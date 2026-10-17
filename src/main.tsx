@@ -1,3 +1,4 @@
+import {canChooseFolder, chooseDeviceFolder, folderLabel, disconnectFolder, authorizeDeviceFolder, saveToDeviceFolder} from './lib/deviceFolder';
 import {browserMode} from './lib/browserStore';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -106,6 +107,9 @@ async function encodeAsset(asset: MarkdownAsset) {
 }
 function App() {
   const pwa = usePwa();
+  const [deviceFolder, setDeviceFolder] = useState('');
+  useEffect(() => {if(browserMode)void folderLabel().then(setDeviceFolder);}, []);
+  async function syncDeviceNotes() {for(const file of await api<string[]>('files')){const note=await api<LoadedDocument>(`document?name=${encodeURIComponent(file)}`);await saveToDeviceFolder({name:file,...note});}}
   useEffect(() => {
     // iOS visual viewport shrinks for the keyboard even when layout viewport/dvh does not.
     const viewport = window.visualViewport;
@@ -250,6 +254,7 @@ function App() {
     operationLock.current = true;
     setBusy(true); setError(''); setNotice('');
     try { await action(); } catch (cause) {
+      if (cause instanceof DOMException && cause.name === 'AbortError') return;
       if (cause instanceof LocalApiError && cause.conflict) {
         setConflict(cause.conflict); setCopyName(cause.conflict.name.replace(/\.(md|markdown|mdown)$/i, '-copia.md')); setSettingsOpen(false);
       } else if (cause instanceof TypeError) { setOffline(true); setPendingSync(true); setNotice('Rascunho preservado no navegador. Reabra o aplicativo local para salvar no repositório e sincronizar o Git.'); }
@@ -308,7 +313,8 @@ function App() {
     setOffline(false); setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
     setImportedVersion(null); setConflict(null); setPendingSync(!result.synced);
     await refresh();
-    if (result.synced) setNotice(browserMode ? 'Nota salva neste navegador.' : 'Arquivo salvo, commit criado e enviado ao remoto.');
+    if (result.synced) setNotice(browserMode ? (deviceFolder ? `Nota salva em ${deviceFolder}.` : 'Nota salva neste navegador.') : 'Arquivo salvo, commit criado e enviado ao remoto.');
+    else if(browserMode) setError(`Nota preservada no navegador; cópia na pasta pendente. ${result.error}`);
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
   function requestSave(automatic = false) {
@@ -351,6 +357,7 @@ function App() {
       <p>{browserMode ? 'Notas e imagens ficam somente neste navegador e dispositivo, sem envio ao servidor. Limpar os dados do site remove as notas. Exporte ZIPs para backup. Git remoto por usuário e Google Drive estão previstos; a versão local para Mac já oferece Git.' : 'Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.'}</p>
       {pwa.updateAvailable && <p>Atualização pronta. Seus rascunhos estão preservados; feche as janelas do editor e abra novamente quando terminar.</p>}
     </section>
+    {browserMode && <section aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : 'Armazenamento privado neste navegador'}</p>{canChooseFolder() ? <><button disabled={busy} onClick={() => {void run(async () => {const label=await chooseDeviceFolder();setDeviceFolder(label);await syncDeviceNotes();setNotice(`Notas copiadas para ${label}. Novos salvamentos também irão para essa pasta.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();await syncDeviceNotes();setNotice('Pasta autorizada e notas copiadas.');})}>Autorizar pasta e copiar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setDeviceFolder('');})}>Usar somente navegador</button></>}</> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. Git remoto e Google Drive serão opções adicionais.</p></section>}
     <div className="settings-theme"><span>Aparência</span><button aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={20}/> : <Moon size={20}/>}Tema {theme === 'dark' ? 'claro' : 'escuro'}</button></div>
     {!browserMode && <details className="repository" open={!repository.repository || undefined}>
       <summary><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></summary>

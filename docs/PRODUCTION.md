@@ -15,3 +15,11 @@ Deploy only built static files. Do not copy application state, notes, credential
 ## Verification
 
 `node tests/public-production.smoke.mjs` exercises the HTTPS origin in Chrome: editing, save/reload, private browser-context isolation, offline save, no API requests, and mobile overflow. Override `SCRIBA_URL` to test another origin.
+
+## Optional device folder
+
+Settings → Selecionar pasta em Files uses `showDirectoryPicker` when available. The app creates `scriba/` beneath the selected directory, copies saved notes/images there, and mirrors subsequent saves. The directory handle and successful file revisions persist privately in IndexedDB. Reauthorization requires a user click. Revoked permissions and external edits preserve the browser copy and report a pending folder write. Disconnecting never deletes files.
+
+Safari/iOS does not expose this writable directory picker to PWAs. Those users retain private browser notes and ZIP export to Files; arbitrary continuous Files access would require a native wrapper. Feature detection, rather than device name, controls availability.
+
+`node tests/device-folder.smoke.mjs` against a public-mode build served at localhost:43999 checks actual browser filesystem operations with a simulated OS picker. This is not a physical mobile picker test.

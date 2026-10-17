@@ -1,3 +1,4 @@
+import {saveToDeviceFolder} from './deviceFolder';
 import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
 /** Public builds keep all user content in this origin's IndexedDB, never on the VPS. */
 export const browserMode = import.meta.env.VITE_STORAGE_MODE === 'browser';
@@ -22,7 +23,7 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       const image=await fetch(welcomeUrl); const bytes=new Uint8Array(await image.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
       guide={name:'Boas-vindas.md',version:crypto.randomUUID(),modifiedAt:new Date().toISOString(),value:'# Bem-vindo ao Scriba\n\n![Escriba egípcio](assets/boas-vindas.jpg)\n\nEscreva, organize e guarde suas notas Markdown neste navegador.\n\n## Comece aqui\n\nCrie uma nota, escreva e pressione Salvar ou ⌘S. Busque e fixe notas na lateral. Importe Markdown e ZIP e exporte suas notas com imagens.\n\n## Privacidade e armazenamento\n\nSuas notas ficam somente neste navegador e dispositivo. Não são enviadas ao nosso servidor. Limpar os dados do site remove as notas; exporte pacotes ZIP para backup. Não há sincronização automática entre dispositivos.\n\nRascunhos são preservados durante a edição. O salvamento automático da biblioteca vem ativado a cada 1 minuto e pode ser ajustado nas configurações.\n\n## Git e roadmap\n\nA versão local para Mac já permite selecionar um repositório e salvar com commit e push. Na versão pública, integração Git remota por usuário (inclusive mobile), Google Drive e novos temas estão no roadmap, ainda sem data.\n\n[Baixar versão local](https://github.com/ab-orbit/ab-markdow-editor)\n\nPowered by **Aeon Bridge Co.** — offered to community.',files:[{path:'assets/boas-vindas.jpg',data:btoa(binary),mime:'image/jpeg'}]};
     }
-    return await new Promise<Response>((resolve,reject)=>{
+    const response = await new Promise<Response>((resolve,reject)=>{
       const tx=database.transaction('library','readwrite'),store=tx.objectStore('library'),request=store.get('state');let result:unknown;let status=200;
       request.onsuccess=()=>{
         const state:State=request.result||initial();const name=body?.name||url.searchParams.get('name')||'';
@@ -47,5 +48,7 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       };
       tx.oncomplete=()=>resolve(Response.json(result,{status}));tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
     });
+    if(url.pathname==='/save-sync'&&response.ok){const result=await response.json();try{await saveToDeviceFolder(body);}catch(error){return Response.json({...result,synced:false,error:error instanceof Error?error.message:String(error)});}return Response.json(result);}
+    return response;
   } catch {return Response.json({error:'Não foi possível acessar o armazenamento deste navegador. Exporte suas notas para preservar uma cópia.'},{status:500});}
 }
