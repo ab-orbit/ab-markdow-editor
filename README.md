@@ -25,15 +25,27 @@ Abra **AB Markdown** na Mesa nas próximas vezes. O servidor escuta apenas em `1
 3. Para um repositório ainda não clonado, expanda **Clonar um repositório por URL**, informe a URL HTTPS/SSH e use **Selecionar onde clonar** para escolher a pasta de destino. Será criada uma subpasta com o nome do repositório, cujo caminho pode ser ajustado antes de clonar. O Git usa suas credenciais locais.
 4. Escolha um Markdown em **Arquivos do repositório** ou clique **Novo**.
 5. Informe um caminho relativo, por exemplo `pesquisa/contexto.md`, e clique **Salvar no repositório**.
-6. Preencha a mensagem e clique **Criar commit**. Depois, **Enviar (push)** publica os commits pendentes da branch no remoto configurado.
+6. O salvamento cria o commit e envia ao remoto automaticamente. Ative **Perguntar nota do commit a cada salvamento** nas configurações se quiser escrever a mensagem antes de salvar.
 
-Salvar grava o documento UTF-8 e suas imagens na cópia local. Commit e push são ações explícitas. O primeiro push de uma branch sem upstream deve ser configurado no Terminal com `git push -u origin NOME_DA_BRANCH`. A identidade Git (`user.name`/`user.email`) também deve estar configurada. A aplicação não coleta senhas nem configura autenticação: credenciais HTTPS, chave SSH e permissões remotas devem funcionar previamente no Terminal. Helpers que exigem interação podem precisar ser desbloqueados antes de abrir o app.
+Salvar grava o documento UTF-8 e suas imagens, cria um commit apenas desses arquivos e faz push. Sem nota personalizada, usa `Update caminho/do/arquivo.md` (ou `Auto-save ...` no automático). Não cria commits vazios se nada mudou. O primeiro push de uma branch sem upstream usa `origin` e configura o acompanhamento automaticamente. A identidade Git (`user.name`/`user.email`) também deve estar configurada. A aplicação não coleta senhas nem configura autenticação: credenciais HTTPS, chave SSH e permissões remotas devem funcionar previamente no Terminal. Helpers que exigem interação podem precisar ser desbloqueados antes de abrir o app.
 
 Ao abrir outro arquivo, criar um documento ou trocar de repositório, o editor pede confirmação se houver alterações pendentes. Se o arquivo for alterado fora do editor, salvar acusa conflito: reabra a versão atual ou escolha outro nome. Salvar com outro nome cria uma cópia; o original permanece.
 
+## Salvamento automático e notas de commit
+
+Na engrenagem, abra **Salvamento e sincronização**:
+
+- **Perguntar nota do commit a cada salvamento**: abre um diálogo antes de salvar, criar o commit e enviar. Vale para o botão, ⌘S e o salvamento automático. Cancelar não grava nem envia o documento.
+- **Ativar salvamento automático**: grava, cria o commit e faz push enquanto a aba estiver aberta, quando houver alterações ou uma sincronização pendente.
+- **Intervalo (minutos)**: padrão de **1 minuto**, configurável de 1 a 1440 minutos. Clique **Salvar preferências** para aplicar.
+
+As duas opções vêm desativadas. As preferências ficam no Mac e sobrevivem ao fechamento do app, à troca de porta e à mudança de repositório. O automático pausa enquanto as configurações ou a nota estão abertas e não cria versões de um documento inicial intocado. Se a nota estiver ativada, cada ciclo com alterações aguarda sua confirmação.
+
+Se o commit ou push falhar, o editor preserva a gravação local e mostra a etapa pendente. Salvar novamente tenta sincronizar usando a versão já gravada; uma falha de push não duplica o commit. O automático também tenta novamente no próximo intervalo. O Git continua respeitando hooks, identidade e credenciais locais; alterações já preparadas por outra ferramenta não entram no commit do editor. A execução do intervalo depende da aba aberta e pode ser adiada pelo navegador quando ela estiver suspensa.
+
 ## Editor
 
-Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre as configurações, os arquivos do repositório e as ações de Git em uma janela separada. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. Fechar essa janela ou usar Escape preserva o texto e o histórico de edição.
+Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre as configurações, os arquivos do repositório e as preferências de salvamento em uma janela separada. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. Fechar essa janela ou usar Escape preserva o texto e o histórico de edição.
 
 Mantém os modos **Escrever**, **Fonte**, **Visão** e **Ler**, formatação, desfazer/refazer, tabelas editáveis, tarefas, referências, imagens por seleção/colagem/arrastar, importação de Markdown/ZIP/Bear e exportação `.md`/ZIP. Imagens inseridas são gravadas na pasta `assets/` ao lado do documento; imagens remotas não são buscadas automaticamente. Os temas claro e escuro usam uma cópia dos tokens do app original.
 

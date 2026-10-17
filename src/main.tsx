@@ -1,6 +1,6 @@
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, GitCommitHorizontal, Upload, Sun, Moon, FilePlus2, Settings, X } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
 import { EditorDialog } from './components/Markdown/EditorDialog';
 import type { MarkdownAsset } from './lib/markdown/assets';
@@ -16,6 +16,25 @@ interface RepositoryInfo {
   /** Human-readable Git short status. */
   status: string;
 }
+interface SavePreferences {
+  /** Ask for a commit note before each manual or scheduled save. */
+  askCommitNote: boolean;
+  /** Enable scheduled save/commit/push while the editor is open. */
+  autoSave: boolean;
+  /** Schedule interval in whole minutes, between 1 and 1440. */
+  intervalMinutes: number;
+}
+interface SaveResult {
+  /** Hash of the content successfully written to disk, even if Git failed. */
+  version: string;
+  /** Whether the saved document has been committed and pushed. */
+  synced: boolean;
+  /** Git operation that remains pending after a partial failure. */
+  stage?: 'commit' | 'push';
+  /** Readable Git failure returned with a successful local save. */
+  error?: string;
+}
+const defaultPreferences: SavePreferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1 };
 interface DocumentFile {
   /** Document-relative image path. */
   path: string;
@@ -55,15 +74,21 @@ function App() {
   const [files, setFiles] = useState<string[]>([]);
   const [selected, setSelected] = useState('');
   const [name, setName] = useState('documento.md');
-  const [loadedName, setLoadedName] = useState('');
+  const [loadedName, setLoadedName] = useState('documento.md');
   const [value, setValue] = useState('# Meu documento\n\nComece a escrever.\n');
-  const [baseline, setBaseline] = useState('');
+  const [baseline, setBaseline] = useState('# Meu documento\n\nComece a escrever.\n');
   const [version, setVersion] = useState<string | null>(null);
   const [assets, setAssets] = useState<MarkdownAsset[]>([]);
   const [initialAssets, setInitialAssets] = useState<{path: string; file: File}[]>([]);
   const [documentId, setDocumentId] = useState(0);
   const [saveRevision, setSaveRevision] = useState(0);
-  const [message, setMessage] = useState('');
+  const [preferences, setPreferences] = useState<SavePreferences>(defaultPreferences);
+  const [preferenceDraft, setPreferenceDraft] = useState<SavePreferences>(defaultPreferences);
+  const [commitNoteOpen, setCommitNoteOpen] = useState(false);
+  const [commitNote, setCommitNote] = useState('');
+  const [pendingSync, setPendingSync] = useState(false);
+  const operationLock = useRef(false);
+  const autoSaveAction = useRef<() => void>(() => {});
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -75,16 +100,18 @@ function App() {
     setFiles(info.repository ? await api<string[]>('files') : []);
     return info;
   }
-  useEffect(() => { void refresh().then(info => setSettingsOpen(!info.repository)).catch(cause => { setError(cause.message); setSettingsOpen(true); }); }, []);
+  useEffect(() => { void Promise.all([refresh(), api<SavePreferences>('preferences')]).then(([info, saved]) => { if (!info.repository) setSettingsOpen(true); setPreferences(saved); setPreferenceDraft(saved); }).catch(cause => { setError(cause.message); setSettingsOpen(true); }); }, []);
   useEffect(() => {
     if (!dirty) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
   }, [dirty]);
   async function run(action: () => Promise<void>) {
+    if (operationLock.current) return;
+    operationLock.current = true;
     setBusy(true); setError(''); setNotice('');
     try { await action(); } catch (cause) { setError(cause instanceof Error ? cause.message : String(cause)); }
-    finally { setBusy(false); }
+    finally { operationLock.current = false; setBusy(false); }
   }
   async function chooseRepository() {
     if (!discard()) return;
@@ -107,14 +134,31 @@ function App() {
   }
   const discard = () => !dirty || window.confirm('Há alterações não salvas. Deseja substituí-las?');
   function resetDocument(text = '', fileName = 'documento.md', hash: string | null = null, attached: {path: string; file: File}[] = []) {
-    setValue(text); setBaseline(text); setName(fileName); setLoadedName(hash ? fileName : ''); setVersion(hash);
-    setAssets([]); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
+    setValue(text); setBaseline(text); setName(fileName); setLoadedName(fileName); setVersion(hash);
+    setPendingSync(false); setAssets([]); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
   }
-  async function save() {
-    const result = await api<{version: string}>('save', { name, value, version: name === loadedName ? version : null, files: await Promise.all(assets.map(encodeAsset)) });
+  async function save(note: string) {
+    const result = await api<SaveResult>('save-sync', { name, value, message: note, version: name === loadedName ? version : null, files: await Promise.all(assets.map(encodeAsset)) });
     setVersion(result.version); setBaseline(value); setLoadedName(name); setSaveRevision(revision => revision + 1);
-    await refresh(); setNotice('Documento e imagens salvos no repositório local.');
+    setPendingSync(!result.synced);
+    await refresh();
+    if (result.synced) setNotice('Arquivo salvo, commit criado e enviado ao remoto.');
+    else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
+  function requestSave(automatic = false) {
+    if (operationLock.current || busy || commitNoteOpen || !repository.repository) return;
+    if (preferences.askCommitNote) {
+      setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
+    } else void run(() => save(`${automatic ? 'Auto-save' : 'Update'} ${name}`));
+  }
+  autoSaveAction.current = () => {
+    if ((dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen) requestSave(true);
+  };
+  useEffect(() => {
+    if (!preferences.autoSave || !repository.repository) return;
+    const interval = window.setInterval(() => autoSaveAction.current(), preferences.intervalMinutes * 60000);
+    return () => window.clearInterval(interval);
+  }, [preferences.autoSave, preferences.intervalMinutes, repository.repository]);
   useEffect(() => {
     if (!notice) return;
     const timeout = window.setTimeout(() => setNotice(''), 4500);
@@ -124,7 +168,7 @@ function App() {
     const shortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
         event.preventDefault();
-        if (repository.repository && !busy) void run(save);
+        if (repository.repository && !busy) requestSave();
       }
     };
     window.addEventListener('keydown', shortcut);
@@ -144,15 +188,33 @@ function App() {
     </details>
     <fieldset className="document-controls" disabled={busy}>
       <div className="row"><label className="grow">Arquivos do repositório<select aria-label="Arquivos do repositório" value={selected} onChange={event => setSelected(event.target.value)}><option value="">Selecione um Markdown</option>{files.map(file => <option key={file} value={file}>{file}</option>)}</select></label><button disabled={!selected || !repository.repository} onClick={() => { if (!discard()) return; void run(async () => { const doc = await api<LoadedDocument>(`document?name=${encodeURIComponent(selected)}`); const attached = doc.files.map(file => ({ path: file.path, file: new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, { type: file.mime }) })); resetDocument(doc.value, selected, doc.version, attached); setSettingsOpen(false); setNotice(doc.warnings.length ? `Aberto com avisos: ${doc.warnings.join('; ')}` : 'Documento aberto.'); }); }}>Abrir do repositório</button><button onClick={() => { if (discard()) { resetDocument(); setSettingsOpen(false); } }}><FilePlus2 size={18}/>Novo</button></div>
-      <div className="row"><label className="grow">Caminho do arquivo no repositório<input value={name} onChange={event => setName(event.target.value)} placeholder="notas/documento.md"/></label><button disabled={!repository.repository} onClick={() => void run(save)}><Save size={18}/>Salvar no repositório</button></div>
-      <div className="row"><label className="grow">Mensagem de commit<input value={message} onChange={event => setMessage(event.target.value)} placeholder="Atualiza notas de pesquisa"/></label><button disabled={!repository.repository || dirty || !message.trim()} onClick={() => void run(async () => { await api('commit', { name, message, assets: assets.map(asset => asset.path) }); await refresh(); setNotice('Commit criado. Use Enviar para publicar no remoto.'); })}><GitCommitHorizontal size={18}/>Criar commit</button><button disabled={!repository.repository} onClick={() => void run(async () => { await api('push', {}); await refresh(); setNotice('Commits enviados ao remoto.'); })}><Upload size={18}/>Enviar (push)</button></div>
-      <p>{busy ? 'Operação em andamento… Se abriu o seletor do macOS, escolha uma pasta ou cancele.' : dirty ? 'Há alterações não salvas no repositório.' : 'Documento salvo.'} Salvar grava na pasta local; commit registra a versão; push envia os commits da branch.</p>
+      <div className="row"><label className="grow">Caminho do arquivo no repositório<input value={name} onChange={event => setName(event.target.value)} placeholder="notas/documento.md"/></label><button disabled={!repository.repository} onClick={() => requestSave()}><Save size={18}/>Salvar no repositório</button></div>
+      {pendingSync && <button disabled={!repository.repository} onClick={() => requestSave()}><Upload size={18}/>Tentar sincronizar novamente</button>}
+      <p>{busy ? 'Salvando e sincronizando…' : pendingSync ? 'Arquivo local salvo; sincronização pendente.' : dirty ? 'Há alterações não salvas.' : 'Documento salvo.'} Salvar grava o arquivo, cria o commit e envia ao remoto.</p>
     </fieldset>
+    <section className="save-preferences" aria-label="Preferências de salvamento">
+      <h3>Salvamento e sincronização</h3>
+      <form onSubmit={event => { event.preventDefault(); void run(async () => { const saved = await api<SavePreferences>('preferences', preferenceDraft); setPreferences(saved); setPreferenceDraft(saved); setNotice('Preferências de salvamento atualizadas.'); }); }}>
+        <fieldset disabled={busy}>
+          <label className="check-option"><input type="checkbox" checked={preferenceDraft.askCommitNote} onChange={event => setPreferenceDraft({ ...preferenceDraft, askCommitNote: event.target.checked })}/>Perguntar nota do commit a cada salvamento</label>
+          <label className="check-option"><input type="checkbox" checked={preferenceDraft.autoSave} onChange={event => setPreferenceDraft({ ...preferenceDraft, autoSave: event.target.checked })}/>Ativar salvamento automático</label>
+          <label>Intervalo (minutos)<input type="number" min="1" max="1440" step="1" required value={preferenceDraft.intervalMinutes} onChange={event => setPreferenceDraft({ ...preferenceDraft, intervalMinutes: Number(event.target.value) })}/></label>
+          <p>O automático salva, cria o commit e envia ao remoto enquanto esta aba estiver aberta. Se pedir nota estiver ligado, aguarda a confirmação antes de salvar.</p>
+          <button type="submit">Salvar preferências</button>
+        </fieldset>
+      </form>
+    </section>
     {statusMessages}
     </div></EditorDialog>}
+    {commitNoteOpen && <EditorDialog title="Nota do commit" onClose={() => setCommitNoteOpen(false)}>
+      <form onSubmit={event => { event.preventDefault(); if (!commitNote.trim()) return; setCommitNoteOpen(false); void run(() => save(commitNote.trim())); }}>
+        <label>Nota do commit<textarea autoFocus required maxLength={1000} value={commitNote} onChange={event => setCommitNote(event.target.value)} placeholder="Descreva o que mudou"/></label>
+        <footer><button type="button" onClick={() => setCommitNoteOpen(false)}>Cancelar</button><button type="submit" disabled={!commitNote.trim()}>Salvar, commit e push</button></footer>
+      </form>
+    </EditorDialog>}
     {!settingsOpen && statusMessages}
     <fieldset disabled={busy} className="editor-container"><MarkdownWorkbench key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); }} initialAssets={initialAssets} onAssetsChange={setAssets} saveRevision={saveRevision} readOnly={busy} actions={<>
-      {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => void run(save)}><Save size={18}/></button>}
+      {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></fieldset>
   </main>;

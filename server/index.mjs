@@ -28,6 +28,7 @@ const server = http.createServer(async (req, res) => {
       if (supplied.length !== token.length || !timingSafeEqual(supplied, Buffer.from(token))) return send(res, 403, { error: 'Sessão inválida. Reabra o aplicativo.' });
       if (req.headers.origin && req.headers.origin !== origin) return send(res, 403, { error: 'Origem inválida.' });
       if (req.method === 'GET') {
+        if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());
         if (url.pathname === '/api/files') return send(res, 200, await repository.list());
         if (url.pathname === '/api/document') return send(res, 200, await repository.read(url.searchParams.get('name')));
@@ -40,6 +41,8 @@ const server = http.createServer(async (req, res) => {
         '/api/pick-folder': () => pickFolder(),
         '/api/connect': () => repository.connect(body.directory),
         '/api/clone': () => repository.clone(body.url, body.destination),
+        '/api/preferences': () => repository.updatePreferences(body),
+        '/api/save-sync': () => repository.saveAndSync(body),
         '/api/save': () => repository.save(body),
         '/api/commit': () => repository.commit(body),
         '/api/push': () => repository.push(),

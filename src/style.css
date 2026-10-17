@@ -43,3 +43,12 @@ html[data-theme="light"] { color-scheme: light; }
 
 .settings-theme { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .settings-content .toast { position: static; width: auto; max-width: none; margin: 16px 0 0; }
+
+.save-preferences { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-panel); }
+.save-preferences h3 { color: var(--text-primary); margin: 0 0 12px; }
+.save-preferences form, .save-preferences fieldset { display: grid; gap: 12px; width: 100%; }
+.check-option { display: flex; flex-direction: row; align-items: center; gap: 8px; }
+.check-option input { flex-shrink: 0; margin: 0; }
+textarea { font: inherit; font-size: 16px; color: var(--text-primary); background: var(--bg-input); border: 1px solid var(--border-strong); padding: 12px; width: 100%; min-height: 100px; resize: vertical; }
+.save-preferences label.check-option { min-width: 0; width: 100%; }
+.save-preferences label.check-option input[type="checkbox"] { width: 44px; min-width: 44px; max-width: 44px; flex: 0 0 44px; accent-color: var(--lime); }

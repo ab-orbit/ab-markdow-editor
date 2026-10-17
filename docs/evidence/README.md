@@ -27,3 +27,15 @@ Depois de conectar o repositório, a tela principal mantém apenas o editor. O p
 ![Configurações no desktop](desktop-settings.png)
 
 ![Configurações no celular](mobile-settings.png)
+
+## Salvamento automático e nota do commit
+
+O relógio do navegador avança os intervalos de um e dois minutos; gravação, commits e pushes usam Git e HTTP reais. O remoto só recebe a alteração após confirmar a nota, quando essa opção está ativa. Cancelar preserva o conteúdo ainda não salvo no editor.
+
+![Preferências de salvamento no desktop](desktop-autosave-settings.png)
+
+![Preferências de salvamento no celular](mobile-autosave-settings.png)
+
+![Nota do commit no desktop](desktop-commit-note.png)
+
+![Nota do commit no celular](mobile-commit-note.png)

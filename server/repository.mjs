@@ -56,11 +56,15 @@ function imageMime(bytes) {
 
 /** Owns one local checkout; settings stay outside the source and destination repositories. */
 export class Repository {
-  constructor(stateDir) { this.stateDir = stateDir; this.root = null; this.queue = Promise.resolve(); }
+  constructor(stateDir) { this.stateDir = stateDir; this.root = null; this.queue = Promise.resolve(); this.preferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1 }; }
 
   async initialize() {
     await fs.mkdir(this.stateDir, { recursive: true, mode: 0o700 });
-    try { await this.connect(JSON.parse(await fs.readFile(path.join(this.stateDir, 'settings.json'), 'utf8')).repository); }
+    try {
+      const settings = JSON.parse(await fs.readFile(path.join(this.stateDir, 'settings.json'), 'utf8'));
+      if (settings.preferences) this.preferences = this.validatePreferences(settings.preferences);
+      if (settings.repository) await this.connect(settings.repository);
+    }
     catch { /* A moved/deleted checkout is reselected through the UI. */ }
   }
 
@@ -69,6 +73,24 @@ export class Repository {
     const next = this.queue.then(action);
     this.queue = next.catch(() => {});
     return next;
+  }
+
+  validatePreferences(input) {
+    if (!input || typeof input.askCommitNote !== 'boolean' || typeof input.autoSave !== 'boolean' || !Number.isInteger(input.intervalMinutes) || input.intervalMinutes < 1 || input.intervalMinutes > 1440) throw new Error('Use um intervalo inteiro entre 1 e 1440 minutos.');
+    return { askCommitNote: input.askCommitNote, autoSave: input.autoSave, intervalMinutes: input.intervalMinutes };
+  }
+
+  async persistSettings(root = this.root, preferences = this.preferences) {
+    const temporary = path.join(this.stateDir, 'settings.tmp');
+    await fs.writeFile(temporary, JSON.stringify({ repository: root, preferences }), { mode: 0o600 });
+    await fs.rename(temporary, path.join(this.stateDir, 'settings.json'));
+  }
+
+  async updatePreferences(input) {
+    const preferences = this.validatePreferences(input);
+    await this.persistSettings(this.root, preferences);
+    this.preferences = preferences;
+    return preferences;
   }
 
   async connect(directory) {
@@ -80,7 +102,7 @@ export class Repository {
     if (await git(root, ['rev-parse', '--is-bare-repository']) !== 'false') throw new Error('O repositório precisa ter uma cópia de trabalho.');
     await fs.access(root, 6);
     await fs.mkdir(this.stateDir, { recursive: true, mode: 0o700 });
-    await fs.writeFile(path.join(this.stateDir, 'settings.json'), JSON.stringify({ repository: root }), { mode: 0o600 });
+    await this.persistSettings(root);
     this.root = root;
     return this.info();
   }
@@ -178,15 +200,45 @@ export class Repository {
     if (await git(root, ['diff', '--cached', '--name-only'])) throw new Error('Há alterações já preparadas no Git. Faça o commit delas ou retire-as do stage antes de continuar.');
     const paths = [name, ...assets.map(asset => `${path.posix.dirname(name)}/${asset}`.replace(/^\.\//, ''))];
     for (const relative of paths) await safeFile(root, relative);
-    await git(root, ['var', 'GIT_AUTHOR_IDENT']);
-    await git(root, ['var', 'GIT_COMMITTER_IDENT']);
     await git(root, ['--literal-pathspecs', 'add', '--', ...paths]);
-    return { commit: await git(root, ['commit', '-m', message]), ...await this.info() };
+    if (!await git(root, ['diff', '--cached', '--name-only'])) return { commit: null, ...await this.info() };
+    try {
+      await git(root, ['var', 'GIT_AUTHOR_IDENT']);
+      await git(root, ['var', 'GIT_COMMITTER_IDENT']);
+      return { commit: await git(root, ['commit', '-m', message]), ...await this.info() };
+    } catch (error) {
+      // Only our paths were staged. Release them so a failed hook/identity can be retried.
+      await git(root, ['--literal-pathspecs', 'reset', '--quiet', '--', ...paths]).catch(() => {});
+      throw error;
+    }
+  }
+
+  /** Save, commit and push inside the mutation queue; retain local progress on Git failures. */
+  async saveAndSync(body) {
+    const message = typeof body.message === 'string' && body.message.trim() ? body.message.trim() : `Update ${body.name}`;
+    if (message.length > 1000) throw new Error('A nota do commit aceita até 1000 caracteres.');
+    const saved = await this.save(body);
+    let committed = false;
+    let stage = 'commit';
+    try {
+      const result = await this.commit({ name: body.name, message, assets: (body.files || []).map(file => file.path) });
+      committed = !!result.commit;
+      stage = 'push';
+      await this.push();
+      return { ...saved, synced: true, committed };
+    } catch (error) {
+      // HTTP 200 reports the saved content version as well as the pending Git stage.
+      return { ...saved, synced: false, committed, stage, error: error.message };
+    }
   }
 
   async push() {
     const root = this.requireRoot();
-    await git(root, ['push']);
+    const branch = await git(root, ['branch', '--show-current']);
+    if (!branch) throw new Error('Selecione uma branch antes de enviar ao remoto.');
+    let upstream = false;
+    try { upstream = !!await git(root, ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}']); } catch { /* First push creates the upstream on origin. */ }
+    await git(root, upstream ? ['push'] : ['push', '-u', 'origin', branch]);
     return this.info();
   }
 }

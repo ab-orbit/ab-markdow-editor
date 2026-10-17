@@ -10,8 +10,8 @@ Ambiente: macOS Darwin 25.6.0, Apple Silicon. Aplicação instalada em `~/Applic
 - Abertura pelo ícone, resposta saudável do servidor em loopback e carregamento do editor.
 - Seleção de pasta real no diálogo nativo do macOS; retorno do caminho confirmado.
 - Cancelamento do diálogo pela API da aplicação instalada: HTTP 200, `directory: null`.
-- 10 testes HTTP com Git real: sessão/origem/host, conexão e listagem, texto/imagens, conflitos, caminhos inválidos/symlinks, gravações concorrentes, commit seletivo e push, proteção de stage, rejeição de credenciais na URL e clonagem HTTPS com CA local.
-- 2 jornadas Playwright: desktop 1440×900 e celular 390×844. Selecionar/cancelar pasta, conectar, escolher destino de clone, editar, inserir imagem, salvar, criar commit, push e reabrir com imagens.
+- 16 testes HTTP com Git real: sessão/origem/host, conexão e listagem, texto/imagens, conflitos, caminhos inválidos/symlinks, gravações concorrentes, commit seletivo e push, proteção de stage, rejeição de credenciais na URL e clonagem HTTPS com CA local; save/commit/push automático, ausência de commits vazios, retry após falha de push sem commit duplicado, recuperação de hook, primeiro upstream e preferências persistidas em novo processo.
+- 2 jornadas Playwright: desktop 1440×900 e celular 390×844. Selecionar/cancelar pasta, conectar, escolher destino de clone, editar, inserir imagem, salvar, commit/push automáticos e reabrir com imagens; relógio do navegador simula ciclos de 1 e 2 minutos com Git/HTTP reais, nota obrigatória, cancelamento sem gravação, ⌘S e persistência das preferências.
 - Interface focada no editor após configuração, inclusive ao recarregar; engrenagem abre configurações; Escape fecha sem perder o texto; gravação disponível na barra e por ⌘S.
 - Temas claro/escuro e contraste ≥4,5:1 dos tokens de texto e acento contra a superfície usada pelo editor, nos dois temas. Sem overflow horizontal no celular.
 - Nenhuma alteração em arquivos rastreados de `ab/app/frontend/`; o arquivo GLB não rastreado que já existia no início foi preservado.

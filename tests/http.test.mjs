@@ -105,3 +105,73 @@ test('clones a repository through real HTTPS using existing local Git trust sett
     assert.match(await fs.readFile(path.join(destination, 'notes/test.md'), 'utf8'), /# Saved/);
   } finally { await new Promise(resolve => transport.close(resolve)); }
 });
+
+test('save-sync saves, commits and pushes only the current document', async () => {
+  await git(checkout, 'reset', '--quiet');
+  await request('connect', { directory: checkout });
+  const result = await request('save-sync', { name: 'sync/manual.md', value: '# Automatic commit\n', version: null, message: 'Research update' });
+  assert.equal(result.status, 200, result.body.error); assert.equal(result.body.synced, true); assert.equal(result.body.committed, true);
+  assert.equal(await git(remote, 'show', 'main:sync/manual.md'), '# Automatic commit');
+  assert.equal(await git(checkout, 'log', '-1', '--pretty=%s'), 'Research update');
+  assert.equal(await git(checkout, 'show', '--pretty=', '--name-only', 'HEAD'), 'sync/manual.md');
+});
+
+test('unchanged saves do not create empty commits', async () => {
+  const previous = await request('document?name=sync%2Fmanual.md');
+  const head = await git(checkout, 'rev-parse', 'HEAD');
+  const result = await request('save-sync', { name: 'sync/manual.md', value: previous.body.value, version: previous.body.version });
+  assert.equal(result.body.synced, true, result.body.error); assert.equal(result.body.committed, false);
+  assert.equal(await git(checkout, 'rev-parse', 'HEAD'), head);
+});
+
+test('a failed push preserves the saved version and retries without another commit', async () => {
+  await git(checkout, 'remote', 'set-url', 'origin', path.join(temporary, 'missing-remote.git'));
+  const pending = await request('save-sync', { name: 'sync/offline.md', value: '# Kept locally', version: null });
+  assert.equal(pending.body.synced, false); assert.equal(pending.body.stage, 'push'); assert.equal(pending.body.committed, true);
+  assert.equal((await request('document?name=sync%2Foffline.md')).body.version, pending.body.version);
+  const head = await git(checkout, 'rev-parse', 'HEAD');
+  await git(checkout, 'remote', 'set-url', 'origin', remote);
+  const retried = await request('save-sync', { name: 'sync/offline.md', value: '# Kept locally', version: pending.body.version });
+  assert.equal(retried.body.synced, true, retried.body.error); assert.equal(retried.body.committed, false);
+  assert.equal(await git(checkout, 'rev-parse', 'HEAD'), head); assert.equal(await git(remote, 'rev-parse', 'main'), head);
+});
+
+test('a failed commit releases its stage so saving can be retried', async () => {
+  const hooks = path.join(temporary, 'hooks'); await fs.mkdir(hooks);
+  await fs.writeFile(path.join(hooks, 'pre-commit'), '#!/bin/sh\nexit 1\n', { mode: 0o700 });
+  await git(checkout, 'config', 'core.hooksPath', hooks);
+  const pending = await request('save-sync', { name: 'sync/hook.md', value: '# Hook failure', version: null });
+  assert.equal(pending.body.synced, false); assert.equal(pending.body.stage, 'commit');
+  assert.equal(await git(checkout, 'diff', '--cached', '--name-only'), '');
+  await git(checkout, 'config', 'core.hooksPath', '/dev/null');
+  const retried = await request('save-sync', { name: 'sync/hook.md', value: '# Hook failure', version: pending.body.version });
+  assert.equal(retried.body.synced, true, retried.body.error);
+});
+
+test('first automatic push configures origin upstream for a new branch', async () => {
+  await git(checkout, 'checkout', '-b', 'autosave-branch');
+  const result = await request('save-sync', { name: 'sync/branch.md', value: '# New branch', version: null });
+  assert.equal(result.body.synced, true, result.body.error);
+  assert.equal(await git(checkout, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'), 'origin/autosave-branch');
+  assert.equal(await git(remote, 'show', 'autosave-branch:sync/branch.md'), '# New branch');
+  await git(checkout, 'checkout', 'main');
+});
+
+test('save preferences validate the interval, survive reconnect and a fresh server process', async () => {
+  assert.deepEqual((await request('preferences')).body, { askCommitNote: false, autoSave: false, intervalMinutes: 1 });
+  const preferences = { askCommitNote: true, autoSave: true, intervalMinutes: 2 };
+  assert.equal((await request('preferences', { ...preferences, intervalMinutes: 0 })).status, 400);
+  assert.equal((await request('preferences', { ...preferences, intervalMinutes: 1.5 })).status, 400);
+  assert.equal((await request('preferences', preferences)).status, 200);
+  await request('connect', { directory: checkout }); assert.deepEqual((await request('preferences')).body, preferences);
+  const runtime = path.join(temporary, 'second-runtime.json');
+  const second = spawn(process.execPath, ['server/index.mjs'], { cwd: new URL('..', import.meta.url), env: { ...process.env, PORT: '0', MARKDOWN_STATE_DIR: path.join(temporary, 'state'), MARKDOWN_RUNTIME_FILE: runtime }, stdio: 'pipe' });
+  try {
+    let address;
+    for (let i = 0; i < 100; i++) { try { address = JSON.parse(await fs.readFile(runtime, 'utf8')).url; break; } catch { await new Promise(resolve => setTimeout(resolve, 50)); } }
+    assert.ok(address);
+    const html = await (await fetch(address)).text(); const capability = html.match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];
+    const response = await fetch(`${address}/api/preferences`, { headers: { Authorization: `Bearer ${capability}` } });
+    assert.deepEqual(await response.json(), preferences);
+  } finally { second.kill(); await new Promise(resolve => second.once('exit', resolve)); }
+});
