@@ -162,3 +162,15 @@ body { font-family: var(--font-ui); }
  .notes-sidebar nav .open-note { padding-right: 44px; }
 }
 @media (max-width: 899px), (max-height: 500px) { .toast { bottom: 8px; padding: 8px 12px; font-size: 13px; line-height: 1.4; max-width: calc(100vw - 24px); } }
+
+/* Storage choices share readable spacing and accessible wrapping actions. */
+.settings-content .storage-settings { padding: 20px 0; margin: 0 0 20px; border-bottom: 1px solid var(--border-panel); }
+.settings-content h3 { display: flex; align-items: center; gap: 10px; line-height: 1.4; }
+.settings-content h3 svg { flex-shrink: 0; }
+.settings-content p { overflow-wrap: anywhere; }
+.settings-actions { display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px; margin: 16px 0; }
+.settings-actions > button, .settings-action { max-width: 100%; white-space: normal; text-align: center; }
+.settings-action { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg-input); color: var(--text-primary); font: inherit; line-height: 1.5; text-decoration: none; }
+.settings-action:hover { color: var(--lime); border-color: var(--lime); }
+.settings-action:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+@media (max-width: 600px) { .settings-actions > * { flex: 1 1 100%; width: 100%; } }
