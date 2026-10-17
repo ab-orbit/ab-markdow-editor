@@ -12,6 +12,7 @@ Ambiente: macOS Darwin 25.6.0, Apple Silicon. Aplicação instalada em `~/Applic
 - Cancelamento do diálogo pela API da aplicação instalada: HTTP 200, `directory: null`.
 - 10 testes HTTP com Git real: sessão/origem/host, conexão e listagem, texto/imagens, conflitos, caminhos inválidos/symlinks, gravações concorrentes, commit seletivo e push, proteção de stage, rejeição de credenciais na URL e clonagem HTTPS com CA local.
 - 2 jornadas Playwright: desktop 1440×900 e celular 390×844. Selecionar/cancelar pasta, conectar, escolher destino de clone, editar, inserir imagem, salvar, criar commit, push e reabrir com imagens.
+- Interface focada no editor após configuração, inclusive ao recarregar; engrenagem abre configurações; Escape fecha sem perder o texto; gravação disponível na barra e por ⌘S.
 - Temas claro/escuro e contraste ≥4,5:1 dos tokens de texto e acento contra a superfície usada pelo editor, nos dois temas. Sem overflow horizontal no celular.
 - Nenhuma alteração em arquivos rastreados de `ab/app/frontend/`; o arquivo GLB não rastreado que já existia no início foi preservado.
 

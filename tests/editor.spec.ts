@@ -16,6 +16,9 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       git('-C',repo,'add','.');git('-C',repo,'commit','-m','Initial');git('-C',repo,'remote','add','origin',remote);git('-C',repo,'push','-u','origin','main');
       await page.setViewportSize(viewport); await page.goto('/');
       page.on('dialog', dialog => dialog.accept());
+      const settings = page.getByRole('dialog', { name: 'Configurações', exact: true });
+      const gear = page.getByRole('button', { name: 'Configurações', exact: true });
+      await expect(settings).toBeVisible();
       const summary = page.locator('details.repository > summary');
       if (!(await page.locator('details.repository').evaluate(el => el.hasAttribute('open')))) await summary.click();
       let folderChoice: string | null = null;
@@ -26,6 +29,11 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       folderChoice = repo;
       await page.getByRole('button', { name: 'Selecionar pasta', exact: true }).click();
       await expect(page.getByRole('status')).toHaveText('Repositório conectado.');
+      await expect(settings).toHaveCount(0);
+      await expect(page.getByText('O texto é o documento.', { exact: true })).toHaveCount(0);
+      await expect(page.locator('.document-controls')).toHaveCount(0);
+      await gear.click();
+      await expect(settings).toBeVisible();
       if (!(await page.locator('details.repository').evaluate(el => el.hasAttribute('open')))) await summary.click();
       await page.getByText('Clonar um repositório por URL', { exact: true }).click();
       await page.getByLabel('URL HTTPS ou SSH', { exact: true }).fill('git@github.com:example/research.git');
@@ -33,7 +41,12 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(page.getByLabel('Nova pasta local (caminho absoluto)')).toHaveValue(`${repo}/research`);
       await page.getByText('Clonar um repositório por URL', { exact: true }).click();
       await page.getByLabel('Caminho do arquivo no repositório').fill('notes/pesquisa.md');
+      await settings.getByRole('button', { name: 'Fechar', exact: true }).click();
       const source = page.locator('.cm-content'); await source.click(); await page.keyboard.insertText('# Pesquisa\n\nTexto com **evidências**.\n\n- [ ] Conferir fontes\n');
+      await gear.click();
+      await page.keyboard.press('Escape');
+      await expect(settings).toHaveCount(0);
+      await expect(source).toContainText('Pesquisa');
       await page.getByRole('button', { name: 'Visão', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'Pesquisa', exact: true })).toBeVisible();
       const image = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=', 'base64');
@@ -42,6 +55,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await page.getByRole('button', { name: 'Salvar no repositório', exact: true }).click();
       await expect(page.getByRole('status')).toHaveText('Documento e imagens salvos no repositório local.');
       const saved = await readFile(join(repo,'notes/pesquisa.md'),'utf8'); expect(saved).toContain('# Pesquisa'); expect(saved).toContain('assets/');
+      await gear.click();
       await page.getByLabel('Mensagem de commit').fill('Pesquisa com evidências');
       await page.getByRole('button', { name: 'Criar commit' }).click();
       await expect(page.getByRole('status')).toHaveText('Commit criado. Use Enviar para publicar no remoto.');
@@ -49,6 +63,9 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(page.getByRole('status')).toHaveText('Commits enviados ao remoto.');
       expect(git('-C',remote,'show','main:notes/pesquisa.md')).toBe(saved);
       await page.reload();
+      await expect(settings).toHaveCount(0);
+      await expect(page.locator('.document-controls')).toHaveCount(0);
+      await gear.click();
       await page.getByLabel('Arquivos do repositório', { exact: true }).selectOption('notes/pesquisa.md');
       await page.getByRole('button', { name: 'Abrir do repositório' }).click();
       await expect(page.getByRole('status')).toHaveText('Documento aberto.');
@@ -56,9 +73,12 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(page.getByRole('heading', { name: 'Pesquisa', exact: true })).toBeVisible();
       await expect(page.locator('article img')).toHaveCount(1);
       await expect(page.locator('article img')).toBeVisible();
-      await summary.click();
+      await expect(settings).toHaveCount(0);
       await page.screenshot({ path: `docs/evidence/${viewport.name}-repository-document-dark.png`, fullPage: true });
+      await gear.click();
+      await page.screenshot({ path: `docs/evidence/${viewport.name}-settings.png`, fullPage: true });
       await page.getByRole('button', { name: 'Usar tema claro' }).click();
+      await settings.getByRole('button', { name: 'Fechar', exact: true }).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme','light');
       await page.screenshot({ path: `docs/evidence/${viewport.name}-repository-document-light.png`, fullPage: true });
       const contrast = await page.evaluate(() => {

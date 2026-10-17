@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Download, FileUp, FileText, Package } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
@@ -25,6 +25,8 @@ export interface MarkdownWorkbenchProps {
   onFileNameChange: (name: string) => void;
   /** Initial display mode, read once at mount. */
   initialMode?: MarkdownMode;
+  /** Host actions displayed alongside the document's existing toolbar controls. */
+  actions?: ReactNode;
   /** Files loaded from the configured repository, applied on mount. */
   initialAssets?: {path: string; file: File}[];
   /** Reports attached files so the host can persist the complete document. */
@@ -38,7 +40,7 @@ export interface MarkdownWorkbenchProps {
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, initialMode = 'live', readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, initialMode = 'live', actions, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
   const [baseline, setBaseline] = useState(value);
   const [busy, setBusy] = useState(false);
@@ -129,6 +131,7 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
         <button type="button" disabled={readOnly || busy} onClick={() => input.current?.click()}><FileUp size={15} aria-hidden="true"/>Abrir .md / ZIP</button>
         <button type="button" className={styles.download} onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/>Baixar .md</button>
         <button type="button" className={styles.download} disabled={busy} onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/>Baixar pacote</button>
+        {actions}
       </div>
       <input ref={input} type="file" hidden aria-label="Arquivo Markdown" disabled={readOnly || busy} accept=".md,.markdown,.mdown,.zip,.bear,text/markdown,application/zip" onChange={event => { void open(event.target.files?.[0]); event.target.value = ''; }}/>
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>

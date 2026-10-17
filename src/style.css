@@ -30,3 +30,16 @@ input[type="checkbox"] { display: inline-block; width: 44px; height: 44px; min-h
 button.primary { color: var(--lime); border-color: var(--lime); background: var(--lime-trace); }
 html[data-theme="dark"] { color-scheme: dark; }
 html[data-theme="light"] { color-scheme: light; }
+
+.editor-app { max-width: none; padding: 16px; }
+.editor-app .editor-container { margin: 0; }
+.editor-app .editor-container .cm-content { min-height: calc(100dvh - 250px); }
+.settings-content { margin-top: 8px; }
+.settings-content .app-header h1 { font-size: 24px; }
+.settings-content .document-controls { margin-bottom: 0; }
+.toast { position: fixed; inset: auto 20px 20px; z-index: 10; margin: 0 auto; width: fit-content; max-width: calc(100vw - 40px); background: var(--bg-overlay); display: flex; align-items: center; gap: 16px; }
+.toast button { flex-shrink: 0; }
+@media (max-width: 600px) { .editor-app { padding: 8px; } }
+
+.settings-theme { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.settings-content .toast { position: static; width: auto; max-width: none; margin: 16px 0 0; }

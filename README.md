@@ -20,7 +20,7 @@ Abra **AB Markdown** na Mesa nas próximas vezes. O servidor escuta apenas em `1
 
 ## Escolher onde salvar
 
-1. Abra **Configurar repositório**.
+1. Abra a engrenagem **Configurações** na barra do editor. A configuração abre automaticamente no primeiro uso.
 2. Clique **Selecionar pasta**. O seletor nativo do macOS permite escolher a pasta do repositório, que será conectada automaticamente. Também é possível digitar ou colar um caminho e usar **Conectar caminho**.
 3. Para um repositório ainda não clonado, expanda **Clonar um repositório por URL**, informe a URL HTTPS/SSH e use **Selecionar onde clonar** para escolher a pasta de destino. Será criada uma subpasta com o nome do repositório, cujo caminho pode ser ajustado antes de clonar. O Git usa suas credenciais locais.
 4. Escolha um Markdown em **Arquivos do repositório** ou clique **Novo**.
@@ -32,6 +32,8 @@ Salvar grava o documento UTF-8 e suas imagens na cópia local. Commit e push sã
 Ao abrir outro arquivo, criar um documento ou trocar de repositório, o editor pede confirmação se houver alterações pendentes. Se o arquivo for alterado fora do editor, salvar acusa conflito: reabra a versão atual ou escolha outro nome. Salvar com outro nome cria uma cópia; o original permanece.
 
 ## Editor
+
+Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre as configurações, os arquivos do repositório e as ações de Git em uma janela separada. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. Fechar essa janela ou usar Escape preserva o texto e o histórico de edição.
 
 Mantém os modos **Escrever**, **Fonte**, **Visão** e **Ler**, formatação, desfazer/refazer, tabelas editáveis, tarefas, referências, imagens por seleção/colagem/arrastar, importação de Markdown/ZIP/Bear e exportação `.md`/ZIP. Imagens inseridas são gravadas na pasta `assets/` ao lado do documento; imagens remotas não são buscadas automaticamente. Os temas claro e escuro usam uma cópia dos tokens do app original.
 

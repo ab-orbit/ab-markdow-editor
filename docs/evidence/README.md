@@ -19,3 +19,11 @@ A mesma jornada em largura de celular, com controles em linhas e sem rolagem hor
 ![Celular, tema claro](mobile-repository-document-light.png)
 
 O seletor de pasta é nativo do macOS e abre uma janela separada. A jornada automatizada simula a resposta do diálogo para testar conexão automática, cancelamento e escolha do destino da clonagem. O helper nativo foi validado adicionalmente pela interface do macOS, selecionando uma pasta real; seu cancelamento também foi validado pela API da aplicação instalada.
+
+## Configurações pela engrenagem
+
+Depois de conectar o repositório, a tela principal mantém apenas o editor. O painel de repositório, arquivos e Git aparece em um diálogo aberto pela engrenagem. Fechar com Escape preserva o texto. As jornadas também verificam que recarregar um repositório configurado mantém o diálogo fechado.
+
+![Configurações no desktop](desktop-settings.png)
+
+![Configurações no celular](mobile-settings.png)
