@@ -1,5 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { Repository } from '../server/repository.mjs';
 import os from 'node:os';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -39,4 +41,15 @@ if (!url) {
   await exec('/usr/bin/osascript', ['-e', 'display alert "AB Markdown" message "Não foi possível iniciar. Consulte ~/Library/Application Support/AB Markdown/server.log." as critical']);
   process.exit(1);
 }
-await exec('/usr/bin/open', [url]);
+const documents = process.argv.slice(2).filter(argument => !argument.startsWith('-psn_'));
+if (!documents.length) await exec('/usr/bin/open', [url]);
+for (const document of documents) {
+  const filename = await fs.realpath(document);
+  if (!/\.(md|markdown|mdown)$/i.test(filename)) continue;
+  // Scope attachment reads to the selected document's directory without changing the user's Git checkout.
+  const reader = new Repository(state); reader.root = path.dirname(filename);
+  const payload = { ...await reader.read(path.basename(filename)), filename };
+  const inbox = path.join(state, 'finder-inbox'); await fs.mkdir(inbox, {recursive:true, mode:0o700});
+  const id = randomUUID(); await fs.writeFile(path.join(inbox, `${id}.json`), JSON.stringify(payload), {mode:0o600});
+  await exec('/usr/bin/open', [`${url}/?finder=${id}`]);
+}

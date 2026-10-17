@@ -291,3 +291,16 @@ test('existing guides gain the welcome image once while preserving user edits', 
   const migrated=await request('library/initialize',{});assert.equal(migrated.status,200);assert.equal(migrated.body.synchronization.synced,true);const updated=await fs.readFile(path.join(repo,name),'utf8');assert.match(updated,/Meu conteúdo editado deve permanecer/);assert.equal(updated.split('escriba-welcome-v1.jpg').length-1,1);
   const head=await git(repo,'rev-parse','HEAD');await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),head);assert.match(await git(upstream,'show',`main:${name}`),/escriba-welcome-v1.jpg/);
 });
+
+test('Finder handoff reads only native inbox IDs and distinguishes imports from checkout documents', async () => {
+  const directory = path.join(temporary, 'state', 'finder-inbox'); await fs.mkdir(directory, {recursive:true});
+  const id = '12345678-1234-1234-1234-123456789abc';
+  const info = (await request('repository')).body;
+  await fs.writeFile(path.join(directory, `${id}.json`), JSON.stringify({filename:path.join(info.repository,'finder-note.md'),value:'# Finder selected',version:'test-version',files:[],warnings:[]}));
+  const document = await request(`finder-document?id=${id}`);
+  assert.equal(document.status,200);assert.equal(document.body.inRepository,true);assert.equal(document.body.name,'finder-note.md');assert.equal(document.body.value,'# Finder selected');assert.equal(document.body.filename,undefined);
+  await fs.writeFile(path.join(directory, `${id}.json`), JSON.stringify({filename:path.join(temporary,'outside.md'),value:'# Imported',version:'outside-version',files:[],warnings:[]}));
+  assert.equal((await request(`finder-document?id=${id}`)).body.inRepository,false);
+  assert.equal((await request('finder-document?id=../../settings')).status,400);
+  assert.equal((await fetch(`${base}/api/finder-document?id=${id}`)).status,403);
+});

@@ -113,3 +113,9 @@ Use **https://scriba.aeonbridge.app/** without installing a local server. Notes 
 The Mac application retains Git save/commit/push. Remote Git integration per user (including mobile), Google Drive, and additional themes are planned alternatives for the public app.
 
 Build the public version with `VITE_STORAGE_MODE=browser npm run build`. See [production deployment](docs/PRODUCTION.md).
+
+### Open Markdown from Finder
+
+The macOS installer registers AB Markdown as an alternate editor for `.md`, `.markdown`, and `.mdown`. Right-click a file → Open With → AB Markdown. To make it the default, use Get Info → Open with → AB Markdown → Change All. Installation does not replace your current default editor.
+
+The native launcher receives Finder document events and imports the selected Markdown with safe local raster attachments. Files inside the currently configured Git checkout retain their relative path and revision. Files outside it are imported; saving uses the configured checkout and preserves the source file. The public PWA's OS file associations are separate from this macOS application registration.

@@ -32,6 +32,15 @@ const server = http.createServer(async (req, res) => {
       if (supplied.length !== token.length || !timingSafeEqual(supplied, Buffer.from(token))) return send(res, 403, { error: 'Sessão inválida. Reabra o aplicativo.' });
       if (req.headers.origin && req.headers.origin !== origin) return send(res, 403, { error: 'Origem inválida.' });
       if (req.method === 'GET') {
+        if (url.pathname === '/api/finder-document') {
+          const id = url.searchParams.get('id');
+          if (!/^[a-f0-9-]{36}$/.test(id || '')) return send(res, 400, {error:'Documento inválido.'});
+          const document = JSON.parse(await fs.readFile(path.join(stateDir, 'finder-inbox', `${id}.json`), 'utf8'));
+          const relative = repository.root ? path.relative(repository.root, document.filename) : '';
+          const inRepository = !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+          const {filename, ...content} = document;
+          return send(res, 200, {...content, name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository});
+        }
         if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());
         if (url.pathname === '/api/thumbnail') return send(res, 200, await repository.thumbnail(url.searchParams.get('name')));

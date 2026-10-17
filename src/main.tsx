@@ -223,6 +223,16 @@ function App() {
           if (!info.repository) setSettingsOpen(true);
         }
         if (!active) return;
+        const finderId = !browserMode && new URLSearchParams(location.search).get('finder');
+        if (finderId) {
+          const doc = await api<LoadedDocument & {name:string;inRepository:boolean}>(`finder-document?id=${encodeURIComponent(finderId)}`);
+          if (!active) return;
+          const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
+          resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);
+          if(!doc.inRepository) setImportedVersion({name:doc.name,version:doc.version});
+          history.replaceState(null, '', location.pathname);
+          setSettingsOpen(false);setNotice(doc.inRepository ? 'Documento do Finder aberto no repositório.' : 'Documento do Finder importado. Salvar usará o repositório configurado; o original fica preservado.');
+        }
         setPreferences(saved); setPreferenceDraft(saved); setOffline(false);
       } catch (cause) {
         if (!active) return;

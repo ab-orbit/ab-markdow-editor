@@ -41,19 +41,13 @@ echo 'Instalando dependências e compilando o editor…'
 
 APP_DIR="$WORK_DIR/AB Markdown.app"
 RESOURCES="$APP_DIR/Contents/Resources"
-mkdir -p "$APP_DIR/Contents/MacOS" "$RESOURCES/scripts"
+/usr/bin/osacompile -o "$APP_DIR" "$SOURCE_DIR/scripts/launcher.applescript"
+mkdir -p "$RESOURCES/scripts"
 cp -R dist server native "$RESOURCES/"
 cp scripts/launch.mjs scripts/stop.mjs "$RESOURCES/scripts/"
 cp -R "$NODE_HOME" "$RESOURCES/runtime"
 "$RESOURCES/runtime/bin/node" --version
 printf '%s\n' "${PATH#*:}" > "$RESOURCES/runtime-path.txt"
-cat > "$APP_DIR/Contents/MacOS/ABMarkdown" <<'LAUNCHER'
-#!/bin/bash
-set -euo pipefail
-RESOURCES="$(cd "$(dirname "$0")/../Resources" && pwd)"
-exec "$RESOURCES/runtime/bin/node" "$RESOURCES/scripts/launch.mjs"
-LAUNCHER
-chmod +x "$APP_DIR/Contents/MacOS/ABMarkdown"
 cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -63,9 +57,22 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>CFBundleIdentifier</key><string>com.aeonbridge.markdown</string>
 <key>CFBundleVersion</key><string>1.0.0</string>
 <key>CFBundleShortVersionString</key><string>1.0.0</string>
-<key>CFBundleExecutable</key><string>ABMarkdown</string>
+<key>CFBundleExecutable</key><string>droplet</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>
+<key>CFBundleDocumentTypes</key><array><dict>
+<key>CFBundleTypeName</key><string>Markdown document</string>
+<key>CFBundleTypeRole</key><string>Editor</string>
+<key>LSHandlerRank</key><string>Alternate</string>
+<key>CFBundleTypeExtensions</key><array><string>md</string><string>markdown</string><string>mdown</string></array>
+<key>LSItemContentTypes</key><array><string>net.daringfireball.markdown</string></array>
+</dict></array>
+<key>UTImportedTypeDeclarations</key><array><dict>
+<key>UTTypeIdentifier</key><string>net.daringfireball.markdown</string>
+<key>UTTypeDescription</key><string>Markdown document</string>
+<key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+<key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>md</string><string>markdown</string><string>mdown</string></array><key>public.mime-type</key><string>text/markdown</string></dict>
+</dict></array>
 <key>LSUIElement</key><true/>
 </dict></plist>
 PLIST
@@ -98,6 +105,8 @@ elif [[ -e "$DESKTOP_LINK" ]]; then
 fi
 /usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/create-desktop-alias.jxa.js" "$TARGET_APP" "$DESKTOP_LINK"
 touch "$TARGET_APP"
+/usr/bin/codesign --force --deep --sign - "$TARGET_APP"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$TARGET_APP"
 echo "Instalado: $TARGET_APP"
 echo "Ícone na Mesa: $DESKTOP_LINK"
 if [[ "${MARKDOWN_NO_OPEN:-0}" != 1 ]]; then open "$TARGET_APP"; fi
