@@ -1,3 +1,4 @@
+import {browserMode} from './lib/browserStore';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff } from 'lucide-react';
@@ -307,7 +308,7 @@ function App() {
     setOffline(false); setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
     setImportedVersion(null); setConflict(null); setPendingSync(!result.synced);
     await refresh();
-    if (result.synced) setNotice('Arquivo salvo, commit criado e enviado ao remoto.');
+    if (result.synced) setNotice(browserMode ? 'Nota salva neste navegador.' : 'Arquivo salvo, commit criado e enviado ao remoto.');
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
   function requestSave(automatic = false) {
@@ -317,7 +318,7 @@ function App() {
     } else void run(() => save(`${automatic ? 'Auto-save' : 'Update'} ${name}`));
   }
   autoSaveAction.current = () => {
-    if (draftReady && !offline && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
+    if (draftReady && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
   };
   useEffect(() => {
     if (!preferences.autoSave || !repository.repository) return;
@@ -347,31 +348,31 @@ function App() {
       <div className="pwa-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>AB Markdown — Escriba</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
       {pwa.canInstall && <button type="button" onClick={() => void pwa.install()}><Download size={18}/>Instalar aplicativo</button>}
       {!pwa.canInstall && !pwa.standalone && <p>Use a opção de instalar aplicativo do navegador. No Safari do Mac, use Arquivo → Adicionar ao Dock.</p>}
-      <p>Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.</p>
+      <p>{browserMode ? 'Notas e imagens ficam somente neste navegador e dispositivo, sem envio ao servidor. Limpar os dados do site remove as notas. Exporte ZIPs para backup. Git remoto por usuário e Google Drive estão previstos; a versão local para Mac já oferece Git.' : 'Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.'}</p>
       {pwa.updateAvailable && <p>Atualização pronta. Seus rascunhos estão preservados; feche as janelas do editor e abra novamente quando terminar.</p>}
     </section>
     <div className="settings-theme"><span>Aparência</span><button aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={20}/> : <Moon size={20}/>}Tema {theme === 'dark' ? 'claro' : 'escuro'}</button></div>
-    <details className="repository" open={!repository.repository || undefined}>
+    {!browserMode && <details className="repository" open={!repository.repository || undefined}>
       <summary><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></summary>
       <fieldset disabled={busy}><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('connect', { directory }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório conectado.'); }); }}><label>Pasta local do repositório<input placeholder="Clique em Selecionar pasta" value={directory} onChange={event => setDirectory(event.target.value)} required/></label><button type="button" className="primary" onClick={() => void chooseRepository()}><FolderOpen size={18}/>Selecionar pasta</button><button>Conectar caminho</button></form>
       <details><summary>Clonar um repositório por URL</summary><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('clone', { url, destination }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório clonado e conectado.'); }); }}><label>URL HTTPS ou SSH<input placeholder="git@github.com:usuario/repositorio.git" value={url} onChange={event => setUrl(event.target.value)} required/></label><label>Nova pasta local (caminho absoluto)<input placeholder="/Users/seu-nome/Documentos/meu-repo" value={destination} onChange={event => setDestination(event.target.value)} required/></label><button type="button" onClick={() => void chooseCloneDestination()}><FolderOpen size={18}/>Selecionar onde clonar</button><button>Clonar e conectar</button></form></details>
       <p>Usa o Git, o agente SSH e o gerenciador de credenciais do seu Mac. Configure a identidade Git e as credenciais antes de clonar ou enviar.</p>
       {repository.status && <pre aria-label="Alterações no repositório">{repository.status}</pre>}</fieldset>
-    </details>
+    </details>}
     <fieldset className="document-controls" disabled={busy}>
-      <div className="row"><label className="grow">Arquivos do repositório<select aria-label="Arquivos do repositório" value={selected} onChange={event => setSelected(event.target.value)}><option value="">Selecione um Markdown</option>{files.map(file => <option key={file} value={file}>{file}</option>)}</select></label><button disabled={!selected || !repository.repository} onClick={() => void openNote(selected)}>Abrir do repositório</button><button onClick={() => { if (discard()) { resetDocument(); setSettingsOpen(false); } }}><FilePlus2 size={18}/>Novo</button></div>
-      <div className="row"><label className="grow">Caminho do arquivo no repositório<input value={name} onChange={event => setName(event.target.value)} placeholder="notas/documento.md"/></label><button disabled={!repository.repository} onClick={() => requestSave()}><Save size={18}/>Salvar no repositório</button></div>
+      <div className="row"><label className="grow">Notas salvas<select aria-label="Notas salvas" value={selected} onChange={event => setSelected(event.target.value)}><option value="">Selecione um Markdown</option>{files.map(file => <option key={file} value={file}>{file}</option>)}</select></label><button disabled={!selected || !repository.repository} onClick={() => void openNote(selected)}>Abrir nota</button><button onClick={() => { if (discard()) { resetDocument(); setSettingsOpen(false); } }}><FilePlus2 size={18}/>Novo</button></div>
+      <div className="row"><label className="grow">Nome do arquivo<input value={name} onChange={event => setName(event.target.value)} placeholder="notas/documento.md"/></label><button disabled={!repository.repository} onClick={() => requestSave()}><Save size={18}/>Salvar nota</button></div>
       {pendingSync && <button disabled={!repository.repository} onClick={() => requestSave()}><Upload size={18}/>Tentar sincronizar novamente</button>}
-      <p>{busy ? 'Salvando e sincronizando…' : pendingSync ? 'Arquivo local salvo; sincronização pendente.' : dirty ? 'Há alterações não salvas.' : 'Documento salvo.'} Salvar grava o arquivo, cria o commit e envia ao remoto.</p>
+      <p>{busy ? 'Salvando e sincronizando…' : pendingSync ? 'Arquivo local salvo; sincronização pendente.' : dirty ? 'Há alterações não salvas.' : 'Documento salvo.'} {browserMode ? 'Salvar guarda a nota neste navegador.' : 'Salvar grava o arquivo, cria o commit e envia ao remoto.'}</p>
     </fieldset>
     <section className="save-preferences" aria-label="Preferências de salvamento">
       <h3>Salvamento e sincronização</h3>
       <form onSubmit={event => { event.preventDefault(); void run(async () => { const saved = await api<SavePreferences>('preferences', preferenceDraft); setPreferences(saved); setPreferenceDraft(saved); setNotice('Preferências de salvamento atualizadas.'); }); }}>
         <fieldset disabled={busy}>
-          <label className="check-option"><input type="checkbox" checked={preferenceDraft.askCommitNote} onChange={event => setPreferenceDraft({ ...preferenceDraft, askCommitNote: event.target.checked })}/>Perguntar nota do commit a cada salvamento</label>
+          {!browserMode && <label className="check-option"><input type="checkbox" checked={preferenceDraft.askCommitNote} onChange={event => setPreferenceDraft({ ...preferenceDraft, askCommitNote: event.target.checked })}/>Perguntar nota do commit a cada salvamento</label>}
           <label className="check-option"><input type="checkbox" checked={preferenceDraft.autoSave} onChange={event => setPreferenceDraft({ ...preferenceDraft, autoSave: event.target.checked })}/>Ativar salvamento automático</label>
           <label>Intervalo (minutos)<input type="number" min="1" max="1440" step="1" required value={preferenceDraft.intervalMinutes} onChange={event => setPreferenceDraft({ ...preferenceDraft, intervalMinutes: Number(event.target.value) })}/></label>
-          <p>O automático salva, cria o commit e envia ao remoto enquanto esta aba estiver aberta. Se pedir nota estiver ligado, aguarda a confirmação antes de salvar.</p>
+          <p>{browserMode ? 'O automático guarda suas notas neste navegador enquanto esta aba estiver aberta.' : 'O automático salva, cria o commit e envia ao remoto enquanto esta aba estiver aberta. Se pedir nota estiver ligado, aguarda a confirmação antes de salvar.'}</p>
           <button type="submit">Salvar preferências</button>
         </fieldset>
       </form>
@@ -380,8 +381,8 @@ function App() {
     </div></EditorDialog>}
     {conflict && <EditorDialog title="Resolver versões do arquivo" onClose={() => setConflict(null)}>
       <p><strong>{conflict.name}</strong></p>
-      <p>{conflict.kind === 'exists' ? 'Já existe um arquivo com esse nome na pasta.' : conflict.kind === 'deleted' ? 'O arquivo foi removido do disco desde a abertura.' : 'O arquivo no disco mudou desde a abertura.'} Seu texto continua intacto no editor.</p>
-      <p>Salve uma cópia para manter os dois arquivos ou confirme a substituição. Antes de substituir, a versão do disco será guardada em Application Support/AB Markdown/conflict-backups.</p>
+      <p>{conflict.kind === 'exists' ? 'Já existe um arquivo com esse nome na pasta.' : conflict.kind === 'deleted' ? 'O arquivo foi removido do disco desde a abertura.' : 'A nota mudou desde a abertura.'} Seu texto continua intacto no editor.</p>
+      <p>{browserMode ? 'Salve uma cópia para manter as duas versões ou confirme a substituição da nota neste navegador.' : 'Salve uma cópia para manter os dois arquivos ou confirme a substituição. Antes de substituir, a versão do disco será guardada em Application Support/AB Markdown/conflict-backups.'}</p>
       <form onSubmit={event => { event.preventDefault(); void run(() => save(lastSaveNote.current, {name: copyName, version: null})); }}>
         <label>Nome da cópia<input required value={copyName} onChange={event => setCopyName(event.target.value)}/></label>
         <footer><button type="button" onClick={() => setConflict(null)}>Continuar editando</button><button type="submit" disabled={busy}>Salvar uma cópia</button></footer>
@@ -397,21 +398,21 @@ function App() {
     {!settingsOpen && statusMessages}
     <div className="editor-layout">
     {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
-      <div className="notes-heading"><img className="notes-logo" src={brandIcon} width="24" height="24" alt="Escriba egípcio — AB Markdown"/><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length + visiblePinned.length} resultados` : `${recentNotes.length + pinnedNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || offline} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
+      <div className="notes-heading"><img className="notes-logo" src={brandIcon} width="24" height="24" alt="Escriba egípcio — AB Markdown"/><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length + visiblePinned.length} resultados` : `${recentNotes.length + pinnedNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || (offline && !browserMode)} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
       <label className="notes-search"><Search size={16} aria-hidden="true"/><input type="search" aria-label="Buscar nas notas recentes" placeholder="Buscar notas…" value={noteSearch} onChange={event => setNoteSearch(event.target.value)}/></label>
       {query && !visibleNotes.length && !visiblePinned.length && <p className="notes-empty">Nenhuma nota encontrada.</p>}
       <button className="new-note" type="button" disabled={busy || !draftReady} onClick={() => { if (discard()) { resetDocument(); if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false); } }}><FilePlus2 size={18}/>Nova nota</button>
       {!repository.repository && <p className="notes-empty">Conecte um repositório nas configurações para listar suas notas.</p>}
       {repository.repository && !recentNotes.length && !pinnedNotes.length && <p className="notes-empty">{offline ? 'Abra o aplicativo local para carregar a lista.' : 'Nenhuma nota Markdown encontrada.'}</p>}
       <nav aria-label="100 notas mais recentes">{noteGroups.map(group => <section className="note-group" key={group.label} aria-label={group.label}><h3>{group.label}</h3><ol>{group.notes.map(note => <li className="note-row" key={note.name} data-note={note.name}>
-        <button className="open-note" type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}{note.hasImage && <NoteThumbnail repository={repository.repository} name={note.name} modifiedAt={note.modifiedAt}/>}<time dateTime={note.modifiedAt} title={new Date(note.modifiedAt).toLocaleString('pt-BR')}>{group.pinned && <Pin size={11} aria-label="Nota fixada"/>}{shortNoteDate(note.modifiedAt, dateClock)}</time></span></button>
-        <button className="pin-note" type="button" disabled={busy || offline} aria-label={`${group.pinned ? 'Desafixar' : 'Fixar'} ${note.name}`} title={group.pinned ? 'Desafixar nota' : 'Fixar nota'} onClick={() => void togglePin(note, !group.pinned)}>{group.pinned ? <PinOff size={14}/> : <Pin size={14}/>}</button>
+        <button className="open-note" type="button" disabled={busy || !draftReady || (offline && !browserMode)} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}{note.hasImage && <NoteThumbnail repository={repository.repository} name={note.name} modifiedAt={note.modifiedAt}/>}<time dateTime={note.modifiedAt} title={new Date(note.modifiedAt).toLocaleString('pt-BR')}>{group.pinned && <Pin size={11} aria-label="Nota fixada"/>}{shortNoteDate(note.modifiedAt, dateClock)}</time></span></button>
+        <button className="pin-note" type="button" disabled={busy || (offline && !browserMode)} aria-label={`${group.pinned ? 'Desafixar' : 'Fixar'} ${note.name}`} title={group.pinned ? 'Desafixar nota' : 'Fixar nota'} onClick={() => void togglePin(note, !group.pinned)}>{group.pinned ? <PinOff size={14}/> : <Pin size={14}/>}</button>
       </li>)}</ol></section>)}</nav>
     </aside>}
     <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench compact key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
-      {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
+      {repository.repository && <button type="button" disabled={busy} aria-label="Salvar nota" title="Salvar nota (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></fieldset>
     </div>

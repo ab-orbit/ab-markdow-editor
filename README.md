@@ -105,3 +105,11 @@ O guia inicial inclui uma ilustração de boas-vindas salva em `assets/escriba-w
 ## Celular e tablet
 
 O modo Visão mantém texto e prévia na tela, com rolagem independente, em coluna nas telas estreitas e lado a lado nas maiores. A interface acompanha a altura disponível, mantém alvos de toque de 44 px e preserva o texto ao girar a tela. Confira a [matriz de testes responsivos e seus limites](docs/RESPONSIVE.md).
+
+## Public Scriba PWA
+
+Use **https://scriba.aeonbridge.app/** without installing a local server. Notes and images stay private in that browser's IndexedDB, including offline use after the first load. Export ZIP backups: clearing site data deletes local notes, and devices do not synchronize automatically.
+
+The Mac application retains Git save/commit/push. Remote Git integration per user (including mobile), Google Drive, and additional themes are planned alternatives for the public app.
+
+Build the public version with `VITE_STORAGE_MODE=browser npm run build`. See [production deployment](docs/PRODUCTION.md).

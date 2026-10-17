@@ -1,3 +1,4 @@
+import {browserMode, browserFetch} from './browserStore';
 let sessionRequest: Promise<void> | null = null;
 /** Obtain a fresh local capability after an offline launch or a backend restart. */
 async function refreshSession() {
@@ -9,6 +10,7 @@ async function refreshSession() {
   await sessionRequest;
 }
 export async function authorizedFetch(route: string, body?: unknown): Promise<Response> {
+  if(browserMode)return browserFetch(route,body);
   if(!window.__MARKDOWN_TOKEN__)await refreshSession();
   const request=()=>fetch(`/api/${route}`,{method:body===undefined?'GET':'POST',headers:{Authorization:`Bearer ${window.__MARKDOWN_TOKEN__}`,...(body===undefined?{}:{'Content-Type':'application/json'})},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store'});
   let response=await request();
