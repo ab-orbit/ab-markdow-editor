@@ -2,9 +2,9 @@
 
 Production: https://scriba.aeonbridge.app/
 
-The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves only `dist/`; no Node server, Git credentials, private checkout, or filesystem API is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups; no cross-device synchronization is implemented.
+The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves `dist/` and proxies `/github/` to the isolated synchronization gateway. No local filesystem API or server Git checkout is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups; no cross-device synchronization is implemented.
 
-The default local build (`npm run build`, `./install.sh`) retains the local Git backend. Remote per-user Git integration for the public/mobile app and Google Drive remain planned alternatives, not available features.
+The default local build (`npm run build`, `./install.sh`) retains the local Git backend. The public/mobile app offers a separate GitHub gateway; see [GitHub operations](GITHUB.md). Google Drive remains planned.
 
 ## VPS
 

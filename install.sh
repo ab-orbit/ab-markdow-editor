@@ -7,7 +7,8 @@ if [[ "$(uname -s)" != Darwin ]]; then
 fi
 SOURCE_DIR="$(cd "$(dirname "$0")" && pwd)"
 STATE_DIR="$HOME/Library/Application Support/AB Markdown"
-APPLICATIONS_DIR="${MARKDOWN_APPLICATIONS_DIR:-$HOME/Applications}"
+if [[ -w /Applications ]]; then DEFAULT_APPLICATIONS_DIR=/Applications; else DEFAULT_APPLICATIONS_DIR="$HOME/Applications"; fi
+APPLICATIONS_DIR="${MARKDOWN_APPLICATIONS_DIR:-$DEFAULT_APPLICATIONS_DIR}"
 DESKTOP_DIR="${MARKDOWN_DESKTOP_DIR:-$HOME/Desktop}"
 mkdir -p "$STATE_DIR" "$APPLICATIONS_DIR" "$DESKTOP_DIR"
 chmod 700 "$STATE_DIR"
@@ -55,8 +56,8 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>CFBundleName</key><string>Scriba</string>
 <key>CFBundleDisplayName</key><string>Scriba</string>
 <key>CFBundleIdentifier</key><string>com.aeonbridge.markdown</string>
-<key>CFBundleVersion</key><string>1.1.0</string>
-<key>CFBundleShortVersionString</key><string>1.1.0</string>
+<key>CFBundleVersion</key><string>1.2.0</string>
+<key>CFBundleShortVersionString</key><string>1.2.0</string>
 <key>CFBundleExecutable</key><string>droplet</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>
@@ -65,7 +66,7 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>CFBundleTypeRole</key><string>Editor</string>
 <key>LSHandlerRank</key><string>Alternate</string>
 <key>CFBundleTypeExtensions</key><array><string>md</string><string>markdown</string><string>mdown</string></array>
-<key>LSItemContentTypes</key><array><string>net.daringfireball.markdown</string></array>
+<key>LSItemContentTypes</key><array><string>net.daringfireball.markdown</string><string>public.markdown</string><string>com.unknown.md</string></array>
 </dict></array>
 <key>UTImportedTypeDeclarations</key><array><dict>
 <key>UTTypeIdentifier</key><string>net.daringfireball.markdown</string>
@@ -90,6 +91,7 @@ plutil -lint "$APP_DIR/Contents/Info.plist"
 TARGET_APP="$APPLICATIONS_DIR/Scriba.app"
 # Migrate the previous product name while retaining the bundle ID and private state.
 LEGACY_APP="$APPLICATIONS_DIR/AB Markdown.app"
+if [[ ! -e "$TARGET_APP" && -d "$HOME/Applications/Scriba.app" && "$APPLICATIONS_DIR" != "$HOME/Applications" ]]; then LEGACY_APP="$HOME/Applications/Scriba.app"; fi
 if [[ ! -e "$TARGET_APP" && -d "$LEGACY_APP" ]] && [[ "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$LEGACY_APP/Contents/Info.plist" 2>/dev/null || true)" == com.aeonbridge.markdown ]]; then
   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$LEGACY_APP" || true
   LEGACY_ALIAS="$DESKTOP_DIR/AB Markdown.app"
@@ -104,7 +106,7 @@ if [[ -e "$TARGET_APP" ]]; then
 fi
 mv "$APP_DIR" "$TARGET_APP"
 /usr/bin/codesign --force --deep --sign - "$TARGET_APP"
-/usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/set-finder-icon.jxa.js" "$TARGET_APP/Contents/Resources/AppIcon.icns" "$TARGET_APP"
+# The application icon is supplied by CFBundleIconFile; custom Finder resource forks invalidate signing.
 DESKTOP_LINK="$DESKTOP_DIR/Scriba.app"
 if [[ -L "$DESKTOP_LINK" ]]; then
   [[ "$(readlink "$DESKTOP_LINK")" == "$TARGET_APP" ]] || { echo "Já existe outro atalho em $DESKTOP_LINK" >&2; exit 1; }

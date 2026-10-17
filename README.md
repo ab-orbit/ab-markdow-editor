@@ -110,7 +110,7 @@ O modo Visão mantém texto e prévia na tela, com rolagem independente, em colu
 
 Use **https://scriba.aeonbridge.app/** without installing a local server. Notes and images stay private in that browser's IndexedDB, including offline use after the first load. Export ZIP backups: clearing site data deletes local notes, and devices do not synchronize automatically.
 
-The Mac application retains Git save/commit/push. Remote Git integration per user (including mobile), Google Drive, and additional themes are planned alternatives for the public app.
+The Mac application retains local Git save/commit/push. The public app also supports GitHub synchronization per user; Google Drive and additional themes remain planned.
 
 Build the public version with `VITE_STORAGE_MODE=browser npm run build`. See [production deployment](docs/PRODUCTION.md).
 
@@ -119,3 +119,9 @@ Build the public version with `VITE_STORAGE_MODE=browser npm run build`. See [pr
 The macOS installer registers AB Markdown as an alternate editor for `.md`, `.markdown`, and `.mdown`. Right-click a file → Open With → AB Markdown. To make it the default, use Get Info → Open with → AB Markdown → Change All. Installation does not replace your current default editor.
 
 The native launcher receives Finder document events and imports the selected Markdown with safe local raster attachments. Files inside the currently configured Git checkout retain their relative path and revision. Files outside it are imported; saving uses the configured checkout and preserves the source file. The public PWA's OS file associations are separate from this macOS application registration.
+
+## GitHub on web, iPhone and iPad
+
+In Settings → GitHub, connect an account, choose an existing repository and the notes folder (`scriba` by default). Saving commits the Markdown and its images together. Browser-only notes and the Mac's local Git repository remain alternatives. Offline changes stay private on the device until saved online; automatic saving works while the note is open.
+
+The account login button requires one-time activation of the organization's GitHub App. A repository-limited fine-grained token can also be used. See [authentication, deployment and conflict handling](docs/GITHUB.md).

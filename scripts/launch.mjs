@@ -19,7 +19,11 @@ async function active() {
     process.kill(runtime.pid, 0);
     const response = await fetch(`${runtime.url}/health`, { signal: AbortSignal.timeout(1200) });
     const health = await response.json();
-    return health.app === 'ab-markdown-editor' && health.pid === runtime.pid ? runtime.url : null;
+    if (health.app !== 'ab-markdown-editor' || health.pid !== runtime.pid) return null;
+    // A renamed/moved app can leave its old process alive with a stale dist path.
+    const page = await fetch(runtime.url, {signal:AbortSignal.timeout(1500)});
+    if (!page.ok) { process.kill(runtime.pid, 'SIGTERM'); await new Promise(resolve => setTimeout(resolve, 250)); return null; }
+    return runtime.url;
   } catch { return null; }
 }
 let url = await active();

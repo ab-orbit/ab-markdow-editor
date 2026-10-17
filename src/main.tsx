@@ -1,3 +1,5 @@
+import {GitHubSettings} from './GitHubSettings';
+import {githubSelection,setGitHubSelection} from './lib/github';
 import {canChooseFolder, chooseDeviceFolder, folderLabel, disconnectFolder, authorizeDeviceFolder, saveToDeviceFolder} from './lib/deviceFolder';
 import {browserMode} from './lib/browserStore';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
@@ -71,6 +73,8 @@ interface DocumentFile {
   mime: string;
 }
 interface LoadedDocument {
+  /** Cached GitHub changes remain pending until a successful remote save. */
+  pendingSync?: boolean;
   /** Canonical UTF-8 Markdown source. */
   value: string;
   /** Content hash used for optimistic concurrency. */
@@ -134,7 +138,7 @@ function App() {
     if (restoringAssets.current && !items.length) return;
     restoringAssets.current = false; setAssets(items);
   }, []);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(() => new URLSearchParams(location.search).has('github'));
   useEffect(() => {const showNotes=()=>setNotesOpen(true);window.addEventListener('scriba:show-notes',showNotes);return()=>window.removeEventListener('scriba:show-notes',showNotes);}, []);
   const [repository, setRepository] = useState<RepositoryInfo>({ repository: null, branch: '', status: '' });
   const [directory, setDirectory] = useState('');
@@ -183,7 +187,8 @@ function App() {
   async function refreshLibrary() {
     const library = await api<NoteLibrary>('library/initialize', {});
     setRecentNotes(library.recent); setPinnedNotes(library.pinned);
-    if (library.synchronization && !library.synchronization.synced) setError(`Guia criado localmente; sincronização pendente: ${library.synchronization.error}`);
+    if(browserMode && githubSelection())setFiles(await api<string[]>('files'));
+    if (library.synchronization && !library.synchronization.synced) setError(`Sincronização pendente: ${library.synchronization.error}`);
   }
   async function togglePin(note: RecentNote, pinned: boolean) {
     await run(async () => {
@@ -192,7 +197,7 @@ function App() {
     });
   }
   async function refresh() {
-    if(browserMode && await folderLabel()) await api('folder/import',{});
+    if(browserMode && !githubSelection() && await folderLabel()) await api('folder/import',{});
     const info = await api<RepositoryInfo>('repository'); setRepository(info);
     setFiles(info.repository ? await api<string[]>('files') : []);
     if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
@@ -225,6 +230,15 @@ function App() {
           if (!info.repository) setSettingsOpen(true);
         }
         if (!active) return;
+        setPreferences(saved); setPreferenceDraft(saved); setOffline(false);
+      } catch (cause) {
+        if (!active) return;
+        if (cause instanceof LocalApiError) { setError(cause.message); setSettingsOpen(true); setOffline(false); }
+        else setOffline(true);
+        if (restored) setNotice('Rascunho recuperado no navegador. Continue editando offline; o Git sincroniza quando o aplicativo local voltar.');
+        else setNotice('Modo offline. Abra ou escreva um Markdown; seu rascunho fica neste navegador.');
+      } finally {
+        try {
         const finderId = !browserMode && new URLSearchParams(location.search).get('finder');
         if (finderId) {
           const doc = await api<LoadedDocument & {name:string;inRepository:boolean}>(`finder-document?id=${encodeURIComponent(finderId)}`);
@@ -233,16 +247,11 @@ function App() {
           resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);
           if(!doc.inRepository) setImportedVersion({name:doc.name,version:doc.version});
           history.replaceState(null, '', location.pathname);
-          setSettingsOpen(false);setNotice(doc.inRepository ? 'Documento do Finder aberto no repositório.' : 'Documento do Finder importado. Salvar usará o repositório configurado; o original fica preservado.');
+          setError('');setSettingsOpen(false);setNotice(doc.inRepository ? 'Documento do Finder aberto no repositório.' : 'Documento do Finder importado. Salvar usará o repositório configurado; o original fica preservado.');
         }
-        setPreferences(saved); setPreferenceDraft(saved); setOffline(false);
-      } catch (cause) {
-        if (!active) return;
-        if (cause instanceof LocalApiError) { setError(cause.message); setSettingsOpen(true); setOffline(false); }
-        else setOffline(true);
-        if (restored) setNotice('Rascunho recuperado no navegador. Continue editando offline; o Git sincroniza quando o aplicativo local voltar.');
-        else setNotice('Modo offline. Abra ou escreva um Markdown; seu rascunho fica neste navegador.');
-      } finally { if (active) setDraftReady(true); }
+        } catch(cause) {if(active)setError(cause instanceof Error ? cause.message : 'Não foi possível abrir o arquivo do Finder.');}
+        if (active) setDraftReady(true);
+      }
     })();
     return () => { active = false; };
   }, [draftId]);
@@ -305,7 +314,7 @@ function App() {
     await run(async () => {
       const doc = await api<LoadedDocument>(`document?name=${encodeURIComponent(fileName)}`);
       const attached = doc.files.map(file => ({ path: file.path, file: new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, { type: file.mime }) }));
-      resetDocument(doc.value, fileName, doc.version, attached); setSelected(fileName); setSettingsOpen(false);
+      resetDocument(doc.value, fileName, doc.version, attached); setPendingSync(!!doc.pendingSync); setSelected(fileName); setSettingsOpen(false);
       if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false);
       setNotice(doc.warnings.length ? `Aberto com avisos: ${doc.warnings.join('; ')}` : 'Documento aberto.');
     });
@@ -327,8 +336,8 @@ function App() {
     setOffline(false); setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
     setImportedVersion(null); setConflict(null); setPendingSync(!result.synced);
     await refresh();
-    if (result.synced) setNotice(browserMode ? (deviceFolder ? `Nota salva em ${deviceFolder}.` : 'Nota salva neste navegador.') : 'Arquivo salvo, commit criado e enviado ao remoto.');
-    else if(browserMode) setError(`Nota preservada no navegador; cópia na pasta pendente. ${result.error}`);
+    if (result.synced) setNotice(browserMode ? (githubSelection() ? 'Nota e imagens salvas no GitHub em um commit.' : deviceFolder ? `Nota salva em ${deviceFolder}.` : 'Nota salva neste navegador.') : 'Arquivo salvo, commit criado e enviado ao remoto.');
+    else if(browserMode) setError(`Nota preservada no navegador; ${githubSelection() ? 'envio ao GitHub' : 'cópia na pasta'} pendente. ${result.error}`);
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
   function requestSave(automatic = false) {
@@ -369,12 +378,13 @@ function App() {
       <div className="pwa-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>Scriba · AB Markdown Editor</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
       {pwa.canInstall && <button type="button" onClick={() => void pwa.install()}><Download size={18}/>Instalar aplicativo</button>}
       {!pwa.canInstall && !pwa.standalone && <p>Use a opção de instalar aplicativo do navegador. No Safari do Mac, use Arquivo → Adicionar ao Dock.</p>}
-      <p>{browserMode ? 'Notas e imagens ficam somente neste navegador e dispositivo, sem envio ao servidor. Limpar os dados do site remove as notas. Exporte ZIPs para backup. Git remoto por usuário e Google Drive estão previstos; a versão local para Mac já oferece Git.' : 'Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.'}</p>
+      <p>{browserMode ? 'Sem integração, notas e imagens ficam neste navegador. Ao conectar GitHub, as notas são enviadas ao repositório escolhido pelo serviço de sincronização. Limpar os dados do site remove as cópias locais; exporte ZIPs para backup. Google Drive está previsto.' : 'Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.'}</p>
       {pwa.updateAvailable && <p>Atualização pronta. Seus rascunhos estão preservados; feche as janelas do editor e abra novamente quando terminar.</p>}
     </section>
-    {browserMode && <section className="storage-settings" aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : 'Armazenamento privado neste navegador'}</p>{canChooseFolder() ? <div className="settings-actions"><button disabled={busy} onClick={() => {void run(async () => {const label=await chooseDeviceFolder();setDeviceFolder(label);const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`${count} notas carregadas. Pasta: ${label}.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`Pasta lida: ${count} notas disponíveis na lista.`);})}>Autorizar pasta e carregar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setDeviceFolder('');})}>Usar somente navegador</button></>}</div> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. Git remoto e Google Drive serão opções adicionais.</p></section>}
+    {browserMode && <GitHubSettings canSwitch={discard} onChange={async () => {resetDocument();await refresh();setNotice('Destino atualizado. Suas notas anteriores continuam preservadas separadamente.');}}/>}
+    {browserMode && <section className="storage-settings" aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : 'Armazenamento privado neste navegador'}</p>{canChooseFolder() ? <div className="settings-actions"><button disabled={busy} onClick={() => {void run(async () => {const label=await chooseDeviceFolder();setGitHubSelection(null);resetDocument();setDeviceFolder(label);const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`${count} notas carregadas. Pasta: ${label}.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`Pasta lida: ${count} notas disponíveis na lista.`);})}>Autorizar pasta e carregar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setDeviceFolder('');})}>Usar somente navegador</button></>}</div> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. Git remoto e Google Drive serão opções adicionais.</p></section>}
     <div className="settings-theme"><span>Aparência</span><button aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={20}/> : <Moon size={20}/>}Tema {theme === 'dark' ? 'claro' : 'escuro'}</button></div>
-    {browserMode && <section className="repository" aria-label="Sincronização com GitHub e Git"><h3><FolderGit2 size={20}/> GitHub / repositório Git</h3><p>Use um repositório local ou clone uma URL Git. Na versão local, cada salvamento grava o arquivo, cria um commit e faz push usando suas credenciais.</p><div className="settings-actions"><a className="settings-action" href="http://127.0.0.1:43127/" target="_blank" rel="noopener noreferrer">Abrir editor local com Git</a><a className="settings-action" href="https://github.com/ab-orbit/ab-markdow-editor#readme" target="_blank" rel="noopener noreferrer">Instalar no Mac</a></div><p>Abra o aplicativo AB Markdown no Mac antes de conectar. No editor local, abra Configurações para selecionar a pasta ou clonar o repositório. As notas deste site continuam separadas; use Baixar pacote e importe no editor local para transferi-las.</p><p>No celular e tablet, a conexão direta com GitHub por usuário ainda está em desenvolvimento. A pasta do dispositivo e o armazenamento no navegador continuam disponíveis conforme o suporte do navegador.</p></section>}
+    {browserMode && <section className="repository" aria-label="Sincronização com GitHub e Git"><h3><FolderGit2 size={20}/> GitHub / repositório Git</h3><p>Use um repositório local ou clone uma URL Git. Na versão local, cada salvamento grava o arquivo, cria um commit e faz push usando suas credenciais.</p><div className="settings-actions"><a className="settings-action" href="http://127.0.0.1:43127/" target="_blank" rel="noopener noreferrer">Abrir editor local com Git</a><a className="settings-action" href="https://github.com/ab-orbit/ab-markdow-editor#readme" target="_blank" rel="noopener noreferrer">Instalar no Mac</a></div><p>Abra o aplicativo Scriba no Mac antes de conectar. No editor local, abra Configurações para selecionar a pasta ou clonar o repositório. As notas deste site continuam separadas; use Baixar pacote e importe no editor local para transferi-las.</p><p>No celular e tablet, use a seção GitHub acima para conectar sua conta e selecionar um repositório. O armazenamento no navegador e a pasta do dispositivo continuam como alternativas.</p></section>}
     {!browserMode && <details className="repository" open={!repository.repository || undefined}>
       <summary><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></summary>
       <fieldset disabled={busy}><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('connect', { directory }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório conectado.'); }); }}><label>Pasta local do repositório<input placeholder="Clique em Selecionar pasta" value={directory} onChange={event => setDirectory(event.target.value)} required/></label><button type="button" className="primary" onClick={() => void chooseRepository()}><FolderOpen size={18}/>Selecionar pasta</button><button>Conectar caminho</button></form>
@@ -386,16 +396,16 @@ function App() {
       <div className="row"><label className="grow">Notas salvas<select aria-label={browserMode ? "Notas salvas" : "Arquivos do repositório"} value={selected} onChange={event => setSelected(event.target.value)}><option value="">Selecione um Markdown</option>{files.map(file => <option key={file} value={file}>{file}</option>)}</select></label><button disabled={!selected || !repository.repository} onClick={() => void openNote(selected)}>Abrir nota</button><button onClick={() => { if (discard()) { resetDocument(); setSettingsOpen(false); } }}><FilePlus2 size={18}/>Novo</button></div>
       <div className="row"><label className="grow">Nome do arquivo<input value={name} onChange={event => setName(event.target.value)} placeholder="notas/documento.md"/></label><button disabled={!repository.repository} onClick={() => requestSave()}><Save size={18}/>{browserMode ? "Salvar nota" : "Salvar no repositório"}</button></div>
       {pendingSync && <button disabled={!repository.repository} onClick={() => requestSave()}><Upload size={18}/>Tentar sincronizar novamente</button>}
-      <p>{busy ? 'Salvando e sincronizando…' : pendingSync ? 'Arquivo local salvo; sincronização pendente.' : dirty ? 'Há alterações não salvas.' : 'Documento salvo.'} {browserMode ? 'Salvar guarda a nota neste navegador.' : 'Salvar grava o arquivo, cria o commit e envia ao remoto.'}</p>
+      <p>{busy ? 'Salvando e sincronizando…' : pendingSync ? 'Arquivo local salvo; sincronização pendente.' : dirty ? 'Há alterações não salvas.' : 'Documento salvo.'} {browserMode ? 'Salvar guarda a nota no destino selecionado e mantém uma cópia neste navegador.' : 'Salvar grava o arquivo, cria o commit e envia ao remoto.'}</p>
     </fieldset>
     <section className="save-preferences" aria-label="Preferências de salvamento">
       <h3>Salvamento e sincronização</h3>
       <form onSubmit={event => { event.preventDefault(); void run(async () => { const saved = await api<SavePreferences>('preferences', preferenceDraft); setPreferences(saved); setPreferenceDraft(saved); setNotice('Preferências de salvamento atualizadas.'); }); }}>
         <fieldset disabled={busy}>
-          {!browserMode && <label className="check-option"><input type="checkbox" checked={preferenceDraft.askCommitNote} onChange={event => setPreferenceDraft({ ...preferenceDraft, askCommitNote: event.target.checked })}/>Perguntar nota do commit a cada salvamento</label>}
+          {(!browserMode || !!githubSelection()) && <label className="check-option"><input type="checkbox" checked={preferenceDraft.askCommitNote} onChange={event => setPreferenceDraft({ ...preferenceDraft, askCommitNote: event.target.checked })}/>Perguntar nota do commit a cada salvamento</label>}
           <label className="check-option"><input type="checkbox" checked={preferenceDraft.autoSave} onChange={event => setPreferenceDraft({ ...preferenceDraft, autoSave: event.target.checked })}/>Ativar salvamento automático</label>
           <label>Intervalo (minutos)<input type="number" min="1" max="1440" step="1" required value={preferenceDraft.intervalMinutes} onChange={event => setPreferenceDraft({ ...preferenceDraft, intervalMinutes: Number(event.target.value) })}/></label>
-          <p>{browserMode ? 'O automático guarda suas notas neste navegador enquanto esta aba estiver aberta.' : 'O automático salva, cria o commit e envia ao remoto enquanto esta aba estiver aberta. Se pedir nota estiver ligado, aguarda a confirmação antes de salvar.'}</p>
+          <p>{browserMode ? 'O automático salva no destino selecionado enquanto esta aba estiver aberta. Se houver conexão GitHub, envia as alterações em um commit.' : 'O automático salva, cria o commit e envia ao remoto enquanto esta aba estiver aberta. Se pedir nota estiver ligado, aguarda a confirmação antes de salvar.'}</p>
           <button type="submit">Salvar preferências</button>
         </fieldset>
       </form>
