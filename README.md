@@ -89,3 +89,13 @@ A logo aparece no cabeçalho do editor. Favicon e ícones PWA usam URLs novas pa
 O layout usa a altura inteira da janela: lista e documento rolam separadamente. A lateral mostra o título Markdown, um trecho e a data da nota; nomes longos são limitados a duas linhas. A barra principal usa ícones com rótulos acessíveis. Clique em **T (Formatação)** para abrir ou recolher as ferramentas de edição. No celular, a lista abre sobre o documento e fecha ao escolher uma nota.
 
 A faixa superior foi removida: o documento e a lateral começam no topo da janela. O controle **Notas recentes** fica na barra do editor. A busca na lateral filtra as 100 notas carregadas por título, trecho e caminho do arquivo, sem diferenciar maiúsculas ou acentos. Limpar a busca restaura a lista; ela não pesquisa o conteúdo completo de todas as notas do repositório.
+
+## Notas fixadas, períodos e leitura
+
+As notas são agrupadas em **Fixadas**, **Hoje**, **Ontem**, **Últimos 7 dias** e **Mais antigas**. Datas aparecem como “agora”, “há 2 h”, “ontem” ou uma data curta; a data completa fica na dica ao passar o ponteiro. O alfinete aparece ao passar o ponteiro ou focar a linha pelo teclado, e permanece disponível em telas de toque.
+
+A lista contém até 100 notas recentes **além das fixadas**. A ordem de fixação é lembrada no Mac por repositório (`library.json` em Application Support). Fixar ou desafixar não altera o Markdown nem faz commit.
+
+Na primeira abertura de cada repositório, o editor inclui e fixa **AB-Markdown-Guia.md**, com apresentação, funcionalidades e roadmap. A criação tenta commit/push automaticamente; se não conseguir, o arquivo local permanece e o editor informa a falha. Arquivos já existentes nunca são substituídos: outro nome é escolhido. A nota pode ser editada e desafixada como qualquer outra. O [conteúdo do guia](server/guide.md) também está neste repositório.
+
+O roadmap prevê Google Drive e novas opções de temas, sem datas anunciadas. A troca entre claro e escuro já está disponível em **Configurações → Aparência**. A leitura usa fonte de sistema sem serifa e cores suaves; código e modo Fonte continuam monoespaçados.

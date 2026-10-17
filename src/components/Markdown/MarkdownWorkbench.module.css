@@ -105,3 +105,8 @@
  .compact .reading { padding: 24px 20px 64px; }
  .compact .footer > span:nth-child(2) { display: none; }
 }
+
+.compact { font-family: var(--font-ui); }
+.compact .reading { font-family: var(--font-ui); font-size: 16px; line-height: 1.75; }
+.compact[data-mode="live"] .cm-content { font-family: var(--font-ui); font-size: 16px; line-height: 1.75; }
+.compact .reading code, .compact .reading pre { font-family: var(--font-mono); }

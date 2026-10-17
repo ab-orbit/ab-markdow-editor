@@ -130,7 +130,7 @@ export class Repository {
   }
 
   /** Most recently modified Markdown files in this checkout, including untracked notes. */
-  async recent() {
+  async recent({ all = false } = {}) {
     const root = this.requireRoot();
     const names = await this.list();
     const notes = [];
@@ -155,7 +155,60 @@ export class Repository {
       }));
       notes.push(...batch.filter(Boolean));
     }
-    return notes.sort((a, b) => b.modifiedAt.localeCompare(a.modifiedAt) || a.name.localeCompare(b.name)).slice(0, 100);
+    const sorted = notes.sort((a, b) => b.modifiedAt.localeCompare(a.modifiedAt) || a.name.localeCompare(b.name));
+    return all ? sorted : sorted.slice(0, 100);
+  }
+
+  /** Per-checkout pin ordering is private local UI state, never mixed into document commits. */
+  async libraryState() {
+    try { return JSON.parse(await fs.readFile(path.join(this.stateDir, 'library.json'), 'utf8')); }
+    catch (error) { if (error.code === 'ENOENT') return {}; throw error; }
+  }
+
+  async persistLibrary(state) {
+    const temporary = path.join(this.stateDir, 'library.tmp');
+    await fs.writeFile(temporary, JSON.stringify(state), { mode: 0o600 });
+    await fs.rename(temporary, path.join(this.stateDir, 'library.json'));
+  }
+
+  async library() {
+    const root = this.requireRoot();
+    const state = await this.libraryState();
+    const names = state[root]?.pinned || [];
+    const notes = await this.recent({ all: true });
+    const byName = new Map(notes.map(note => [note.name, note]));
+    return { pinned: names.flatMap(name => byName.has(name) ? [byName.get(name)] : []), recent: notes.filter(note => !names.includes(note.name)).slice(0, 100) };
+  }
+
+  /** Seed a normal editable Markdown guide once, without overwriting any user file. */
+  async initializeLibrary() {
+    const root = this.requireRoot();
+    const state = await this.libraryState();
+    if (state[root]) return this.library();
+    let name = 'AB-Markdown-Guia.md';
+    for (let suffix = 2; ; suffix++) {
+      const filename = await safeFile(root, name);
+      try { await fs.access(filename); name = `AB-Markdown-Guia-${suffix}.md`; }
+      catch (error) { if (error.code === 'ENOENT') break; throw error; }
+    }
+    const value = await fs.readFile(new URL('./guide.md', import.meta.url), 'utf8');
+    const synchronization = await this.saveAndSync({ name, value, version: null, message: 'Add AB Markdown platform guide' });
+    state[root] = { pinned: [name] };
+    await this.persistLibrary(state);
+    return { ...await this.library(), synchronization };
+  }
+
+  async pin({ name, pinned }) {
+    markdownName(name);
+    if (typeof pinned !== 'boolean') throw new Error('Estado de fixação inválido.');
+    const root = this.requireRoot();
+    const filename = await safeFile(root, name); await fs.access(filename);
+    const state = await this.libraryState();
+    const names = state[root]?.pinned || [];
+    if (pinned && !names.includes(name) && names.length >= 100) throw new Error('Limite de 100 notas fixadas.');
+    state[root] = { pinned: pinned ? [...new Set([...names, name])] : names.filter(item => item !== name) };
+    await this.persistLibrary(state);
+    return this.library();
   }
 
   async read(name) {

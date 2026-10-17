@@ -929,3 +929,23 @@
   --scribe-orange: #ff7a18;
   --scribe-paper: #f1eee5;
 }
+
+/* Standalone reading palette: soft charcoal, warm paper and restrained blue accents. */
+:root, [data-theme="dark"] {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bg-base: #1e1f20; --bg-surface: #1e1f20; --bg-input: #252729;
+  --bg-elevated: #303234; --bg-subtle: #292b2d; --bg-hover: #2b2d2f; --bg-overlay: #252729;
+  --border-panel: #36393b; --border-base: #36393b; --border-strong: #62686c;
+  --text-primary: #cbd9df; --text-secondary: #dedfdf; --text-muted: #a9aeb1;
+  --text-dim: #a9aeb1; --text-label: #a9aeb1;
+  --lime: #78c0df; --cyan: #78c0df; --lime-dim: #426c7e; --lime-trace: #26383f;
+}
+[data-theme="light"] {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bg-base: #faf9f6; --bg-surface: #faf9f6; --bg-input: #f0efeb;
+  --bg-elevated: #e5e8e7; --bg-subtle: #eeefec; --bg-hover: #e9ece9; --bg-overlay: #f4f3ef;
+  --border-panel: #d4d8d6; --border-base: #d4d8d6; --border-strong: #7d8588;
+  --text-primary: #283842; --text-secondary: #30383b; --text-muted: #5c666b;
+  --text-dim: #5c666b; --text-label: #5c666b;
+  --lime: #17627e; --cyan: #17627e; --lime-dim: #718e9a; --lime-trace: #e1edf0;
+}

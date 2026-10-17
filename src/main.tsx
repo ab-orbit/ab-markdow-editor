@@ -1,7 +1,8 @@
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
+import { noteGroup, shortNoteDate } from './lib/noteDates';
 import { usePwa } from './usePwa';
 import { authorizedFetch } from './lib/session';
 import { loadDraft, persistDraft, type DraftSnapshot } from './lib/drafts';
@@ -19,6 +20,14 @@ interface RecentNote {
   /** Markdown heading and short plain-text preview for the note list. */
   title?: string;
   preview?: string;
+}
+interface NoteLibrary {
+  /** Manually ordered pinned notes for the current checkout. */
+  pinned: RecentNote[];
+  /** Latest 100 non-pinned notes, newest first. */
+  recent: RecentNote[];
+  /** Initial guide synchronization may require a Git retry. */
+  synchronization?: SaveResult;
 }
 const brandIcon = '/icons/profile-v3/scribe-64.png';
 interface RepositoryInfo {
@@ -112,10 +121,16 @@ function App() {
   const [destination, setDestination] = useState('');
   const [files, setFiles] = useState<string[]>([]);
   const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
+  const [pinnedNotes, setPinnedNotes] = useState<RecentNote[]>([]);
+  const [dateClock, setDateClock] = useState(Date.now());
+  useEffect(() => { const timer = window.setInterval(() => setDateClock(Date.now()), 60000); return () => window.clearInterval(timer); }, []);
   const [noteSearch, setNoteSearch] = useState('');
   const normalizeSearch = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
   const query = normalizeSearch(noteSearch.trim());
-  const visibleNotes = recentNotes.filter(note => !query || normalizeSearch(`${note.name} ${note.title || ''} ${note.preview || ''}`).includes(query));
+  const matchesNote = (note: RecentNote) => !query || normalizeSearch(`${note.name} ${note.title || ''} ${note.preview || ''}`).includes(query);
+  const visibleNotes = recentNotes.filter(matchesNote);
+  const visiblePinned = pinnedNotes.filter(matchesNote);
+  const noteGroups = [{label:'Fixadas', notes:visiblePinned, pinned:true}, ...['Hoje', 'Ontem', 'Últimos 7 dias', 'Mais antigas'].map(label => ({label, notes:visibleNotes.filter(note => noteGroup(note.modifiedAt, dateClock) === label), pinned:false}))].filter(group => group.notes.length);
   const [notesOpen, setNotesOpen] = useState(() => window.matchMedia('(min-width: 900px)').matches);
   const [selected, setSelected] = useState('');
   const [name, setName] = useState('documento.md');
@@ -144,10 +159,21 @@ function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('ab-markdown-theme') || 'dark');
   const dirty = value !== baseline || name !== loadedName;
   useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('ab-markdown-theme', theme); }, [theme]);
+  async function refreshLibrary() {
+    const library = await api<NoteLibrary>('library/initialize', {});
+    setRecentNotes(library.recent); setPinnedNotes(library.pinned);
+    if (library.synchronization && !library.synchronization.synced) setError(`Guia criado localmente; sincronização pendente: ${library.synchronization.error}`);
+  }
+  async function togglePin(note: RecentNote, pinned: boolean) {
+    await run(async () => {
+      const library = await api<NoteLibrary>('pin', {name:note.name, pinned});
+      setRecentNotes(library.recent); setPinnedNotes(library.pinned);
+    });
+  }
   async function refresh() {
     const info = await api<RepositoryInfo>('repository'); setRepository(info);
     setFiles(info.repository ? await api<string[]>('files') : []);
-    setRecentNotes(info.repository ? await api<RecentNote[]>('recent') : []);
+    if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
     return info;
   }
   useEffect(() => {
@@ -173,7 +199,7 @@ function App() {
           setSettingsOpen(true);
         } else {
           setRepository(info); setFiles(info.repository ? await api<string[]>('files') : []);
-          setRecentNotes(info.repository ? await api<RecentNote[]>('recent') : []);
+          if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
           if (!info.repository) setSettingsOpen(true);
         }
         if (!active) return;
@@ -358,13 +384,16 @@ function App() {
     {!settingsOpen && statusMessages}
     <div className="editor-layout">
     {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
-      <div className="notes-heading"><img className="notes-logo" src={brandIcon} width="24" height="24" alt="Escriba egípcio — AB Markdown"/><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length} de ${recentNotes.length}` : `${recentNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || offline} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
+      <div className="notes-heading"><img className="notes-logo" src={brandIcon} width="24" height="24" alt="Escriba egípcio — AB Markdown"/><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length + visiblePinned.length} resultados` : `${recentNotes.length + pinnedNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || offline} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
       <label className="notes-search"><Search size={16} aria-hidden="true"/><input type="search" aria-label="Buscar nas notas recentes" placeholder="Buscar notas…" value={noteSearch} onChange={event => setNoteSearch(event.target.value)}/></label>
-      {query && !visibleNotes.length && <p className="notes-empty">Nenhuma nota encontrada.</p>}
+      {query && !visibleNotes.length && !visiblePinned.length && <p className="notes-empty">Nenhuma nota encontrada.</p>}
       <button className="new-note" type="button" disabled={busy || !draftReady} onClick={() => { if (discard()) { resetDocument(); if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false); } }}><FilePlus2 size={18}/>Nova nota</button>
       {!repository.repository && <p className="notes-empty">Conecte um repositório nas configurações para listar suas notas.</p>}
-      {repository.repository && !recentNotes.length && <p className="notes-empty">{offline ? 'Abra o aplicativo local para carregar a lista.' : 'Nenhuma nota Markdown encontrada.'}</p>}
-      <nav aria-label="100 notas mais recentes"><ol>{visibleNotes.map(note => <li key={note.name}><button type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><FileText size={16}/><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}{note.name.includes('/') && <small>{note.name.slice(0, note.name.lastIndexOf('/'))}</small>}<time dateTime={note.modifiedAt}>{new Date(note.modifiedAt).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}</time></span></button></li>)}</ol></nav>
+      {repository.repository && !recentNotes.length && !pinnedNotes.length && <p className="notes-empty">{offline ? 'Abra o aplicativo local para carregar a lista.' : 'Nenhuma nota Markdown encontrada.'}</p>}
+      <nav aria-label="100 notas mais recentes">{noteGroups.map(group => <section className="note-group" key={group.label} aria-label={group.label}><h3>{group.label}</h3><ol>{group.notes.map(note => <li className="note-row" key={note.name} data-note={note.name}>
+        <button className="open-note" type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}<time dateTime={note.modifiedAt} title={new Date(note.modifiedAt).toLocaleString('pt-BR')}>{group.pinned && <Pin size={11} aria-label="Nota fixada"/>}{shortNoteDate(note.modifiedAt, dateClock)}</time></span></button>
+        <button className="pin-note" type="button" disabled={busy || offline} aria-label={`${group.pinned ? 'Desafixar' : 'Fixar'} ${note.name}`} title={group.pinned ? 'Desafixar nota' : 'Fixar nota'} onClick={() => void togglePin(note, !group.pinned)}>{group.pinned ? <PinOff size={14}/> : <Pin size={14}/>}</button>
+      </li>)}</ol></section>)}</nav>
     </aside>}
     <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench compact key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>

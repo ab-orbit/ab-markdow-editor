@@ -128,7 +128,7 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
   }
 
   const [formattingOpen, setFormattingOpen] = useState(false);
-  return <section className={`${styles.workbench} ${compact ? styles.compact : ''}`} aria-label="Bancada Markdown" aria-busy={busy}>
+  return <section className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} aria-label="Bancada Markdown" aria-busy={busy}>
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}</div>
       <div className={styles.modes} role="group" aria-label="Modo de edição">

@@ -71,3 +71,11 @@ Repositório sintético com 105 notas: a barra lateral limita a lista às 100 ma
 ![Celular com notas, escuro](mobile-recent-notes-dark.png)
 
 ![Celular com notas, claro](mobile-recent-notes-light.png)
+
+## Guia fixado, períodos e leitura suave
+
+A primeira nota fixada explica a plataforma, os recursos e o roadmap de Google Drive/temas. As capturas da lista acima agora mostram períodos e datas curtas. Os testes usam notas com datas de hoje, ontem e dias anteriores, e validam fixar/desafixar sem modificar o Git.
+
+![Guia em leitura, desktop escuro](desktop-guide-reading-dark.png)
+
+![Guia em leitura, celular escuro](mobile-guide-reading-dark.png)

@@ -34,6 +34,7 @@ const server = http.createServer(async (req, res) => {
       if (req.method === 'GET') {
         if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());
+        if (url.pathname === '/api/library') return send(res, 200, await repository.library());
         if (url.pathname === '/api/recent') return send(res, 200, await repository.recent());
         if (url.pathname === '/api/files') return send(res, 200, await repository.list());
         if (url.pathname === '/api/document') return send(res, 200, await repository.read(url.searchParams.get('name')));
@@ -43,6 +44,8 @@ const server = http.createServer(async (req, res) => {
       for await (const chunk of req) { size += chunk.length; if (size > 65 * 1024 * 1024) throw new Error('Envio maior que 65 MB.'); chunks.push(chunk); }
       const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
       const actions = {
+        '/api/library/initialize': () => repository.initializeLibrary(),
+        '/api/pin': () => repository.pin(body),
         '/api/pick-folder': () => pickFolder(),
         '/api/connect': () => repository.connect(body.directory),
         '/api/clone': () => repository.clone(body.url, body.destination),

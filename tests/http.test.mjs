@@ -251,3 +251,19 @@ test('recent notes returns the latest 100 safe existing Markdown paths by file m
     assert.ok(response.body.every(note=>Number.isFinite(Date.parse(note.modifiedAt))));
   } finally {await fs.rm(folder,{recursive:true,force:true});}
 });
+
+test('guide is seeded once, committed and pushed; pins persist per checkout without changing Git', async () => {
+  const repo=path.join(temporary,'library-repo'),upstream=path.join(temporary,'library-remote.git');await fs.mkdir(repo);await fs.mkdir(upstream);
+  await git(repo,'init','-b','main');await git(upstream,'init','--bare','-b','main');
+  for(const [key,value] of [['user.name','Library Test'],['user.email','library@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])await git(repo,'config',key,value);
+  await fs.writeFile(path.join(repo,'note.md'),'# Minha nota\n\nConteúdo');await git(repo,'add','.');await git(repo,'commit','-m','Initial');await git(repo,'remote','add','origin',upstream);
+  await request('connect',{directory:repo});
+  const initialized=await request('library/initialize',{});assert.equal(initialized.status,200);assert.equal(initialized.body.synchronization.synced,true);assert.equal(initialized.body.pinned[0].name,'AB-Markdown-Guia.md');
+  const guide=await git(upstream,'show','main:AB-Markdown-Guia.md');assert.match(guide,/Google Drive/);assert.match(guide,/Temas/);assert.match(guide,/Aeon Bridge/);
+  const head=await git(repo,'rev-parse','HEAD');assert.equal((await request('library/initialize',{})).body.synchronization,undefined);assert.equal(await git(repo,'rev-parse','HEAD'),head);
+  assert.equal((await request('pin',{name:'note.md',pinned:true})).status,200);
+  await request('connect',{directory:checkout});assert.equal((await request('library')).body.pinned.length,0);await request('connect',{directory:repo});
+  const persisted=await request('library');assert.deepEqual(persisted.body.pinned.map(note=>note.name),['AB-Markdown-Guia.md','note.md']);assert.equal(await git(repo,'rev-parse','HEAD'),head);
+  await request('pin',{name:'note.md',pinned:false});assert.equal((await request('library')).body.pinned.length,1);
+  assert.equal((await request('pin',{name:'../note.md',pinned:true})).status,400);
+});

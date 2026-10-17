@@ -10,7 +10,7 @@ Ambiente: macOS Darwin 25.6.0, Apple Silicon. Aplicação instalada em `~/Applic
 - Abertura pelo ícone, resposta saudável do servidor em loopback e carregamento do editor.
 - Seleção de pasta real no diálogo nativo do macOS; retorno do caminho confirmado.
 - Cancelamento do diálogo pela API da aplicação instalada: HTTP 200, `directory: null`.
-- 24 testes HTTP com Git real: sessão/origem/host, conexão e listagem, texto/imagens, conflitos, caminhos inválidos/symlinks, gravações concorrentes, commit seletivo e push, proteção de stage, rejeição de credenciais na URL e clonagem HTTPS com CA local; save/commit/push automático, ausência de commits vazios, retry após falha de push sem commit duplicado, recuperação de hook, primeiro upstream e preferências persistidas em novo processo.
+- 25 testes HTTP com Git real: sessão/origem/host, conexão e listagem, texto/imagens, conflitos, caminhos inválidos/symlinks, gravações concorrentes, commit seletivo e push, proteção de stage, rejeição de credenciais na URL e clonagem HTTPS com CA local; save/commit/push automático, ausência de commits vazios, retry após falha de push sem commit duplicado, recuperação de hook, primeiro upstream e preferências persistidas em novo processo.
 - 8 jornadas Playwright: desktop 1440×900 e celular 390×844. Selecionar/cancelar pasta, conectar, escolher destino de clone, editar, inserir imagem, salvar, commit/push automáticos e reabrir com imagens; relógio do navegador simula ciclos de 1 e 2 minutos com Git/HTTP reais, nota obrigatória, cancelamento sem gravação, ⌘S e persistência das preferências.
 - Regressão do conflito: importação pelo seletor, abertura pela lista, arquivo sem histórico Git, salvamento repetido após perda de resposta, hash original válido/inválido, cópia de recuperação, substituição com backup e rejeição de confirmação desatualizada.
 - Interface focada no editor após configuração, inclusive ao recarregar; engrenagem abre configurações; Escape fecha sem perder o texto; gravação disponível na barra e por ⌘S.
@@ -44,8 +44,14 @@ Jornadas desktop/mobile criam 105 notas, verificam exatamente 100 entradas orden
 
 Cabeçalho reduzido de 96 para 48 px; lateral de 264 para 220 px; barras de ajuda removidas visualmente e formatação recolhida por padrão. Importação/exportação mantêm nomes acessíveis e dicas, usando botões de ícone. Lista e documento têm rolagem independente e o shell cabe em 100dvh, sem rolagem da página. A lista usa título do Markdown e trecho textual obtidos de até 8 KB por arquivo, com leitura em lotes de 32; conteúdo aparece como texto, sem execução de HTML.
 
-As 8 jornadas de navegador passaram nos dois tamanhos, incluindo abrir/recolher formatação, lista com título/trecho, limite de altura da janela e os fluxos anteriores de edição/Git/offline. Os 24 testes HTTP também passaram. Capturas atualizadas nos temas claro e escuro.
+As 8 jornadas de navegador passaram nos dois tamanhos, incluindo abrir/recolher formatação, lista com título/trecho, limite de altura da janela e os fluxos anteriores de edição/Git/offline. Os 25 testes HTTP também passaram. Capturas atualizadas nos temas claro e escuro.
 
 ## Remoção da faixa superior e busca
 
 Faixa de marca acima do workspace removida; logo mantida apenas no cabeçalho da lista. Controle da lateral transferido para a barra do editor. Busca local por título, trecho e nome/caminho das 100 notas recentes, com normalização de caixa e acentos, contagem de resultados e estado vazio. Jornadas desktop/mobile verificam título em maiúsculas, busca sem acento, nome do arquivo, resultado inexistente e restauração das 100 entradas ao limpar.
+
+## Fixadas, guia inicial, períodos e tipografia
+
+25 testes HTTP aprovados, incluindo criação única do guia com commit/push a remoto Git real, ausência de novo commit ao reinicializar, pins persistidos e isolados por checkout, desafixar sem alterar HEAD e rejeição de caminho inválido. As 8 jornadas completas passaram; as 2 jornadas da lateral foram ampliadas e repetidas para validar períodos (hoje/ontem/últimos 7 dias), “há 2 h”, guia como primeira fixada, fixar/desafixar, busca e leitura sem fonte monoespaçada.
+
+Paleta local suave nos dois temas, alterada nos tokens. Contraste na superfície selecionada, o caso mais desfavorável: tema escuro texto 9,64:1 / secundário 5,75:1 / acento 6,38:1; tema claro texto 9,71:1 / secundário 4,77:1 / acento 5,52:1. Código e Fonte preservam monoespaçada. Capturas de leitura do guia e lista com grupos em desktop e celular.
