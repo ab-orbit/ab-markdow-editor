@@ -1,0 +1,924 @@
+/*
+ * AB-POLInSights Design System Tokens
+ * ─────────────────────────────────────────────────────────────────
+ * Single source of truth for all design decisions.
+ * Inspired by the worldmonitor systematic token approach.
+ * Import this file in globals.css BEFORE tailwind layers.
+ */
+
+:root,
+/* [data-theme="dark"]: uma subárvore pode pedir o tema escuro numa página
+ * clara (componente com `theme="dark"`, ex. NotificationBell). Sem isto só o
+ * claro podia ser forçado por subárvore, porque o escuro vivia só em :root. */
+[data-theme="dark"] {
+  /* Explorer identity is independent of graph class colors. */
+  --explorer-shell: #f1eee5;
+  --explorer-suit: #e57c37;
+  --explorer-visor: #102231;
+  --explorer-light: #ffd58a;
+
+  /* ── BACKGROUNDS ───────────────────────────────────────────── */
+  --bg-void:       #000000;   /* absolute black */
+  --bg-base:       #050505;   /* grid/canvas background */
+  --bg-surface:    #0a0a0a;   /* panel background */
+  --bg-overlay:    #0b0d0f;   /* popups, tooltips, modals */
+  --bg-elevated:   #111111;   /* hover states, inputs */
+  --bg-subtle:     #161616;   /* secondary surfaces */
+  --bg-hover:      #1a1a1a;   /* hover target bg */
+  --bg-input:      #0d0d0d;   /* form inputs */
+  --bg-skeleton:   #1e1e1e;   /* loading skeleton */
+  --bg-canvas:     #0d0d14;   /* SVG/chart visualization canvas — dark default; light override in [data-theme="light"] */
+
+  /* ── BORDERS ────────────────────────────────────────────────── */
+  --border-ultra:  rgba(255, 255, 255, 0.02);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-dim:    rgba(255, 255, 255, 0.06);
+  --border-muted:  rgba(255, 255, 255, 0.08);
+  --border-base:   rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.25);
+  /* neutral named aliases */
+  --border-900:    #1e1e1e;
+  --border-800:    #1a1a1a;
+  --border-panel:  #2b2b2b;  /* panel section dividers */
+  --border-dark:   #1a1a1a;  /* subtle dark separators */
+
+  /* ── TEXT ───────────────────────────────────────────────────── */
+  --text-primary:     #f1f5f9;  /* headings, labels, values */
+  --text-secondary:   #cbd5e1;  /* body, descriptions */
+  --text-muted:       #94a3b8;  /* metadata, secondary UI */
+  --text-dim:         #888888;  /* panel titles, placeholders */
+  --text-label:       #888888;  /* data label text (alias of dim) */
+  --text-value:       #eaeaea;  /* primary data values in panels */
+  --text-ghost:       #555555;  /* very muted / decorative text */
+  --text-inactive:    #666666;  /* inactive tabs, disabled states */
+  --text-faint:       rgba(255, 255, 255, 0.35);
+  --text-ultra-faint: rgba(255, 255, 255, 0.25);
+  --text-amber-signal: #fbbf24;  /* amber-400 — legível no dark */
+  --bg-amber-signal:   rgba(120, 53, 15, 0.25); /* amber-950/25 — sutil no dark */
+
+  /* ── ACCENT — LIME (primary) ────────────────────────────────── */
+  --lime:          #84cc16;
+  --lime-bright:   #a3e635;
+  --lime-dim:      rgba(132, 204, 22, 0.2);
+  --lime-glow:     rgba(132, 204, 22, 0.3);
+  --lime-trace:    rgba(132, 204, 22, 0.07);
+
+  /* ── ACCENT — CYAN (secondary) ─────────────────────────────── */
+  --cyan:          #22d3ee;
+  --cyan-dim:      rgba(34, 211, 238, 0.2);
+  --cyan-glow:     rgba(34, 211, 238, 0.3);
+  /* Fundo de item ativo em ciano, par do `--lime-trace` (entrada CAMADAS). */
+  --cyan-trace:    rgba(34, 211, 238, 0.07);
+
+  /* ── ACCENT — ROSA (par do azul em pares opostos: sai/entra) ──── */
+  --pink:          #f472b6;
+  --pink-dim:      rgba(244, 114, 182, 0.2);
+
+  /* ── ACCENT — GREEN (data values) ──────────────────────────── */
+  --green:         #4ade80;
+  --blue:          #60a5fa;
+  --violet:        #a78bfa;
+  --red:           #ef4444;
+  --amber:         #fbbf24;
+  /* Óleo / pré-sal: o laranja da pena da esfinge (abertura do HYPATHIA). 6.9:1 sobre --orgn-bg. */
+  --oil:           #fb923c;
+  --oil-glow:      rgba(251, 146, 60, 0.35);
+  /* Disco claro sob o logo do HYPATHIA: o marinho da marca (#011F4E) some no
+     fundo escuro (~1,4:1). Marinho sobre o disco 14:1; disco sobre --orgn-bg 16:1.
+     Igual nos dois temas: é a placa da marca, não cor de tema. */
+  --brand-hypathia-plate: #f4efe3;
+  --green-dim:     rgba(74, 222, 128, 0.1);
+  --green-glow:    rgba(74, 222, 128, 0.3);
+
+  /* ── STATUS PALETTE ─────────────────────────────────────────── */
+  --status-ok:       #4ade80;
+  --status-ok-dim:   rgba(74, 222, 128, 0.12);
+  --status-warn:     #f59e0b;
+  --status-warn-dim: rgba(245, 158, 11, 0.12);
+  --status-alert:    #ef4444;
+  --status-alert-dim:rgba(239, 68, 68, 0.12);
+  --status-info:     #3b82f6;
+  --status-info-dim: rgba(59, 130, 246, 0.12);
+  --status-neutral:  #94a3b8;
+
+  /* ── SCORE (sinal fraco do hipergrafo: 0.80 / 0.55 / 0.35) ───────
+     Três tons semânticos, definidos nos DOIS temas. Antes eram
+     text-red-400/yellow-400/green-400 literais, que sobre branco dão
+     2.9:1, 1.6:1 e 3.0:1 — o 0.55 amarelo sumia no tema claro. */
+  --score-high:    #ef4444;
+  --score-mid:     #eab308;
+  --score-low:     #22c55e;
+
+  /* ── HIPERGRAFO · POLÍGONOS: cor por município ───────────────────
+     Oito matizes SEM vermelho, laranja, amarelo nem verde puro: essas
+     quatro são o score (--score-*) nas visões vizinhas, e o painel de
+     polígonos usava vermelho para Recife e laranja para Caruaru — quem
+     vinha da aba SINAIS lia "tudo em risco". Matiz E luminância variam
+     (lima claro, azul escuro, lavanda pálida, ardósia) para daltonismo.
+     Nós do grafo: país em neutro claro, capítulo em âmbar — o município
+     é sempre o polígono, nunca o nó. */
+  --hg-mun-1:        #84cc16;   /* lime */
+  --hg-mun-2:        #22d3ee;   /* cyan */
+  --hg-mun-3:        #a855f7;   /* purple */
+  --hg-mun-4:        #3b82f6;   /* blue */
+  --hg-mun-5:        #ec4899;   /* pink */
+  --hg-mun-6:        #2dd4bf;   /* teal */
+  --hg-mun-7:        #c4b5fd;   /* lavender */
+  --hg-mun-8:        #94a3b8;   /* slate */
+  --hg-node-country: #e2e8f0;
+  --hg-node-chapter: #fbbf24;
+
+  /* Grafo societário do Net Analysis (/network e painel do dashboard). O
+     Cytoscape pinta em canvas e não resolve var(): NetworkGraph lê estes
+     tokens com getCSSColor e refaz o estilo na troca de tema. Só cor OPACA.
+     Porte da empresa = fundo + texto; setor (divisão CNAE) = borda. */
+  --net-node-bg:          #0f0f1a;
+  --net-node-border:      #2d3a4a;
+  --net-node-text:        #7a8fa0;
+  --net-size-me-bg:       #071428;
+  --net-size-me-text:     #e0f2fe;
+  --net-size-me-border:   #60a5fa;
+  --net-size-sm-bg:       #1c1000;
+  --net-size-sm-text:     #fef9c3;
+  --net-size-sm-border:   #fbbf24;
+  --net-size-lg-bg:       #100618;
+  --net-size-lg-text:     #f5f3ff;
+  --net-size-lg-border:   #c084fc;
+  --net-root-bg:          #071510;
+  --net-root-border:      #84cc16;
+  --net-root-text:        #d9ff80;
+  --net-person-bg:        #050f14;
+  --net-person-border:    #22d3ee;
+  --net-person-text:      #a5f3fc;
+  --net-edge:             #334d5c;
+  /* Opacidade do que sai de foco quando um nó é selecionado (29/09): 0.07
+   * sumia com tudo. 0.45 no escuro = rótulo de org 2.1:1, pessoa 3.9:1. */
+  --net-dimmed-opacity:   0.45;
+  /* Fora do grupo aceso (legenda, resumo, REDE): bem mais apagado que o esmaecido do foco de um nó, para o recorte saltar. */
+  --net-role-off-opacity: 0.12;
+  --net-edge-root:        #84cc16;
+  --net-edge-selected:    #f97316;
+  --net-inactive-border:  #ef4444;
+  --net-inactive-text:    #fca5a5;
+  --net-inactive-bg:      #1a0a0a;
+  --net-selected:         #facc15;
+  --net-expanding:        #22d3ee;
+  --net-canvas-dot:       rgba(132, 204, 22, 0.08);
+  --net-sector-unknown:   #3a4a5a;
+  --net-sector-1:  #f97316;
+  --net-sector-2:  #22d3ee;
+  --net-sector-3:  #84cc16;
+  --net-sector-4:  #c084fc;
+  --net-sector-5:  #f472b6;
+  --net-sector-6:  #facc15;
+  --net-sector-7:  #60a5fa;
+  --net-sector-8:  #34d399;
+  --net-sector-9:  #fb7185;
+  --net-sector-10: #a78bfa;
+  --net-sector-11: #2dd4bf;
+  --net-sector-12: #fbbf24;
+  --net-sector-13: #e879f9;
+  --net-sector-14: #4ade80;
+  --net-sector-15: #38bdf8;
+  /* Cascos de comunidade: a paleta CATEGÓRICA do design system (`--cat-1..8`, ab-design-system/references/dataviz.md),
+   * na ordem em que o casco a consome — roxo, azul, teal, lavanda, ardósia, rosa e, por último, lima e ciano (que já são
+   * a raiz e a pessoa). Acima de 8 comunidades o resto vai para `--text-inactive`. Nenhuma cor inventada.
+   * `--net-topactor`: contorno do ator central. */
+  --net-community-1:  #a855f7;
+  --net-community-2:  #3b82f6;
+  --net-community-3:  #2dd4bf;
+  --net-community-4:  #c4b5fd;
+  --net-community-5:  #94a3b8;
+  --net-community-6:  #ec4899;
+  --net-community-7:  #84cc16;
+  --net-community-8:  #22d3ee;
+  --net-topactor:     #e2e8f0;
+
+  /* ── NEWS CATEGORY COLORS ───────────────────────────────────── *
+   * Each category maps to a distinct accent used in tab highlights,
+   * badge borders, and status dots within IntelligencePanel / News.
+   */
+  --cat-brasil:    #22d3ee;   /* cyan */
+  --cat-mundo:     #a855f7;   /* purple */
+  --cat-politica:  #ef4444;   /* red */
+  --cat-economia:  #84cc16;   /* lime */
+  --cat-seguranca: #f97316;   /* orange */
+  --cat-saude:     #06b6d4;   /* sky */
+  --cat-ambiente:  #22c55e;   /* green */
+  --cat-ciencia:   #3b82f6;   /* blue */
+  --cat-educacao:  #f59e0b;   /* amber */
+  --cat-cultura:   #ec4899;   /* pink */
+  --cat-trabalho:  #8b5cf6;   /* violet */
+  --cat-direitos:  #fb923c;   /* orange-light */
+  --cat-outros:    #6b7280;   /* gray */
+  --cat-social:    #e1306c;   /* Instagram pink */
+
+  /* ── ACENTOS VINDOS DE DADOS ─────────────────────────────────── *
+   * Cores que chegam do backend/JSON (cor de indústria, de lente, de
+   * dimensão) foram escolhidas contra fundo preto e desbotam sobre
+   * branco — #84cc16 dá 1.98:1, #f59e0b dá 2.15:1. Não dá pra
+   * sobrescrevê-las por tema em CSS: elas entram via `style` inline.
+   *
+   * Estes tokens empurram o acento na direção da cor de texto do tema —
+   * clareiam no escuro, escurecem no claro — até ele sobreviver ao fundo,
+   * preservando o matiz que identifica a categoria. Funcionam inline
+   * porque var() resolve no elemento. Use via themeAccentText() de
+   * utils/themeColors.ts — não escreva o color-mix na mão.
+   *
+   * 18% leva #e11d48 de 4.47:1 para acima do mínimo sobre #0a0a0a.
+   */
+  --accent-shift-to: #ffffff;
+  --accent-shift:    18%;
+
+  /* ── ONTOLOGY VIEWER — CLASS COLORS ─────────────────────────────── */
+  --onto-1: #84cc16;   /* lime */
+  --onto-2: #22d3ee;   /* cyan */
+  --onto-3: #a855f7;   /* purple */
+  --onto-4: #f97316;   /* orange */
+  --onto-5: #ec4899;   /* pink */
+  --onto-6: #3b82f6;   /* blue */
+  --onto-7: #eab308;   /* yellow */
+  --onto-8: #4ade80;   /* green */
+  /* Analytical 3D classes: preserve class hue and non-text contrast on the canvas. */
+  --knowledge-document: #84cc16;
+  --knowledge-section: #22d3ee;
+  --knowledge-chunk: #a855f7;
+  --knowledge-entity: #f97316;
+  --onto-unclassified: #6b7280;   /* gray — individual with no known class */
+
+  /* ── WEATHER SEVERITY COLORS ────────────────────────────────── */
+  --sev-critical:  #ef4444;   /* extreme / danger */
+  --sev-high:      #f97316;   /* high / storm */
+  --sev-medium:    #eab308;   /* moderate / watch */
+  --sev-low:       #4ade80;   /* normal / clear */
+
+  /* ── GEO LAYERS ─────────────────────────────────────────────── */
+  --geo-state:      #3b82f6;   /* Brazil state boundaries */
+  --geo-state-glow: rgba(59, 130, 246, 0.6);
+  --geo-muni:       #22d3ee;   /* municipality fill */
+
+  /* ── ORGN — INQUIRING / EVAL MODULE PALETTE ─────────────────── *
+   * Paleta olive/neon usada por /inquiring, /eval e /ontology.
+   * Era ~620 hexes hardcoded nos componentes — por isso o módulo não
+   * respondia a [data-theme]. Overrides claros no fim deste arquivo.
+   *
+   * Contraste (ratio mínimo medido contra os cinco fundos do módulo:
+   * bg, surface, elevated, elevated-2, hover):
+   *   --orgn-text 12.0 · --orgn-text-2 7.3 · --orgn-muted 4.66
+   *   --orgn-ghost 3.92 (só sobre hover; ≥4.53 nos demais)
+   *   --orgn-border-strong 3.53 (UI não-textual, alvo ≥3)
+   *   --orgn-border é DECORATIVO (1.5-2.0) — nunca delimitar controle com ele.
+   */
+  --orgn-bg:           #11150a;   /* fundo do shell */
+  --orgn-surface:      #191d12;   /* top bar, sidenav, cards, modais */
+  --orgn-elevated:     #1d2115;   /* inputs, code, segmented, cards internos */
+  --orgn-elevated-2:   #272c1f;   /* hover de card / superfície aninhada */
+  --orgn-hover:        #323629;   /* hover de linha/item de lista */
+
+  --orgn-text:         #e1e4d2;   /* texto principal */
+  --orgn-text-2:       #c2cab0;   /* corpo secundário */
+  --orgn-muted:        #9aa289;   /* labels, metadata (era #8c947c: 3.92 no hover) */
+  --orgn-ghost:        #8c947c;   /* texto apagado (era #606b4d: 3.27 — reprovava AA) */
+
+  --orgn-border:       #424936;   /* SÓ divisores decorativos */
+  --orgn-border-strong:#828d6f;   /* borda de input/foco/UI interativa */
+
+  --orgn-accent:       #ccff80;   /* preenchimento e borda de acento */
+  --orgn-accent-text:  #ccff80;   /* acento usado COMO texto sobre o fundo */
+  --orgn-accent-hover: #a3e635;
+  --orgn-on-accent:    #213600;   /* texto sobre botão de acento */
+  --orgn-accent-soft:  rgba(204, 255, 128, 0.06);  /* fundo de item ativo */
+  --orgn-accent-glow:  rgba(204, 255, 128, 0.15);  /* glow de hover/foco */
+
+  /* ── Posições do Conselho (HYPATHIA) ──────────────────────────
+   * Sempre ícone + rótulo + cor; RECUSOU é hachura, não cor.
+   * Razões medidas (superfície / elevado / chip 10%):
+   *   reinforces 6.74 / 6.45 / 5.74 · opposes 6.47 / 6.19 / 5.58
+   *   conditions 10.26 / 9.82 / 8.32 · questions 9.48 / 9.07 / 7.85
+   *   neutral 5.42 / 5.19 / 4.71
+   */
+  --stance-reinforces: #60a5fa;  /* --cat-4 um passo acima (blue-400) */
+  --stance-opposes:    #f472b6;  /* --cat-5 um passo acima (pink-400) */
+  --stance-conditions: #fbbf24;  /* --amber */
+  --stance-questions:  #22d3ee;  /* --cat-2 / --cyan */
+  --stance-neutral:    var(--orgn-ghost);
+
+  --orgn-danger:       #f87171;   /* erro (era #ef4444: 3.29 no hover) */
+  --orgn-warn:         #eab308;   /* alerta — texto/ícone */
+  --orgn-warn-bg:      #3a2f11;   /* faixa de alerta (ex: banner de preview) */
+  --orgn-warn-border:  #8c6f1a;
+  --orgn-info:         #22d3ee;   /* job em geração — texto/ícone (mesmo cyan do resto do app) */
+  --orgn-info-bg:      #0e2b30;   /* faixa/badge de geração */
+  --orgn-info-border:  #1a6b78;
+  --orgn-success:      #4ade80;   /* contexto completo — distinto do lime de acento (9.41 sobre --orgn-elevated) */
+  --orgn-success-bg:   #0f2e1b;   /* faixa/badge de completo */
+  --orgn-success-border: #1f6b3f;
+
+  --orgn-grid-line:    rgba(66, 73, 54, 0.10);   /* .tactical-grid */
+  --orgn-backdrop:     rgba(0, 0, 0, 0.6);       /* backdrop de drawer/modal */
+  --loading-veil:      rgba(10, 10, 10, 0.82);   /* véu de carregamento que bloqueia a tela (PlumeRowLoader) — opaco o bastante para o rótulo não depender do que está atrás */
+
+  /* ── TYPOGRAPHY — FAMILIES ──────────────────────────────────── */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Cascadia Code",
+               ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Courier New", monospace;
+
+  /* ── FONT SCALE ─────────────────────────────────────────────── *
+   * --ui-font-scale-user é escrito no <html> pelo usuário (settings +
+   * script anti-FOUC em app/layout.tsx). Subárvores podem derivar um
+   * fator próprio a partir dele redefinindo --ui-font-scale (ver
+   * .orgn-scope em orgn.css) — por isso são duas variáveis e não uma:
+   * uma subárvore não pode multiplicar uma variável por si mesma.
+   *
+   * Os tamanhos em si estão no bloco `:root, .orgn-scope` mais abaixo,
+   * não aqui — leia o comentário de lá antes de mexer.
+   */
+  --ui-font-scale: var(--ui-font-scale-user, 1);
+
+  /* ── FONT WEIGHTS ───────────────────────────────────────────── */
+  --weight-normal:    400;
+  --weight-medium:    500;  /* data values */
+  --weight-semibold:  600;  /* section labels */
+  --weight-bold:      700;  /* badges, panel titles, UI labels */
+  --weight-extrabold: 800;  /* badge text tight */
+  --weight-black:     900;  /* org chart node names */
+
+  /* ── LETTER SPACING ─────────────────────────────────────────── */
+  --tracking-tight:   0.02em;  /* mono data values */
+  --tracking-normal:  0.06em;  /* body labels */
+  --tracking-wide:    0.08em;  /* titles, popups */
+  --tracking-wider:   0.10em;  /* metadata labels */
+  --tracking-widest:  0.12em;  /* badges */
+  --tracking-ultra:   0.15em;  /* panel titles */
+  --tracking-max:     0.18em;  /* org chart labels */
+
+  /* ── SPACING SCALE ──────────────────────────────────────────── */
+  --space-px:  1px;
+  --space-1:   2px;
+  --space-2:   4px;
+  --space-3:   6px;
+  --space-4:   8px;
+  --space-5:   10px;
+  --space-6:   12px;
+  --space-7:   14px;
+  --space-8:   16px;
+  --space-9:   20px;
+  --space-10:  24px;
+  --space-11:  32px;
+  --space-12:  40px;
+  --space-13:  48px;
+
+  /* ── BORDER RADIUS ──────────────────────────────────────────── */
+  --radius-none:  0;
+  --radius-xs:    2px;   /* rounded-sm */
+  --radius-sm:    3px;   /* badge */
+  --radius-md:    4px;   /* panel */
+  --radius-lg:    6px;   /* popup */
+  --radius-xl:    8px;   /* modal, large card */
+  --radius-full:  9999px; /* pill / dot */
+
+  /* ── COMPONENT GEOMETRY ─────────────────────────────────────── */
+  --panel-header-h:   36px;
+  --panel-min-h:      180px;
+  --panel-radius:     var(--radius-md);
+  --badge-radius:     var(--radius-sm);
+  --popup-radius:     var(--radius-lg);
+  --grid-gap:         8px;
+  --grid-padding:     8px;
+  --grid-col-min:     280px;
+  --tab-h:            32px;    /* tab bar height */
+  --status-dot-sm:    6px;     /* small status dot */
+  --status-dot-md:    8px;     /* medium status dot */
+  /* acompanha a escala de fonte do usuário: caixa fixa em px com texto que
+     cresce corta o que foi digitado. Em escala 1 continua 28px. */
+  --input-h:          calc(28px * var(--ui-font-scale, 1));  /* form input height */
+
+  /* ── Z-INDEX SCALE ──────────────────────────────────────────── */
+  --z-panel:           1;
+  --z-panel-dragging:  2;
+  --z-panel-active:    10;
+  --z-grid:            5;
+  --z-map-controls:    400;
+  --z-overlay:         600;
+  --z-modal:           1000;
+
+  /* ── SHADOWS ────────────────────────────────────────────────── */
+  --shadow-sm:         0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-panel:      0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg:         0 8px 40px rgba(0, 0, 0, 0.6);
+  --shadow-xl:         0 16px 64px rgba(0, 0, 0, 0.7);
+  --shadow-popup:      0 24px 64px rgba(0, 0, 0, 0.85);
+  --shadow-tooltip:    0 4px 20px rgba(0, 0, 0, 0.7);
+  --shadow-glow-lime:  0 0 12px rgba(132, 204, 22, 0.3),
+                       0 0 24px rgba(132, 204, 22, 0.15);
+  --shadow-glow-cyan:  0 0 12px rgba(34, 211, 238, 0.3),
+                       0 0 24px rgba(34, 211, 238, 0.15);
+  --shadow-glow-green: 0 0 16px rgba(74, 222, 128, 0.3);
+
+  /* ── TRANSITIONS ────────────────────────────────────────────── */
+  --transition-fast:   100ms ease;
+  --transition-base:   200ms ease;
+  --transition-slow:   400ms ease;
+  --transition-border: border-color 200ms ease;
+  --transition-all:    all 200ms ease;
+
+  /* ── ANIMATIONS ─────────────────────────────────────────────── */
+  --anim-pulse-lime: pulse-lime 2s ease-in-out infinite;
+  --anim-pulse-red:  pulse-red 1.5s ease-in-out infinite;
+  --anim-scan:       scanline 4s linear infinite;
+  --anim-blink:      blink 1.2s step-end infinite;
+  --anim-flicker:    flicker 6s step-end infinite;
+  --anim-spin:       spin 1s linear infinite;
+  --anim-skeleton:   skeleton-shimmer 1.5s ease-in-out infinite;
+
+  /* ── PESTEL ─────────────────────────────────────────────────────
+     Cor por dimensão do cartão/modal/gráfico do scanner, lida por
+     `components/Map/panels/pestelDimConfig.ts`. bar = faixa lateral e
+     série do gráfico; badge-* = etiqueta POL/ECO/...; body-* = fundo e
+     borda do cartão; meta = linha de metadados; beam = halo do alerta.
+     O tema claro redefine tudo — fundo do cartão é tinta clara lá. */
+  --pestel-pol-bar: #0891b2; --pestel-pol-badge-bg: #0c2d3d; --pestel-pol-badge-tx: #22d3ee; --pestel-pol-body-bg: #05100f; --pestel-pol-body-bdr: #0c3040; --pestel-pol-meta: #06b6d4; --pestel-pol-beam: #22d3ee;
+  --pestel-eco-bar: #2563eb; --pestel-eco-badge-bg: #0f1e3d; --pestel-eco-badge-tx: #60a5fa; --pestel-eco-body-bg: #040d1c; --pestel-eco-body-bdr: #0f2040; --pestel-eco-meta: #3b82f6; --pestel-eco-beam: #60a5fa;
+  --pestel-soc-bar: #d97706; --pestel-soc-badge-bg: #2d1800; --pestel-soc-badge-tx: #fbbf24; --pestel-soc-body-bg: #0d0800; --pestel-soc-body-bdr: #3a1f00; --pestel-soc-meta: #d97706; --pestel-soc-beam: #fbbf24;
+  --pestel-tec-bar: #7c3aed; --pestel-tec-badge-bg: #1e0a40; --pestel-tec-badge-tx: #c4b5fd; --pestel-tec-body-bg: #07040f; --pestel-tec-body-bdr: #280a50; --pestel-tec-meta: #8b5cf6; --pestel-tec-beam: #c4b5fd;
+  --pestel-amb-bar: #65a30d; --pestel-amb-badge-bg: #162300; --pestel-amb-badge-tx: #a3e635; --pestel-amb-body-bg: #050900; --pestel-amb-body-bdr: #1e3000; --pestel-amb-meta: #84cc16; --pestel-amb-beam: #a3e635;
+  --pestel-leg-bar: #ea580c; --pestel-leg-badge-bg: #2c0e00; --pestel-leg-badge-tx: #fb923c; --pestel-leg-body-bg: #0a0400; --pestel-leg-body-bdr: #3d1200; --pestel-leg-meta: #f97316; --pestel-leg-beam: #fb923c;
+
+  --pestel-zone-local:    #4ade80;
+  --pestel-zone-national: #60a5fa;
+  --pestel-zone-global:   #c4b5fd;
+
+  --pestel-score-high-stroke: #ef4444; --pestel-score-high-text: #fca5a5;
+  --pestel-score-mid-stroke:  #d97706; --pestel-score-mid-text:  #fbbf24;
+  --pestel-score-low-stroke:  #6b9d6b; --pestel-score-low-text:  #86efac;
+  --pestel-ring-track: #1f2937;
+
+  /* Selo de alerta (score >= 90, "NOVO") */
+  --pestel-alert-bg:   #200505;
+  --pestel-alert-bdr:  #dc2626;
+  --pestel-alert-tx:   #fca5a5;
+  --pestel-alert-dot:  #ef4444;
+  --pestel-scrim:      rgba(0, 0, 0, 0.70);  /* fundo atrás do modal do sinal */
+
+  /* Realce de entidade no texto do sinal (NER_HIGHLIGHT) */
+  --pestel-ner-per:     #fb923c;
+  --pestel-ner-org:     #22d3ee;
+  --pestel-ner-loc:     #34d399;
+  --pestel-ner-sector:  #a78bfa;
+  --pestel-ner-keyword: #84cc16;
+}
+
+/* ── FONT SIZES ───────────────────────────────────────────────────── *
+ * Fora do :root de propósito. A substituição de var() acontece no elemento
+ * onde a propriedade é DECLARADA, não onde é consumida: com --text-xs
+ * declarado só no :root, ele resolveria var(--ui-font-scale) contra o valor
+ * do <html> e desceria já congelado — qualquer subárvore que redefinisse a
+ * escala não teria efeito nenhum.
+ *
+ * Declarando o mesmo bloco também em .orgn-scope, cada elemento resolve
+ * contra a sua própria escala. Uma subárvore nova com escala própria precisa
+ * entrar nesta lista de seletores (e não em `*`, que custaria caro e
+ * atropelaria overrides locais de --text-*).
+ *
+ * Estes tokens vencem o @layer theme do Tailwind (regras unlayered), então
+ * text-xs/sm/base/... resolvem por aqui e herdam a escala. Classes
+ * arbitrárias — text-[10px] — NÃO herdam: use sempre o utilitário nomeado.
+ */
+:root,
+.orgn-scope,
+.notif-scope {
+  --text-micro: calc(7px  * var(--ui-font-scale));  /* dense tooltips, internal IDs */
+  --text-2xs:   calc(8px  * var(--ui-font-scale));  /* OrgChart micro labels, badges tight */
+  --text-xs:    calc(9px  * var(--ui-font-scale));  /* badges, uppercase labels, section headers */
+  --text-sm:    calc(10px * var(--ui-font-scale));  /* panel titles, metadata labels */
+  --text-smd:   calc(11px * var(--ui-font-scale));  /* degrau intermediário (registrado no @theme) */
+  --text-base:  calc(12px * var(--ui-font-scale));  /* body, list items, popups */
+  --text-md:    calc(13px * var(--ui-font-scale));  /* data values, subtitles */
+  --text-lg:    calc(14px * var(--ui-font-scale));  /* prominent body */
+  --text-xl:    calc(16px * var(--ui-font-scale));  /* section headings */
+  --text-2xl:   calc(20px * var(--ui-font-scale));  /* page/card headings */
+  --text-3xl:   calc(22px * var(--ui-font-scale));  /* display, org chart names */
+}
+
+/* ── KEYFRAMES ──────────────────────────────────────────────────── */
+@keyframes pulse-lime {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(132, 204, 22, 0.4); }
+  50%       { opacity: 0.6; box-shadow: 0 0 12px rgba(132, 204, 22, 0.8); }
+}
+
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+@keyframes scanline {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96%            { opacity: 0.85; }
+  97%            { opacity: 1; }
+  98%            { opacity: 0.9; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px var(--lime-glow); }
+  50%       { box-shadow: 0 0 16px var(--lime-glow), 0 0 32px var(--lime-trace); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes skeleton-shimmer {
+  0%   { opacity: 0.5; }
+  50%  { opacity: 0.8; }
+  100% { opacity: 0.5; }
+}
+
+/* ── LIGHT THEME OVERRIDES ──────────────────────────────────────── */
+[data-theme="light"] {
+  /* Opaque node colors meet 3:1 against the light visualization canvas. */
+  --knowledge-document: #4d7c0f;
+  --knowledge-section: #0e7490;
+  --knowledge-chunk: #7e22ce;
+  --knowledge-entity: #c2410c;
+  /* Same physical character; stronger trim against a light canvas. */
+  --explorer-shell: #e2e8ed;
+  --explorer-suit: #a8441c;
+  --explorer-visor: #102231;
+  --explorer-light: #ffd58a;
+
+  --bg-void:       #ffffff;
+  --bg-base:       #f8f9fa;
+  --bg-surface:    #ffffff;
+  --bg-overlay:    #f1f3f5;
+  --bg-elevated:   #e9ecef;
+  --bg-subtle:     #dee2e6;
+  --bg-hover:      #ced4da;
+  --bg-input:      #f8f9fa;
+  --bg-skeleton:   #e9ecef;
+
+  --border-ultra:  rgba(0, 0, 0, 0.02);
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --border-dim:    rgba(0, 0, 0, 0.08);
+  --border-muted:  rgba(0, 0, 0, 0.10);
+  --border-base:   rgba(0, 0, 0, 0.15);
+  --border-strong: rgba(0, 0, 0, 0.35);
+  --border-900:    #dee2e6;
+  --border-800:    #e9ecef;
+  --border-panel:  #d4d4d4;
+  --border-dark:   #e0e0e0;
+
+  --text-primary:     #0f172a;
+  --text-secondary:   #334155;
+  --text-muted:       #525252;  /* 5.7:1 on white */
+  --text-dim:         #5f6773;  /* 5.72:1 on white, 5.17:1 on --bg-canvas */
+  --text-amber-signal: #b45309;  /* amber-700 — 7:1 on white */
+  --bg-amber-signal:   rgba(254, 243, 199, 0.60); /* amber-100/60 — visível no light */
+  --text-label:       #525252;  /* 5.7:1 on white */
+  --text-value:       #1a1a1a;
+  --text-ghost:       #737373;  /* 4.5:1 on white */
+  --text-inactive:    #6b7280;  /* 4.7:1 on white */
+  --text-faint:       rgba(0, 0, 0, 0.35);
+  --text-ultra-faint: rgba(0, 0, 0, 0.25);
+
+  /* Accents — darker variants for legibility on white/light backgrounds */
+  /* lime-800. Era lime-700 (#4d7c0f): 6.4:1 no branco, mas o acento vive
+     como texto sobre fundo tingido (--lime-dim, --bg-elevated) e ali dava
+     3.9–4.5:1 — medido no /network, 2026-09-26. Agora ≥ 5.4:1 nesses fundos. */
+  --lime:       #3f6212;  /* 7.6:1 on white */
+  --lime-bright:#365314;
+  --lime-dim:   rgba(63, 98, 18, 0.15);
+  --lime-glow:  rgba(63, 98, 18, 0.20);
+  --lime-trace: rgba(63, 98, 18, 0.07);
+
+  /* Sobre branco, os acentos do tema escuro somem: #86efac dá 1.40:1,
+     #60a5fa dá 2.54:1 e #a78bfa dá 2.72:1 — abaixo dos 4.5:1 de texto. */
+  --green:      #15803d;  /* green-700, 5.02:1 on white */
+  --blue:       #1d4ed8;  /* blue-700, 6.70:1 on white */
+  --violet:     #6d28d9;  /* violet-700, 7.10:1 on white */
+  --red:        #b91c1c;  /* red-700, 6.47:1 on white */
+  --amber:      #b45309;  /* amber-700, 5.02:1 on white */
+  --oil:        #c2410c;  /* orange-700, 5.18:1 on white */
+  --oil-glow:   rgba(194, 65, 12, 0.25);
+  --brand-hypathia-plate: #f4efe3;  /* mesma placa: marinho 14:1; a borda do disco é que muda de contraste */
+
+  /* cyan-700: 5.4:1 on white. O #0891b2 anterior media 3.7:1 (o comentário
+     dizia 4.7 e não batia) — texto de 9–13px em ciano falhava a AA. */
+  /* cyan-800, mesmo motivo do --lime: cyan-700 sobre --cyan-dim dava 3.96:1. */
+  --cyan:       #155e75;  /* 7.3:1 on white, ≥ 5.3:1 on --cyan-dim */
+  --cyan-dim:   rgba(21, 94, 117, 0.15);
+  --cyan-glow:  rgba(21, 94, 117, 0.20);
+  --cyan-trace: rgba(21, 94, 117, 0.07);
+  --pink:       #be185d;  /* pink-700, 5.9:1 on white */
+  --pink-dim:   rgba(190, 24, 93, 0.15);
+
+  --score-high: #b91c1c;  /* red-700, 6.5:1 on white */
+  --score-mid:  #a16207;  /* yellow-700, 4.9:1 on white */
+  --score-low:  #15803d;  /* green-700, 5.0:1 on white */
+
+  /* Polígonos do hipergrafo: variantes -700 sobre branco (≥ 4.5:1),
+     mesma ordem de matiz do bloco escuro. */
+  --hg-mun-1:        #4d7c0f;
+  --hg-mun-2:        #0e7490;
+  --hg-mun-3:        #7e22ce;
+  --hg-mun-4:        #1d4ed8;
+  --hg-mun-5:        #be185d;
+  --hg-mun-6:        #0f766e;
+  --hg-mun-7:        #6d28d9;
+  --hg-mun-8:        #475569;
+  --hg-node-country: #1e293b;
+  --hg-node-chapter: #b45309;
+
+  /* Grafo do Net Analysis no claro: fundo claro tingido pelo porte com texto
+     -900 (≥ 7:1), bordas -700 (≥ 4.5:1 sobre branco — a borda de setor é a
+     única marca do setor no nó, então precisa dos 3:1 de objeto gráfico). */
+  --net-node-bg:          #ffffff;
+  --net-node-border:      #64748b;
+  --net-node-text:        #1e293b;
+  --net-size-me-bg:       #eff6ff;
+  --net-size-me-text:     #1e3a8a;
+  --net-size-me-border:   #1d4ed8;
+  --net-size-sm-bg:       #fffbeb;
+  --net-size-sm-text:     #78350f;
+  --net-size-sm-border:   #b45309;
+  --net-size-lg-bg:       #faf5ff;
+  --net-size-lg-text:     #581c87;
+  --net-size-lg-border:   #7e22ce;
+  --net-root-bg:          #f7fee7;
+  --net-root-border:      #4d7c0f;
+  --net-root-text:        #365314;
+  --net-person-bg:        #ecfeff;
+  --net-person-border:    #0e7490;
+  --net-person-text:      #164e63;
+  --net-edge:             #94a3b8;
+  /* Claro: 0.55 = rótulo de org 3.5:1, pessoa 2.8:1 sobre --bg-canvas; com
+   * 0.07 (valor antigo, fixo) caía a 1.1:1 e os demais nós sumiam (29/09). */
+  --net-dimmed-opacity:   0.55;
+  --net-role-off-opacity: 0.18;
+  --net-edge-root:        #4d7c0f;
+  --net-edge-selected:    #c2410c;
+  --net-inactive-border:  #b91c1c;
+  --net-inactive-text:    #991b1b;
+  --net-inactive-bg:      #fef2f2;
+  --net-selected:         #a16207;
+  --net-expanding:        #0e7490;
+  --net-canvas-dot:       rgba(77, 124, 15, 0.14);
+  --net-sector-unknown:   #94a3b8;
+  --net-sector-1:  #c2410c;
+  --net-sector-2:  #0e7490;
+  --net-sector-3:  #4d7c0f;
+  --net-sector-4:  #7e22ce;
+  --net-sector-5:  #be185d;
+  --net-sector-6:  #a16207;
+  --net-sector-7:  #1d4ed8;
+  --net-sector-8:  #047857;
+  --net-sector-9:  #be123c;
+  --net-sector-10: #6d28d9;
+  --net-sector-11: #0f766e;
+  --net-sector-12: #b45309;
+  --net-sector-13: #a21caf;
+  --net-sector-14: #15803d;
+  --net-sector-15: #0369a1;
+  --net-community-1:  #7e22ce;
+  --net-community-2:  #1d4ed8;
+  --net-community-3:  #0f766e;
+  --net-community-4:  #6d28d9;
+  --net-community-5:  #475569;
+  --net-community-6:  #be185d;
+  --net-community-7:  #4d7c0f;
+  --net-community-8:  #0e7490;
+  --net-topactor:     #0f172a;
+
+  /* Status: o bloco escuro definia os quatro uma vez só, e sobre branco eles
+     somem — #4ade80 dá 1.57:1, #f59e0b dá 2.15:1, #ef4444 dá 3.76:1 e
+     #3b82f6 dá 3.68:1, todos abaixo dos 4.5:1 de texto normal. Mesmos valores
+     dos acentos claros acima, já medidos. */
+  --status-ok:       #15803d;
+  --status-ok-dim:   rgba(21, 128, 61, 0.12);
+  --status-warn:     #a14a07;
+  --status-warn-dim: rgba(161, 74, 7, 0.12);
+  --status-alert:    #b91c1c;
+  --status-alert-dim:rgba(185, 28, 28, 0.12);
+  --status-info:     #1d4ed8;
+  --status-info-dim: rgba(29, 78, 216, 0.12);
+  --status-neutral:  #525252;
+
+  /* --bg-canvas: SVG/map canvas goes light; Cytoscape graphs use hardcoded #0d0d14 directly */
+  --bg-canvas: #f0f4f6;
+
+  /* ── ORGN — tema claro ────────────────────────────────────────
+   * Mesmos ratios mínimos do dark, medidos contra os cinco fundos:
+   *   --orgn-text 9.6 · --orgn-text-2 9.6 · --orgn-muted 5.28
+   *   --orgn-ghost 4.79 · --orgn-accent-text 5.49 · --orgn-danger 5.02
+   *   --orgn-border-strong 3.31 · branco sobre --orgn-accent 4.99
+   * O acento neon (#ccff80) é ilegível sobre branco (1.2:1) — vira o
+   * mesmo olive escuro que o --lime claro já usa, mantendo a assinatura
+   * cromática sem perder o texto.
+   */
+  --orgn-bg:           #f5f7ef;
+  --orgn-surface:      #ffffff;
+  --orgn-elevated:     #ecefe2;
+  --orgn-elevated-2:   #e4e8d8;
+  --orgn-hover:        #e0e5d1;
+
+  --orgn-text:         #1a1f10;
+  --orgn-text-2:       #2f3722;
+  --orgn-muted:        #565e46;
+  --orgn-ghost:        #5c6544;
+
+  --orgn-border:       #ccd2bc;
+  --orgn-border-strong:#767e62;
+
+  --orgn-accent:       #4d7c0f;
+  --orgn-accent-text:  #3f6212;
+  --orgn-accent-hover: #3f6212;
+  --orgn-on-accent:    #ffffff;
+  --orgn-accent-soft:  rgba(77, 124, 15, 0.10);
+  --orgn-accent-glow:  rgba(77, 124, 15, 0.20);
+
+  /* ── Posições do Conselho (HYPATHIA) — tema claro ─────────────
+   * reinforces 6.70 / 5.75 / 5.72 · opposes 9.65 / 8.27 / 8.07
+   * conditions 7.09 / 6.08 / 6.08 · questions 5.36 / 4.60 / 4.67
+   * neutral 6.18 / 5.30 / 5.40
+   */
+  --stance-reinforces: #1d4ed8;  /* --cat-4 */
+  --stance-opposes:    #831843;  /* --cat-5 dois passos abaixo (pink-900) */
+  --stance-conditions: #92400e;  /* amber-800, família de --status-warn */
+  --stance-questions:  #0e7490;  /* --cat-2 */
+  --stance-neutral:    var(--orgn-ghost);
+
+  --orgn-danger:       #b91c1c;
+  --orgn-warn:         #8a5208;
+  --orgn-warn-bg:      #fdf3d7;
+  --orgn-warn-border:  #a16207;
+  --orgn-info:         #0f7490;   /* dark teal-cyan, mesma família do --cyan claro (0891b2), contraste seguro em branco */
+  --orgn-info-bg:      #e0f6fb;
+  --orgn-info-border:  #3b9fb5;
+  --orgn-success:      #047857;   /* contexto completo (4.76 sobre --orgn-success-bg) */
+  --orgn-success-bg:   #dcf5e4;
+  --orgn-success-border: #2f9e63;
+
+  --orgn-grid-line:    rgba(86, 94, 70, 0.10);
+  --orgn-backdrop:     rgba(26, 31, 16, 0.35);
+  --loading-veil:      rgba(245, 247, 239, 0.86);
+
+  /* Acentos vindos de dados: escurecer pra sobreviver ao fundo branco.
+     35% leva #f59e0b de 2.15:1 e #84cc16 de 1.98:1 para acima do mínimo,
+     preservando o matiz que identifica cada indústria/lente. */
+  --accent-shift-to: #000000;
+  --accent-shift:    35%;
+
+  /* PESTEL — tinta clara no fundo, texto na faixa 700/800 da mesma
+     matiz: badge-tx >= 4.5:1 sobre badge-bg, meta >= 4.5:1 sobre body-bg. */
+  --pestel-pol-bar: #0891b2; --pestel-pol-badge-bg: #cffafe; --pestel-pol-badge-tx: #155e75; --pestel-pol-body-bg: #ecfeff; --pestel-pol-body-bdr: #a5f3fc; --pestel-pol-meta: #0e7490; --pestel-pol-beam: #06b6d4;
+  --pestel-eco-bar: #2563eb; --pestel-eco-badge-bg: #dbeafe; --pestel-eco-badge-tx: #1e40af; --pestel-eco-body-bg: #eff6ff; --pestel-eco-body-bdr: #bfdbfe; --pestel-eco-meta: #1d4ed8; --pestel-eco-beam: #3b82f6;
+  --pestel-soc-bar: #d97706; --pestel-soc-badge-bg: #fef3c7; --pestel-soc-badge-tx: #92400e; --pestel-soc-body-bg: #fffbeb; --pestel-soc-body-bdr: #fde68a; --pestel-soc-meta: #92400e; --pestel-soc-beam: #f59e0b;
+  --pestel-tec-bar: #7c3aed; --pestel-tec-badge-bg: #ede9fe; --pestel-tec-badge-tx: #5b21b6; --pestel-tec-body-bg: #f5f3ff; --pestel-tec-body-bdr: #ddd6fe; --pestel-tec-meta: #6d28d9; --pestel-tec-beam: #8b5cf6;
+  --pestel-amb-bar: #65a30d; --pestel-amb-badge-bg: #ecfccb; --pestel-amb-badge-tx: #3f6212; --pestel-amb-body-bg: #f7fee7; --pestel-amb-body-bdr: #d9f99d; --pestel-amb-meta: #3f6212; --pestel-amb-beam: #84cc16;
+  --pestel-leg-bar: #ea580c; --pestel-leg-badge-bg: #ffedd5; --pestel-leg-badge-tx: #9a3412; --pestel-leg-body-bg: #fff7ed; --pestel-leg-body-bdr: #fed7aa; --pestel-leg-meta: #9a3412; --pestel-leg-beam: #f97316;
+
+  --pestel-zone-local:    #15803d;
+  --pestel-zone-national: #1d4ed8;
+  --pestel-zone-global:   #6d28d9;
+
+  --pestel-score-high-stroke: #dc2626; --pestel-score-high-text: #b91c1c;
+  --pestel-score-mid-stroke:  #d97706; --pestel-score-mid-text:  #92400e;
+  --pestel-score-low-stroke:  #16a34a; --pestel-score-low-text:  #166534;
+  --pestel-ring-track: #e2e8f0;
+
+  --pestel-alert-bg:   #fee2e2;
+  --pestel-alert-bdr:  #dc2626;
+  --pestel-alert-tx:   #991b1b;
+  --pestel-alert-dot:  #dc2626;
+  --pestel-scrim:      rgba(15, 23, 42, 0.45);
+
+  --pestel-ner-per:     #c2410c;
+  --pestel-ner-org:     #0e7490;
+  --pestel-ner-loc:     #047857;
+  --pestel-ner-sector:  #6d28d9;
+  --pestel-ner-keyword: #4d7c0f;
+}
+
+/* ── ONTOLOGY VIEWER — FLOATING PANELS, LIGHT THEME ──────────────────────
+ * Scope: the LAYOUT_ENGINE panel, its buttons, and the legend — the small
+ * surfaces that float over the graph. Nothing else.
+ *
+ * The problem in light mode: --bg-surface is #ffffff and --bg-canvas is
+ * #f0f4f6, so a floating panel is nearly invisible against the graph behind
+ * it, and --border-panel (#d4d4d4) does not read as a border. A warm
+ * (sepia) surface separates panel from canvas by hue as well as luminance,
+ * which survives the neutral greys of the graph itself.
+ *
+ * Deliberately NOT overriding --bg-canvas or the graph's text tokens: the
+ * canvas is the graph's own background and must stay as it is. Because the
+ * scope is limited to plain DOM, cytoscape (which resolves tokens through
+ * getCSSColor at render time, off document.documentElement) is untouched and
+ * needs no plumbing.
+ *
+ * Measured against #f2e8d5 (WCAG formula):
+ *   --border-panel  #8a7350   3.02:1  (non-text UI, WCAG 1.4.11 wants 3:1)
+ *   --text-primary  #2b2214  13.4:1
+ *   --text-secondary #453722   9.1:1
+ *   --text-dim      #5c4a2e    5.9:1  (10px uppercase — extra headroom)
+ *   --lime          #46690f    5.3:1
+ *   --cyan          #05687e    5.2:1
+ */
+[data-theme="light"] .onto-floating-panel {
+  --bg-surface:     #f2e8d5;
+  --border-panel:   #8a7350;
+  --text-primary:   #2b2214;
+  --text-secondary: #453722;
+  --text-dim:       #5c4a2e;
+  --text-ghost:     #6b5636;
+  --lime:           #46690f;
+  --cyan:           #05687e;
+  --cyan-trace:     rgba(5, 104, 126, 0.07);
+  --pink:           #a3155a;
+
+  /* The Tailwind-facing aliases have to be repeated. globals.css declares
+   * `--color-surface: var(--bg-surface)` inside @theme, i.e. on :root — and
+   * custom-property substitution resolves there, once. A descendant that
+   * redefines --bg-surface does not change the already-computed value the
+   * `bg-surface` utility inherits. Utilities written as an explicit
+   * `var(--token)` (like the border here) do follow the cascade, which is why
+   * the border picked up the sepia and the background did not. */
+  --color-surface:   #f2e8d5;
+  --color-primary:   #2b2214;
+  --color-secondary: #453722;
+  --color-dim:       #5c4a2e;
+  --color-lime:      #46690f;
+  --color-cyan:      #05687e;
+}
+
+/* ── Central de notificações ────────────────────────────────────
+ * Superfície do sino e do painel. São referências, então seguem o tema.
+ *
+ * O componente é reutilizável e recebe tema, escala e paleta por parâmetro
+ * (NotificationBell: `theme`, `fontScale`, `palette`). Para isso a raiz dele
+ * é `.notif-scope`: ali os --notif-* e os --text-* (bloco de tamanhos acima)
+ * são recalculados com o `data-theme` e a escala DELE, e não herdados já
+ * resolvidos do <html>. Sem parâmetro, herda o controle global.
+ *
+ *   .notif-scope             paleta geral (hub e demais telas)
+ *   .notif-scope.notif-orgn  paleta orgn (shell do inquiring) + boost 1.15
+ */
+:root,
+.notif-scope {
+  --notif-bg:            var(--bg-surface);
+  --notif-hover:         var(--bg-elevated);
+  --notif-avatar:        var(--bg-subtle);
+  --notif-text:          var(--text-primary);
+  --notif-text-2:        var(--text-secondary);
+  --notif-muted:         var(--text-muted);
+  --notif-border:        var(--border-base);
+  --notif-border-strong: var(--border-strong);
+  --notif-focus:         var(--cyan);
+  --notif-tab:           var(--lime);
+}
+.orgn-scope,
+.notif-scope.notif-orgn {
+  --notif-bg:            var(--orgn-surface);
+  --notif-hover:         var(--orgn-hover);
+  --notif-avatar:        var(--orgn-elevated-2);
+  --notif-text:          var(--orgn-text);
+  --notif-text-2:        var(--orgn-text-2);
+  --notif-muted:         var(--orgn-muted);
+  --notif-border:        var(--orgn-border);
+  --notif-border-strong: var(--orgn-border-strong);
+  --notif-focus:         var(--orgn-accent);
+  --notif-tab:           var(--orgn-accent);
+}
+/* Escala: `--notif-font-scale` (parâmetro) vence; sem ele, o fator global do
+ * usuário vezes o boost da paleta (orgn usa o mesmo 1.15 do shell). */
+.notif-scope {
+  --ui-font-scale: var(--notif-font-scale, calc(var(--ui-font-scale-user, 1) * var(--notif-font-boost, 1)));
+}
+.notif-scope.notif-orgn {
+  --notif-font-boost: 1.15;
+}
