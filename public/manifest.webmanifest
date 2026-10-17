@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "AB Markdown — Escriba",
-  "short_name": "AB Markdown",
+  "name": "Scriba — AB Markdown Editor",
+  "short_name": "Scriba",
   "description": "Editor Markdown local com rascunhos offline e sincronização Git. Powered by Aeon Bridge Co. — offered to community.",
   "lang": "pt-BR",
   "start_url": "/?source=pwa",

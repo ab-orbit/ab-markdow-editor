@@ -174,3 +174,17 @@ body { font-family: var(--font-ui); }
 .settings-action:hover { color: var(--lime); border-color: var(--lime); }
 .settings-action:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 @media (max-width: 600px) { .settings-actions > * { flex: 1 1 100%; width: 100%; } }
+
+.notes-heading .about-trigger { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 6px; border-radius: var(--radius-sm); }
+.notes-heading .about-trigger:hover { background: var(--bg-elevated); }
+.about-trigger .notes-logo { width: 30px; height: 30px; flex-basis: 30px; }
+.about-scriba { max-width: 560px; margin: 0 auto; padding: 12px 8px 20px; font-family: var(--font-ui); line-height: 1.65; }
+.about-scriba > img { display: block; margin: 0 auto 16px; border-radius: var(--radius-sm); }
+.about-scriba h1, .about-subtitle { text-align: center; margin: 4px 0; }
+.about-scriba h1 { font-size: 32px; }
+.about-subtitle { color: var(--text-muted); }
+.about-scriba dl { border-top: 1px solid var(--border-panel); border-bottom: 1px solid var(--border-panel); padding: 12px 0; }
+.about-scriba dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; margin: 8px 0; }
+.about-scriba dt { color: var(--text-muted); }
+.about-scriba dd { margin: 0; }
+.about-scriba a { color: var(--cyan); overflow-wrap: anywhere; }

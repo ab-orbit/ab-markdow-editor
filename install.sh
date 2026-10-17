@@ -39,7 +39,7 @@ echo 'Instalando dependências e compilando o editor…'
 "$NPM_BIN" ci --no-audit --no-fund
 "$NPM_BIN" run build
 
-APP_DIR="$WORK_DIR/AB Markdown.app"
+APP_DIR="$WORK_DIR/Scriba.app"
 RESOURCES="$APP_DIR/Contents/Resources"
 /usr/bin/osacompile -o "$APP_DIR" "$SOURCE_DIR/scripts/launcher.applescript"
 mkdir -p "$RESOURCES/scripts"
@@ -52,11 +52,11 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>CFBundleName</key><string>AB Markdown</string>
-<key>CFBundleDisplayName</key><string>AB Markdown</string>
+<key>CFBundleName</key><string>Scriba</string>
+<key>CFBundleDisplayName</key><string>Scriba</string>
 <key>CFBundleIdentifier</key><string>com.aeonbridge.markdown</string>
-<key>CFBundleVersion</key><string>1.0.0</string>
-<key>CFBundleShortVersionString</key><string>1.0.0</string>
+<key>CFBundleVersion</key><string>1.1.0</string>
+<key>CFBundleShortVersionString</key><string>1.1.0</string>
 <key>CFBundleExecutable</key><string>droplet</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>
@@ -87,7 +87,15 @@ iconutil -c icns "$WORK_DIR/AppIcon.iconset" -o "$RESOURCES/AppIcon.icns"
 plutil -lint "$APP_DIR/Contents/Info.plist"
 
 # Replace only our own application and desktop link; never remove unrelated files.
-TARGET_APP="$APPLICATIONS_DIR/AB Markdown.app"
+TARGET_APP="$APPLICATIONS_DIR/Scriba.app"
+# Migrate the previous product name while retaining the bundle ID and private state.
+LEGACY_APP="$APPLICATIONS_DIR/AB Markdown.app"
+if [[ ! -e "$TARGET_APP" && -d "$LEGACY_APP" ]] && [[ "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$LEGACY_APP/Contents/Info.plist" 2>/dev/null || true)" == com.aeonbridge.markdown ]]; then
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "$LEGACY_APP" || true
+  LEGACY_ALIAS="$DESKTOP_DIR/AB Markdown.app"
+  if [[ -e "$LEGACY_ALIAS" ]] && /usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/create-desktop-alias.jxa.js" "$LEGACY_APP" "$LEGACY_ALIAS" --check; then rm "$LEGACY_ALIAS"; fi
+  mv "$LEGACY_APP" "$TARGET_APP"
+fi
 if [[ -e "$TARGET_APP" ]]; then
   APP_ID=$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$TARGET_APP/Contents/Info.plist" 2>/dev/null || true)
   [[ "$APP_ID" == com.aeonbridge.markdown ]] || { echo "Já existe outro aplicativo em $TARGET_APP" >&2; exit 1; }
@@ -95,8 +103,9 @@ if [[ -e "$TARGET_APP" ]]; then
   rm -rf "$TARGET_APP"
 fi
 mv "$APP_DIR" "$TARGET_APP"
+/usr/bin/codesign --force --deep --sign - "$TARGET_APP"
 /usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/set-finder-icon.jxa.js" "$TARGET_APP/Contents/Resources/AppIcon.icns" "$TARGET_APP"
-DESKTOP_LINK="$DESKTOP_DIR/AB Markdown.app"
+DESKTOP_LINK="$DESKTOP_DIR/Scriba.app"
 if [[ -L "$DESKTOP_LINK" ]]; then
   [[ "$(readlink "$DESKTOP_LINK")" == "$TARGET_APP" ]] || { echo "Já existe outro atalho em $DESKTOP_LINK" >&2; exit 1; }
   rm "$DESKTOP_LINK"
@@ -105,7 +114,6 @@ elif [[ -e "$DESKTOP_LINK" ]]; then
 fi
 /usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/create-desktop-alias.jxa.js" "$TARGET_APP" "$DESKTOP_LINK"
 touch "$TARGET_APP"
-/usr/bin/codesign --force --deep --sign - "$TARGET_APP"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$TARGET_APP"
 echo "Instalado: $TARGET_APP"
 echo "Ícone na Mesa: $DESKTOP_LINK"

@@ -107,6 +107,7 @@ async function encodeAsset(asset: MarkdownAsset) {
 }
 function App() {
   const pwa = usePwa();
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [deviceFolder, setDeviceFolder] = useState('');
   useEffect(() => {if(browserMode)void folderLabel().then(setDeviceFolder);}, []);
   async function importDeviceNotes() {await api('folder/import',{});await refresh();return (await api<string[]>('files')).length;}
@@ -360,10 +361,11 @@ function App() {
   });
   const statusMessages = <>{error && <div role="alert" className="error toast">{error}<button aria-label="Dispensar erro" onClick={() => setError('')}><X size={18}/></button></div>}{notice && <p role="status" className="notice toast">{notice}</p>}</>;
   return <main aria-busy={busy} className="editor-app">
+    {aboutOpen && <EditorDialog title="Sobre o Scriba" onClose={() => setAboutOpen(false)}><div className="about-scriba"><img src="/icons/profile-v3/scribe-180.png" width="96" height="96" alt="Escriba egípcio, símbolo do Scriba"/><h1>Scriba</h1><p className="about-subtitle">AB Markdown Editor</p><p>Scriba vem do latim e significa escriba: quem registra e preserva a palavra escrita. O escriba egípcio da nossa marca representa esse cuidado com suas ideias — agora em notas Markdown que continuam suas.</p><dl><div><dt>Versão</dt><dd>{__APP_VERSION__}</dd></div><div><dt>Compilação</dt><dd><time dateTime={__BUILD_DATE__}>{new Date(__BUILD_DATE__).toLocaleDateString('pt-BR')}</time></dd></div><div><dt>Edição</dt><dd>{browserMode ? 'Web / PWA' : 'Local para Mac'}</dd></div><div><dt>Desenvolvido por</dt><dd>Aeon Bridge Co.</dd></div></dl><p>Powered by Aeon Bridge Co. — offered to community.</p><a href="https://github.com/ab-orbit/ab-markdow-editor" target="_blank" rel="noopener noreferrer">Código-fonte e documentação</a></div></EditorDialog>}
     {settingsOpen && <EditorDialog title="Configurações" onClose={() => setSettingsOpen(false)}>
     <div className="settings-content">
     <section className="pwa-settings" aria-label="Aplicativo PWA">
-      <div className="pwa-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>AB Markdown — Escriba</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
+      <div className="pwa-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>Scriba · AB Markdown Editor</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
       {pwa.canInstall && <button type="button" onClick={() => void pwa.install()}><Download size={18}/>Instalar aplicativo</button>}
       {!pwa.canInstall && !pwa.standalone && <p>Use a opção de instalar aplicativo do navegador. No Safari do Mac, use Arquivo → Adicionar ao Dock.</p>}
       <p>{browserMode ? 'Notas e imagens ficam somente neste navegador e dispositivo, sem envio ao servidor. Limpar os dados do site remove as notas. Exporte ZIPs para backup. Git remoto por usuário e Google Drive estão previstos; a versão local para Mac já oferece Git.' : 'Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.'}</p>
@@ -418,7 +420,7 @@ function App() {
     {!settingsOpen && statusMessages}
     <div className="editor-layout">
     {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
-      <div className="notes-heading"><img className="notes-logo" src={brandIcon} width="24" height="24" alt="Escriba egípcio — AB Markdown"/><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length + visiblePinned.length} resultados` : `${recentNotes.length + pinnedNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || (offline && !browserMode)} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
+      <div className="notes-heading"><button type="button" className="about-trigger" aria-label="Sobre o Scriba" title="Sobre o Scriba" onClick={() => setAboutOpen(true)}><img className="notes-logo" src={brandIcon} width="24" height="24" alt=""/></button><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length + visiblePinned.length} resultados` : `${recentNotes.length + pinnedNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || (offline && !browserMode)} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
       <label className="notes-search"><Search size={16} aria-hidden="true"/><input type="search" aria-label="Buscar nas notas recentes" placeholder="Buscar notas…" value={noteSearch} onChange={event => setNoteSearch(event.target.value)}/></label>
       {query && !visibleNotes.length && !visiblePinned.length && <p className="notes-empty">Nenhuma nota encontrada.</p>}
       <button className="new-note" type="button" disabled={busy || !draftReady} onClick={() => { if (discard()) { resetDocument(); if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false); } }}><FilePlus2 size={18}/>Nova nota</button>
