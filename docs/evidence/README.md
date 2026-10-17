@@ -59,3 +59,15 @@ Texto e imagem preservados após recarregamento sem conexão; exportação ZIP v
 ![Configurações PWA desktop](desktop-pwa-install-settings.png)
 
 ![Configurações PWA celular](mobile-pwa-install-settings.png)
+
+## Logo no editor e 100 notas recentes
+
+Repositório sintético com 105 notas: a barra lateral limita a lista às 100 mais recentes. A nota salva sobe ao topo; trocar com alterações pendentes solicita confirmação. Cabeçalho com logo e botão para recolher a lista. No celular a lista inicia fechada.
+
+![Desktop com logo e notas, escuro](desktop-recent-notes-dark.png)
+
+![Desktop com logo e notas, claro](desktop-recent-notes-light.png)
+
+![Celular com notas, escuro](mobile-recent-notes-dark.png)
+
+![Celular com notas, claro](mobile-recent-notes-light.png)

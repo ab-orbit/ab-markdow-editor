@@ -1,6 +1,6 @@
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
 import { usePwa } from './usePwa';
 import { authorizedFetch } from './lib/session';
@@ -11,6 +11,13 @@ import './tokens.css';
 import './style.css';
 
 declare global { interface Window { /** Per-process local API capability injected by the server. */ __MARKDOWN_TOKEN__: string } }
+interface RecentNote {
+  /** Safe repository-relative path used when opening a note. */
+  name: string;
+  /** File modification time in ISO format, newest first. */
+  modifiedAt: string;
+}
+const brandIcon = '/icons/profile-v3/scribe-64.png';
 interface RepositoryInfo {
   /** Absolute checkout root on this Mac, or null before configuration. */
   repository: string | null;
@@ -101,6 +108,8 @@ function App() {
   const [url, setUrl] = useState('');
   const [destination, setDestination] = useState('');
   const [files, setFiles] = useState<string[]>([]);
+  const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
+  const [notesOpen, setNotesOpen] = useState(() => window.matchMedia('(min-width: 900px)').matches);
   const [selected, setSelected] = useState('');
   const [name, setName] = useState('documento.md');
   const [loadedName, setLoadedName] = useState('documento.md');
@@ -131,6 +140,7 @@ function App() {
   async function refresh() {
     const info = await api<RepositoryInfo>('repository'); setRepository(info);
     setFiles(info.repository ? await api<string[]>('files') : []);
+    setRecentNotes(info.repository ? await api<RecentNote[]>('recent') : []);
     return info;
   }
   useEffect(() => {
@@ -156,6 +166,7 @@ function App() {
           setSettingsOpen(true);
         } else {
           setRepository(info); setFiles(info.repository ? await api<string[]>('files') : []);
+          setRecentNotes(info.repository ? await api<RecentNote[]>('recent') : []);
           if (!info.repository) setSettingsOpen(true);
         }
         if (!active) return;
@@ -223,6 +234,16 @@ function App() {
     setValue(text); setBaseline(text); setName(fileName); setLoadedName(fileName); setVersion(hash);
     setImportedVersion(null); setConflict(null); setPendingSync(false); restoringAssets.current = attached.length > 0; setAssets(attached.map(asset => ({...asset,url:''}))); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
   }
+  async function openNote(fileName: string) {
+    if (!discard()) return;
+    await run(async () => {
+      const doc = await api<LoadedDocument>(`document?name=${encodeURIComponent(fileName)}`);
+      const attached = doc.files.map(file => ({ path: file.path, file: new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, { type: file.mime }) }));
+      resetDocument(doc.value, fileName, doc.version, attached); setSelected(fileName); setSettingsOpen(false);
+      if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false);
+      setNotice(doc.warnings.length ? `Aberto com avisos: ${doc.warnings.join('; ')}` : 'Documento aberto.');
+    });
+  }
   async function registerImport(source: string, fileName: string) {
     await run(async () => {
       const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
@@ -274,10 +295,14 @@ function App() {
   });
   const statusMessages = <>{error && <div role="alert" className="error toast">{error}<button aria-label="Dispensar erro" onClick={() => setError('')}><X size={18}/></button></div>}{notice && <p role="status" className="notice toast">{notice}</p>}</>;
   return <main aria-busy={busy} className="editor-app">
+    <header className="editor-brandbar">
+      <div className="editor-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio — AB Markdown"/><div><strong>AB Markdown</strong><span>Escriba</span></div></div>
+      <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} onClick={() => setNotesOpen(open => !open)}><PanelLeft size={20}/>Notas</button>
+    </header>
     {settingsOpen && <EditorDialog title="Configurações" onClose={() => setSettingsOpen(false)}>
     <div className="settings-content">
     <section className="pwa-settings" aria-label="Aplicativo PWA">
-      <div className="pwa-brand"><img src="/icons/scribe-64.png" width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>AB Markdown — Escriba</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
+      <div className="pwa-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>AB Markdown — Escriba</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
       {pwa.canInstall && <button type="button" onClick={() => void pwa.install()}><Download size={18}/>Instalar aplicativo</button>}
       {!pwa.canInstall && !pwa.standalone && <p>Use a opção de instalar aplicativo do navegador. No Safari do Mac, use Arquivo → Adicionar ao Dock.</p>}
       <p>Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.</p>
@@ -292,7 +317,7 @@ function App() {
       {repository.status && <pre aria-label="Alterações no repositório">{repository.status}</pre>}</fieldset>
     </details>
     <fieldset className="document-controls" disabled={busy}>
-      <div className="row"><label className="grow">Arquivos do repositório<select aria-label="Arquivos do repositório" value={selected} onChange={event => setSelected(event.target.value)}><option value="">Selecione um Markdown</option>{files.map(file => <option key={file} value={file}>{file}</option>)}</select></label><button disabled={!selected || !repository.repository} onClick={() => { if (!discard()) return; void run(async () => { const doc = await api<LoadedDocument>(`document?name=${encodeURIComponent(selected)}`); const attached = doc.files.map(file => ({ path: file.path, file: new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, { type: file.mime }) })); resetDocument(doc.value, selected, doc.version, attached); setSettingsOpen(false); setNotice(doc.warnings.length ? `Aberto com avisos: ${doc.warnings.join('; ')}` : 'Documento aberto.'); }); }}>Abrir do repositório</button><button onClick={() => { if (discard()) { resetDocument(); setSettingsOpen(false); } }}><FilePlus2 size={18}/>Novo</button></div>
+      <div className="row"><label className="grow">Arquivos do repositório<select aria-label="Arquivos do repositório" value={selected} onChange={event => setSelected(event.target.value)}><option value="">Selecione um Markdown</option>{files.map(file => <option key={file} value={file}>{file}</option>)}</select></label><button disabled={!selected || !repository.repository} onClick={() => void openNote(selected)}>Abrir do repositório</button><button onClick={() => { if (discard()) { resetDocument(); setSettingsOpen(false); } }}><FilePlus2 size={18}/>Novo</button></div>
       <div className="row"><label className="grow">Caminho do arquivo no repositório<input value={name} onChange={event => setName(event.target.value)} placeholder="notas/documento.md"/></label><button disabled={!repository.repository} onClick={() => requestSave()}><Save size={18}/>Salvar no repositório</button></div>
       {pendingSync && <button disabled={!repository.repository} onClick={() => requestSave()}><Upload size={18}/>Tentar sincronizar novamente</button>}
       <p>{busy ? 'Salvando e sincronizando…' : pendingSync ? 'Arquivo local salvo; sincronização pendente.' : dirty ? 'Há alterações não salvas.' : 'Documento salvo.'} Salvar grava o arquivo, cria o commit e envia ao remoto.</p>
@@ -328,11 +353,20 @@ function App() {
       </form>
     </EditorDialog>}
     {!settingsOpen && statusMessages}
+    <div className="editor-layout">
+    {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
+      <div className="notes-heading"><div><h2>Notas recentes</h2><p>Últimas {recentNotes.length} · por alteração</p></div><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || offline} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
+      <button className="new-note" type="button" disabled={busy || !draftReady} onClick={() => { if (discard()) { resetDocument(); if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false); } }}><FilePlus2 size={18}/>Nova nota</button>
+      {!repository.repository && <p className="notes-empty">Conecte um repositório nas configurações para listar suas notas.</p>}
+      {repository.repository && !recentNotes.length && <p className="notes-empty">{offline ? 'Abra o aplicativo local para carregar a lista.' : 'Nenhuma nota Markdown encontrada.'}</p>}
+      <nav aria-label="100 notas mais recentes"><ol>{recentNotes.map(note => <li key={note.name}><button type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} onClick={() => void openNote(note.name)}><FileText size={16}/><span><strong>{note.name.split('/').at(-1)}</strong>{note.name.includes('/') && <small>{note.name.slice(0, note.name.lastIndexOf('/'))}</small>}<time dateTime={note.modifiedAt}>{new Date(note.modifiedAt).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}</time></span></button></li>)}</ol></nav>
+    </aside>}
     <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/>Offline</span>}
       {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></fieldset>
+    </div>
   </main>;
 }
 createRoot(document.getElementById('root')!).render(<StrictMode><App/></StrictMode>);

@@ -34,6 +34,7 @@ const server = http.createServer(async (req, res) => {
       if (req.method === 'GET') {
         if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());
+        if (url.pathname === '/api/recent') return send(res, 200, await repository.recent());
         if (url.pathname === '/api/files') return send(res, 200, await repository.list());
         if (url.pathname === '/api/document') return send(res, 200, await repository.read(url.searchParams.get('name')));
       }

@@ -129,6 +129,25 @@ export class Repository {
     return [...new Set(stdout.split('\0').filter(name => /\.(md|markdown|mdown)$/i.test(name)))].sort();
   }
 
+  /** Most recently modified Markdown files in this checkout, including untracked notes. */
+  async recent() {
+    const root = this.requireRoot();
+    const names = await this.list();
+    const notes = [];
+    // Bound filesystem concurrency for repositories with many notes.
+    for (let offset = 0; offset < names.length; offset += 32) {
+      const batch = await Promise.all(names.slice(offset, offset + 32).map(async name => {
+        try {
+          const filename = await safeFile(root, name);
+          const stat = await fs.stat(filename);
+          return stat.isFile() ? { name, modifiedAt: stat.mtime.toISOString() } : null;
+        } catch { return null; } // Deleted files and unsafe symlinks are not openable notes.
+      }));
+      notes.push(...batch.filter(Boolean));
+    }
+    return notes.sort((a, b) => b.modifiedAt.localeCompare(a.modifiedAt) || a.name.localeCompare(b.name)).slice(0, 100);
+  }
+
   async read(name) {
     markdownName(name);
     const root = this.requireRoot();

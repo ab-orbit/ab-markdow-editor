@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync, mkdtempSync, rmSync, copyFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdtempSync, rmSync, copyFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -22,3 +22,10 @@ const header=Buffer.alloc(6+16*sizes.length);header.writeUInt16LE(1,2);header.wr
 let offset=header.length;
 images.forEach((bytes,i)=>{const entry=6+i*16;header[entry]=sizes[i];header[entry+1]=sizes[i];header.writeUInt16LE(1,entry+4);header.writeUInt16LE(32,entry+6);header.writeUInt32LE(bytes.length,entry+8);header.writeUInt32LE(offset,entry+12);offset+=bytes.length;});
 writeFileSync(fileURLToPath(new URL('../public/favicon.ico',import.meta.url)),Buffer.concat([header,...images]));
+
+// A new URL bypasses favicon and older service-worker caches after a brand update.
+const versioned = path.join(icons, 'profile-v3');
+mkdirSync(versioned, { recursive: true });
+for (const size of [16,32,48,64,180,192,512,1024]) copyFileSync(path.join(icons, `scribe-${size}.png`), path.join(versioned, `scribe-${size}.png`));
+for (const size of [192,512]) copyFileSync(path.join(icons, `scribe-maskable-${size}.png`), path.join(versioned, `scribe-maskable-${size}.png`));
+copyFileSync(fileURLToPath(new URL('../public/favicon.ico',import.meta.url)),path.join(versioned,'favicon.ico'));

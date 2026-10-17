@@ -79,3 +79,9 @@ O ícone representa um escriba egípcio nas cores do SPHINX: azul profundo, lara
 Nas configurações, use **Instalar aplicativo** quando disponível; no Safari do Mac, **Arquivo → Adicionar ao Dock**. Depois do primeiro acesso, o editor abre offline e recupera automaticamente texto e imagens em rascunhos locais do navegador. A exportação também funciona offline. Para salvar no repositório e sincronizar Git, mantenha o serviço local aberto pelo ícone da Mesa; o push precisa de conexão ao remoto. O endereço local permanece em `http://127.0.0.1:43127`.
 
 Veja [funcionamento e limites da PWA](docs/PWA.md) e [origem do ícone](docs/ICON.md).
+
+## Notas recentes
+
+A barra lateral lista as **100 notas Markdown mais recentemente alteradas** no repositório conectado, com nome, pasta e data. Clique para abrir; edições pendentes pedem confirmação antes da troca. O salvamento atualiza a ordem, e o botão de atualização relê mudanças feitas fora do editor. **Nova nota** inicia um documento. O botão **Notas** mostra ou recolhe a lista; no celular ela começa recolhida.
+
+A logo aparece no cabeçalho do editor. Favicon e ícones PWA usam URLs novas para substituir versões antigas em cache. Em uma aba que já estava aberta durante a atualização, recarregue para carregar a interface nova; rascunhos são recuperados pelo navegador.

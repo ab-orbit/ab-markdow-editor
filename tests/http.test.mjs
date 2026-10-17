@@ -239,3 +239,15 @@ test('an offline draft cannot save into a different configured checkout', async 
   const result=await request('save-sync',{repository:path.join(temporary,'other'),name:'wrong-checkout.md',value:'# Preserve',version:null});
   assert.equal(result.status,400);assert.match(result.body.error,/repositório mudou/);await assert.rejects(fs.access(path.join(checkout,'wrong-checkout.md')));
 });
+
+test('recent notes returns the latest 100 safe existing Markdown paths by file modification time', async () => {
+  await request('connect', {directory:checkout});
+  const folder=path.join(checkout,'recent-test');await fs.mkdir(folder);
+  try {
+    for(let i=0;i<105;i++) {const filename=path.join(folder,`note-${String(i).padStart(3,'0')}.md`);await fs.writeFile(filename,`# ${i}`);const time=new Date(Date.now()+100000+i*1000);await fs.utimes(filename,time,time);}
+    await fs.symlink(path.join(folder,'note-104.md'),path.join(folder,'unsafe.md'));
+    const response=await request('recent');assert.equal(response.status,200);assert.equal(response.body.length,100);
+    assert.equal(response.body[0].name,'recent-test/note-104.md');assert.equal(response.body[99].name,'recent-test/note-005.md');
+    assert.ok(response.body.every(note=>Number.isFinite(Date.parse(note.modifiedAt))));
+  } finally {await fs.rm(folder,{recursive:true,force:true});}
+});
