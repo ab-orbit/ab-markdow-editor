@@ -94,11 +94,9 @@ if [[ -L "$DESKTOP_LINK" ]]; then
   [[ "$(readlink "$DESKTOP_LINK")" == "$TARGET_APP" ]] || { echo "Já existe outro atalho em $DESKTOP_LINK" >&2; exit 1; }
   rm "$DESKTOP_LINK"
 elif [[ -e "$DESKTOP_LINK" ]]; then
-  echo "Já existe um arquivo em $DESKTOP_LINK. O aplicativo foi instalado em $TARGET_APP." >&2
-  exit 1
+  /usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/create-desktop-alias.jxa.js" "$TARGET_APP" "$DESKTOP_LINK" --check || { echo "Já existe outro arquivo em $DESKTOP_LINK." >&2; exit 1; }
 fi
-ln -s "$TARGET_APP" "$DESKTOP_LINK"
-/usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/set-finder-icon.jxa.js" "$TARGET_APP/Contents/Resources/AppIcon.icns" "$DESKTOP_LINK"
+/usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/create-desktop-alias.jxa.js" "$TARGET_APP" "$DESKTOP_LINK"
 touch "$TARGET_APP"
 echo "Instalado: $TARGET_APP"
 echo "Ícone na Mesa: $DESKTOP_LINK"

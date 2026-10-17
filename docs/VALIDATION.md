@@ -30,3 +30,5 @@ Verificação adicional no aplicativo instalado em `127.0.0.1:43127`, com perfil
 ### Ícone do Finder após atualização
 
 Trocar apenas `AppIcon.icns` não atualizou o ícone apresentado pelo atalho existente. O instalador agora aplica a arte pelo `NSWorkspace.setIcon` ao bundle e ao atalho recém-criado, notificando a mudança ao Finder. Correção executada no Mac e conferida visualmente em **Obter Informações** do atalho da Mesa: miniatura e prévia mostram o escriba azul/laranja. Nenhum reinício do Finder ou limpeza global de cache foi necessário.
+
+A verificação posterior em lista revelou que o link simbólico ainda podia aparecer como pasta em outra janela do Finder. O instalador passou a criar um **alias nativo (bookmark do macOS)**, com ícone próprio. Validado na linha AB Markdown da lista da Mesa: escriba visível. Testadas criação/recriação do alias, resolução para o aplicativo correto e rejeição de um arquivo alheio sem alteração do conteúdo.
