@@ -87,3 +87,5 @@ A barra lateral lista as **100 notas Markdown mais recentemente alteradas** no r
 A logo aparece no cabeçalho do editor. Favicon e ícones PWA usam URLs novas para substituir versões antigas em cache. Em uma aba que já estava aberta durante a atualização, recarregue para carregar a interface nova; rascunhos são recuperados pelo navegador.
 
 O layout usa a altura inteira da janela: lista e documento rolam separadamente. A lateral mostra o título Markdown, um trecho e a data da nota; nomes longos são limitados a duas linhas. A barra principal usa ícones com rótulos acessíveis. Clique em **T (Formatação)** para abrir ou recolher as ferramentas de edição. No celular, a lista abre sobre o documento e fecha ao escolher uma nota.
+
+A faixa superior foi removida: o documento e a lateral começam no topo da janela. O controle **Notas recentes** fica na barra do editor. A busca na lateral filtra as 100 notas carregadas por título, trecho e caminho do arquivo, sem diferenciar maiúsculas ou acentos. Limpar a busca restaura a lista; ela não pesquisa o conteúdo completo de todas as notas do repositório.

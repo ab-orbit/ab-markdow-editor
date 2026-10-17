@@ -1,6 +1,6 @@
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
 import { usePwa } from './usePwa';
 import { authorizedFetch } from './lib/session';
@@ -112,6 +112,10 @@ function App() {
   const [destination, setDestination] = useState('');
   const [files, setFiles] = useState<string[]>([]);
   const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
+  const [noteSearch, setNoteSearch] = useState('');
+  const normalizeSearch = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+  const query = normalizeSearch(noteSearch.trim());
+  const visibleNotes = recentNotes.filter(note => !query || normalizeSearch(`${note.name} ${note.title || ''} ${note.preview || ''}`).includes(query));
   const [notesOpen, setNotesOpen] = useState(() => window.matchMedia('(min-width: 900px)').matches);
   const [selected, setSelected] = useState('');
   const [name, setName] = useState('documento.md');
@@ -298,10 +302,6 @@ function App() {
   });
   const statusMessages = <>{error && <div role="alert" className="error toast">{error}<button aria-label="Dispensar erro" onClick={() => setError('')}><X size={18}/></button></div>}{notice && <p role="status" className="notice toast">{notice}</p>}</>;
   return <main aria-busy={busy} className="editor-app">
-    <header className="editor-brandbar">
-      <div className="editor-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio — AB Markdown"/><div><strong>AB Markdown</strong><span>Escriba</span></div></div>
-      <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/><span className="notes-toggle-label">Notas</span></button>
-    </header>
     {settingsOpen && <EditorDialog title="Configurações" onClose={() => setSettingsOpen(false)}>
     <div className="settings-content">
     <section className="pwa-settings" aria-label="Aplicativo PWA">
@@ -358,13 +358,16 @@ function App() {
     {!settingsOpen && statusMessages}
     <div className="editor-layout">
     {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
-      <div className="notes-heading"><div><h2>Notas recentes</h2><p>{recentNotes.length} notas</p></div><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || offline} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
+      <div className="notes-heading"><img className="notes-logo" src={brandIcon} width="24" height="24" alt="Escriba egípcio — AB Markdown"/><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length} de ${recentNotes.length}` : `${recentNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || offline} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
+      <label className="notes-search"><Search size={16} aria-hidden="true"/><input type="search" aria-label="Buscar nas notas recentes" placeholder="Buscar notas…" value={noteSearch} onChange={event => setNoteSearch(event.target.value)}/></label>
+      {query && !visibleNotes.length && <p className="notes-empty">Nenhuma nota encontrada.</p>}
       <button className="new-note" type="button" disabled={busy || !draftReady} onClick={() => { if (discard()) { resetDocument(); if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false); } }}><FilePlus2 size={18}/>Nova nota</button>
       {!repository.repository && <p className="notes-empty">Conecte um repositório nas configurações para listar suas notas.</p>}
       {repository.repository && !recentNotes.length && <p className="notes-empty">{offline ? 'Abra o aplicativo local para carregar a lista.' : 'Nenhuma nota Markdown encontrada.'}</p>}
-      <nav aria-label="100 notas mais recentes"><ol>{recentNotes.map(note => <li key={note.name}><button type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><FileText size={16}/><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}{note.name.includes('/') && <small>{note.name.slice(0, note.name.lastIndexOf('/'))}</small>}<time dateTime={note.modifiedAt}>{new Date(note.modifiedAt).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}</time></span></button></li>)}</ol></nav>
+      <nav aria-label="100 notas mais recentes"><ol>{visibleNotes.map(note => <li key={note.name}><button type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><FileText size={16}/><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}{note.name.includes('/') && <small>{note.name.slice(0, note.name.lastIndexOf('/'))}</small>}<time dateTime={note.modifiedAt}>{new Date(note.modifiedAt).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})}</time></span></button></li>)}</ol></nav>
     </aside>}
     <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench compact key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
+      <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/>Offline</span>}
       {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>

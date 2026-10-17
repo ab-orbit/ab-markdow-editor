@@ -126,3 +126,13 @@ textarea { font: inherit; font-size: 16px; color: var(--text-primary); backgroun
  .editor-brandbar > button { min-height: 44px; min-width: 44px; }
  .notes-heading button, .new-note { min-height: 44px; }
 }
+
+.notes-heading { gap: 8px; }
+.notes-heading > div { flex: 1; }
+.notes-logo { flex: 0 0 24px; border-radius: var(--radius-sm); }
+.notes-search { position: relative; display: flex; flex-direction: row; align-items: center; margin-top: 8px; }
+.notes-search svg { position: absolute; left: 8px; color: var(--text-muted); pointer-events: none; }
+.notes-search input { min-height: 34px; padding: 6px 8px 6px 30px; font-size: 13px; background: var(--bg-input); }
+@media (max-width: 899px) { .notes-search input { min-height: 44px; font-size: 16px; } }
+.notes-heading .close-notes { display: none; }
+@media (max-width: 899px) { .notes-heading .close-notes { display: inline-flex; min-width: 44px; min-height: 44px; } }

@@ -45,3 +45,7 @@ Jornadas desktop/mobile criam 105 notas, verificam exatamente 100 entradas orden
 Cabeçalho reduzido de 96 para 48 px; lateral de 264 para 220 px; barras de ajuda removidas visualmente e formatação recolhida por padrão. Importação/exportação mantêm nomes acessíveis e dicas, usando botões de ícone. Lista e documento têm rolagem independente e o shell cabe em 100dvh, sem rolagem da página. A lista usa título do Markdown e trecho textual obtidos de até 8 KB por arquivo, com leitura em lotes de 32; conteúdo aparece como texto, sem execução de HTML.
 
 As 8 jornadas de navegador passaram nos dois tamanhos, incluindo abrir/recolher formatação, lista com título/trecho, limite de altura da janela e os fluxos anteriores de edição/Git/offline. Os 24 testes HTTP também passaram. Capturas atualizadas nos temas claro e escuro.
+
+## Remoção da faixa superior e busca
+
+Faixa de marca acima do workspace removida; logo mantida apenas no cabeçalho da lista. Controle da lateral transferido para a barra do editor. Busca local por título, trecho e nome/caminho das 100 notas recentes, com normalização de caixa e acentos, contagem de resultados e estado vazio. Jornadas desktop/mobile verificam título em maiúsculas, busca sem acento, nome do arquivo, resultado inexistente e restauração das 100 entradas ao limpar.
