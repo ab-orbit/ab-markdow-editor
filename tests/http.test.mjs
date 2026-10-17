@@ -51,9 +51,9 @@ test('saves and reopens nested Markdown and raster assets', async () => {
   assert.match(opened.body.value, /# Saved/);
 });
 test('refuses overwrite when destination already exists or was changed externally', async () => {
-  assert.equal((await request('save', { name: 'README.md', value: 'overwrite', version: null })).status, 400);
+  assert.equal((await request('save', { name: 'README.md', value: 'overwrite', version: null })).status, 409);
   const old = await request('document?name=README.md'); await fs.writeFile(path.join(checkout, 'README.md'), '# External change');
-  const conflict = await request('save', { name: 'README.md', value: 'lost update', version: old.body.version }); assert.match(conflict.body.error, /Conflito/);
+  const conflict = await request('save', { name: 'README.md', value: 'lost update', version: old.body.version }); assert.equal(conflict.status, 409); assert.equal(conflict.body.conflict.kind, 'modified');
   assert.equal(await fs.readFile(path.join(checkout, 'README.md'), 'utf8'), '# External change');
 });
 test('rejects traversal, Git metadata, invalid images and symlinks', async () => {
@@ -66,7 +66,7 @@ test('rejects traversal, Git metadata, invalid images and symlinks', async () =>
 test('serializes concurrent saves and reports a conflict instead of losing an edit', async () => {
   const body = { name: 'race.md', value: '# First', version: null };
   const results = await Promise.all([request('save', body), request('save', { ...body, value: '# Second' })]);
-  assert.deepEqual(results.map(r => r.status).sort(), [200, 400]);
+  assert.deepEqual(results.map(r => r.status).sort(), [200, 409]);
 });
 test('commits only document and assets, pushes to real bare remote', async () => {
   const result = await request('commit', { name: 'notes/test.md', message: 'Save document', assets: ['assets/pixel.png'] }); assert.equal(result.status, 200, result.body.error);
@@ -174,4 +174,50 @@ test('save preferences validate the interval, survive reconnect and a fresh serv
     const response = await fetch(`${address}/api/preferences`, { headers: { Authorization: `Bearer ${capability}` } });
     assert.deepEqual(await response.json(), preferences);
   } finally { second.kill(); await new Promise(resolve => second.once('exit', resolve)); }
+});
+
+test('an imported original hash binds edits to an existing file without a blind overwrite', async () => {
+  const original = '# Imported original\n';
+  await fs.writeFile(path.join(checkout, 'imported.md'), original);
+  const opened = await request('document?name=imported.md');
+  const saved = await request('save-sync', {name:'imported.md',value:'# Imported and edited\n',version:null,baseVersion:opened.body.version});
+  assert.equal(saved.body.synced,true,saved.body.error);
+  assert.equal(await git(remote,'show','main:imported.md'),'# Imported and edited');
+  const stale = await request('save-sync',{name:'imported.md',value:'stale imported edit',version:null,baseVersion:opened.body.version});
+  assert.equal(stale.status,409); assert.equal(stale.body.code,'DOCUMENT_CONFLICT'); assert.equal(stale.body.conflict.kind,'exists');
+  assert.equal(await fs.readFile(path.join(checkout,'imported.md'),'utf8'),'# Imported and edited\n');
+});
+
+test('a repeated identical save is safe even if the browser lost the preceding response', async () => {
+  const document = await request('document?name=imported.md');
+  const head = await git(checkout,'rev-parse','HEAD');
+  const repeated = await request('save-sync',{name:'imported.md',value:document.body.value,version:null});
+  assert.equal(repeated.body.synced,true,repeated.body.error); assert.equal(repeated.body.committed,false);
+  assert.equal(await git(checkout,'rev-parse','HEAD'),head);
+});
+
+test('explicit conflict replacement rechecks the revision and backs up the displaced file', async () => {
+  await fs.writeFile(path.join(checkout,'external.md'),'# External A');
+  const conflict = await request('save-sync',{name:'external.md',value:'# Browser draft',version:null});
+  assert.equal(conflict.status,409);
+  await fs.writeFile(path.join(checkout,'external.md'),'# External B');
+  const staleConfirmation = await request('save-sync',{name:'external.md',value:'# Browser draft',version:conflict.body.conflict.currentVersion,backupBeforeReplace:true});
+  assert.equal(staleConfirmation.status,409); assert.equal(await fs.readFile(path.join(checkout,'external.md'),'utf8'),'# External B');
+  const resolved = await request('save-sync',{name:'external.md',value:'# Browser draft',version:staleConfirmation.body.conflict.currentVersion,backupBeforeReplace:true});
+  assert.equal(resolved.body.synced,true,resolved.body.error);
+  const directory=path.join(temporary,'state','conflict-backups');
+  const names=await fs.readdir(directory);
+  assert.equal(names.length,1); assert.equal(await fs.readFile(path.join(directory,names[0]),'utf8'),'# External B');
+  assert.equal(await git(remote,'show','main:external.md'),'# Browser draft');
+});
+
+test('an existing untracked document can be opened and saved in a repository with no commits', async () => {
+  const fresh = path.join(temporary,'unborn'); const bare = path.join(temporary,'unborn-remote.git');
+  await fs.mkdir(fresh); await fs.mkdir(bare); await git(fresh,'init','-b','main'); await git(bare,'init','--bare','-b','main');
+  await git(fresh,'config','user.name','Fresh Repo'); await git(fresh,'config','user.email','fresh@example.invalid'); await git(fresh,'config','commit.gpgsign','false'); await git(fresh,'config','core.hooksPath','/dev/null'); await git(fresh,'remote','add','origin',bare);
+  await fs.writeFile(path.join(fresh,'existing.md'),'# Existing without history\n');
+  await request('connect',{directory:fresh});
+  const opened=await request('document?name=existing.md');
+  const saved=await request('save-sync',{name:'existing.md',value:'# Edited after opening\n',version:opened.body.version});
+  assert.equal(saved.body.synced,true,saved.body.error); assert.equal(await git(bare,'show','main:existing.md'),'# Edited after opening');
 });

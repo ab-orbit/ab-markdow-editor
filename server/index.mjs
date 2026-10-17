@@ -60,7 +60,7 @@ const server = http.createServer(async (req, res) => {
     const file = await fs.readFile(path.join(dist, relative));
     const mime = { '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png' }[path.extname(relative)] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': mime }); res.end(file);
-  } catch (error) { send(res, 400, { error: error.code === 'ENOENT' ? 'Arquivo ou pasta não encontrado.' : error.message }); }
+  } catch (error) { send(res, error.code === 'DOCUMENT_CONFLICT' ? 409 : 400, { error: error.code === 'ENOENT' ? 'Arquivo ou pasta não encontrado.' : error.message, ...(error.conflict ? { code: error.code, conflict: error.conflict } : {}) }); }
 });
 server.requestTimeout = 660000;
 server.listen(Number(process.env.PORT || 43127), '127.0.0.1', async () => {

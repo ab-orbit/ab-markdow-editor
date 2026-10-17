@@ -53,10 +53,23 @@ interface LoadedDocument {
   /** References that could not be loaded. */
   warnings: string[];
 }
+interface DocumentConflict {
+  /** Relative destination that failed optimistic concurrency validation. */
+  name: string;
+  /** Distinguishes a pre-existing file, a newer revision or an external deletion. */
+  kind: 'exists' | 'modified' | 'deleted';
+  /** Observed disk revision; a resolution must still match it when writing. */
+  currentVersion: string | null;
+}
+class LocalApiError extends Error {
+  /** Structured conflict details returned by the local server, when present. */
+  conflict?: DocumentConflict;
+  constructor(message: string, conflict?: DocumentConflict) { super(message); this.conflict = conflict; }
+}
 async function api<T>(route: string, body?: unknown): Promise<T> {
   const response = await fetch(`/api/${route}`, { method: body === undefined ? 'GET' : 'POST', headers: { Authorization: `Bearer ${window.__MARKDOWN_TOKEN__}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, body: body === undefined ? undefined : JSON.stringify(body) });
   const result = await response.json();
-  if (!response.ok) throw new Error(result.error || 'Não foi possível concluir a operação.');
+  if (!response.ok) throw new LocalApiError(result.error || 'Não foi possível concluir a operação.', result.conflict);
   return result;
 }
 async function encodeAsset(asset: MarkdownAsset) {
@@ -77,6 +90,10 @@ function App() {
   const [loadedName, setLoadedName] = useState('documento.md');
   const [value, setValue] = useState('# Meu documento\n\nComece a escrever.\n');
   const [baseline, setBaseline] = useState('# Meu documento\n\nComece a escrever.\n');
+  const [importedVersion, setImportedVersion] = useState<{name: string; version: string} | null>(null);
+  const [conflict, setConflict] = useState<DocumentConflict | null>(null);
+  const [copyName, setCopyName] = useState('');
+  const lastSaveNote = useRef('');
   const [version, setVersion] = useState<string | null>(null);
   const [assets, setAssets] = useState<MarkdownAsset[]>([]);
   const [initialAssets, setInitialAssets] = useState<{path: string; file: File}[]>([]);
@@ -110,7 +127,11 @@ function App() {
     if (operationLock.current) return;
     operationLock.current = true;
     setBusy(true); setError(''); setNotice('');
-    try { await action(); } catch (cause) { setError(cause instanceof Error ? cause.message : String(cause)); }
+    try { await action(); } catch (cause) {
+      if (cause instanceof LocalApiError && cause.conflict) {
+        setConflict(cause.conflict); setCopyName(cause.conflict.name.replace(/\.(md|markdown|mdown)$/i, '-copia.md')); setSettingsOpen(false);
+      } else setError(cause instanceof Error ? cause.message : String(cause));
+    }
     finally { operationLock.current = false; setBusy(false); }
   }
   async function chooseRepository() {
@@ -135,24 +156,36 @@ function App() {
   const discard = () => !dirty || window.confirm('Há alterações não salvas. Deseja substituí-las?');
   function resetDocument(text = '', fileName = 'documento.md', hash: string | null = null, attached: {path: string; file: File}[] = []) {
     setValue(text); setBaseline(text); setName(fileName); setLoadedName(fileName); setVersion(hash);
-    setPendingSync(false); setAssets([]); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
+    setImportedVersion(null); setConflict(null); setPendingSync(false); setAssets([]); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
   }
-  async function save(note: string) {
-    const result = await api<SaveResult>('save-sync', { name, value, message: note, version: name === loadedName ? version : null, files: await Promise.all(assets.map(encodeAsset)) });
-    setVersion(result.version); setBaseline(value); setLoadedName(name); setSaveRevision(revision => revision + 1);
-    setPendingSync(!result.synced);
+  async function registerImport(source: string, fileName: string) {
+    await run(async () => {
+      const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
+      const originalVersion = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('');
+      setImportedVersion({ name: fileName, version: originalVersion });
+      setBaseline(source); setLoadedName(fileName); setVersion(null); setPendingSync(true); setConflict(null);
+    });
+  }
+  async function save(note: string, target?: {name: string; version: string | null; backupBeforeReplace?: boolean}) {
+    lastSaveNote.current = note;
+    const targetName = target?.name ?? name;
+    const expected = target ? target.version : name === loadedName ? version : null;
+    const baseVersion = !target && importedVersion?.name === name ? importedVersion.version : undefined;
+    const result = await api<SaveResult>('save-sync', { name: targetName, value, message: note, version: expected, baseVersion, backupBeforeReplace: target?.backupBeforeReplace, files: await Promise.all(assets.map(encodeAsset)) });
+    setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
+    setImportedVersion(null); setConflict(null); setPendingSync(!result.synced);
     await refresh();
     if (result.synced) setNotice('Arquivo salvo, commit criado e enviado ao remoto.');
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
   function requestSave(automatic = false) {
-    if (operationLock.current || busy || commitNoteOpen || !repository.repository) return;
+    if (operationLock.current || busy || commitNoteOpen || conflict || !repository.repository) return;
     if (preferences.askCommitNote) {
       setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
     } else void run(() => save(`${automatic ? 'Auto-save' : 'Update'} ${name}`));
   }
   autoSaveAction.current = () => {
-    if ((dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen) requestSave(true);
+    if ((dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
   };
   useEffect(() => {
     if (!preferences.autoSave || !repository.repository) return;
@@ -206,6 +239,16 @@ function App() {
     </section>
     {statusMessages}
     </div></EditorDialog>}
+    {conflict && <EditorDialog title="Resolver versões do arquivo" onClose={() => setConflict(null)}>
+      <p><strong>{conflict.name}</strong></p>
+      <p>{conflict.kind === 'exists' ? 'Já existe um arquivo com esse nome na pasta.' : conflict.kind === 'deleted' ? 'O arquivo foi removido do disco desde a abertura.' : 'O arquivo no disco mudou desde a abertura.'} Seu texto continua intacto no editor.</p>
+      <p>Salve uma cópia para manter os dois arquivos ou confirme a substituição. Antes de substituir, a versão do disco será guardada em Application Support/AB Markdown/conflict-backups.</p>
+      <form onSubmit={event => { event.preventDefault(); void run(() => save(lastSaveNote.current, {name: copyName, version: null})); }}>
+        <label>Nome da cópia<input required value={copyName} onChange={event => setCopyName(event.target.value)}/></label>
+        <footer><button type="button" onClick={() => setConflict(null)}>Continuar editando</button><button type="submit" disabled={busy}>Salvar uma cópia</button></footer>
+      </form>
+      <button type="button" disabled={busy} onClick={() => void run(() => save(lastSaveNote.current, {name: conflict.name, version: conflict.currentVersion, backupBeforeReplace: true}))}>Substituir arquivo existente</button>
+    </EditorDialog>}
     {commitNoteOpen && <EditorDialog title="Nota do commit" onClose={() => setCommitNoteOpen(false)}>
       <form onSubmit={event => { event.preventDefault(); if (!commitNote.trim()) return; setCommitNoteOpen(false); void run(() => save(commitNote.trim())); }}>
         <label>Nota do commit<textarea autoFocus required maxLength={1000} value={commitNote} onChange={event => setCommitNote(event.target.value)} placeholder="Descreva o que mudou"/></label>
@@ -213,7 +256,7 @@ function App() {
       </form>
     </EditorDialog>}
     {!settingsOpen && statusMessages}
-    <fieldset disabled={busy} className="editor-container"><MarkdownWorkbench key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); }} initialAssets={initialAssets} onAssetsChange={setAssets} saveRevision={saveRevision} readOnly={busy} actions={<>
+    <fieldset disabled={busy} className="editor-container"><MarkdownWorkbench key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={setAssets} saveRevision={saveRevision} readOnly={busy} actions={<>
       {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></fieldset>

@@ -39,3 +39,11 @@ O relógio do navegador avança os intervalos de um e dois minutos; gravação, 
 ![Nota do commit no desktop](desktop-commit-note.png)
 
 ![Nota do commit no celular](mobile-commit-note.png)
+
+## Resolução de versões sem descartar o rascunho
+
+As jornadas importam um Markdown que já existe no repositório e salvam suas alterações com commit/push. Depois, abrem o mesmo arquivo pela lista do repositório e repetem o salvamento. Uma alteração externa de verdade abre a resolução; cancelar preserva o rascunho, e salvar uma cópia mantém a versão externa intacta.
+
+![Resolver versões no desktop](desktop-resolve-file-conflict.png)
+
+![Resolver versões no celular](mobile-resolve-file-conflict.png)

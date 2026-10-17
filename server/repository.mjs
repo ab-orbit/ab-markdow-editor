@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -159,7 +159,7 @@ export class Repository {
     return { value, version: digest(bytes), files, warnings };
   }
 
-  async save({ name, value, version, files = [] }) {
+  async save({ name, value, version, baseVersion, backupBeforeReplace = false, files = [] }) {
     markdownName(name);
     if (typeof value !== 'string' || Buffer.byteLength(value) > MAX_TEXT) throw new Error('O Markdown excede 5 MB.');
     if (!Array.isArray(files) || files.length > 50) throw new Error('Limite de imagens excedido.');
@@ -167,7 +167,15 @@ export class Repository {
     const filename = await safeFile(root, name, true);
     let previous = null;
     try { previous = digest(await fs.readFile(filename)); } catch (error) { if (error.code !== 'ENOENT') throw error; }
-    if (previous !== version) throw new Error('Conflito: o arquivo já existe ou foi alterado fora do editor. Reabra antes de salvar.');
+    // Browser imports can identify their original bytes without granting a blind overwrite.
+    const matchesImport = previous !== null && typeof baseVersion === 'string' && previous === baseVersion;
+    const identicalContent = previous !== null && previous === digest(Buffer.from(value));
+    if (previous !== version && !matchesImport && !identicalContent) {
+      const kind = previous === null ? 'deleted' : version == null ? 'exists' : 'modified';
+      throw Object.assign(new Error(kind === 'exists' ? 'Já existe um arquivo com esse nome. Seu texto continua no editor.' : 'A versão no disco mudou desde a abertura. Seu texto continua no editor.'), {
+        code: 'DOCUMENT_CONFLICT', conflict: { name, kind, currentVersion: previous },
+      });
+    }
     let total = 0;
     const prepared = [];
     for (const file of files) {
@@ -185,6 +193,13 @@ export class Repository {
     // Image files are immutable; the Markdown is replaced atomically after all validation.
     for (const file of prepared) {
       try { await fs.writeFile(file.target, file.data, { flag: 'wx' }); } catch (error) { if (error.code !== 'EEXIST') throw error; }
+    }
+    if (backupBeforeReplace && previous !== null) {
+      const backupDirectory = path.join(this.stateDir, 'conflict-backups');
+      await fs.mkdir(backupDirectory, { recursive: true, mode: 0o700 });
+      const backup = path.join(backupDirectory, `${randomUUID()}.md`);
+      await fs.copyFile(filename, backup);
+      await fs.chmod(backup, 0o600);
     }
     const temporary = `${filename}.${process.pid}.tmp`;
     try { await fs.writeFile(temporary, value, { flag: 'wx' }); await fs.rename(temporary, filename); }

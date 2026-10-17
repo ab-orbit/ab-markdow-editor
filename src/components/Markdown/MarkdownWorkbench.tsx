@@ -23,6 +23,8 @@ export interface MarkdownWorkbenchProps {
   fileName: string;
   /** Receives the name of a successfully imported file. */
   onFileNameChange: (name: string) => void;
+  /** Record the original imported source before the user starts editing it. */
+  onImport?: (source: string, name: string) => Promise<void>;
   /** Initial display mode, read once at mount. */
   initialMode?: MarkdownMode;
   /** Host actions displayed alongside the document's existing toolbar controls. */
@@ -40,7 +42,7 @@ export interface MarkdownWorkbenchProps {
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, initialMode = 'live', actions, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', actions, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
   const [baseline, setBaseline] = useState(value);
   const [busy, setBusy] = useState(false);
@@ -77,7 +79,9 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
       const packaged = /\.(zip|bear)$/i.test(file.name) ? await readMarkdownPackage(file) : null;
       const source = packaged?.value ?? await readMarkdownFile(file);
       replaceAssets(packaged?.files ?? []);
-      onChange(source); onFileNameChange(file.name.replace(/\.(zip|bear)$/i, '.md')); setBaseline(source); setDocumentId(id => id + 1);
+      const name = file.name.replace(/\.(zip|bear)$/i, '.md');
+      onChange(source); onFileNameChange(name); setBaseline(source); setDocumentId(id => id + 1);
+      await onImport?.(source, name);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Não foi possível abrir o arquivo.');
     } finally { setBusy(false); }
