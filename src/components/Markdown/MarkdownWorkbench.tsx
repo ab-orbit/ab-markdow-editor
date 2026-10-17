@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Download, FileUp, FileText, Package } from 'lucide-react';
+import { Download, FileUp, FileText, Package, Type } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -29,6 +29,8 @@ export interface MarkdownWorkbenchProps {
   initialMode?: MarkdownMode;
   /** Host actions displayed alongside the document's existing toolbar controls. */
   actions?: ReactNode;
+  /** Compact standalone layout with formatting available on demand. */
+  compact?: boolean;
   /** Files loaded from the configured repository, applied on mount. */
   initialAssets?: {path: string; file: File}[];
   /** Reports attached files so the host can persist the complete document. */
@@ -42,7 +44,7 @@ export interface MarkdownWorkbenchProps {
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', actions, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', actions, compact = false, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
   const [baseline, setBaseline] = useState(value);
   const [busy, setBusy] = useState(false);
@@ -125,22 +127,24 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível editar a tabela.'); }
   }
 
-  return <section className={styles.workbench} aria-label="Bancada Markdown" aria-busy={busy}>
+  const [formattingOpen, setFormattingOpen] = useState(false);
+  return <section className={`${styles.workbench} ${compact ? styles.compact : ''}`} aria-label="Bancada Markdown" aria-busy={busy}>
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}</div>
       <div className={styles.modes} role="group" aria-label="Modo de edição">
         {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={mode === key} onClick={() => setMode(key)}>{label}</button>)}
       </div>
       <div className={styles.actions}>
-        <button type="button" disabled={readOnly || busy} onClick={() => input.current?.click()}><FileUp size={15} aria-hidden="true"/>Abrir .md / ZIP</button>
-        <button type="button" className={styles.download} onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/>Baixar .md</button>
-        <button type="button" className={styles.download} disabled={busy} onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/>Baixar pacote</button>
+        <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" title="Abrir .md / ZIP" onClick={() => input.current?.click()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
+        <button type="button" className={styles.download} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
+        <button type="button" className={styles.download} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
+        {compact && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} title="Formatação" aria-expanded={formattingOpen} onClick={() => setFormattingOpen(open => !open)}><Type size={18}/></button>}
         {actions}
       </div>
       <input ref={input} type="file" hidden aria-label="Arquivo Markdown" disabled={readOnly || busy} accept=".md,.markdown,.mdown,.zip,.bear,text/markdown,application/zip" onChange={event => { void open(event.target.files?.[0]); event.target.value = ''; }}/>
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>
     </header>
-    <EditingToolbar disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>
+    {(!compact || formattingOpen) && <EditingToolbar disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
     <div className={styles.modeHint}>{mode === 'live' ? 'Os marcadores aparecem na linha selecionada. Clique no texto para editar.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Volte a Escrever para editar.'}</div>

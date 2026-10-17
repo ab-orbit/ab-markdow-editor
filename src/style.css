@@ -94,3 +94,35 @@ textarea { font: inherit; font-size: 16px; color: var(--text-primary); backgroun
   .editor-brand { gap: 10px; }
   .editor-brand strong { font-size: 16px; }
 }
+
+/* Dense notes workspace: fixed shell, independently scrolling list and document. */
+.editor-app { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; padding: 0; }
+.editor-brandbar { flex: 0 0 48px; min-height: 48px; padding: 0 12px; border-bottom: 1px solid var(--border-panel); }
+.editor-brand { gap: 8px; }
+.editor-brand img { width: 30px; height: 30px; flex-basis: 30px; }
+.editor-brand strong { font-size: 13px; }
+.editor-brand span { display: none; }
+.editor-brandbar > button { min-height: 36px; padding: 6px 8px; border: 0; background: transparent; }
+.editor-layout { flex: 1; min-height: 0; align-items: stretch; gap: 0; }
+.editor-layout > .editor-container { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.notes-sidebar { position: static; flex: 0 0 220px; width: 220px; max-height: none; border: 0; border-right: 1px solid var(--border-panel); border-radius: 0; padding: 8px; overflow-y: auto; }
+.notes-heading h2 { font-size: 12px; }
+.notes-heading p { font-size: 11px; margin: 0; }
+.notes-heading button { min-height: 32px; padding: 6px; border: 0; background: transparent; }
+.new-note { min-height: 32px; font-size: 12px; margin: 8px 0; padding: 4px 8px; border-color: var(--border-panel); }
+.notes-sidebar li + li { margin: 0; border-top: 1px solid var(--border-base); }
+.notes-sidebar nav button { padding: 10px 8px; border-radius: var(--radius-sm); border: 0; min-height: 64px; }
+.notes-sidebar nav button svg { display: none; }
+.notes-sidebar nav strong { font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.note-preview { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font: 12px/1.5 system-ui, sans-serif; color: var(--text-muted); margin-top: 3px; }
+.notes-sidebar nav small { display: none; }
+.notes-sidebar time { font: 11px/1.4 system-ui, sans-serif; margin-top: 6px; }
+.notes-sidebar nav button[aria-current="page"] { background: var(--bg-elevated); box-shadow: inset 3px 0 var(--cyan); }
+.editor-app .editor-container .cm-content { min-height: calc(100dvh - 220px); }
+@media (max-width: 899px) {
+ .editor-layout { position: relative; flex-direction: row; }
+ .notes-sidebar { position: absolute; inset: 0 auto 0 0; width: min(280px, 85vw); z-index: 5; max-height: none; border-right: 1px solid var(--border-strong); }
+ .editor-brandbar { padding: 0 8px; }
+ .editor-brandbar > button { min-height: 44px; min-width: 44px; }
+ .notes-heading button, .new-note { min-height: 44px; }
+}

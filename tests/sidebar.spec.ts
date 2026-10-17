@@ -17,14 +17,16 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wid
    expect(await brand.evaluate((el:HTMLImageElement)=>el.complete&&el.naturalWidth===64)).toBe(true);
    const favicon=page.locator('link[rel="icon"][type="image/png"]');await expect(favicon).toHaveAttribute('href','/icons/profile-v3/scribe-32.png');expect((await page.request.get((await favicon.getAttribute('href'))!)).status()).toBe(200);
    if(viewport.name==='mobile')await page.getByRole('button',{name:'Mostrar notas recentes'}).click();
-   const sidebar=page.getByRole('complementary',{name:'Notas recentes'});await expect(sidebar.locator('nav li')).toHaveCount(100);await expect(sidebar.locator('nav strong').first()).toHaveText('note-104.md');await expect(sidebar.locator('nav strong').last()).toHaveText('note-005.md');
+   const sidebar=page.getByRole('complementary',{name:'Notas recentes'});await expect(sidebar.locator('nav li')).toHaveCount(100);await expect(sidebar.locator('nav strong').first()).toHaveText('Nota 104');await expect(sidebar.locator('nav strong').last()).toHaveText('Nota 5');
+   await expect(sidebar.locator('.note-preview').first()).toContainText('Conteúdo 104');
+   expect(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight)).toBe(true);
    await page.screenshot({path:`docs/evidence/${viewport.name}-recent-notes-dark.png`,fullPage:true});
-   await sidebar.getByRole('button',{name:/note-104.md/}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();const source=page.locator('.cm-content');await expect(source).toContainText('Conteúdo 104');await source.click();await page.keyboard.insertText('Edição preservada');
+   await sidebar.getByRole('button',{name:/note-104.md/}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();await page.getByRole('button',{name:'Mostrar formatação'}).click();await expect(page.getByRole('button',{name:'Negrito',exact:true})).toBeVisible();await page.getByRole('button',{name:'Ocultar formatação'}).click();const source=page.locator('.cm-content');await expect(source).toContainText('Conteúdo 104');await source.click();await page.keyboard.insertText('Edição preservada');
    if(viewport.name==='mobile')await page.getByRole('button',{name:'Mostrar notas recentes'}).click();
    page.once('dialog',dialog=>dialog.dismiss());await sidebar.getByRole('button',{name:/note-103.md/}).click();await expect(source).toContainText('Edição preservada');
    page.once('dialog',dialog=>dialog.accept());await sidebar.getByRole('button',{name:/note-103.md/}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();await expect(source).toContainText('Conteúdo 103');await source.click();await page.keyboard.insertText('Atualizado');
    await page.getByRole('button',{name:'Salvar no repositório',exact:true}).click();await expect(page.getByRole('status')).toHaveText('Arquivo salvo, commit criado e enviado ao remoto.');
-   if(viewport.name==='mobile')await page.getByRole('button',{name:'Mostrar notas recentes'}).click();await expect(sidebar.locator('nav strong').first()).toHaveText('note-103.md');
+   if(viewport.name==='mobile')await page.getByRole('button',{name:'Mostrar notas recentes'}).click();await expect(sidebar.locator('nav strong').first()).toHaveText('Nota 103');
    await page.getByRole('button',{name:'Configurações',exact:true}).click();await page.getByRole('button',{name:'Usar tema claro'}).click();await settings.getByRole('button',{name:'Fechar',exact:true}).click();
    await page.screenshot({path:`docs/evidence/${viewport.name}-recent-notes-light.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   }finally{await rm(temporary,{recursive:true,force:true});}

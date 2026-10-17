@@ -77,3 +77,31 @@
 .cellEditor input { min-width: 120px; width: 100%; }
 @media (max-width: 760px) { .toolbar { gap: 12px; } .modes { order: 3; width: 100%; } .modes button { flex: 1; } .actions { margin-left: auto; } .split { grid-template-columns: minmax(0,1fr); } .split .source { border-right: 0; border-bottom: 1px solid var(--border-panel); } .reading { padding: 24px 20px; } .filename > span:first-of-type { max-width: 150px; } }
 @media (max-width: 430px) { .filename { flex-basis: 100%; } .actions { margin-left: 0; width: 100%; } .actions button { flex: 1; } }
+
+.compact { height: 100%; display: flex; flex-direction: column; border: 0; border-radius: 0; min-height: 0; }
+.compact .toolbar { flex-shrink: 0; gap: 8px; padding: 4px 16px; min-height: 48px; }
+.compact .toolbar button { padding: 6px 8px; min-width: 36px; min-height: 36px; }
+.compact .filename { font-size: 12px; min-width: 80px; }
+.compact .filename svg { display: none; }
+.compact .modes { border: 0; padding: 0; background: transparent; }
+.compact .modes button { font-size: 12px; }
+.compact .actions { gap: 0; }
+.compact .actionLabel { display: none; }
+.compact .download { border-color: transparent; background: transparent; color: var(--text-muted); }
+.compact .modeHint { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+.compact .pages { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.compact .source { padding: 20px 32px 80px; width: 100%; max-width: 800px; }
+.compact .reading { max-width: 800px; padding: 32px 48px 80px; }
+.compact .footer { padding: 4px 16px; font-size: 11px; flex-shrink: 0; border-top: 1px solid var(--border-base); }
+.compact .assetHint { padding: 4px 16px; margin: 0; font-size: 11px; }
+.compact .editingToolbar { padding: 4px 12px; gap: 0; }
+.compact .editingToolbar button, .compact .editingToolbar select { min-height: 36px; min-width: 36px; padding: 6px; }
+@media (max-width: 760px) {
+ .compact .toolbar { gap: 0 8px; padding: 4px 8px; }
+ .compact .modes { order: 3; width: 100%; justify-content: center; }
+ .compact .modes button { flex: 0 1 80px; }
+ .compact .toolbar button, .compact .editingToolbar button, .compact .editingToolbar select { min-height: 44px; min-width: 44px; }
+ .compact .source { padding: 16px 12px 64px; }
+ .compact .reading { padding: 24px 20px 64px; }
+ .compact .footer > span:nth-child(2) { display: none; }
+}

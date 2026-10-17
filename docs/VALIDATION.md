@@ -39,3 +39,9 @@ A verificação posterior em lista revelou que o link simbólico ainda podia apa
 Logo de 64 px visível no cabeçalho do editor; favicon, Apple Touch Icon e manifest usam caminhos novos em `icons/profile-v3/`, evitando as URLs que ficaram no cache anterior. A barra lateral mostra até 100 Markdown por mtime decrescente, incluindo arquivos não rastreados e excluindo links simbólicos/arquivos removidos. Abrir nota exige confirmação quando há edição pendente. Novo salvamento atualiza a ordem; botão de atualização permite reler alterações externas.
 
 Jornadas desktop/mobile criam 105 notas, verificam exatamente 100 entradas ordenadas, abrem notas, cancelam/confimam descarte, salvam com Git real e conferem reordenação, imagem carregada, URL nova do favicon e ausência de overflow horizontal. Capturas nos dois temas. No celular, a lista inicia recolhida, abre pelo botão Notas e recolhe após abrir uma nota.
+
+## Layout compacto inspirado na referência de notas
+
+Cabeçalho reduzido de 96 para 48 px; lateral de 264 para 220 px; barras de ajuda removidas visualmente e formatação recolhida por padrão. Importação/exportação mantêm nomes acessíveis e dicas, usando botões de ícone. Lista e documento têm rolagem independente e o shell cabe em 100dvh, sem rolagem da página. A lista usa título do Markdown e trecho textual obtidos de até 8 KB por arquivo, com leitura em lotes de 32; conteúdo aparece como texto, sem execução de HTML.
+
+As 8 jornadas de navegador passaram nos dois tamanhos, incluindo abrir/recolher formatação, lista com título/trecho, limite de altura da janela e os fluxos anteriores de edição/Git/offline. Os 24 testes HTTP também passaram. Capturas atualizadas nos temas claro e escuro.

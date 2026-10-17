@@ -85,3 +85,5 @@ Veja [funcionamento e limites da PWA](docs/PWA.md) e [origem do ícone](docs/ICO
 A barra lateral lista as **100 notas Markdown mais recentemente alteradas** no repositório conectado, com nome, pasta e data. Clique para abrir; edições pendentes pedem confirmação antes da troca. O salvamento atualiza a ordem, e o botão de atualização relê mudanças feitas fora do editor. **Nova nota** inicia um documento. O botão **Notas** mostra ou recolhe a lista; no celular ela começa recolhida.
 
 A logo aparece no cabeçalho do editor. Favicon e ícones PWA usam URLs novas para substituir versões antigas em cache. Em uma aba que já estava aberta durante a atualização, recarregue para carregar a interface nova; rascunhos são recuperados pelo navegador.
+
+O layout usa a altura inteira da janela: lista e documento rolam separadamente. A lateral mostra o título Markdown, um trecho e a data da nota; nomes longos são limitados a duas linhas. A barra principal usa ícones com rótulos acessíveis. Clique em **T (Formatação)** para abrir ou recolher as ferramentas de edição. No celular, a lista abre sobre o documento e fecha ao escolher uma nota.

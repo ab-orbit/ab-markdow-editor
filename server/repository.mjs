@@ -140,7 +140,17 @@ export class Repository {
         try {
           const filename = await safeFile(root, name);
           const stat = await fs.stat(filename);
-          return stat.isFile() ? { name, modifiedAt: stat.mtime.toISOString() } : null;
+          if (!stat.isFile()) return null;
+          const file = await fs.open(filename, 'r');
+          let text;
+          try { const buffer = Buffer.alloc(8192); const {bytesRead} = await file.read(buffer, 0, buffer.length, 0); text = buffer.subarray(0, bytesRead).toString('utf8'); }
+          finally { await file.close(); }
+          const lines = text.replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/, '').split(/\r?\n/);
+          const heading = lines.find(line => /^#{1,6}\s+/.test(line));
+          const plain = line => line.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[#*_`>~]/g, '').trim();
+          const title = heading ? plain(heading).slice(0, 160) : name.split('/').at(-1);
+          const preview = lines.filter(line => line !== heading && line.trim()).map(plain).filter(Boolean).join(' ').slice(0, 180);
+          return { name, modifiedAt: stat.mtime.toISOString(), title, preview };
         } catch { return null; } // Deleted files and unsafe symlinks are not openable notes.
       }));
       notes.push(...batch.filter(Boolean));
