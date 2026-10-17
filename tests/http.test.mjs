@@ -259,6 +259,10 @@ test('guide is seeded once, committed and pushed; pins persist per checkout with
   await fs.writeFile(path.join(repo,'note.md'),'# Minha nota\n\nConteúdo');await git(repo,'add','.');await git(repo,'commit','-m','Initial');await git(repo,'remote','add','origin',upstream);
   await request('connect',{directory:repo});
   const initialized=await request('library/initialize',{});assert.equal(initialized.status,200);assert.equal(initialized.body.synchronization.synced,true);assert.equal(initialized.body.pinned[0].name,'AB-Markdown-Guia.md');
+  const thumbnail=await request('thumbnail?name=AB-Markdown-Guia.md');assert.equal(thumbnail.status,200);assert.equal(thumbnail.body.mime,'image/jpeg');assert.ok(Buffer.from(thumbnail.body.data,'base64').length>1000);
+  const diskImage=await fs.readFile(path.join(repo,'assets','escriba-welcome-v1.jpg'));assert.equal(thumbnail.body.data,diskImage.toString('base64'));
+  assert.ok(await git(upstream,'cat-file','-s','main:assets/escriba-welcome-v1.jpg'));
+  assert.equal((await request('library')).body.pinned[0].hasImage,true);
   const guide=await git(upstream,'show','main:AB-Markdown-Guia.md');assert.match(guide,/Google Drive/);assert.match(guide,/Temas/);assert.match(guide,/Aeon Bridge/);
   const head=await git(repo,'rev-parse','HEAD');assert.equal((await request('library/initialize',{})).body.synchronization,undefined);assert.equal(await git(repo,'rev-parse','HEAD'),head);
   assert.equal((await request('pin',{name:'note.md',pinned:true})).status,200);
@@ -266,4 +270,24 @@ test('guide is seeded once, committed and pushed; pins persist per checkout with
   const persisted=await request('library');assert.deepEqual(persisted.body.pinned.map(note=>note.name),['AB-Markdown-Guia.md','note.md']);assert.equal(await git(repo,'rev-parse','HEAD'),head);
   await request('pin',{name:'note.md',pinned:false});assert.equal((await request('library')).body.pinned.length,1);
   assert.equal((await request('pin',{name:'../note.md',pinned:true})).status,400);
+});
+
+
+test('thumbnails never fetch remote images and reject traversal, SVG and symlinks', async () => {
+  await request('connect',{directory:checkout});
+  await fs.writeFile(path.join(checkout,'thumb.md'),'# Remote\n![image](https://example.invalid/secret.png)');assert.equal((await request('thumbnail?name=thumb.md')).body,null);
+  await fs.writeFile(path.join(checkout,'thumb.md'),'# Traversal\n![image](../outside.png)');assert.equal((await request('thumbnail?name=thumb.md')).status,400);
+  await fs.writeFile(path.join(checkout,'unsafe.svg'),'<svg xmlns="http://www.w3.org/2000/svg"></svg>');await fs.writeFile(path.join(checkout,'thumb.md'),'![image](unsafe.svg)');assert.equal((await request('thumbnail?name=thumb.md')).status,400);
+  await fs.symlink(path.join(checkout,'notes/assets/pixel.png'),path.join(checkout,'linked.png'));await fs.writeFile(path.join(checkout,'thumb.md'),'![image](linked.png)');assert.equal((await request('thumbnail?name=thumb.md')).status,400);
+});
+
+test('existing guides gain the welcome image once while preserving user edits', async () => {
+  const repo=path.join(temporary,'old-guide'),upstream=path.join(temporary,'old-guide.git');await fs.mkdir(repo);await fs.mkdir(upstream);
+  await git(repo,'init','-b','main');await git(upstream,'init','--bare','-b','main');
+  for(const [key,value] of [['user.name','Guide Test'],['user.email','guide@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])await git(repo,'config',key,value);
+  const name='AB-Markdown-Guia.md';const text='# AB Markdown — Guia da plataforma\n\nMeu conteúdo editado deve permanecer.\n';
+  await fs.writeFile(path.join(repo,name),text);await git(repo,'add','.');await git(repo,'commit','-m','Old guide');await git(repo,'remote','add','origin',upstream);
+  const info=await request('connect',{directory:repo});const file=path.join(temporary,'state','library.json');const state=JSON.parse(await fs.readFile(file,'utf8'));state[info.body.repository]={pinned:[name]};await fs.writeFile(file,JSON.stringify(state));
+  const migrated=await request('library/initialize',{});assert.equal(migrated.status,200);assert.equal(migrated.body.synchronization.synced,true);const updated=await fs.readFile(path.join(repo,name),'utf8');assert.match(updated,/Meu conteúdo editado deve permanecer/);assert.equal(updated.split('escriba-welcome-v1.jpg').length-1,1);
+  const head=await git(repo,'rev-parse','HEAD');await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),head);assert.match(await git(upstream,'show',`main:${name}`),/escriba-welcome-v1.jpg/);
 });

@@ -150,3 +150,6 @@ body { font-family: var(--font-ui); }
 @media (hover: none) { .notes-sidebar nav .pin-note { opacity: 1; } }
 @media (max-width: 899px) { .notes-sidebar nav .pin-note { opacity: 1; width: 44px; min-height: 44px; } .notes-sidebar nav .open-note { padding-right: 44px; } }
 .notes-sidebar nav .open-note time svg { display: inline-block; margin: 0; color: var(--cyan); }
+.note-thumbnail { display: block; width: 112px; max-width: 100%; margin-top: 8px; }
+.note-thumbnail:empty { min-height: 1px; }
+.note-thumbnail img { display: block; width: 112px; max-width: 100%; height: 62px; object-fit: cover; border-radius: var(--radius-sm); }

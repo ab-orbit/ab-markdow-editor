@@ -1,5 +1,7 @@
 # AB Markdown — Guia da plataforma
 
+![Boas-vindas ao Escriba — um escriba egípcio escrevendo em papiro](assets/escriba-welcome-v1.jpg)
+
 Um espaço local para escrever, organizar e versionar notas Markdown no seu próprio repositório Git.
 
 ## Como começar

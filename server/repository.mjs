@@ -6,6 +6,7 @@ import path from 'node:path';
 
 const exec = promisify(execFile);
 const MAX_TEXT = 5 * 1024 * 1024;
+const welcomeImage = 'assets/escriba-welcome-v1.jpg';
 const MAX_IMAGE = 10 * 1024 * 1024;
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 
@@ -129,6 +130,33 @@ export class Repository {
     return [...new Set(stdout.split('\0').filter(name => /\.(md|markdown|mdown)$/i.test(name)))].sort();
   }
 
+  /** Only local raster references are eligible; remote images are never fetched. */
+  localImage(text) {
+    for (const match of text.matchAll(/!\[[^\]]*\]\((?:<([^>]+)>|([^\s)]+))(?:\s+[^)]*)?\)/g)) {
+      const reference = match[1] || match[2];
+      if (!/^(?:[a-z][a-z0-9+.-]*:|\/|#)/i.test(reference)) return reference;
+    }
+    return null;
+  }
+
+  async thumbnail(name) {
+    markdownName(name);
+    const root = this.requireRoot();
+    const filename = await safeFile(root, name);
+    const note = await fs.open(filename, 'r');
+    let text;
+    try { const buffer = Buffer.alloc(8192); const {bytesRead} = await note.read(buffer, 0, buffer.length, 0); text = buffer.subarray(0, bytesRead).toString('utf8'); }
+    finally { await note.close(); }
+    const image = this.localImage(text);
+    if (!image) return null;
+    const relative = path.posix.normalize(path.posix.join(path.posix.dirname(name), decodeURIComponent(image)));
+    const target = await safeFile(root, relative);
+    const stat = await fs.stat(target);
+    if (stat.size > MAX_IMAGE) throw new Error('Imagem maior que 10 MB.');
+    const data = await fs.readFile(target);
+    return { data: data.toString('base64'), mime: imageMime(data) };
+  }
+
   /** Most recently modified Markdown files in this checkout, including untracked notes. */
   async recent({ all = false } = {}) {
     const root = this.requireRoot();
@@ -150,7 +178,7 @@ export class Repository {
           const plain = line => line.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[#*_`>~]/g, '').trim();
           const title = heading ? plain(heading).slice(0, 160) : name.split('/').at(-1);
           const preview = lines.filter(line => line !== heading && line.trim()).map(plain).filter(Boolean).join(' ').slice(0, 180);
-          return { name, modifiedAt: stat.mtime.toISOString(), title, preview };
+          return { name, modifiedAt: stat.mtime.toISOString(), title, preview, hasImage: !!this.localImage(text) };
         } catch { return null; } // Deleted files and unsafe symlinks are not openable notes.
       }));
       notes.push(...batch.filter(Boolean));
@@ -184,7 +212,28 @@ export class Repository {
   async initializeLibrary() {
     const root = this.requireRoot();
     const state = await this.libraryState();
-    if (state[root]) return this.library();
+    if (state[root]) {
+      const entry = state[root];
+      if (!entry.welcomeImageVersion) {
+        const name = entry.guideName || entry.pinned.find(item => /^AB-Markdown-Guia(?:-\d+)?\.md$/.test(item));
+        let synchronization;
+        if (name) {
+          try {
+            const doc = await this.read(name);
+            if (doc.value.startsWith('# AB Markdown — Guia da plataforma') && !doc.value.includes(welcomeImage)) {
+              const image = `![Boas-vindas ao Escriba — um escriba egípcio escrevendo em papiro](${welcomeImage})`;
+              const value = doc.value.replace(/^(#[^\n]*\n)/, `$1\n${image}\n`);
+              const data = await fs.readFile(new URL('./assets/escriba-welcome-v1.jpg', import.meta.url));
+              synchronization = await this.saveAndSync({name, value, version:doc.version, files:[{path:welcomeImage, data:data.toString('base64')}], message:'Add welcome image to AB Markdown guide'});
+            }
+          } catch (error) { if (error.code !== 'ENOENT') throw error; }
+        }
+        entry.welcomeImageVersion = 1;
+        await this.persistLibrary(state);
+        return {...await this.library(), ...(synchronization ? {synchronization} : {})};
+      }
+      return this.library();
+    }
     let name = 'AB-Markdown-Guia.md';
     for (let suffix = 2; ; suffix++) {
       const filename = await safeFile(root, name);
@@ -192,8 +241,9 @@ export class Repository {
       catch (error) { if (error.code === 'ENOENT') break; throw error; }
     }
     const value = await fs.readFile(new URL('./guide.md', import.meta.url), 'utf8');
-    const synchronization = await this.saveAndSync({ name, value, version: null, message: 'Add AB Markdown platform guide' });
-    state[root] = { pinned: [name] };
+    const image = await fs.readFile(new URL('./assets/escriba-welcome-v1.jpg', import.meta.url));
+    const synchronization = await this.saveAndSync({ name, value, version: null, files:[{path:welcomeImage, data:image.toString('base64')}], message: 'Add AB Markdown platform guide' });
+    state[root] = { pinned: [name], guideName:name, welcomeImageVersion:1 };
     await this.persistLibrary(state);
     return { ...await this.library(), synchronization };
   }
@@ -206,7 +256,7 @@ export class Repository {
     const state = await this.libraryState();
     const names = state[root]?.pinned || [];
     if (pinned && !names.includes(name) && names.length >= 100) throw new Error('Limite de 100 notas fixadas.');
-    state[root] = { pinned: pinned ? [...new Set([...names, name])] : names.filter(item => item !== name) };
+    state[root] = { ...state[root], pinned: pinned ? [...new Set([...names, name])] : names.filter(item => item !== name) };
     await this.persistLibrary(state);
     return this.library();
   }

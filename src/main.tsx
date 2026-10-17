@@ -2,6 +2,7 @@ import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
+import { NoteThumbnail } from './NoteThumbnail';
 import { noteGroup, shortNoteDate } from './lib/noteDates';
 import { usePwa } from './usePwa';
 import { authorizedFetch } from './lib/session';
@@ -20,6 +21,8 @@ interface RecentNote {
   /** Markdown heading and short plain-text preview for the note list. */
   title?: string;
   preview?: string;
+  /** Whether the note contains a local image eligible for a lazy thumbnail. */
+  hasImage?: boolean;
 }
 interface NoteLibrary {
   /** Manually ordered pinned notes for the current checkout. */
@@ -391,7 +394,7 @@ function App() {
       {!repository.repository && <p className="notes-empty">Conecte um repositório nas configurações para listar suas notas.</p>}
       {repository.repository && !recentNotes.length && !pinnedNotes.length && <p className="notes-empty">{offline ? 'Abra o aplicativo local para carregar a lista.' : 'Nenhuma nota Markdown encontrada.'}</p>}
       <nav aria-label="100 notas mais recentes">{noteGroups.map(group => <section className="note-group" key={group.label} aria-label={group.label}><h3>{group.label}</h3><ol>{group.notes.map(note => <li className="note-row" key={note.name} data-note={note.name}>
-        <button className="open-note" type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}<time dateTime={note.modifiedAt} title={new Date(note.modifiedAt).toLocaleString('pt-BR')}>{group.pinned && <Pin size={11} aria-label="Nota fixada"/>}{shortNoteDate(note.modifiedAt, dateClock)}</time></span></button>
+        <button className="open-note" type="button" disabled={busy || !draftReady || offline} aria-current={name === note.name && version ? 'page' : undefined} title={note.name} aria-label={note.name} onClick={() => void openNote(note.name)}><span><strong>{note.title || note.name.split('/').at(-1)}</strong>{note.preview && <span className="note-preview">{note.preview}</span>}{note.hasImage && <NoteThumbnail repository={repository.repository} name={note.name} modifiedAt={note.modifiedAt}/>}<time dateTime={note.modifiedAt} title={new Date(note.modifiedAt).toLocaleString('pt-BR')}>{group.pinned && <Pin size={11} aria-label="Nota fixada"/>}{shortNoteDate(note.modifiedAt, dateClock)}</time></span></button>
         <button className="pin-note" type="button" disabled={busy || offline} aria-label={`${group.pinned ? 'Desafixar' : 'Fixar'} ${note.name}`} title={group.pinned ? 'Desafixar nota' : 'Fixar nota'} onClick={() => void togglePin(note, !group.pinned)}>{group.pinned ? <PinOff size={14}/> : <Pin size={14}/>}</button>
       </li>)}</ol></section>)}</nav>
     </aside>}
