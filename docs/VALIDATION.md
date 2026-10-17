@@ -26,3 +26,7 @@ Veja [capturas e legendas](evidence/README.md).
 Manifest/ícones normais e maskable, favicon/Apple Touch Icon, service worker e cache estático sem credenciais validados. As novas jornadas verificam reload offline, IndexedDB com texto e imagens, exportação ZIP offline e sincronização real após reconectar. Testes HTTP cobrem sessão recuperada com cabeçalho de mesma origem, tipos MIME e bloqueio de gravação de rascunho em outro checkout. Chrome usa contextos privados isolados: o diagnóstico de instalação só apresentou a restrição `in-incognito`, sem erros do aplicativo. Safari/iOS não foram executados nesta rodada.
 
 Verificação adicional no aplicativo instalado em `127.0.0.1:43127`, com perfil persistente limpo do Chrome (fora de modo privado): `Page.getInstallabilityErrors` retornou `{"installabilityErrors":[]}`. Bundle/ícone da Mesa atualizados e health check aprovado.
+
+### Ícone do Finder após atualização
+
+Trocar apenas `AppIcon.icns` não atualizou o ícone apresentado pelo atalho existente. O instalador agora aplica a arte pelo `NSWorkspace.setIcon` ao bundle e ao atalho recém-criado, notificando a mudança ao Finder. Correção executada no Mac e conferida visualmente em **Obter Informações** do atalho da Mesa: miniatura e prévia mostram o escriba azul/laranja. Nenhum reinício do Finder ou limpeza global de cache foi necessário.

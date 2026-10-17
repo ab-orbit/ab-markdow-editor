@@ -88,6 +88,7 @@ if [[ -e "$TARGET_APP" ]]; then
   rm -rf "$TARGET_APP"
 fi
 mv "$APP_DIR" "$TARGET_APP"
+/usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/set-finder-icon.jxa.js" "$TARGET_APP/Contents/Resources/AppIcon.icns" "$TARGET_APP"
 DESKTOP_LINK="$DESKTOP_DIR/AB Markdown.app"
 if [[ -L "$DESKTOP_LINK" ]]; then
   [[ "$(readlink "$DESKTOP_LINK")" == "$TARGET_APP" ]] || { echo "Já existe outro atalho em $DESKTOP_LINK" >&2; exit 1; }
@@ -97,6 +98,7 @@ elif [[ -e "$DESKTOP_LINK" ]]; then
   exit 1
 fi
 ln -s "$TARGET_APP" "$DESKTOP_LINK"
+/usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/set-finder-icon.jxa.js" "$TARGET_APP/Contents/Resources/AppIcon.icns" "$DESKTOP_LINK"
 touch "$TARGET_APP"
 echo "Instalado: $TARGET_APP"
 echo "Ícone na Mesa: $DESKTOP_LINK"
