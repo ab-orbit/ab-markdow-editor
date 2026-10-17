@@ -27,7 +27,7 @@ if (!url) {
   const log = await fs.open(path.join(state, 'server.log'), 'a', 0o600);
   const child = spawn(process.execPath, [path.join(resources, 'server/index.mjs')], {
     detached: true, stdio: ['ignore', log.fd, log.fd],
-    env: { ...process.env, PATH: `${installedPath.trim()}:${process.env.PATH || '/usr/bin:/bin:/usr/sbin:/sbin'}`, PORT: '0', MARKDOWN_RUNTIME_FILE: runtimeFile },
+    env: { ...process.env, PATH: `${installedPath.trim()}:${process.env.PATH || '/usr/bin:/bin:/usr/sbin:/sbin'}`, PORT: '43127', MARKDOWN_RUNTIME_FILE: runtimeFile },
   });
   child.unref(); await log.close();
   for (let attempt = 0; attempt < 80; attempt++) {

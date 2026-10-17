@@ -221,3 +221,21 @@ test('an existing untracked document can be opened and saved in a repository wit
   const saved=await request('save-sync',{name:'existing.md',value:'# Edited after opening\n',version:opened.body.version});
   assert.equal(saved.body.synced,true,saved.body.error); assert.equal(await git(bare,'show','main:existing.md'),'# Edited after opening');
 });
+
+test('offline shell reacquires a capability only through a same-origin custom-header request', async () => {
+  assert.equal((await fetch(`${base}/api/session`)).status, 403);
+  assert.equal((await fetch(`${base}/api/session`, {headers:{'X-AB-Markdown-Client':'1', Origin:'https://example.invalid'}})).status,403);
+  assert.equal((await fetch(`${base}/api/session`, {headers:{'X-AB-Markdown-Client':'1','Sec-Fetch-Site':'cross-site'}})).status,403);
+  const response=await fetch(`${base}/api/session`,{headers:{'X-AB-Markdown-Client':'1'}});
+  assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'no-store');assert.equal((await response.json()).token,token);
+});
+test('PWA assets have correct types and the offline shell contains no capability', async () => {
+  const manifest=await fetch(`${base}/manifest.webmanifest`);assert.match(manifest.headers.get('content-type'),/application\/manifest\+json/);assert.equal((await manifest.json()).display,'standalone');
+  const worker=await fetch(`${base}/sw.js`);assert.equal(worker.headers.get('service-worker-allowed'),'/');assert.equal(worker.headers.get('cache-control'),'no-cache');
+  assert.doesNotMatch(await(await fetch(`${base}/app-shell.html`)).text(),/window\.__MARKDOWN_TOKEN__=/);
+  assert.match((await fetch(`${base}/favicon.ico`)).headers.get('content-type'),/image\/x-icon/);
+});
+test('an offline draft cannot save into a different configured checkout', async () => {
+  const result=await request('save-sync',{repository:path.join(temporary,'other'),name:'wrong-checkout.md',value:'# Preserve',version:null});
+  assert.equal(result.status,400);assert.match(result.body.error,/repositório mudou/);await assert.rejects(fs.access(path.join(checkout,'wrong-checkout.md')));
+});

@@ -10,8 +10,8 @@ Ambiente: macOS Darwin 25.6.0, Apple Silicon. Aplicação instalada em `~/Applic
 - Abertura pelo ícone, resposta saudável do servidor em loopback e carregamento do editor.
 - Seleção de pasta real no diálogo nativo do macOS; retorno do caminho confirmado.
 - Cancelamento do diálogo pela API da aplicação instalada: HTTP 200, `directory: null`.
-- 20 testes HTTP com Git real: sessão/origem/host, conexão e listagem, texto/imagens, conflitos, caminhos inválidos/symlinks, gravações concorrentes, commit seletivo e push, proteção de stage, rejeição de credenciais na URL e clonagem HTTPS com CA local; save/commit/push automático, ausência de commits vazios, retry após falha de push sem commit duplicado, recuperação de hook, primeiro upstream e preferências persistidas em novo processo.
-- 4 jornadas Playwright: desktop 1440×900 e celular 390×844. Selecionar/cancelar pasta, conectar, escolher destino de clone, editar, inserir imagem, salvar, commit/push automáticos e reabrir com imagens; relógio do navegador simula ciclos de 1 e 2 minutos com Git/HTTP reais, nota obrigatória, cancelamento sem gravação, ⌘S e persistência das preferências.
+- 23 testes HTTP com Git real: sessão/origem/host, conexão e listagem, texto/imagens, conflitos, caminhos inválidos/symlinks, gravações concorrentes, commit seletivo e push, proteção de stage, rejeição de credenciais na URL e clonagem HTTPS com CA local; save/commit/push automático, ausência de commits vazios, retry após falha de push sem commit duplicado, recuperação de hook, primeiro upstream e preferências persistidas em novo processo.
+- 6 jornadas Playwright: desktop 1440×900 e celular 390×844. Selecionar/cancelar pasta, conectar, escolher destino de clone, editar, inserir imagem, salvar, commit/push automáticos e reabrir com imagens; relógio do navegador simula ciclos de 1 e 2 minutos com Git/HTTP reais, nota obrigatória, cancelamento sem gravação, ⌘S e persistência das preferências.
 - Regressão do conflito: importação pelo seletor, abertura pela lista, arquivo sem histórico Git, salvamento repetido após perda de resposta, hash original válido/inválido, cópia de recuperação, substituição com backup e rejeição de confirmação desatualizada.
 - Interface focada no editor após configuração, inclusive ao recarregar; engrenagem abre configurações; Escape fecha sem perder o texto; gravação disponível na barra e por ⌘S.
 - Temas claro/escuro e contraste ≥4,5:1 dos tokens de texto e acento contra a superfície usada pelo editor, nos dois temas. Sem overflow horizontal no celular.
@@ -20,3 +20,9 @@ Ambiente: macOS Darwin 25.6.0, Apple Silicon. Aplicação instalada em `~/Applic
 O instalador também tem seleção de runtime para Intel x64; a execução física foi validada em Apple Silicon. O build informa um aviso de tamanho do bundle JavaScript; a aplicação é servida localmente. O helper nativo usa assinatura ad hoc, gerada localmente; o bundle não é uma distribuição notarizada pela Apple.
 
 Veja [capturas e legendas](evidence/README.md).
+
+## PWA Escriba
+
+Manifest/ícones normais e maskable, favicon/Apple Touch Icon, service worker e cache estático sem credenciais validados. As novas jornadas verificam reload offline, IndexedDB com texto e imagens, exportação ZIP offline e sincronização real após reconectar. Testes HTTP cobrem sessão recuperada com cabeçalho de mesma origem, tipos MIME e bloqueio de gravação de rascunho em outro checkout. Chrome usa contextos privados isolados: o diagnóstico de instalação só apresentou a restrição `in-incognito`, sem erros do aplicativo. Safari/iOS não foram executados nesta rodada.
+
+Verificação adicional no aplicativo instalado em `127.0.0.1:43127`, com perfil persistente limpo do Chrome (fora de modo privado): `Page.getInstallabilityErrors` retornou `{"installabilityErrors":[]}`. Bundle/ícone da Mesa atualizados e health check aprovado.

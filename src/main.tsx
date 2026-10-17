@@ -1,7 +1,10 @@
-import { StrictMode, useEffect, useRef, useState } from 'react';
+import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
+import { usePwa } from './usePwa';
+import { authorizedFetch } from './lib/session';
+import { loadDraft, persistDraft, type DraftSnapshot } from './lib/drafts';
 import { EditorDialog } from './components/Markdown/EditorDialog';
 import type { MarkdownAsset } from './lib/markdown/assets';
 import './tokens.css';
@@ -67,7 +70,7 @@ class LocalApiError extends Error {
   constructor(message: string, conflict?: DocumentConflict) { super(message); this.conflict = conflict; }
 }
 async function api<T>(route: string, body?: unknown): Promise<T> {
-  const response = await fetch(`/api/${route}`, { method: body === undefined ? 'GET' : 'POST', headers: { Authorization: `Bearer ${window.__MARKDOWN_TOKEN__}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const response = await authorizedFetch(route, body);
   const result = await response.json();
   if (!response.ok) throw new LocalApiError(result.error || 'Não foi possível concluir a operação.', result.conflict);
   return result;
@@ -79,6 +82,19 @@ async function encodeAsset(asset: MarkdownAsset) {
   return { path: asset.path, data: btoa(binary) };
 }
 function App() {
+  const pwa = usePwa();
+  const [offline, setOffline] = useState(!navigator.onLine);
+  const [draftReady, setDraftReady] = useState(false);
+  const [draftId] = useState(() => {
+    const id = sessionStorage.getItem('ab-markdown-draft-id') || crypto.randomUUID();
+    sessionStorage.setItem('ab-markdown-draft-id', id); return id;
+  });
+  const latestDraft = useRef<DraftSnapshot | null>(null);
+  const restoringAssets = useRef(false);
+  const handleAssets = useCallback((items: MarkdownAsset[]) => {
+    if (restoringAssets.current && !items.length) return;
+    restoringAssets.current = false; setAssets(items);
+  }, []);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [repository, setRepository] = useState<RepositoryInfo>({ repository: null, branch: '', status: '' });
   const [directory, setDirectory] = useState('');
@@ -117,7 +133,55 @@ function App() {
     setFiles(info.repository ? await api<string[]>('files') : []);
     return info;
   }
-  useEffect(() => { void Promise.all([refresh(), api<SavePreferences>('preferences')]).then(([info, saved]) => { if (!info.repository) setSettingsOpen(true); setPreferences(saved); setPreferenceDraft(saved); }).catch(cause => { setError(cause.message); setSettingsOpen(true); }); }, []);
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      let restored: DraftSnapshot | null = null;
+      try { restored = await loadDraft(draftId); } catch { /* Continue online if browser storage is unavailable. */ }
+      if (!active) return;
+      if (restored) {
+        setRepository(restored.repository); setName(restored.name); setLoadedName(restored.loadedName);
+        setValue(restored.value); setBaseline(restored.baseline); setVersion(restored.version);
+        setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync);
+        setPreferences(restored.preferences); setPreferenceDraft(restored.preferences);
+        restoringAssets.current = restored.assets.length > 0;
+        setAssets(restored.assets.map(asset => ({ ...asset, url: '' })));
+        setInitialAssets(restored.assets); setDocumentId(id => id + 1);
+      }
+      try {
+        const [info, saved] = await Promise.all([api<RepositoryInfo>('repository'), api<SavePreferences>('preferences')]);
+        if (!active) return;
+        if (restored?.repository.repository && restored.repository.repository !== info.repository) {
+          setError('O rascunho pertence a outro repositório. Reconecte a pasta nas configurações antes de salvar.');
+          setSettingsOpen(true);
+        } else {
+          setRepository(info); setFiles(info.repository ? await api<string[]>('files') : []);
+          if (!info.repository) setSettingsOpen(true);
+        }
+        if (!active) return;
+        setPreferences(saved); setPreferenceDraft(saved); setOffline(false);
+      } catch (cause) {
+        if (!active) return;
+        if (cause instanceof LocalApiError) { setError(cause.message); setSettingsOpen(true); setOffline(false); }
+        else setOffline(true);
+        if (restored) setNotice('Rascunho recuperado no navegador. Continue editando offline; o Git sincroniza quando o aplicativo local voltar.');
+        else setNotice('Modo offline. Abra ou escreva um Markdown; seu rascunho fica neste navegador.');
+      } finally { if (active) setDraftReady(true); }
+    })();
+    return () => { active = false; };
+  }, [draftId]);
+  useEffect(() => {
+    if (!draftReady) return;
+    const snapshot: DraftSnapshot = {id: draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, assets: assets.map(({path,file}) => ({path,file})), preferences, updatedAt: Date.now()};
+    latestDraft.current = snapshot;
+    void persistDraft(snapshot).catch(() => setError('Não foi possível guardar o rascunho no navegador. Baixe o Markdown ou pacote para preservar suas alterações.'));
+  }, [draftReady, draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, assets, preferences]);
+  useEffect(() => {
+    const flush = () => { if (latestDraft.current) void persistDraft(latestDraft.current).catch(() => {}); };
+    const online = () => setOffline(false), disconnected = () => setOffline(true);
+    window.addEventListener('pagehide', flush); window.addEventListener('online', online); window.addEventListener('offline', disconnected);
+    return () => { window.removeEventListener('pagehide', flush); window.removeEventListener('online', online); window.removeEventListener('offline', disconnected); };
+  }, []);
   useEffect(() => {
     if (!dirty) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
@@ -130,7 +194,8 @@ function App() {
     try { await action(); } catch (cause) {
       if (cause instanceof LocalApiError && cause.conflict) {
         setConflict(cause.conflict); setCopyName(cause.conflict.name.replace(/\.(md|markdown|mdown)$/i, '-copia.md')); setSettingsOpen(false);
-      } else setError(cause instanceof Error ? cause.message : String(cause));
+      } else if (cause instanceof TypeError) { setOffline(true); setPendingSync(true); setNotice('Rascunho preservado no navegador. Reabra o aplicativo local para salvar no repositório e sincronizar o Git.'); }
+      else setError(cause instanceof Error ? cause.message : String(cause));
     }
     finally { operationLock.current = false; setBusy(false); }
   }
@@ -156,7 +221,7 @@ function App() {
   const discard = () => !dirty || window.confirm('Há alterações não salvas. Deseja substituí-las?');
   function resetDocument(text = '', fileName = 'documento.md', hash: string | null = null, attached: {path: string; file: File}[] = []) {
     setValue(text); setBaseline(text); setName(fileName); setLoadedName(fileName); setVersion(hash);
-    setImportedVersion(null); setConflict(null); setPendingSync(false); setAssets([]); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
+    setImportedVersion(null); setConflict(null); setPendingSync(false); restoringAssets.current = attached.length > 0; setAssets(attached.map(asset => ({...asset,url:''}))); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
   }
   async function registerImport(source: string, fileName: string) {
     await run(async () => {
@@ -171,21 +236,21 @@ function App() {
     const targetName = target?.name ?? name;
     const expected = target ? target.version : name === loadedName ? version : null;
     const baseVersion = !target && importedVersion?.name === name ? importedVersion.version : undefined;
-    const result = await api<SaveResult>('save-sync', { name: targetName, value, message: note, version: expected, baseVersion, backupBeforeReplace: target?.backupBeforeReplace, files: await Promise.all(assets.map(encodeAsset)) });
-    setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
+    const result = await api<SaveResult>('save-sync', { repository: repository.repository, name: targetName, value, message: note, version: expected, baseVersion, backupBeforeReplace: target?.backupBeforeReplace, files: await Promise.all(assets.map(encodeAsset)) });
+    setOffline(false); setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
     setImportedVersion(null); setConflict(null); setPendingSync(!result.synced);
     await refresh();
     if (result.synced) setNotice('Arquivo salvo, commit criado e enviado ao remoto.');
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
   function requestSave(automatic = false) {
-    if (operationLock.current || busy || commitNoteOpen || conflict || !repository.repository) return;
+    if (!draftReady || operationLock.current || busy || commitNoteOpen || conflict || !repository.repository) return;
     if (preferences.askCommitNote) {
       setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
     } else void run(() => save(`${automatic ? 'Auto-save' : 'Update'} ${name}`));
   }
   autoSaveAction.current = () => {
-    if ((dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
+    if (draftReady && !offline && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
   };
   useEffect(() => {
     if (!preferences.autoSave || !repository.repository) return;
@@ -211,6 +276,13 @@ function App() {
   return <main aria-busy={busy} className="editor-app">
     {settingsOpen && <EditorDialog title="Configurações" onClose={() => setSettingsOpen(false)}>
     <div className="settings-content">
+    <section className="pwa-settings" aria-label="Aplicativo PWA">
+      <div className="pwa-brand"><img src="/icons/scribe-64.png" width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>AB Markdown — Escriba</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
+      {pwa.canInstall && <button type="button" onClick={() => void pwa.install()}><Download size={18}/>Instalar aplicativo</button>}
+      {!pwa.canInstall && !pwa.standalone && <p>Use a opção de instalar aplicativo do navegador. No Safari do Mac, use Arquivo → Adicionar ao Dock.</p>}
+      <p>Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.</p>
+      {pwa.updateAvailable && <p>Atualização pronta. Seus rascunhos estão preservados; feche as janelas do editor e abra novamente quando terminar.</p>}
+    </section>
     <div className="settings-theme"><span>Aparência</span><button aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={20}/> : <Moon size={20}/>}Tema {theme === 'dark' ? 'claro' : 'escuro'}</button></div>
     <details className="repository" open={!repository.repository || undefined}>
       <summary><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></summary>
@@ -256,7 +328,8 @@ function App() {
       </form>
     </EditorDialog>}
     {!settingsOpen && statusMessages}
-    <fieldset disabled={busy} className="editor-container"><MarkdownWorkbench key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={setAssets} saveRevision={saveRevision} readOnly={busy} actions={<>
+    <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
+      {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/>Offline</span>}
       {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></fieldset>

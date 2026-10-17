@@ -159,11 +159,12 @@ export class Repository {
     return { value, version: digest(bytes), files, warnings };
   }
 
-  async save({ name, value, version, baseVersion, backupBeforeReplace = false, files = [] }) {
+  async save({ name, value, version, baseVersion, repository: expectedRepository, backupBeforeReplace = false, files = [] }) {
     markdownName(name);
     if (typeof value !== 'string' || Buffer.byteLength(value) > MAX_TEXT) throw new Error('O Markdown excede 5 MB.');
     if (!Array.isArray(files) || files.length > 50) throw new Error('Limite de imagens excedido.');
     const root = this.requireRoot();
+    if (expectedRepository && expectedRepository !== root) throw new Error('O repositório mudou. Reconecte a pasta original antes de salvar este rascunho.');
     const filename = await safeFile(root, name, true);
     let previous = null;
     try { previous = digest(await fs.readFile(filename)); } catch (error) { if (error.code !== 'ENOENT') throw error; }

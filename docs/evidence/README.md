@@ -47,3 +47,15 @@ As jornadas importam um Markdown que já existe no repositório e salvam suas al
 ![Resolver versões no desktop](desktop-resolve-file-conflict.png)
 
 ![Resolver versões no celular](mobile-resolve-file-conflict.png)
+
+## PWA e recuperação offline
+
+Texto e imagem preservados após recarregamento sem conexão; exportação ZIP validada. Ao reconectar, o mesmo documento chega ao remoto por commit/push. Capturas usam exclusivamente repositórios temporários de teste.
+
+![Rascunho offline desktop](desktop-pwa-offline-draft.png)
+
+![Rascunho offline celular](mobile-pwa-offline-draft.png)
+
+![Configurações PWA desktop](desktop-pwa-install-settings.png)
+
+![Configurações PWA celular](mobile-pwa-install-settings.png)

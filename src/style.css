@@ -55,3 +55,11 @@ textarea { font: inherit; font-size: 16px; color: var(--text-primary); backgroun
 
 .editor-app dialog form footer { flex-wrap: wrap; }
 .editor-app dialog p { overflow-wrap: anywhere; }
+
+.editor-app { padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); padding-left: max(8px, env(safe-area-inset-left)); padding-right: max(8px, env(safe-area-inset-right)); }
+.pwa-settings { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-panel); }
+.pwa-brand { display: flex; align-items: center; gap: 16px; }
+.pwa-brand img { flex-shrink: 0; border-radius: var(--radius-md); }
+.pwa-brand h3 { margin: 0; color: var(--text-primary); }
+.pwa-settings p { color: var(--text-muted); }
+.offline-indicator { display: inline-flex; align-items: center; gap: 6px; color: var(--amber); font-size: var(--text-base); }

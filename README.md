@@ -71,3 +71,11 @@ Configurações e logs: `~/Library/Application Support/AB Markdown/` (`settings.
 Para atualizar, salve os documentos e execute `./install.sh` na nova versão. O instalador encerra o servidor anterior, substitui o aplicativo e abre a nova versão. Para encerrar o servidor manualmente, use `npm run stop` na pasta do código ou `"$HOME/Applications/AB Markdown.app/Contents/Resources/runtime/bin/node" "$HOME/Applications/AB Markdown.app/Contents/Resources/scripts/stop.mjs"`. Remova `~/Applications/AB Markdown.app` e o atalho da Mesa para desinstalar. A pasta de configurações pode ser removida separadamente; seus repositórios e documentos ficam preservados.
 
 O bundle é gerado localmente, sem assinatura/notarização de distribuição. A evidência de validação desta extração está em [docs/VALIDATION.md](docs/VALIDATION.md).
+
+## Aplicativo PWA e ícone Escriba
+
+O ícone representa um escriba egípcio nas cores do SPHINX: azul profundo, laranja e papiro claro. Ele aparece no favicon, no aplicativo do Mac e na instalação PWA.
+
+Nas configurações, use **Instalar aplicativo** quando disponível; no Safari do Mac, **Arquivo → Adicionar ao Dock**. Depois do primeiro acesso, o editor abre offline e recupera automaticamente texto e imagens em rascunhos locais do navegador. A exportação também funciona offline. Para salvar no repositório e sincronizar Git, mantenha o serviço local aberto pelo ícone da Mesa; o push precisa de conexão ao remoto. O endereço local permanece em `http://127.0.0.1:43127`.
+
+Veja [funcionamento e limites da PWA](docs/PWA.md) e [origem do ícone](docs/ICON.md).

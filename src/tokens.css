@@ -922,3 +922,10 @@
 .notif-scope.notif-orgn {
   --notif-font-boost: 1.15;
 }
+
+/* Scribe app identity, shared with SPHINX artwork; constant across both UI themes. */
+:root, [data-theme="dark"], [data-theme="light"] {
+  --scribe-navy: #102231;
+  --scribe-orange: #ff7a18;
+  --scribe-paper: #f1eee5;
+}

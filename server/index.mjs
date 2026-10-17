@@ -23,6 +23,10 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'");
     const url = new URL(req.url, origin);
     if (url.pathname === '/health') return send(res, 200, { app: 'ab-markdown-editor', pid: process.pid });
+    if (url.pathname === '/api/session' && req.method === 'GET') {
+      if (req.headers['x-ab-markdown-client'] !== '1' || req.headers['sec-fetch-site'] === 'cross-site' || (req.headers.origin && req.headers.origin !== origin)) return send(res, 403, { error: 'Origem inválida.' });
+      return send(res, 200, { token });
+    }
     if (url.pathname.startsWith('/api/')) {
       const supplied = Buffer.from(req.headers.authorization?.replace(/^Bearer /, '') || '');
       if (supplied.length !== token.length || !timingSafeEqual(supplied, Buffer.from(token))) return send(res, 403, { error: 'Sessão inválida. Reabra o aplicativo.' });
@@ -58,7 +62,8 @@ const server = http.createServer(async (req, res) => {
     const relative = decodeURIComponent(url.pathname).slice(1);
     if (relative.split('/').some(part => part === '..' || part.startsWith('.')) || relative.includes('\\')) return send(res, 404, { error: 'Arquivo inválido.' });
     const file = await fs.readFile(path.join(dist, relative));
-    const mime = { '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png' }[path.extname(relative)] || 'application/octet-stream';
+    const mime = { '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json', '.html': 'text/html; charset=utf-8' }[path.extname(relative)] || 'application/octet-stream';
+    if (relative === 'sw.js') { res.setHeader('Service-Worker-Allowed', '/'); res.setHeader('Cache-Control', 'no-cache'); }
     res.writeHead(200, { 'Content-Type': mime }); res.end(file);
   } catch (error) { send(res, error.code === 'DOCUMENT_CONFLICT' ? 409 : 400, { error: error.code === 'ENOENT' ? 'Arquivo ou pasta não encontrado.' : error.message, ...(error.conflict ? { code: error.code, conflict: error.conflict } : {}) }); }
 });
