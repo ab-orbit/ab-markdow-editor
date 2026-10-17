@@ -135,6 +135,7 @@ function App() {
     restoringAssets.current = false; setAssets(items);
   }, []);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  useEffect(() => {const showNotes=()=>setNotesOpen(true);window.addEventListener('scriba:show-notes',showNotes);return()=>window.removeEventListener('scriba:show-notes',showNotes);}, []);
   const [repository, setRepository] = useState<RepositoryInfo>({ repository: null, branch: '', status: '' });
   const [directory, setDirectory] = useState('');
   const [url, setUrl] = useState('');
@@ -431,7 +432,7 @@ function App() {
         <button className="pin-note" type="button" disabled={busy || (offline && !browserMode)} aria-label={`${group.pinned ? 'Desafixar' : 'Fixar'} ${note.name}`} title={group.pinned ? 'Desafixar nota' : 'Fixar nota'} onClick={() => void togglePin(note, !group.pinned)}>{group.pinned ? <PinOff size={14}/> : <Pin size={14}/>}</button>
       </li>)}</ol></section>)}</nav>
     </aside>}
-    <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench compact key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
+    <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench compact initialMode={window.matchMedia('(max-width: 899px)').matches && version ? 'read' : 'live'} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
       {repository.repository && <button type="button" disabled={busy} aria-label={browserMode ? "Salvar nota" : "Salvar no repositório"} title={browserMode ? "Salvar nota (⌘S)" : "Salvar no repositório (⌘S)"} onClick={() => requestSave()}><Save size={18}/></button>}

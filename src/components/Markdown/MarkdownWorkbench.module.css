@@ -136,3 +136,22 @@
 .dialog input, .dialog textarea, .dialog select { font-size: 16px; }
 .compact .toolbar { position: relative; }
 @media (max-width: 430px) { .compact .actions :global(.offline-indicator) { position: absolute; top: 5px; right: 8px; font-size: 11px; } }
+
+/* Mobile reading follows a quiet document layout, with controls outside the text. */
+.mobileReadingBar { display: none; }
+@media (max-width: 899px) {
+ .compact[data-mode="read"] .mobileReadingBar { display: flex; flex: 0 0 auto; justify-content: space-between; align-items: center; padding: 12px 20px 8px; gap: 12px; }
+ .mobileReadingBar > div { display: flex; gap: 4px; }
+ .mobileReadingBar button { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 8px; border: 1px solid var(--border-panel); border-radius: var(--radius-full); background: transparent; color: var(--text-secondary); }
+ .mobileReadingBar button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+ .compact[data-mode="read"][data-reading-actions="false"] > .toolbar { display: none; }
+ .compact[data-mode="read"] > .footer, .compact[data-mode="read"] > .editingToolbar { display: none; }
+ .compact[data-mode="read"] .reading { max-width: 740px; padding: 16px 25px 64px; font-family: var(--font-ui); font-size: 17px; line-height: 1.8; letter-spacing: .005em; }
+ .compact[data-mode="read"] .reading h1 { font-size: 32px; line-height: 1.3; letter-spacing: -.015em; margin: 0 0 40px; }
+ .compact[data-mode="read"] .reading h2 { font-size: 25px; line-height: 1.4; margin: 40px 0 24px; }
+ .compact[data-mode="read"] .reading h3 { font-size: 21px; line-height: 1.4; margin: 32px 0 20px; }
+ .compact[data-mode="read"] .reading p { margin: 0 0 26px; }
+ .compact[data-mode="read"] .reading hr { margin: 38px 0; }
+ .compact[data-mode="read"] .reading strong { color: var(--text-secondary); }
+}
+@media (max-width: 359px) { .compact[data-mode="read"] .reading { padding-inline: 20px; } .compact[data-mode="read"] .reading h1 { font-size: 29px; } }

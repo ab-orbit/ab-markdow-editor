@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Download, FileUp, FileText, Package, Type } from 'lucide-react';
+import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -128,7 +128,11 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
   }
 
   const [formattingOpen, setFormattingOpen] = useState(false);
-  return <section className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} aria-label="Bancada Markdown" aria-busy={busy}>
+  const [readingActionsOpen, setReadingActionsOpen] = useState(false);
+  const [noteInfoOpen, setNoteInfoOpen] = useState(false);
+  return <section className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} data-reading-actions={readingActionsOpen} aria-label="Bancada Markdown" aria-busy={busy}>
+    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" aria-label="Editar nota" onClick={() => setMode('live')}><Pencil size={20}/></button><button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
+    {noteInfoOpen && <EditorDialog title="Informações da nota" onClose={() => setNoteInfoOpen(false)}><p>{fileName}</p><p>{words} palavras · {value.length} caracteres</p><p>Leitura estimada: {Math.max(1, Math.ceil(words / 200))} min</p><p>Markdown · UTF-8</p></EditorDialog>}
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}</div>
       <div className={styles.modes} role="group" aria-label="Modo de edição">
