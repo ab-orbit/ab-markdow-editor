@@ -108,7 +108,7 @@ O modo Visão mantém texto e prévia na tela, com rolagem independente, em colu
 
 ## Public Scriba PWA
 
-Use **https://scriba.aeonbridge.app/** without installing a local server. Notes and images stay private in that browser's IndexedDB, including offline use after the first load. Export ZIP backups: clearing site data deletes local notes, and devices do not synchronize automatically.
+Use **https://scriba.aeonbridge.app/** without installing a local server. By default, notes and images stay private in that browser's IndexedDB, including offline use after the first load. Export ZIP backups: clearing site data deletes local notes, and devices do not synchronize automatically.
 
 The Mac application retains local Git save/commit/push. The public app also supports GitHub synchronization per user; Google Drive and additional themes remain planned.
 

@@ -55,7 +55,7 @@ interface SavePreferences {
 }
 interface SaveResult {
   /** Hash of the content successfully written to disk, even if Git failed. */
-  version: string;
+  version: string | null;
   /** Whether the saved document has been committed and pushed. */
   synced: boolean;
   /** Git operation that remains pending after a partial failure. */
@@ -78,7 +78,7 @@ interface LoadedDocument {
   /** Canonical UTF-8 Markdown source. */
   value: string;
   /** Content hash used for optimistic concurrency. */
-  version: string;
+  version: string | null;
   /** Attached local images. */
   files: DocumentFile[];
   /** References that could not be loaded. */
@@ -245,7 +245,7 @@ function App() {
           if (!active) return;
           const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
           resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);
-          if(!doc.inRepository) setImportedVersion({name:doc.name,version:doc.version});
+          if(!doc.inRepository && doc.version) setImportedVersion({name:doc.name,version:doc.version});
           history.replaceState(null, '', location.pathname);
           setError('');setSettingsOpen(false);setNotice(doc.inRepository ? 'Documento do Finder aberto no repositório.' : 'Documento do Finder importado. Salvar usará o repositório configurado; o original fica preservado.');
         }
@@ -382,7 +382,7 @@ function App() {
       {pwa.updateAvailable && <p>Atualização pronta. Seus rascunhos estão preservados; feche as janelas do editor e abra novamente quando terminar.</p>}
     </section>
     {browserMode && <GitHubSettings canSwitch={discard} onChange={async () => {resetDocument();await refresh();setNotice('Destino atualizado. Suas notas anteriores continuam preservadas separadamente.');}}/>}
-    {browserMode && <section className="storage-settings" aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : 'Armazenamento privado neste navegador'}</p>{canChooseFolder() ? <div className="settings-actions"><button disabled={busy} onClick={() => {void run(async () => {const label=await chooseDeviceFolder();setGitHubSelection(null);resetDocument();setDeviceFolder(label);const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`${count} notas carregadas. Pasta: ${label}.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`Pasta lida: ${count} notas disponíveis na lista.`);})}>Autorizar pasta e carregar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setDeviceFolder('');})}>Usar somente navegador</button></>}</div> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. Git remoto e Google Drive serão opções adicionais.</p></section>}
+    {browserMode && <section className="storage-settings" aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : 'Armazenamento privado neste navegador'}</p>{canChooseFolder() ? <div className="settings-actions"><button disabled={busy} onClick={() => {if(!discard())return;void run(async () => {const label=await chooseDeviceFolder();setGitHubSelection(null);resetDocument();setDeviceFolder(label);const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`${count} notas carregadas. Pasta: ${label}.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`Pasta lida: ${count} notas disponíveis na lista.`);})}>Autorizar pasta e carregar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setGitHubSelection(null);resetDocument();await refresh();setDeviceFolder('');})}>Usar somente navegador</button></>}</div> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. GitHub está disponível na seção acima; Google Drive está previsto.</p></section>}
     <div className="settings-theme"><span>Aparência</span><button aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={20}/> : <Moon size={20}/>}Tema {theme === 'dark' ? 'claro' : 'escuro'}</button></div>
     {browserMode && <section className="repository" aria-label="Sincronização com GitHub e Git"><h3><FolderGit2 size={20}/> GitHub / repositório Git</h3><p>Use um repositório local ou clone uma URL Git. Na versão local, cada salvamento grava o arquivo, cria um commit e faz push usando suas credenciais.</p><div className="settings-actions"><a className="settings-action" href="http://127.0.0.1:43127/" target="_blank" rel="noopener noreferrer">Abrir editor local com Git</a><a className="settings-action" href="https://github.com/ab-orbit/ab-markdow-editor#readme" target="_blank" rel="noopener noreferrer">Instalar no Mac</a></div><p>Abra o aplicativo Scriba no Mac antes de conectar. No editor local, abra Configurações para selecionar a pasta ou clonar o repositório. As notas deste site continuam separadas; use Baixar pacote e importe no editor local para transferi-las.</p><p>No celular e tablet, use a seção GitHub acima para conectar sua conta e selecionar um repositório. O armazenamento no navegador e a pasta do dispositivo continuam como alternativas.</p></section>}
     {!browserMode && <details className="repository" open={!repository.repository || undefined}>

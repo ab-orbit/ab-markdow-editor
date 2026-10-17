@@ -8,10 +8,15 @@ export interface GitHubSelection {
   folder: string;
 }
 export interface GitHubStatus {
+  /** Whether the operator has registered the GitHub App. */
   configured: boolean;
+  /** Whether this private session has account credentials. */
   connected: boolean;
+  /** Public account handle, without access or refresh tokens. */
   user: { login: string } | null;
+  /** Server-side repository destination, when selected. */
   selection: GitHubSelection | null;
+  /** GitHub installation page for granting repository permissions. */
   installUrl: string | null;
 }
 const selectionKey = "scriba-github-selection";

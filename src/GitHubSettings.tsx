@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import { FolderGit2, RefreshCw } from "lucide-react";
 import {
   githubJson,
+  githubSelection,
   githubStatus,
   setGitHubSelection,
   type GitHubStatus,
 } from "./lib/github";
 interface Repository {
+  /** Canonical owner/repository identifier shown in the selector. */
   fullName: string;
+  /** Repository branch used by the initial integration. */
   defaultBranch: string;
+  /** Privacy label, independent of the authorized write permission. */
   private: boolean;
 }
 /** Account connection and repository authorization are independent of local folder storage. */
@@ -122,6 +126,7 @@ export function GitHubSettings({
             {status.selection &&
               ` · ${status.selection.fullName}/${status.selection.folder}`}
           </p>
+          <p>{githubSelection() ? "Salvamento ativo no GitHub." : "Conta conectada. Use este repositório para ativar o salvamento no GitHub."}</p>
           <div className="settings-actions">
             {status.installUrl && (
               <a
