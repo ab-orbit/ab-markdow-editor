@@ -1,4 +1,4 @@
-import {saveToDeviceFolder} from './deviceFolder';
+import {saveToDeviceFolder, readDeviceNotes} from './deviceFolder';
 import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
 /** Public builds keep all user content in this origin's IndexedDB, never on the VPS. */
 export const browserMode = import.meta.env.VITE_STORAGE_MODE === 'browser';
@@ -18,6 +18,7 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
   try {
     const database=await db();
     const url=new URL(route,'https://browser.invalid/');
+    const imported = url.pathname === '/folder/import' ? await readDeviceNotes() : [];
     let guide:Note|undefined;
     if(url.pathname==='/library/initialize') {
       const image=await fetch(welcomeUrl); const bytes=new Uint8Array(await image.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
@@ -28,6 +29,7 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       request.onsuccess=()=>{
         const state:State=request.result||initial();const name=body?.name||url.searchParams.get('name')||'';
         switch(url.pathname) {
+          case '/folder/import':for(const note of imported){const existing=state.notes[note.name];if(!existing)state.notes[note.name]={...note,version:crypto.randomUUID()};}result=library(state);break;
           case '/repository':result={repository:'Notas neste navegador',branch:'',status:''};break;
           case '/preferences':if(body)state.preferences={askCommitNote:false,autoSave:!!body.autoSave,intervalMinutes:Math.max(1,Math.min(1440,Number(body.intervalMinutes)||1))};result=state.preferences;break;
           case '/files':result=Object.keys(state.notes).sort();break;
