@@ -110,3 +110,29 @@
 .compact .reading { font-family: var(--font-ui); font-size: 16px; line-height: 1.75; }
 .compact[data-mode="live"] .cm-content { font-family: var(--font-ui); font-size: 16px; line-height: 1.75; }
 .compact .reading code, .compact .reading pre { font-family: var(--font-mono); }
+
+/* Split mode keeps both panes on screen even when one document is very long. */
+.compact .split { min-height: 0; overflow: hidden; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.compact .split > .source, .compact .split > .reading { min-height: 0; height: 100%; width: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 16px 20px 48px; }
+.compact .editingToolbar { max-height: min(160px, 30dvh); overflow-y: auto; flex-shrink: 0; }
+@media (max-width: 899px) {
+ .compact .split { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+ .compact .split > .source { border-right: 0; border-bottom: 1px solid var(--border-panel); }
+ .compact .split > .source, .compact .split > .reading { padding: 8px 14px 24px; }
+}
+@media (pointer: coarse) {
+ .compact .toolbar button, .compact .editingToolbar button, .compact .editingToolbar select { min-height: 44px; min-width: 44px; }
+ .compact .editingToolbar select { font-size: 16px; }
+}
+@media (max-height: 500px) { .compact .assetHint { display: none; } .compact .footer { padding: 2px 8px; } }
+.dialog { max-height: min(85dvh, calc(var(--workspace-height, 100dvh) - 24px)); }
+.dialog > header { position: sticky; top: -24px; z-index: 2; background: var(--bg-surface); padding: 4px 0; }
+@media (max-width: 430px) {
+ .compact .toolbar { padding-left: 6px; padding-right: 6px; }
+ .compact .actions { flex-wrap: nowrap; justify-content: space-between; width: 100%; }
+ .compact .actions button { flex: 0 0 44px; min-width: 44px; padding-left: 0; padding-right: 0; }
+}
+@media (max-width: 899px) { .compact .assetHint { display: none; } }
+.dialog input, .dialog textarea, .dialog select { font-size: 16px; }
+.compact .toolbar { position: relative; }
+@media (max-width: 430px) { .compact .actions :global(.offline-indicator) { position: absolute; top: 5px; right: 8px; font-size: 11px; } }

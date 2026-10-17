@@ -79,3 +79,7 @@ A primeira nota fixada explica a plataforma, os recursos e o roadmap de Google D
 ![Guia em leitura, desktop escuro](desktop-guide-reading-dark.png)
 
 ![Guia em leitura, celular escuro](mobile-guide-reading-dark.png)
+
+## Celular e tablet — vertical, horizontal e área reduzida
+
+Veja as [44 capturas organizadas por motor, perfil e orientação](RESPONSIVE.md), cobrindo Visão, Ler, lateral aberta em tablet e redução de área para teclado. Repositórios sintéticos; matriz e limites documentados em [RESPONSIVE.md](../RESPONSIVE.md). A revisão também corrigiu a persistência de imagens no WebKit; os cenários finais exigem ausência de alertas e restauração de texto/imagem após reload.

@@ -59,3 +59,9 @@ Paleta local suave nos dois temas, alterada nos tokens. Contraste na superfície
 ## Imagem de boas-vindas e miniatura da nota
 
 27 testes HTTP e 8 jornadas de navegador aprovados. Validação da miniatura carregada na lista e imagem aberta em leitura, JPG junto ao Markdown no remoto Git, migração única de guia existente preservando texto editado, rejeição de traversal/SVG/symlinks e ausência de busca remota. A miniatura usa IntersectionObserver e uma chamada autenticada separada; não carrega imagens de todas as notas de uma vez. Capturas de guia e lista atualizadas em desktop/mobile.
+
+## Matriz responsiva — celular e tablet nas duas orientações
+
+13 jornadas Chrome (as 8 anteriores + 4 perfis responsivos + compatibilidade de rascunhos anteriores) e 4 jornadas WebKit; cada perfil responsivo gira entre vertical e horizontal, exercita toque, Visão, edição, imagens, tabela, preferências, nota de commit, save/commit/push, ZIP, área reduzida de 280 px e edição offline seguida de sincronização. 27 testes HTTP. Ver [matriz, defeito reproduzido e limites](RESPONSIVE.md) e [capturas por motor/perfil/orientação](evidence/RESPONSIVE.md).
+
+A revisão visual identificou ainda uma falha de armazenamento de File/Blob no IndexedDB do WebKit. Corrigida com bytes ArrayBuffer, metadados e fila de gravação. Novas asserções exigem ausência de alertas, dados e bytes persistidos e recuperação após reload em cada orientação. Rascunhos anteriores com File foram testados em uma jornada própria e continuam legíveis/exportáveis.

@@ -101,3 +101,7 @@ Na primeira abertura de cada repositório, o editor inclui e fixa **AB-Markdown-
 O roadmap prevê Google Drive e novas opções de temas, sem datas anunciadas. A troca entre claro e escuro já está disponível em **Configurações → Aparência**. A leitura usa fonte de sistema sem serifa e cores suaves; código e modo Fonte continuam monoespaçados.
 
 O guia inicial inclui uma ilustração de boas-vindas salva em `assets/escriba-welcome-v1.jpg`. Ela aparece no documento e como miniatura na lista. Outras notas também exibem a primeira imagem local encontrada nos primeiros 8 KB de Markdown. As miniaturas carregam quando entram na área visível, pela API local autenticada; imagens externas e SVG não são buscados/executados. Ao atualizar um guia já criado, o editor insere a imagem uma única vez, preserva o restante do conteúdo e sincroniza Markdown + JPG no Git.
+
+## Celular e tablet
+
+O modo Visão mantém texto e prévia na tela, com rolagem independente, em coluna nas telas estreitas e lado a lado nas maiores. A interface acompanha a altura disponível, mantém alvos de toque de 44 px e preserva o texto ao girar a tela. Confira a [matriz de testes responsivos e seus limites](docs/RESPONSIVE.md).

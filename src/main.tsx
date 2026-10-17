@@ -105,6 +105,16 @@ async function encodeAsset(asset: MarkdownAsset) {
 }
 function App() {
   const pwa = usePwa();
+  useEffect(() => {
+    // iOS visual viewport shrinks for the keyboard even when layout viewport/dvh does not.
+    const viewport = window.visualViewport;
+    const resize = () => {
+      if (!viewport || viewport.scale !== 1) return;
+      document.documentElement.style.setProperty('--workspace-height', `${viewport.height}px`);
+    };
+    resize(); viewport?.addEventListener('resize', resize);
+    return () => { viewport?.removeEventListener('resize', resize); document.documentElement.style.removeProperty('--workspace-height'); };
+  }, []);
   const [offline, setOffline] = useState(!navigator.onLine);
   const [draftReady, setDraftReady] = useState(false);
   const [draftId] = useState(() => {
@@ -400,7 +410,7 @@ function App() {
     </aside>}
     <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench compact key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
-      {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/>Offline</span>}
+      {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
       {repository.repository && <button type="button" disabled={busy} aria-label="Salvar no repositório" title="Salvar no repositório (⌘S)" onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></fieldset>

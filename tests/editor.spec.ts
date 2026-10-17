@@ -51,7 +51,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(page.getByRole('heading', { name: 'Pesquisa', exact: true })).toBeVisible();
       const image = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=', 'base64');
       await page.getByLabel('Arquivos de imagem', { exact: true }).setInputFiles({ name: 'pixel.png', mimeType: 'image/png', buffer: image });
-      await expect(page.getByText('1 imagem(ns) anexada(s).', { exact: false })).toBeVisible();
+      await expect(page.locator('article img')).toHaveCount(1);await expect.poll(() => page.locator('article img').evaluate((el:HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
       await page.getByRole('button', { name: 'Salvar no repositório', exact: true }).click();
       await expect(page.getByRole('status')).toHaveText('Arquivo salvo, commit criado e enviado ao remoto.');
       const saved = await readFile(join(repo,'notes/pesquisa.md'),'utf8'); expect(saved).toContain('# Pesquisa'); expect(saved).toContain('assets/');

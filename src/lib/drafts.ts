@@ -34,15 +34,44 @@ function database() {
     request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
   });
 }
+interface StoredAsset {
+  /** Repository-relative image path. */
+  path: string;
+  /** Original filename and MIME type restore a browser File on load. */
+  name: string;
+  type: string;
+  /** Original file time retained when reconstructing the image. */
+  lastModified: number;
+  /** Binary bytes avoid Safari IndexedDB Blob/File persistence failures. */
+  bytes: ArrayBuffer;
+}
+type StoredDraft = Omit<DraftSnapshot, 'assets'> & {assets: (StoredAsset | Pick<MarkdownAsset, 'path' | 'file'>)[]};
+const imageBytes = new WeakMap<File, Promise<ArrayBuffer>>();
+let writeQueue: Promise<void> = Promise.resolve();
 export async function loadDraft(id: string): Promise<DraftSnapshot | null> {
   const db=await database();
-  return new Promise((resolve,reject)=>{
+  const stored = await new Promise<StoredDraft | null>((resolve,reject)=>{
     const transaction=db.transaction('drafts','readonly');const store=transaction.objectStore('drafts');const request=store.get(id);
     request.onsuccess=()=>{if(request.result){resolve(request.result);return;}const latest=store.index('updatedAt').openCursor(null,'prev');latest.onsuccess=()=>resolve(latest.result?.value ?? null);latest.onerror=()=>reject(latest.error);};
     request.onerror=()=>reject(request.error);
   });
+  if (!stored) return null;
+  // Existing drafts that stored native File objects remain readable after this upgrade.
+  return {...stored, assets:stored.assets.map(asset => 'bytes' in asset ? {path:asset.path,file:new File([asset.bytes],asset.name,{type:asset.type,lastModified:asset.lastModified})} : asset)};
 }
-export async function persistDraft(draft: DraftSnapshot): Promise<void> {
-  const db=await database();
-  return new Promise((resolve,reject)=>{const transaction=db.transaction('drafts','readwrite');transaction.objectStore('drafts').put(draft);transaction.oncomplete=()=>resolve();transaction.onerror=()=>reject(transaction.error);transaction.onabort=()=>reject(transaction.error);});
+export function persistDraft(draft: DraftSnapshot): Promise<void> {
+  const write = async () => {
+    const assets: StoredAsset[] = await Promise.all(draft.assets.map(async ({path,file}) => {
+      let bytes=imageBytes.get(file);if(!bytes){bytes=file.arrayBuffer();imageBytes.set(file,bytes);}
+      return {path,name:file.name,type:file.type,lastModified:file.lastModified,bytes:await bytes};
+    }));
+    const db=await database();
+    await new Promise<void>((resolve,reject)=>{
+      const transaction=db.transaction('drafts','readwrite');
+      transaction.objectStore('drafts').put({...draft,assets});
+      transaction.oncomplete=()=>resolve();transaction.onerror=()=>reject(transaction.error);transaction.onabort=()=>reject(transaction.error);
+    });
+  };
+  // Encoding image bytes is asynchronous; serialize writes so older text cannot replace a newer draft.
+  const pending=writeQueue.then(write);writeQueue=pending.catch(()=>{});return pending;
 }
