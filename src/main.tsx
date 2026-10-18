@@ -111,6 +111,24 @@ async function encodeAsset(asset: MarkdownAsset) {
   for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
   return { path: asset.path, data: btoa(binary) };
 }
+/** Translate Git porcelain codes into local file states, without implying a successful push. */
+function describeRepositoryChanges(status: string): string {
+  return status.split('\n').filter(Boolean).map(line => {
+    // The local Git helper trims the first line, so accept one or two status columns.
+    const match = line.match(/^([ MADRCU?!T]{1,2}) (.+)$/);
+    if (!match) return 'Há alterações locais no repositório.';
+    const [, code, file] = match;
+    const label = code === '??' ? 'Ainda não versionado'
+      : code === '!!' ? 'Ignorado pelo Git'
+      : code.includes('U') || code === 'AA' || code === 'DD' ? 'Conflito a resolver'
+      : code.includes('D') ? 'Exclusão local pendente'
+      : code.includes('R') ? 'Renomeação local pendente'
+      : code.includes('C') ? 'Cópia local pendente'
+      : code.includes('A') ? 'Adicionado; commit pendente'
+      : 'Alteração local pendente';
+    return `${label}: ${file}`;
+  }).join('\n');
+}
 function App() {
   const pwa = usePwa();
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -406,7 +424,7 @@ function App() {
       <fieldset disabled={busy}><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('connect', { directory }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório conectado.'); }); }}><label>Pasta local do repositório<input placeholder="Clique em Selecionar pasta" value={directory} onChange={event => setDirectory(event.target.value)} required/></label><button type="button" className="primary" onClick={() => void chooseRepository()}><FolderOpen size={18}/>Selecionar pasta</button><button>Conectar caminho</button></form>
       <details><summary>Clonar um repositório por URL</summary><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('clone', { url, destination }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório clonado e conectado.'); }); }}><label>URL HTTPS ou SSH<input placeholder="git@github.com:usuario/repositorio.git" value={url} onChange={event => setUrl(event.target.value)} required/></label><label>Nova pasta local (caminho absoluto)<input placeholder="/Users/seu-nome/Documentos/meu-repo" value={destination} onChange={event => setDestination(event.target.value)} required/></label><button type="button" onClick={() => void chooseCloneDestination()}><FolderOpen size={18}/>Selecionar onde clonar</button><button>Clonar e conectar</button></form></details>
       <p>Usa o Git, o agente SSH e o gerenciador de credenciais do seu Mac. Configure a identidade Git e as credenciais antes de clonar ou enviar.</p>
-      {repository.status && <pre aria-label="Alterações no repositório">{repository.status}</pre>}</fieldset>
+      {repository.status && <p aria-label="Alterações no repositório" style={{whiteSpace: 'pre-wrap', overflowWrap: 'anywhere'}}>{describeRepositoryChanges(repository.status)}</p>}</fieldset>
     </details>}
     <section className="save-preferences" aria-label="Preferências de salvamento">
       <h3>Salvamento e sincronização</h3>
