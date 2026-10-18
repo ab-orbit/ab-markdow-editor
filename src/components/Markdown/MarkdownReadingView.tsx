@@ -1,20 +1,15 @@
-import ReactMarkdown from 'react-markdown';
-import { Children, cloneElement, isValidElement, type InputHTMLAttributes, type MouseEvent, type KeyboardEvent } from 'react';
+import ReactMarkdown, { type Components, type ExtraProps } from 'react-markdown';
+import { Children, cloneElement, createContext, createElement, isValidElement, useContext, type HTMLAttributes, type InputHTMLAttributes, type MouseEvent, type KeyboardEvent } from 'react';
 import remarkGfm from 'remark-gfm';
 import { remarkMissingFootnotes } from './remarkMissingFootnotes';
 import styles from './MarkdownWorkbench.module.css';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 import type { SourceRange } from './editorCommands';
-
-/** Render registered local image URLs; unregistered URLs remain textual references. */
-function DocumentImage({ source, alt, assets }: { source?: string; alt?: string; assets: readonly MarkdownAsset[] }) {
-  const asset = source ? resolveAsset(source, assets) : undefined;
-  if (!asset) return <span className={styles.image} title="Imagem não anexada. Abra o pacote com os arquivos assets para exibi-la.">Imagem · {alt || 'sem descrição'}</span>;
-  // eslint-disable-next-line @next/next/no-img-element -- Local blob URLs are owned by this browser, not an optimization server.
-  return <img className={styles.documentImage} src={asset.url} alt={alt || asset.file.name}/>;
-}
+import { DiagramBlock } from './DiagramBlock';
 
 interface MarkdownReadingViewProps {
+  /** Scope diagram presentation preferences to the current document. */
+  diagramScope?: string;
   /** Original source; rendered-node offsets remain UTF-16 positions in this string. */
   value: string;
   /** Registered raster assets; external images are never fetched. */
@@ -28,43 +23,75 @@ interface MarkdownReadingViewProps {
   /** Disable only the gesture, preserving the keyboard alternative. */
   doubleClickToEdit?: boolean;
 }
-/** Render GFM without executing embedded HTML or automatically fetching remote images. */
-export function MarkdownReadingView({ value, assets = [], onEditTable, onToggleTask, onEditBlock, doubleClickToEdit = true }: MarkdownReadingViewProps) {
-  function blockProps(node?: {position?: {start: {offset?: number};end: {offset?: number}}}) {
-    const from=node?.position?.start.offset,to=node?.position?.end.offset;
-    if(!onEditBlock||from===undefined||to===undefined)return {};
-    return {
-      'data-source-from':from,'data-source-to':to,tabIndex:0,
-      title:doubleClickToEdit?'Dois cliques ou Enter para editar este bloco':'Enter para editar este bloco',
-      onDoubleClick:(event:MouseEvent<HTMLElement>)=>{
-        if(!doubleClickToEdit||event.target instanceof Element&&event.target.closest('a,button,input,select,textarea'))return;
-        event.preventDefault();event.stopPropagation();onEditBlock!({from,to});
-      },
-      onKeyDown:(event:KeyboardEvent<HTMLElement>)=>{
-        if(event.key!=='Enter'||event.target!==event.currentTarget||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
-        event.preventDefault();event.stopPropagation();onEditBlock!({from,to});
-      },
-    };
-  }
-  return <article className={styles.reading} aria-label="Prévia Markdown">
-    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMissingFootnotes]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={{
-      h1:({node,...props})=><h1 {...props} {...blockProps(node)}/>,
-      h2:({node,...props})=><h2 {...props} {...blockProps(node)}/>,
-      h3:({node,...props})=><h3 {...props} {...blockProps(node)}/>,
-      h4:({node,...props})=><h4 {...props} {...blockProps(node)}/>,
-      h5:({node,...props})=><h5 {...props} {...blockProps(node)}/>,
-      h6:({node,...props})=><h6 {...props} {...blockProps(node)}/>,
-      p:({node,...props})=><p {...props} {...blockProps(node)}/>,
-      pre:({node,...props})=><pre {...props} {...blockProps(node)}/>,
-      hr:({node,...props})=><hr {...props} {...blockProps(node)}/>,
-      a: ({ node, ...props }) => {
-        void node;
-        // Footnotes require the generated id/data attributes and same-document navigation.
-        return props.href?.startsWith('#') ? <a {...props}/> : <a {...props} target="_blank" rel="noopener noreferrer"/>;
-      },
-      img: ({ alt, src }) => <DocumentImage source={typeof src === 'string' ? src : undefined} alt={alt} assets={assets}/>,
-      li: ({ children, node, ...props }) => <li {...props} {...blockProps(node)}>{Children.map(children, child => isValidElement<InputHTMLAttributes<HTMLInputElement>>(child) && child.type === 'input' && node?.position?.start.offset !== undefined ? cloneElement(child, { disabled: !onToggleTask, 'aria-label': 'Alternar tarefa', onChange: () => onToggleTask?.({ from: node.position!.start.offset!, to: node.position!.end.offset! }) }) : child)}</li>,
-      table: ({ children, node }) => <div className={styles.table} {...blockProps(node)}>{onEditTable && node?.position?.start.offset !== undefined && node?.position?.end.offset !== undefined && <button className={styles.editTable} type="button" onClick={() => onEditTable({ from: node.position!.start.offset!, to: node.position!.end.offset! })}>Editar tabela</button>}<table>{children}</table></div>,
-    }}>{value}</ReactMarkdown>
-  </article>;
+interface ReadingContextValue extends Omit<MarkdownReadingViewProps, 'value'> { assets: readonly MarkdownAsset[] }
+const context = createContext<ReadingContextValue>({ assets: [] });
+
+type PositionedNode = { position?: { start: { offset?: number }; end: { offset?: number } } };
+function blockProps(node: PositionedNode | undefined, { onEditBlock, doubleClickToEdit = true }: ReadingContextValue) {
+  const from = node?.position?.start.offset, to = node?.position?.end.offset;
+  if (!onEditBlock || from === undefined || to === undefined) return {};
+  return {
+    'data-source-from': from, 'data-source-to': to, tabIndex: 0,
+    title: doubleClickToEdit ? 'Dois cliques ou Enter para editar este bloco' : 'Enter para editar este bloco',
+    onDoubleClick: (event: MouseEvent<HTMLElement>) => {
+      if (!doubleClickToEdit || event.target instanceof Element && event.target.closest('a,button,input,select,textarea')) return;
+      event.preventDefault(); event.stopPropagation(); onEditBlock({ from, to });
+    },
+    onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+      if (event.key !== 'Enter' || event.target !== event.currentTarget || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      event.preventDefault(); event.stopPropagation(); onEditBlock({ from, to });
+    },
+  };
+}
+
+/** Component identities stay stable when the host refreshes status or preferences. */
+function sourceBlock(tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'hr') {
+  return function SourceBlock({ node, ...props }: HTMLAttributes<HTMLElement> & ExtraProps) {
+    return createElement(tag, { ...props, ...blockProps(node, useContext(context)) });
+  };
+}
+const components: Components = {
+  h1: sourceBlock('h1'), h2: sourceBlock('h2'), h3: sourceBlock('h3'),
+  h4: sourceBlock('h4'), h5: sourceBlock('h5'), h6: sourceBlock('h6'),
+  p: sourceBlock('p'), hr: sourceBlock('hr'),
+  pre: function ReadingCode({ node, ...props }) {
+    const settings = useContext(context);
+    const code = node?.children.find(child => child.type === 'element' && child.tagName === 'code');
+    const classes = code?.type === 'element' ? code.properties.className : undefined;
+    if (code?.type === 'element' && Array.isArray(classes) && classes.some(name => String(name).toLowerCase() === 'language-mermaid')) {
+      const source = code.children.map(child => child.type === 'text' ? child.value : '').join('');
+      const from = node?.position?.start.offset, to = node?.position?.end.offset;
+      return <div {...blockProps(node, settings)}><DiagramBlock source={source} identity={`${settings.diagramScope}:${from}`} onEdit={settings.onEditBlock && from !== undefined && to !== undefined ? () => settings.onEditBlock!({ from, to }) : undefined}/></div>;
+    }
+    return <pre {...props} {...blockProps(node, settings)}/>;
+  },
+  a: function ReadingLink({ node, ...props }) {
+    void node;
+    // Footnotes retain their generated IDs and same-document navigation.
+    return props.href?.startsWith('#') ? <a {...props}/> : <a {...props} target="_blank" rel="noopener noreferrer"/>;
+  },
+  img: function ReadingImage({ alt, src }) {
+    const { assets } = useContext(context);
+    const asset = typeof src === 'string' ? resolveAsset(src, assets) : undefined;
+    if (!asset) return <span className={styles.image} title="Imagem não anexada. Abra o pacote com os arquivos assets para exibi-la.">Imagem · {alt || 'sem descrição'}</span>;
+    return <img className={styles.documentImage} src={asset.url} alt={alt || asset.file.name}/>;
+  },
+  li: function ReadingListItem({ children, node, ...props }) {
+    const settings = useContext(context);
+    return <li {...props} {...blockProps(node, settings)}>{Children.map(children, child => isValidElement<InputHTMLAttributes<HTMLInputElement>>(child) && child.type === 'input' && node?.position?.start.offset !== undefined ? cloneElement(child, {
+      disabled: !settings.onToggleTask, 'aria-label': 'Alternar tarefa',
+      onChange: () => settings.onToggleTask?.({ from: node.position!.start.offset!, to: node.position!.end.offset! }),
+    }) : child)}</li>;
+  },
+  table: function ReadingTable({ children, node }) {
+    const settings = useContext(context);
+    return <div className={styles.table} {...blockProps(node, settings)}>{settings.onEditTable && node?.position?.start.offset !== undefined && node?.position?.end.offset !== undefined && <button className={styles.editTable} type="button" onClick={() => settings.onEditTable!({ from: node.position!.start.offset!, to: node.position!.end.offset! })}>Editar tabela</button>}<table>{children}</table></div>;
+  },
+};
+
+/** Render GFM with stable source-backed blocks and isolated diagram components. */
+export function MarkdownReadingView({ value, assets = [], diagramScope = 'document', ...settings }: MarkdownReadingViewProps) {
+  return <context.Provider value={{ ...settings, assets, diagramScope }}><article className={styles.reading} aria-label="Prévia Markdown">
+    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMissingFootnotes]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={components}>{value}</ReactMarkdown>
+  </article></context.Provider>;
 }

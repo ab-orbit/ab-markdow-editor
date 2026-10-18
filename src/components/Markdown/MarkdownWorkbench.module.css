@@ -61,6 +61,7 @@
 .source :global(.md-live-image) { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 28px; }
 .source :global(.md-live-image img) { max-width: 100%; max-height: 420px; object-fit: contain; border: 1px solid var(--border-panel); }
 .source :global(.md-live-image button) { color: var(--text-muted); background: var(--bg-elevated); padding: 8px 12px; min-height: 44px; font-size: var(--text-base); cursor: pointer; border: 1px solid var(--border-panel); }
+.source :global(.md-live-diagram) { min-width: 0; max-width: 100%; padding: 0 28px; }
 .dialog { position: fixed; inset: 0; margin: auto; width: min(960px, calc(100vw - 32px)); max-height: 85dvh; padding: 24px; background: var(--bg-surface); color: var(--text-secondary); font: var(--text-lg)/1.7 var(--font-mono); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); overflow: auto; }
 .dialog::backdrop { background: color-mix(in srgb, var(--bg-void) 80%, transparent); }
 .dialog header, .dialog footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

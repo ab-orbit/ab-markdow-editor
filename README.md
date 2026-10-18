@@ -96,6 +96,12 @@ Mantém os modos **Escrever**, **Fonte**, **Visão** e **Ler**, formatação, de
 
 Limites: 5 MB de texto, 10 MB por imagem, 40 MB de imagens e 50 imagens por documento. O editor não executa HTML incorporado. Não aceita caminhos que escapem do repositório, links simbólicos ou alterações em `.git`. O commit recusa operar quando já há arquivos no stage para evitar misturar trabalho de outras ferramentas. Hooks Git continuam sendo respeitados.
 
+## Diagramas
+
+Blocos de código `mermaid` viram diagramas em **Ler**, **Visão** e na prévia de **Escrever**. Sobre cada desenho, o seletor permite alternar entre **Mermaid**, **Pele** e **Beautiful Mermaid** para comparar a apresentação. A escolha é independente por bloco e fica neste navegador; o arquivo Markdown permanece intacto. O lápis revela o código original.
+
+Mermaid é o padrão. Beautiful Mermaid tem cobertura menor e avisa quando o tipo não é suportado, mantendo o seletor disponível. Os três funcionam offline depois que a PWA conclui seu cache. Veja [exemplos](examples/diagramas.md), [detalhes](docs/DIAGRAMS.md) e [capturas/testes](docs/evidence/DIAGRAMS.md).
+
 ## Desenvolvimento e testes
 
 ```bash

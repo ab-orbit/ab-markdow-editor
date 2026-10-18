@@ -5,6 +5,7 @@ import { editorExtensions, livePreviewExtension } from './editorExtensions';
 import { runMarkdownCommand, sourceTables, type MarkdownCommand, type SourceRange } from './editorCommands';
 import type { MarkdownAsset } from '@/lib/markdown/assets';
 import { imageDecorations } from './imageDecorations';
+import { diagramDecorations } from './diagramDecorations';
 import {rawBlockField,revealBlock,revealBlockEffect,finishBlock,blockEditingFinished} from './blockEditing';
 
 export interface MarkdownEditorHandle {
@@ -23,6 +24,8 @@ export interface MarkdownEditorHandle {
 }
 
 export interface MarkdownEditorProps {
+  /** Private document identity used only for diagram presentation preferences. */
+  diagramScope?: string;
   /** Canonical Markdown source, controlled by the host application. */
   value: string;
   /** Receives document edits without a Markdown-to-HTML round trip. */
@@ -45,7 +48,7 @@ const externalChange = Annotation.define<boolean>();
 
 /** A browser editor mounted after hydration; history survives mode switches. */
 const noAssets: readonly MarkdownAsset[] = [];
-export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorProps>(function MarkdownEditor({ value, onChange, livePreview = true, doubleClickToEdit = true, onBlockEditChange, readOnly = false, assets = noAssets, onImageFiles }: MarkdownEditorProps, ref) {
+export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorProps>(function MarkdownEditor({ value, onChange, livePreview = true, doubleClickToEdit = true, onBlockEditChange, readOnly = false, assets = noAssets, onImageFiles, diagramScope = 'document' }: MarkdownEditorProps, ref) {
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);
   const callback = useRef(onChange);
@@ -121,9 +124,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
       compartments.live.reconfigure(livePreview ? livePreviewExtension(doubleClickToEdit) : []),
       ...(!livePreview?[revealBlockEffect.of(null)]:[]),
       compartments.editable.reconfigure([EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly)]),
-      compartments.images.reconfigure(livePreview ? imageDecorations(assets) : []),
+      compartments.images.reconfigure(livePreview ? [imageDecorations(assets), diagramDecorations(diagramScope)] : []),
     ] });
-  }, [livePreview, doubleClickToEdit, readOnly, compartments, assets]);
+  }, [livePreview, doubleClickToEdit, readOnly, compartments, assets, diagramScope]);
 
   return <div ref={host} data-testid="markdown-editor" />;
 });

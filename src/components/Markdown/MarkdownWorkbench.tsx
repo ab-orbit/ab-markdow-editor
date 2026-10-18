@@ -21,6 +21,8 @@ export interface MarkdownWorkbenchHandle {
   isBusy: () => boolean;
 }
 export interface MarkdownWorkbenchProps {
+  /** Storage destination and filename namespace diagram presentation preferences. */
+  diagramScope?: string;
   /** Host commands reuse the workbench's file input and operation guards. */
   ref?: Ref<MarkdownWorkbenchHandle>;
   /** Markdown owned by the consuming screen. */
@@ -64,7 +66,7 @@ export interface MarkdownWorkbenchProps {
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
   useEffect(() => { onModeChange?.(mode); }, [mode,onModeChange]);
   const workbench = useRef<HTMLElement>(null);
@@ -229,9 +231,9 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     <div className={styles.modeHint}>{mode === 'live' ? 'Os marcadores aparecem na linha selecionada. Clique no texto para editar.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Volte a Escrever para editar.'}</div>
     <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
       <div className={styles.source} hidden={mode === 'read'}>
-        <MarkdownEditor key={documentId} ref={editor} value={value} onChange={onChange} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
+        <MarkdownEditor key={documentId} ref={editor} diagramScope={diagramScope} value={value} onChange={onChange} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
       </div>
-      {(mode === 'split' || mode === 'read') && <MarkdownReadingView value={value} assets={assets} doubleClickToEdit={doubleClickToEdit} onEditBlock={!readOnly && !busy ? editBlock : undefined} onEditTable={!readOnly && !busy ? editTable : undefined} onToggleTask={!readOnly && !busy ? range => {
+      {(mode === 'split' || mode === 'read') && <MarkdownReadingView diagramScope={diagramScope} value={value} assets={assets} doubleClickToEdit={doubleClickToEdit} onEditBlock={!readOnly && !busy ? editBlock : undefined} onEditTable={!readOnly && !busy ? editTable : undefined} onToggleTask={!readOnly && !busy ? range => {
         const source = value.slice(range.from, range.to);
         const marker = source.match(/^(\s*(?:[-*+]|\d+[.)])\s+\[)([ xX])\]/);
         if (marker) editor.current?.replace(marker[2] === ' ' ? 'x' : ' ', { from: range.from + marker[1].length, to: range.from + marker[1].length + 1 });

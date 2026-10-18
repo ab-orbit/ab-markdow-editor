@@ -1,10 +1,10 @@
 {
   "name": "ab-markdown-editor",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "build": "tsc --noEmit && vite build && node scripts/build-pwa.mjs && node scripts/build-picker.mjs",
@@ -15,26 +15,30 @@
     "icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "lucide-react": "^1.7.0",
-    "fflate": "^0.8.3",
-    "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1",
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-markdown": "^6.5.2",
     "@codemirror/language": "^6.13.1",
     "@codemirror/state": "^6.7.6",
     "@codemirror/view": "^6.43.14",
     "@lezer/highlight": "^1.2.5",
-    "@lezer/markdown": "^1.8.0"
+    "@lezer/markdown": "^1.8.0",
+    "beautiful-mermaid": "1.1.3",
+    "dompurify": "3.4.17",
+    "fflate": "^0.8.3",
+    "lucide-react": "^1.7.0",
+    "mermaid": "12.2.0",
+    "pele": "1.6.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "vite": "^6.4.1",
-    "typescript": "^5.9.3",
+    "@playwright/test": "^1.62.0",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/node": "^22",
-    "@playwright/test": "^1.62.0"
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1"
   }
 }

@@ -1,0 +1,32 @@
+.diagram {
+  --diagram-bg: var(--bg-surface); --diagram-fg: var(--text-primary);
+  --pele-bg: var(--bg-surface); --pele-fg: var(--text-primary); --pele-muted: var(--text-muted);
+  --pele-line: var(--text-muted); --pele-surface: var(--bg-elevated); --pele-surface-alt: var(--bg-subtle);
+  --pele-border: var(--text-muted); --pele-accent: var(--cyan); --pele-font: var(--font-ui);
+  position: relative; margin: 20px 0; min-width: 0; width: 100%; max-width: 100%;
+  border: 1px solid var(--border-panel); border-radius: var(--radius-md);
+  background: var(--bg-surface); color: var(--text-secondary); font-family: var(--font-ui);
+}
+.controls { position: absolute; top: 8px; right: 8px; z-index: 2; display: flex; align-items: center; gap: 4px; max-width: calc(100% - 16px); padding: 2px; border-radius: var(--radius-sm); background: var(--bg-overlay); border: 1px solid var(--border-panel); }
+.picker { position: relative; min-width: 0; }
+.picker select { appearance: none; width: 100%; min-width: 0; max-width: 190px; min-height: 34px; padding: 6px 28px 6px 10px; border: 0; background: transparent; color: var(--text-primary); font: 13px/1.3 var(--font-ui); cursor: pointer; }
+.picker > svg { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); }
+.edit { min-width: 34px; min-height: 34px; padding: 6px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); }
+.edit:hover, .picker:focus-within { color: var(--text-primary); background: var(--bg-hover); }
+.picker select:focus-visible, .edit:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.timing { padding-left: 8px; font: 11px/1.3 var(--font-ui); color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.canvas { min-width: 0; width: 100%; min-height: 180px; padding: 60px 16px 18px; overflow: auto; }
+.drawing { width: 100%; min-width: 0; }
+.drawing > svg { display: block; max-width: 100%; width: 100%; height: auto; margin: 0 auto; overflow: visible; }
+.loading, .failure { display: flex; align-items: center; justify-content: center; min-height: 100px; gap: 10px; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+.failure { flex-direction: column; align-items: flex-start; justify-content: flex-start; padding: 8px 0; overflow-wrap: anywhere; }
+.failure strong { color: var(--text-primary); font-weight: 600; }
+.help { color: var(--text-muted); font-size: 13px; }
+@media (max-width: 1024px), (pointer: coarse) {
+  .picker select { min-height: 44px; font-size: 16px; max-width: 215px; }
+  .edit { min-width: 44px; min-height: 44px; }
+  .controls { top: 6px; right: 6px; max-width: calc(100% - 12px); }
+  .timing { display: none; }
+  .canvas { padding: 68px 10px 14px; }
+}
+@media print { .controls { display: none; } .canvas { padding-top: 16px; } }
