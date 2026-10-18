@@ -406,12 +406,6 @@ function App() {
       <p>Usa o Git, o agente SSH e o gerenciador de credenciais do seu Mac. Configure a identidade Git e as credenciais antes de clonar ou enviar.</p>
       {repository.status && <pre aria-label="Alterações no repositório">{repository.status}</pre>}</fieldset>
     </details>}
-    <fieldset className="document-controls" disabled={busy}>
-      <div className="row"><label className="grow">Notas salvas<select aria-label={browserMode ? "Notas salvas" : "Arquivos do repositório"} value={selected} onChange={event => setSelected(event.target.value)}><option value="">Selecione um Markdown</option>{files.map(file => <option key={file} value={file}>{file}</option>)}</select></label><button disabled={!selected || !repository.repository} onClick={() => void openNote(selected)}>Abrir nota</button><button onClick={() => { if (discard()) { resetDocument(); setSettingsOpen(false); } }}><FilePlus2 size={18}/>Novo</button></div>
-      <div className="row"><label className="grow">Nome do arquivo<input value={name} onChange={event => setName(event.target.value)} placeholder="notas/documento.md"/></label><button disabled={!repository.repository} onClick={() => requestSave()}><Save size={18}/>{browserMode ? "Salvar nota" : "Salvar no repositório"}</button></div>
-      {pendingSync && <button disabled={!repository.repository} onClick={() => requestSave()}><Upload size={18}/>Tentar sincronizar novamente</button>}
-      <p>{busy ? 'Salvando e sincronizando…' : pendingSync ? 'Arquivo local salvo; sincronização pendente.' : dirty ? 'Há alterações não salvas.' : 'Documento salvo.'} {browserMode ? 'Salvar guarda a nota no destino selecionado e mantém uma cópia neste navegador.' : 'Salvar grava o arquivo, cria o commit e envia ao remoto.'}</p>
-    </fieldset>
     <section className="save-preferences" aria-label="Preferências de salvamento">
       <h3>Salvamento e sincronização</h3>
       <form onSubmit={event => { event.preventDefault(); void run(async () => { const saved = await api<SavePreferences>('preferences', preferenceDraft); setPreferences(saved); setPreferenceDraft(saved); setNotice('Preferências de salvamento atualizadas.'); }); }}>
