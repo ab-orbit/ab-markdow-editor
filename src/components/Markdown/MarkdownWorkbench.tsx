@@ -15,8 +15,8 @@ import styles from './MarkdownWorkbench.module.css';
 
 export type MarkdownMode = 'live' | 'source' | 'split' | 'read';
 export interface MarkdownWorkbenchHandle {
-  /** Invoke the same native chooser as the Open toolbar action, within a user gesture. */
-  openFile: () => void;
+  /** Reuse the native chooser; reload requires the original filename and preserves the view mode. */
+  openFile: (reloadOriginal?: boolean) => void;
   /** File/package operations must finish before the host saves or closes the note. */
   isBusy: () => boolean;
 }
@@ -31,8 +31,8 @@ export interface MarkdownWorkbenchProps {
   fileName: string;
   /** Receives the name of a successfully imported file. */
   onFileNameChange: (name: string) => void;
-  /** Record the original imported source before the user starts editing it. */
-  onImport?: (source: string, name: string) => Promise<void>;
+  /** Record the original source and distinguish explicit disk reloads from normal imports. */
+  onImport?: (source: string, name: string, reloaded?: boolean) => Promise<void>;
   /** Initial display mode, read once at mount. */
   initialMode?: MarkdownMode;
   /** Preserve the document reading position across a source refresh. */
@@ -83,10 +83,14 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const [linkError, setLinkError] = useState('');
   const [tableEdit, setTableEdit] = useState<{ range: SourceRange; table: EditableTable } | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const reloadImport = useRef(false);
   const imageInput = useRef<HTMLInputElement>(null);
   const imageRange = useRef<SourceRange>({ from: 0, to: 0 });
   const editor = useRef<MarkdownEditorHandle>(null);
-  function chooseFile() { if (!readOnly && !busy) input.current?.click(); }
+  function chooseFile(reloadOriginal = false) {
+    if (readOnly || busy) return;
+    reloadImport.current = reloadOriginal;setError('');input.current?.click();
+  }
   useImperativeHandle(ref, () => ({openFile: chooseFile, isBusy: () => busy}));
   const { assets, replace: replaceAssets, append: appendAssets } = useMarkdownAssets();
   useEffect(() => { if (initialAssets) replaceAssets(initialAssets); }, []);
@@ -103,17 +107,22 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   }, [dirty, warnBeforeUnload]);
 
   async function open(file?: File) {
+    const reloadOriginal = reloadImport.current;reloadImport.current = false;
     if (!file || readOnly || busy) return;
-    if (dirty && !window.confirm('Abrir outro arquivo substituirá as alterações desta sessão. Continuar?')) return;
+    const importedName = file.name.replace(/\.(zip|bear)$/i, '.md');
+    const expectedName = fileName.split(/[\\/]/).at(-1);
+    if (reloadOriginal && importedName !== expectedName) {setError(`Selecione o arquivo original ${expectedName} para recarregar esta nota.`);return;}
+    if (dirty && !window.confirm(reloadOriginal ? 'Recarregar substituirá as alterações não salvas desta nota. Continuar?' : 'Abrir outro arquivo substituirá as alterações desta sessão. Continuar?')) return;
     setError(''); setBusy(true);
     try {
       const packaged = /\.(zip|bear)$/i.test(file.name) ? await readMarkdownPackage(file) : null;
       const source = packaged?.value ?? await readMarkdownFile(file);
       replaceAssets(packaged?.files ?? []);
-      const name = file.name.replace(/\.(zip|bear)$/i, '.md');
+      const name = importedName;
       onChange(source); onFileNameChange(name); setBaseline(source); setDocumentId(id => id + 1);
-      await onImport?.(source, name);
-      blockFromReading.current=false;setMode('read');setReadingActionsOpen(false);
+      await onImport?.(source, name, reloadOriginal);
+      blockFromReading.current=false;
+      if (!reloadOriginal) {setMode('read');setReadingActionsOpen(false);}
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Não foi possível abrir o arquivo.');
     } finally { setBusy(false); }
@@ -200,7 +209,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
         {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={mode === key} onClick={() => changeMode(key)}>{label}</button>)}
       </div>
       <div className={styles.actions}>
-        <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={chooseFile}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
+        <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={() => chooseFile()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
         {compact && <details className={styles.exportMenu} onKeyDown={event => {if(event.key==='Escape'&&event.currentTarget.open){event.preventDefault();event.stopPropagation();event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>

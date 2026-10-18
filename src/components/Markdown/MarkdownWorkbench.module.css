@@ -12,7 +12,8 @@
 .toolbar button:hover { color: var(--text-primary); background: var(--bg-elevated); }
 .toolbar button[aria-pressed="true"] { background: var(--lime-trace); color: var(--lime); border-color: var(--lime-dim); }
 .toolbar button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-.toolbar button:disabled { opacity: .5; cursor: wait; }
+.toolbar button:disabled { opacity: .5; cursor: default; }
+.toolbar button[aria-busy="true"] { cursor: progress; }
 .toolbar .download { color: var(--lime); border-color: var(--lime-dim); background: var(--lime-trace); }
 .modeHint { padding: 10px 20px; color: var(--text-muted); font-size: var(--text-base); line-height: 1.7; border-bottom: 1px solid var(--border-base); }
 .pages { min-height: 480px; }

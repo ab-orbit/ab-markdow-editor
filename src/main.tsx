@@ -423,7 +423,17 @@ function App() {
     });
   }
   const sourceScope = browserMode ? libraryKey() : repository.repository;
-  const reloadLabel = finderSourceId || !browserMode || deviceFolder && !githubSelection() ? 'Recarregar do disco' : githubSelection() ? 'Recarregar do GitHub' : 'Recarregar nota';
+  // Browser file inputs expose a snapshot, not a reusable path to the selected original.
+  const reloadFromPicker = !!importedVersion && !finderSourceId && !version && name === loadedName && !autoSavePaused;
+  const canReloadSource = !!finderSourceId || !!version && !!repository.repository && sourceScope === openedScope && !autoSavePaused;
+  const reloadLabel = reloadFromPicker || finderSourceId || !browserMode || deviceFolder && !githubSelection() ? 'Recarregar do disco' : githubSelection() ? 'Recarregar do GitHub' : 'Recarregar nota';
+  const reloadTitle = sourceReloadTitle();
+  function sourceReloadTitle() {
+    if (name !== loadedName) return 'Salve o novo nome do arquivo antes de recarregar.';
+    if (reloadFromPicker) return 'Recarregar do disco: selecione novamente o arquivo original. A leitura não grava nem sincroniza.';
+    if (!canReloadSource) return 'Abra um arquivo salvo para poder recarregar da origem.';
+    return reloadLabel;
+  }
   const sourceQuery = `name=${encodeURIComponent(loadedName)}&folder=${encodeURIComponent(deviceFolder)}&${browserMode ? `scope=${encodeURIComponent(sourceScope || '')}` : `repository=${encodeURIComponent(repository.repository || '')}`}`;
   const sourceReload = useDocumentReload<LoadedDocument>({
     identity: JSON.stringify([sourceScope,deviceFolder,loadedName,version,documentId,finderSourceId]),
@@ -446,12 +456,13 @@ function App() {
       void api<NoteLibrary>('library').then(library=>{setRecentNotes(library.recent);setPinnedNotes(library.pinned);}).catch(()=>{});
     },
   });
-  async function registerImport(source: string, fileName: string) {
+  async function registerImport(source: string, fileName: string, reloaded = false) {
     await run(async () => {
       const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
       const originalVersion = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('');
       setDocumentClosed(false);setSettingsOpen(false);setFinderSourceId(null);setImportedVersion({ name: fileName, version: originalVersion });
       setBaseline(source); setLoadedName(fileName); setVersion(null); setPendingSync(true); setConflict(null);
+      if (reloaded) setNotice('Arquivo relido do disco.');
     });
   }
   async function save(note: string, target?: {name: string; version: string | null; backupBeforeReplace?: boolean}) {
@@ -617,7 +628,7 @@ function App() {
     <div className="workbench-container" hidden={documentClosed}><MarkdownWorkbench ref={workbenchRef} warnBeforeUnload={false} onClose={requestClose} compact initialScrollTop={reloadScrollTop.current} initialMode={reloadMode || (version || importedVersion || finderSourceId ? 'read' : 'live')} doubleClickToEdit={preferences.doubleClickToEdit} onModeChange={reportMode} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setDocumentClosed(false);setFinderSourceId(null);setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy || sourceReload.manualLock} sourceStatus={sourceReload.change && <div className="source-change" role="status"><CircleAlert size={18} aria-hidden="true"/><span>{sourceReload.change.kind === 'deleted' ? 'O arquivo foi removido da origem. Seu texto continua no editor.' : sourceReload.change.kind === 'error' ? `Não foi possível recarregar: ${sourceReload.change.message}` : dirty || pendingSync ? 'A nota mudou fora do Scriba. Suas edições foram mantidas.' : sourceReload.reloading ? 'Carregando atualização da origem…' : 'Há uma versão mais recente na origem.'}</span>{sourceReload.change.kind !== 'deleted' && <button type="button" disabled={sourceReload.reloading} onClick={sourceReload.request}>{reloadLabel}</button>}</div>} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
-      <button type="button" aria-label={reloadLabel} title={`${reloadLabel}${sourceReload.change ? ' — alteração externa detectada' : ''}`} className={sourceReload.change ? 'source-reload-pending' : undefined} disabled={busy || sourceReload.reloading || name !== loadedName || !finderSourceId && (!version || !repository.repository || sourceScope !== openedScope || autoSavePaused)} aria-busy={sourceReload.reloading} onClick={sourceReload.request}><RotateCw size={18}/></button>
+      <button type="button" aria-label={reloadLabel} title={`${reloadTitle}${sourceReload.change ? ' — alteração externa detectada' : ''}`} className={sourceReload.change ? 'source-reload-pending' : undefined} disabled={busy || sourceReload.reloading || name !== loadedName || !canReloadSource && !reloadFromPicker} aria-busy={sourceReload.reloading} onClick={() => reloadFromPicker ? workbenchRef.current?.openFile(true) : sourceReload.request()}><RotateCw size={18}/></button>
       {repository.repository && <button type="button" disabled={busy} aria-keyshortcuts="Meta+S Control+S" aria-label={browserMode ? "Salvar nota" : "Salvar no repositório"} title={browserMode ? "Salvar nota (⌘S)" : "Salvar no repositório (⌘S)"} onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} title={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button>
       <button type="button" aria-label="Configurações" title="Configurações" aria-controls="settings-page" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
