@@ -121,7 +121,11 @@ export class Repository {
 
   async info() {
     if (!this.root) return { repository: null, branch: '', status: '' };
-    return { repository: this.root, branch: await git(this.root, ['branch', '--show-current']), status: await git(this.root, ['status', '--short']) };
+    // Expose only a canonical GitHub page, never credentials from a remote URL.
+    const origin = await git(this.root, ['remote', 'get-url', 'origin']).catch(() => '');
+    const match = origin.match(/^(?:git@github\.com:|ssh:\/\/git@github\.com\/|https:\/\/(?:[^/@]+@)?github\.com\/)([\w.-]+)\/([\w.-]+?)\/?$/i);
+    const githubUrl = match ? `https://github.com/${match[1]}/${match[2].replace(/\.git$/, '')}` : undefined;
+    return { repository: this.root, branch: await git(this.root, ['branch', '--show-current']), status: await git(this.root, ['status', '--short']), githubUrl };
   }
 
   async list() {
