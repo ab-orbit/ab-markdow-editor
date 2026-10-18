@@ -225,3 +225,31 @@ body { font-family: var(--font-ui); }
  .repository-summary-content { grid-template-columns: minmax(0, 1fr); gap: 8px; }
  .repository-summary-content .connection-status { grid-row: 1; }
 }
+
+.repository-management { margin: 16px 0; }
+.repository-switch { margin: 18px 0; padding-top: 18px; border-top: 1px solid var(--border-panel); }
+.repository-switch-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.repository-switch-heading h3 { margin: 0; color: var(--text-primary); font-size: 18px; }
+.repository-switch-heading button { width: 44px; flex: 0 0 44px; padding: 9px; }
+.repository-switch form { display: grid; gap: 14px; align-items: stretch; }
+.repository-switch form > button { justify-self: start; }
+.repository-switch-path { display: flex; align-items: flex-end; gap: 12px; }
+.repository-switch-path > label { flex: 1; min-width: 0; }
+.repository-switch-path > button { flex-shrink: 0; }
+.repository .repository-switch-source { font-size: 14px; overflow-wrap: anywhere; }
+.repository-switch-preview { margin-top: 20px; padding: 16px; background: var(--bg-elevated); border-left: 3px solid var(--cyan); }
+.repository-switch-preview h4 { color: var(--text-primary); margin: 0 0 12px; }
+.repository-switch-preview dl { margin: 0; display: grid; gap: 10px; }
+.repository-switch-preview dl > div { display: grid; grid-template-columns: 88px minmax(0,1fr); gap: 12px; }
+.repository-switch-preview dt { color: var(--text-muted); }
+.repository-switch-preview dd { margin: 0; overflow-wrap: anywhere; }
+.repository-switch-preview dd svg { vertical-align: middle; margin-right: 6px; }
+.repository .repository-switch-error, .repository .repository-switch-warning { display: flex; align-items: flex-start; gap: 8px; color: var(--status-warn); }
+.repository-switch-error svg, .repository-switch-warning svg { flex-shrink: 0; margin-top: 4px; }
+.repository-switch-preview ul { max-height: 180px; overflow-y: auto; overflow-wrap: anywhere; padding-left: 24px; }
+@media (max-width: 600px) {
+ .repository-switch-path { flex-direction: column; align-items: stretch; }
+ .repository-switch form > button { justify-self: stretch; }
+ .repository-switch-preview { padding: 12px; }
+ .repository-switch-preview dl > div { grid-template-columns: minmax(0,1fr); gap: 2px; }
+}

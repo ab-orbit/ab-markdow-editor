@@ -45,9 +45,20 @@ Se o commit ou push falhar, o editor preserva a gravação local e mostra a etap
 
 Nas configurações do repositório local, o check verde **Pasta conectada** confirma o acesso à pasta selecionada. O resultado do envio ao remoto aparece junto ao botão de sincronização. O ícone **Sincronizar repositório**, ao lado das alterações, cria um commit com todos os arquivos pendentes da pasta e faz push. Ele também tenta enviar commits já criados quando um push anterior falhou, sem duplicá-los. Respeita a preferência de perguntar a nota do commit, os arquivos ignorados pelo Git e as alterações preparadas por outras ferramentas. A ação usa os arquivos já gravados no disco; o botão Salvar do editor grava o documento em edição.
 
+## Desconectar, trocar e levar a estrutura local
+
+Na engrenagem, abra o repositório conectado:
+
+- **Desconectar** desativa o destino no Scriba, preservando a pasta, o histórico Git e o documento aberto. A pasta anterior fica disponível para reconectar, inclusive depois de fechar o aplicativo.
+- **Trocar repositório** oferece outra pasta já clonada, **Clonar outra URL** ou **Outra URL, mantendo esta pasta**. A última opção mantém o histórico e os arquivos locais; se o novo remoto tiver um histórico incompatível, use a clonagem e a cópia da estrutura.
+- **Levar notas, imagens e subpastas atuais** copia os arquivos já gravados. A revisão mostra destino, branch e quantidade antes de aplicar. Arquivos diferentes com o mesmo nome bloqueiam a transferência; **Usar subpasta** preserva as duas estruturas e os caminhos relativos das imagens. Os originais não são removidos. O diretório `.git`, arquivos ignorados pelo Git, links simbólicos e submódulos não são copiados; o histórico do destino é preservado.
+- **Criar commit e enviar ao remoto** controla o envio da transferência e respeita a preferência de mensagem de commit. Falhas de push preservam os arquivos copiados e o commit local; o botão de sincronização permite tentar novamente.
+
+Cancelar a revisão mantém a conexão anterior. Um clone solicitado na revisão fica na nova pasta e pode ser reutilizado. Se escolher trocar sem levar a estrutura, o documento aberto continua no editor com o automático pausado até salvá-lo manualmente ou abrir outra nota. Alterações na origem ou no destino depois da revisão exigem uma nova revisão.
+
 ## Editor
 
-Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre as configurações, os arquivos do repositório e as preferências de salvamento em uma janela separada. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. Fechar essa janela ou usar Escape preserva o texto e o histórico de edição.
+Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre uma página de configurações com o destino e as preferências de salvamento. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. O botão Editor volta ao documento preservando o texto e o histórico de edição.
 
 Mantém os modos **Escrever**, **Fonte**, **Visão** e **Ler**, formatação, desfazer/refazer, tabelas editáveis, tarefas, referências, imagens por seleção/colagem/arrastar, importação de Markdown/ZIP/Bear e exportação `.md`/ZIP. Imagens inseridas são gravadas na pasta `assets/` ao lado do documento; imagens remotas não são buscadas automaticamente. Os temas claro e escuro usam uma cópia dos tokens do app original.
 

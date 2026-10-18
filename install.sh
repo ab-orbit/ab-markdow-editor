@@ -56,8 +56,8 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>CFBundleName</key><string>Scriba</string>
 <key>CFBundleDisplayName</key><string>Scriba</string>
 <key>CFBundleIdentifier</key><string>com.aeonbridge.markdown</string>
-<key>CFBundleVersion</key><string>1.2.0</string>
-<key>CFBundleShortVersionString</key><string>1.2.0</string>
+<key>CFBundleVersion</key><string>1.3.0</string>
+<key>CFBundleShortVersionString</key><string>1.3.0</string>
 <key>CFBundleExecutable</key><string>droplet</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>

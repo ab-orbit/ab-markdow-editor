@@ -3,6 +3,7 @@ import { promisify } from 'node:util';
 import { createHash, randomUUID } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import {transferFolder, transferSnapshot, checkoutStamp, inspectTransfer, copyTransfer} from './repository-transfer.mjs';
 
 const exec = promisify(execFile);
 const MAX_TEXT = 5 * 1024 * 1024;
@@ -20,6 +21,23 @@ async function git(cwd, args) {
   } catch (error) {
     throw new Error((error.stderr || error.message).trim());
   }
+}
+
+/** Display the destination without exposing credentials embedded in an older Git config. */
+function displayRemote(value) {
+  try {
+    const url = new URL(value);
+    if (!['https:', 'ssh:'].includes(url.protocol)) return undefined;
+    if (url.protocol === 'https:') url.username = '';
+    url.password = ''; url.search = ''; url.hash = '';
+    return url.toString();
+  } catch { return /^git@[a-z0-9.-]+:[^\s]+$/i.test(value) ? value : undefined; }
+}
+
+/** Check containment using path segments, including equal checkout roots. */
+function containsCheckout(parent, child) {
+  const relative = path.relative(parent, child);
+  return !relative || relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative);
 }
 
 /** Reject traversal, Git internals, symlinks and platform-dependent path separators. */
@@ -57,12 +75,13 @@ function imageMime(bytes) {
 
 /** Owns one local checkout; settings stay outside the source and destination repositories. */
 export class Repository {
-  constructor(stateDir) { this.stateDir = stateDir; this.root = null; this.queue = Promise.resolve(); this.preferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1 }; }
+  constructor(stateDir) { this.stateDir = stateDir; this.root = null; this.previousRoot = null; this.switchPlans = new Map(); this.queue = Promise.resolve(); this.preferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1 }; }
 
   async initialize() {
     await fs.mkdir(this.stateDir, { recursive: true, mode: 0o700 });
     try {
       const settings = JSON.parse(await fs.readFile(path.join(this.stateDir, 'settings.json'), 'utf8'));
+      if (typeof settings.previousRepository === 'string') this.previousRoot = settings.previousRepository;
       if (settings.preferences) this.preferences = this.validatePreferences(settings.preferences);
       if (settings.repository) await this.connect(settings.repository);
     }
@@ -81,9 +100,9 @@ export class Repository {
     return { askCommitNote: input.askCommitNote, autoSave: input.autoSave, intervalMinutes: input.intervalMinutes };
   }
 
-  async persistSettings(root = this.root, preferences = this.preferences) {
+  async persistSettings(root = this.root, preferences = this.preferences, previousRepository = this.previousRoot) {
     const temporary = path.join(this.stateDir, 'settings.tmp');
-    await fs.writeFile(temporary, JSON.stringify({ repository: root, preferences }), { mode: 0o600 });
+    await fs.writeFile(temporary, JSON.stringify({ repository: root, preferences, previousRepository }), { mode: 0o600 });
     await fs.rename(temporary, path.join(this.stateDir, 'settings.json'));
   }
 
@@ -94,7 +113,7 @@ export class Repository {
     return preferences;
   }
 
-  async connect(directory) {
+  async resolveCheckout(directory) {
     if (typeof directory !== 'string' || !directory.trim()) throw new Error('Informe a pasta local do repositório.');
     const expanded = directory.startsWith('~/') ? path.join(process.env.HOME, directory.slice(2)) : directory;
     const resolved = await fs.realpath(path.resolve(expanded));
@@ -102,9 +121,22 @@ export class Repository {
     if (root !== resolved) throw new Error('Selecione a raiz do repositório Git.');
     if (await git(root, ['rev-parse', '--is-bare-repository']) !== 'false') throw new Error('O repositório precisa ter uma cópia de trabalho.');
     await fs.access(root, 6);
+    return root;
+  }
+
+  async connect(directory) {
+    const root = await this.resolveCheckout(directory);
     await fs.mkdir(this.stateDir, { recursive: true, mode: 0o700 });
-    await this.persistSettings(root);
-    this.root = root;
+    await this.persistSettings(root, this.preferences, root);
+    this.root = root; this.previousRoot = root;
+    return this.info();
+  }
+
+  async disconnect({ repository: expectedRepository }) {
+    if (expectedRepository !== this.root) throw new Error('O repositório mudou. Reabra as configurações.');
+    const previous = this.root || this.previousRoot;
+    await this.persistSettings(null, this.preferences, previous);
+    this.root = null; this.previousRoot = previous; this.switchPlans.clear();
     return this.info();
   }
 
@@ -117,10 +149,115 @@ export class Repository {
     return this.connect(destination);
   }
 
+  validateRemoteUrl(url) {
+    if (typeof url !== 'string' || !/^(https:\/\/|ssh:\/\/|git@)/.test(url) || /[\x00-\x20]/.test(url)) throw new Error('Use uma URL Git HTTPS ou SSH.');
+    if (url.startsWith('https://') || url.startsWith('ssh://')) {
+      const parsed = new URL(url);
+      if (parsed.password || parsed.search || parsed.hash || parsed.protocol === 'https:' && parsed.username) throw new Error('Use as credenciais locais; não inclua tokens ou senhas na URL.');
+    }
+    return url;
+  }
+
+  /** Preview never changes the active checkout or its remote. Clones remain ordinary local folders. */
+  async prepareSwitch({ repository: expectedRepository, mode, directory, url, destination, carryFiles = false, folder = '' }) {
+    if (expectedRepository !== this.root) throw new Error('O repositório mudou. Reabra as configurações.');
+    if (!['local', 'clone', 'remote'].includes(mode) || typeof carryFiles !== 'boolean') throw new Error('Escolha como conectar o novo repositório.');
+    folder = transferFolder(folder);
+    const source = this.root || this.previousRoot;
+    let target;
+    if (mode === 'remote') {
+      if (!source) throw new Error('Selecione uma pasta local primeiro.');
+      target = await this.resolveCheckout(source);
+      url = this.validateRemoteUrl(url);
+      const branch = await git(target, ['branch', '--show-current']);
+      if (!branch) throw new Error('Selecione uma branch antes de trocar o remoto.');
+      const refs = await git(target, ['ls-remote', '--heads', '--', url]);
+      for (const line of refs.split('\n').filter(Boolean)) {
+        const [sha, ref] = line.split(/\s+/);
+        if (ref === `refs/heads/${branch}`) {
+          try { await git(target, ['merge-base', '--is-ancestor', sha, 'HEAD']); }
+          catch { throw new Error('Esse remoto tem um histórico diferente. Escolha “Clonar outra URL” para copiar os arquivos preservando o histórico do destino.'); }
+        }
+      }
+      carryFiles = true; folder = '';
+    } else if (mode === 'clone') {
+      if (carryFiles && !source) throw new Error('Não há uma pasta anterior para transferir.');
+      url = this.validateRemoteUrl(url);
+      if (typeof destination !== 'string' || !path.isAbsolute(destination)) throw new Error('Selecione onde criar a nova pasta.');
+      if (carryFiles) {
+        const proposed = path.join(await fs.realpath(path.dirname(destination)), path.basename(destination));
+        if (containsCheckout(source, proposed) || containsCheckout(proposed, source)) throw new Error('Escolha um destino fora da pasta de origem.');
+      }
+      const contents = await fs.readdir(destination).catch(error => {if(error.code === 'ENOENT')return [];throw error;});
+      if (!contents.length) await git(this.stateDir, ['clone', '--', url, destination]);
+      target = await this.resolveCheckout(destination);
+      if (await git(target, ['config', '--get', 'remote.origin.url']) !== url) throw new Error('A pasta já existe e pertence a outro repositório. Escolha uma nova pasta.');
+    } else target = await this.resolveCheckout(directory);
+    if (carryFiles && !source) throw new Error('Não há uma pasta anterior para transferir.');
+    if (carryFiles && await this.resolveCheckout(source) !== source) throw new Error('A pasta de origem mudou. Reconecte a pasta antes de transferir.');
+    if (carryFiles && mode !== 'remote' && !(source === target && !folder)) {
+      if (containsCheckout(source, target) || containsCheckout(target, source)) throw new Error('Escolha um destino fora da pasta de origem.');
+      if (await git(target, ['status', '--porcelain'])) throw new Error('O destino tem alterações locais. Faça o commit delas antes de transferir a estrutura.');
+    }
+    const data = carryFiles && mode !== 'remote' ? await inspectTransfer(source, target, folder) : {snapshot: carryFiles ? await transferSnapshot(source) : null, entries: [], conflicts: []};
+    const targetStamp = await checkoutStamp(target);
+    const branch = await git(target, ['branch', '--show-current']);
+    const origin = await git(target, ['remote', 'get-url', 'origin']).catch(() => '');
+    let suggestedFolder = path.basename(source || 'notas').replace(/[^\p{L}\p{N}._-]/gu, '-') || 'notas-importadas';
+    for (let suffix = 2; ; suffix++) { try { await fs.access(path.join(target, suggestedFolder)); suggestedFolder = `${path.basename(source || 'notas')}-scriba-${suffix}`; } catch(error) { if(error.code !== 'ENOENT') throw error; break; } }
+    for (const [key, plan] of this.switchPlans) if (Date.now() - plan.createdAt > 600000) this.switchPlans.delete(key);
+    if (this.switchPlans.size >= 16) this.switchPlans.delete(this.switchPlans.keys().next().value);
+    const id = randomUUID();
+    this.switchPlans.set(id, {id, mode, source, target, url, carryFiles, folder, ...data, targetStamp, branch, origin, expectedRepository: this.root, createdAt: Date.now()});
+    return {id, mode, source, target, branch, folder, carryFiles, fileCount:data.snapshot?.files.length || 0, bytes:data.snapshot?.files.reduce((sum,file)=>sum+file.size,0) || 0, identical:data.entries.filter(file=>file.identical).length, conflicts:data.conflicts, skipped:data.snapshot?.skipped || [], suggestedFolder, remote:displayRemote(mode === 'remote' || mode === 'clone' ? url : origin)};
+  }
+
+  async applySwitch({ id, publish = false, message = 'Import notes with Scriba' }) {
+    const plan = this.switchPlans.get(id);
+    if (!plan || Date.now() - plan.createdAt > 600000) throw new Error('A revisão expirou. Revise o destino novamente.');
+    if (plan.expectedRepository !== this.root) throw new Error('O repositório mudou. Revise o destino novamente.');
+    if (typeof publish !== 'boolean' || typeof message !== 'string' || !message.trim() || message.length > 1000) throw new Error('Informe uma mensagem de commit de até 1000 caracteres.');
+    if (plan.conflicts.length) throw new Error('Há arquivos diferentes com o mesmo nome. Escolha uma subpasta para preservar as duas estruturas.');
+    if (await checkoutStamp(plan.target) !== plan.targetStamp || await git(plan.target, ['remote', 'get-url', 'origin']).catch(() => '') !== plan.origin) throw new Error('O destino mudou. Revise a transferência novamente.');
+    if (await this.resolveCheckout(plan.target) !== plan.target || plan.carryFiles && await this.resolveCheckout(plan.source) !== plan.source) throw new Error('Uma pasta mudou. Revise a transferência novamente.');
+    let copied = 0;
+    if (plan.mode !== 'remote' && plan.carryFiles) copied = await copyTransfer(plan, this.stateDir);
+    if (plan.mode === 'remote') {
+      if ((await transferSnapshot(plan.source)).fingerprint !== plan.snapshot.fingerprint) throw new Error('A origem mudou. Revise o destino novamente.');
+      const keys = ['remote.origin.url', 'remote.origin.pushurl', `branch.${plan.branch}.remote`, `branch.${plan.branch}.merge`, `branch.${plan.branch}.pushRemote`];
+      const previous = await Promise.all(keys.map(key => git(plan.target, ['config', '--local', '--get-all', key]).then(value=>value.split('\n')).catch(()=>[])));
+      try {
+        const values = [plan.url, plan.url, 'origin', `refs/heads/${plan.branch}`, 'origin'];
+        for (let index=0; index<keys.length; index++) await git(plan.target, ['config', '--local', '--replace-all', keys[index], values[index]]);
+        await this.connect(plan.target);
+      } catch(error) {
+        for (let index=0; index<keys.length; index++) { await git(plan.target, ['config', '--local', '--unset-all', keys[index]]).catch(()=>{}); for(const value of previous[index]) await git(plan.target, ['config', '--local', '--add', keys[index], value]); }
+        throw error;
+      }
+    } else await this.connect(plan.target);
+    // A reviewed local-only switch must not trigger the guide's automatic first push.
+    const library = await this.libraryState();
+    const entry = library[plan.target] || {pinned:[], welcomeImageVersion:1};
+    if (plan.carryFiles && plan.mode !== 'remote') {
+      const included = new Set(plan.entries.map(file=>file.name));
+      const sourcePins = (library[plan.source]?.pinned || []).filter(name=>included.has(name)).map(name=>plan.folder ? `${plan.folder}/${name}` : name);
+      entry.pinned = [...new Set([...(entry.pinned || []), ...sourcePins])];
+    }
+    library[plan.target] = entry;
+    await this.persistLibrary(library);
+    this.switchPlans.clear();
+    let synchronization = null;
+    if (publish) {
+      try { synchronization = await this.sync({repository:plan.target, message, paths:plan.mode !== 'remote' && plan.carryFiles ? plan.entries.map(file=>file.target) : null}); }
+      catch(error) { synchronization = {synced:false, stage:'commit', error:error.message}; }
+    }
+    return {info:await this.info(), copied, identical:plan.entries.filter(file=>file.identical).length, folder:plan.folder, carriedFiles:plan.carryFiles, synchronization};
+  }
+
   requireRoot() { if (!this.root) throw new Error('Configure um repositório primeiro.'); return this.root; }
 
   async info() {
-    if (!this.root) return { repository: null, branch: '', status: '' };
+    if (!this.root) return { repository: null, branch: '', status: '', previousRepository: this.previousRoot };
     // Expose only a canonical GitHub page, never credentials from a remote URL.
     const origin = await git(this.root, ['remote', 'get-url', 'origin']).catch(() => '');
     const match = origin.match(/^(?:git@github\.com:|ssh:\/\/git@github\.com\/|https:\/\/(?:[^/@]+@)?github\.com\/)([\w.-]+)\/([\w.-]+?)\/?$/i);
@@ -385,10 +522,11 @@ export class Repository {
   }
 
   /** Commit all explicitly requested checkout changes, then retry a normal, non-forced push. */
-  async sync({ repository: expectedRepository, message = 'Synchronize local notes' }) {
+  async sync({ repository: expectedRepository, message = 'Synchronize local notes', paths = null }) {
     const root = this.requireRoot();
     if (expectedRepository !== root) throw new Error('O repositório mudou. Reabra as configurações antes de sincronizar.');
     if (typeof message !== 'string' || !message.trim() || message.length > 1000) throw new Error('Informe uma mensagem de commit de até 1000 caracteres.');
+    if (paths !== null) {if(!Array.isArray(paths)||!paths.every(name=>typeof name==='string'))throw new Error('Lista de arquivos inválida.');for(const name of paths)await safeFile(root,name);}
     if (await git(root, ['diff', '--name-only', '--diff-filter=U'])) throw new Error('Resolva os conflitos do Git antes de sincronizar.');
     // Preserve an index prepared by another tool instead of silently including its files.
     if (await git(root, ['diff', '--cached', '--name-only'])) throw new Error('Há alterações já preparadas no Git. Faça o commit delas ou retire-as do stage antes de sincronizar.');
@@ -396,11 +534,12 @@ export class Repository {
     let staged = false;
     let stage = 'commit';
     try {
-      if (await git(root, ['status', '--porcelain'])) {
+      if (paths?.length || await git(root, ['status', '--porcelain'])) {
         await git(root, ['var', 'GIT_AUTHOR_IDENT']);
         await git(root, ['var', 'GIT_COMMITTER_IDENT']);
         staged = true;
-        await git(root, ['add', '--all']);
+        if (paths !== null) {for(let index=0;index<paths.length;index+=100)await git(root, ['--literal-pathspecs', 'add', '--force', '--', ...paths.slice(index,index+100)]);}
+        else await git(root, ['add', '--all']);
         if (await git(root, ['diff', '--cached', '--name-only'])) {
           await git(root, ['commit', '-m', message.trim()]);
           committed = true;

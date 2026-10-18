@@ -19,6 +19,8 @@ export interface DraftSnapshot {
   importedVersion: {name: string; version: string} | null;
   /** Whether commit/push still needs to be completed. */
   pendingSync: boolean;
+  /** Keep a retained draft from automatically publishing to a different checkout. */
+  autoSavePaused?: boolean;
   /** Durable image bytes; temporary object URLs are deliberately omitted. */
   assets: Pick<MarkdownAsset, 'path' | 'file'>[];
   /** Offline copy of the non-secret save preferences. */

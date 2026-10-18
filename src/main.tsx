@@ -1,10 +1,11 @@
+import {RepositorySwitch, type RepositorySwitchResult} from './RepositorySwitch';
 import {GitHubSettings} from './GitHubSettings';
 import {githubSelection,setGitHubSelection} from './lib/github';
 import {canChooseFolder, chooseDeviceFolder, folderLabel, disconnectFolder, authorizeDeviceFolder, saveToDeviceFolder} from './lib/deviceFolder';
 import {browserMode} from './lib/browserStore';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff, ArrowLeft, CircleCheck, CircleAlert } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff, ArrowLeft, CircleCheck, CircleAlert, ArrowRightLeft, Unplug } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
 import { NoteThumbnail } from './NoteThumbnail';
 import { noteGroup, shortNoteDate } from './lib/noteDates';
@@ -46,6 +47,8 @@ interface RepositoryInfo {
   status: string;
   /** Public GitHub URL derived from the checkout origin, without credentials. */
   githubUrl?: string;
+  /** Last local checkout remains available after disconnecting, without automatic writes. */
+  previousRepository?: string | null;
 }
 interface SavePreferences {
   /** Ask for a commit note before each manual or scheduled save. */
@@ -175,9 +178,7 @@ function App() {
   useEffect(() => {const showNotes=()=>setNotesOpen(true);window.addEventListener('scriba:show-notes',showNotes);return()=>window.removeEventListener('scriba:show-notes',showNotes);}, []);
   const [repository, setRepository] = useState<RepositoryInfo>({ repository: null, branch: '', status: '' });
   const [repositoryConnected, setRepositoryConnected] = useState(false);
-  const [directory, setDirectory] = useState('');
-  const [url, setUrl] = useState('');
-  const [destination, setDestination] = useState('');
+  const [switchRepositoryOpen, setSwitchRepositoryOpen] = useState(false);
   const [files, setFiles] = useState<string[]>([]);
   const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
   const [pinnedNotes, setPinnedNotes] = useState<RecentNote[]>([]);
@@ -213,6 +214,7 @@ function App() {
   const [repositorySyncFeedback, setRepositorySyncFeedback] = useState<{message: string; state: 'syncing' | 'success' | 'error'} | null>(null);
   const [commitNote, setCommitNote] = useState('');
   const [pendingSync, setPendingSync] = useState(false);
+  const [autoSavePaused, setAutoSavePaused] = useState(false);
   const operationLock = useRef(false);
   const autoSaveAction = useRef<() => void>(() => {});
   const [notice, setNotice] = useState('');
@@ -252,7 +254,7 @@ function App() {
       if (restored) {
         setRepository(restored.repository); setName(restored.name); setLoadedName(restored.loadedName);
         setValue(restored.value); setBaseline(restored.baseline); setVersion(restored.version);
-        setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync);
+        setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync); setAutoSavePaused(!!restored.autoSavePaused);
         setPreferences(restored.preferences); setPreferenceDraft(restored.preferences);
         restoringAssets.current = restored.assets.length > 0;
         setAssets(restored.assets.map(asset => ({ ...asset, url: '' })));
@@ -267,7 +269,7 @@ function App() {
         } else {
           setRepository(info); setRepositoryConnected(!!info.repository); setFiles(info.repository ? await api<string[]>('files') : []);
           if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
-          if (!info.repository) setSettingsOpen(true);
+          if (!info.repository) {setSettingsOpen(true);setSwitchRepositoryOpen(true);}
         }
         if (!active) return;
         setPreferences(saved); setPreferenceDraft(saved); setOffline(false);
@@ -298,10 +300,10 @@ function App() {
   }, [draftId]);
   useEffect(() => {
     if (!draftReady) return;
-    const snapshot: DraftSnapshot = {id: draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, assets: assets.map(({path,file}) => ({path,file})), preferences, updatedAt: Date.now()};
+    const snapshot: DraftSnapshot = {id: draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, assets: assets.map(({path,file}) => ({path,file})), preferences, updatedAt: Date.now()};
     latestDraft.current = snapshot;
     void persistDraft(snapshot).catch(() => setError('Não foi possível guardar o rascunho no navegador. Baixe o Markdown ou pacote para preservar suas alterações.'));
-  }, [draftReady, draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, assets, preferences]);
+  }, [draftReady, draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, assets, preferences]);
   useEffect(() => {
     const flush = () => { if (latestDraft.current) void persistDraft(latestDraft.current).catch(() => {}); };
     const online = () => setOffline(false), disconnected = () => setOffline(true);
@@ -326,29 +328,28 @@ function App() {
     }
     finally { operationLock.current = false; setBusy(false); }
   }
-  async function chooseRepository() {
-    if (!discard()) return;
+  async function disconnectRepository() {
     await run(async () => {
-      const picked = await api<{directory: string | null}>('pick-folder', {});
-      if (!picked.directory) return;
-      setDirectory(picked.directory);
-      const info = await api<RepositoryInfo>('connect', { directory: picked.directory });
-      setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório conectado.');
+      const info = await api<RepositoryInfo>('disconnect', {repository: repository.repository});
+      setRepository(info); setRepositoryConnected(false); setFiles([]); setRecentNotes([]); setPinnedNotes([]);
+      setSwitchRepositoryOpen(false); setRepositorySyncFeedback(null);
+      setNotice('Repositório desconectado. Seus arquivos locais e o documento aberto estão preservados.');
     });
   }
-  async function chooseCloneDestination() {
-    await run(async () => {
-      const picked = await api<{directory: string | null}>('pick-folder', {});
-      if (!picked.directory) return;
-      const repositoryName = url.trim().split('/').at(-1)?.replace(/\.git$/, '').replace(/[^a-zA-Z0-9._-]/g, '-') || 'meu-repositorio';
-      setDestination(`${picked.directory.replace(/\/$/, '')}/${repositoryName}`);
-      setNotice('Pasta de destino selecionada. Clique em Clonar e conectar.');
-    });
+  async function completeRepositorySwitch(result: RepositorySwitchResult) {
+    setAutoSavePaused(!result.carriedFiles);
+    if (result.carriedFiles) {
+      if (result.folder) {setName(current => `${result.folder}/${current}`); setLoadedName(current => current ? `${result.folder}/${current}` : current);setImportedVersion(current => current ? {...current,name:`${result.folder}/${current.name}`} : null);}
+    } else {setVersion(null); setImportedVersion(null); setLoadedName('');}
+    setRepository(result.info); setRepositoryConnected(!!result.info.repository); setSwitchRepositoryOpen(false);
+    setRepositorySyncFeedback(result.synchronization ? {message:result.synchronization.synced ? 'Repositório sincronizado com o remoto.' : `Arquivos preservados localmente. Envio pendente: ${result.synchronization.error}`, state:result.synchronization.synced ? 'success' : 'error'} : null);
+    await refresh();
+    setNotice(`Destino alterado.${result.copied ? ` ${result.copied} arquivos copiados; originais preservados.` : ''} O documento aberto continua no editor.${!result.carriedFiles ? ' O automático desse rascunho fica pausado até salvá-lo manualmente ou abrir outra nota.' : ''}`);
   }
   const discard = () => !dirty || window.confirm('Há alterações não salvas. Deseja substituí-las?');
   function resetDocument(text = '', fileName = 'documento.md', hash: string | null = null, attached: {path: string; file: File}[] = []) {
     setValue(text); setBaseline(text); setName(fileName); setLoadedName(fileName); setVersion(hash);
-    setImportedVersion(null); setConflict(null); setPendingSync(false); restoringAssets.current = attached.length > 0; setAssets(attached.map(asset => ({...asset,url:''}))); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
+    setImportedVersion(null); setConflict(null); setPendingSync(false); setAutoSavePaused(false); restoringAssets.current = attached.length > 0; setAssets(attached.map(asset => ({...asset,url:''}))); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
   }
   async function openNote(fileName: string) {
     if (!discard()) return;
@@ -375,7 +376,7 @@ function App() {
     const baseVersion = !target && importedVersion?.name === name ? importedVersion.version : undefined;
     const result = await api<SaveResult>('save-sync', { repository: repository.repository, name: targetName, value, message: note, version: expected, baseVersion, backupBeforeReplace: target?.backupBeforeReplace, files: await Promise.all(assets.map(encodeAsset)) });
     setOffline(false); setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
-    setImportedVersion(null); setConflict(null); setPendingSync(!result.synced);
+    setImportedVersion(null); setConflict(null); setPendingSync(!result.synced); setAutoSavePaused(false);
     await refresh();
     if (result.synced) setNotice(browserMode ? (githubSelection() ? 'Nota e imagens salvas no GitHub em um commit.' : deviceFolder ? `Nota salva em ${deviceFolder}.` : 'Nota salva neste navegador.') : 'Arquivo salvo, commit criado e enviado ao remoto.');
     else if(browserMode) setError(`Nota preservada no navegador; ${githubSelection() ? 'envio ao GitHub' : 'cópia na pasta'} pendente. ${result.error}`);
@@ -404,7 +405,7 @@ function App() {
     } else void run(() => save(`${automatic ? 'Auto-save' : 'Update'} ${name}`));
   }
   autoSaveAction.current = () => {
-    if (draftReady && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
+    if (draftReady && !autoSavePaused && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
   };
   useEffect(() => {
     if (!preferences.autoSave || !repository.repository) return;
@@ -445,9 +446,11 @@ function App() {
     {!browserMode && <details className="repository" open={!repository.repository || undefined}>
       <summary className="repository-summary"><span className="repository-summary-content"><span className="repository-path"><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></span>{repository.repository && <span className="connection-status" data-state={repositoryConnected ? 'connected' : 'pending'}>{repositoryConnected ? <CircleCheck size={16} aria-hidden="true"/> : <CircleAlert size={16} aria-hidden="true"/>}{repositoryConnected ? 'Pasta conectada' : draftReady ? 'Conexão indisponível' : 'Verificando conexão…'}</span>}</span></summary>
       {repository.githubUrl && <p>Repositório: <a href={repository.githubUrl} target="_blank" rel="noopener noreferrer">{repository.githubUrl.replace('https://github.com/', '')}</a></p>}
-      <fieldset disabled={busy}><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('connect', { directory }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório conectado.'); }); }}><label>Pasta local do repositório<input placeholder="Clique em Selecionar pasta" value={directory} onChange={event => setDirectory(event.target.value)} required/></label><button type="button" className="primary" onClick={() => void chooseRepository()}><FolderOpen size={18}/>Selecionar pasta</button><button>Conectar caminho</button></form>
-      <details><summary>Clonar um repositório por URL</summary><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('clone', { url, destination }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório clonado e conectado.'); }); }}><label>URL HTTPS ou SSH<input placeholder="git@github.com:usuario/repositorio.git" value={url} onChange={event => setUrl(event.target.value)} required/></label><label>Nova pasta local (caminho absoluto)<input placeholder="/Users/seu-nome/Documentos/meu-repo" value={destination} onChange={event => setDestination(event.target.value)} required/></label><button type="button" onClick={() => void chooseCloneDestination()}><FolderOpen size={18}/>Selecionar onde clonar</button><button>Clonar e conectar</button></form></details>
-      <p>Usa o Git, o agente SSH e o gerenciador de credenciais do seu Mac. Configure a identidade Git e as credenciais antes de clonar ou enviar.</p>
+      <fieldset disabled={busy}>
+      {repository.repository && <div className="settings-actions repository-management"><button type="button" onClick={() => setSwitchRepositoryOpen(true)}><ArrowRightLeft size={18}/>Trocar repositório</button><button type="button" onClick={() => void disconnectRepository()}><Unplug size={18}/>Desconectar</button></div>}
+      {!repository.repository && <p>Sem repositório conectado. {repository.previousRepository ? `Seus arquivos continuam em ${repository.previousRepository}.` : 'Selecione uma pasta ou clone um repositório para começar.'} O documento aberto pode ser editado e exportado.</p>}
+      {!repository.repository && !switchRepositoryOpen && <button type="button" onClick={() => setSwitchRepositoryOpen(true)}><FolderOpen size={18}/>Conectar repositório</button>}
+      {switchRepositoryOpen && <RepositorySwitch key={repository.repository || 'disconnected'} repository={repository.repository} source={repository.repository || repository.previousRepository || null} busy={busy} run={run} request={api} askCommitNote={preferences.askCommitNote} onComplete={completeRepositorySwitch} onCancel={() => setSwitchRepositoryOpen(false)}/>}
       {repository.repository && <><div className="repository-sync"><p aria-label="Alterações no repositório">{repository.status ? describeRepositoryChanges(repository.status) : 'Nenhuma alteração local pendente.'}</p><button type="button" disabled={busy} aria-label="Sincronizar repositório" title="Sincronizar todas as alterações locais: criar commit e enviar ao remoto" aria-busy={repositorySyncing} onClick={requestRepositorySync}><RefreshCw size={18}/></button></div>{repositorySyncFeedback && <p role="status" className="repository-sync-feedback" data-state={repositorySyncFeedback.state}>{repositorySyncFeedback.state === 'success' ? <CircleCheck size={18} aria-hidden="true"/> : repositorySyncFeedback.state === 'error' ? <CircleAlert size={18} aria-hidden="true"/> : <RefreshCw size={18} aria-hidden="true"/>}<span>{repositorySyncFeedback.message}</span></p>}</>}</fieldset>
     </details>}
     <section className="save-preferences" aria-label="Preferências de salvamento">
