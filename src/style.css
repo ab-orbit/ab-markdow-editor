@@ -203,3 +203,7 @@ body { font-family: var(--font-ui); }
  .settings-page-header h1 { font-size: 20px; }
  .settings-page .settings-content { padding: 20px 16px 48px; }
 }
+
+.repository-sync { display: flex; align-items: flex-start; gap: 12px; margin-top: 12px; }
+.repository-sync p { flex: 1; margin: 8px 0; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.repository-sync button { flex: 0 0 44px; width: 44px; padding: 9px; }

@@ -384,6 +384,38 @@ export class Repository {
     }
   }
 
+  /** Commit all explicitly requested checkout changes, then retry a normal, non-forced push. */
+  async sync({ repository: expectedRepository, message = 'Synchronize local notes' }) {
+    const root = this.requireRoot();
+    if (expectedRepository !== root) throw new Error('O repositório mudou. Reabra as configurações antes de sincronizar.');
+    if (typeof message !== 'string' || !message.trim() || message.length > 1000) throw new Error('Informe uma mensagem de commit de até 1000 caracteres.');
+    if (await git(root, ['diff', '--name-only', '--diff-filter=U'])) throw new Error('Resolva os conflitos do Git antes de sincronizar.');
+    // Preserve an index prepared by another tool instead of silently including its files.
+    if (await git(root, ['diff', '--cached', '--name-only'])) throw new Error('Há alterações já preparadas no Git. Faça o commit delas ou retire-as do stage antes de sincronizar.');
+    let committed = false;
+    let staged = false;
+    let stage = 'commit';
+    try {
+      if (await git(root, ['status', '--porcelain'])) {
+        await git(root, ['var', 'GIT_AUTHOR_IDENT']);
+        await git(root, ['var', 'GIT_COMMITTER_IDENT']);
+        staged = true;
+        await git(root, ['add', '--all']);
+        if (await git(root, ['diff', '--cached', '--name-only'])) {
+          await git(root, ['commit', '-m', message.trim()]);
+          committed = true;
+        }
+      }
+      stage = 'push';
+      await this.push();
+      return { synced: true, committed };
+    } catch (error) {
+      // Files and completed commits remain available for the next retry.
+      if (staged && !committed) await git(root, ['reset', '--quiet']).catch(() => {});
+      return { synced: false, committed, stage, error: error.message };
+    }
+  }
+
   async push() {
     const root = this.requireRoot();
     const branch = await git(root, ['branch', '--show-current']);

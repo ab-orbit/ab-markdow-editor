@@ -64,6 +64,7 @@ const server = http.createServer(async (req, res) => {
         '/api/save': () => repository.save(body),
         '/api/commit': () => repository.commit(body),
         '/api/push': () => repository.push(),
+        '/api/sync': () => repository.sync(body),
       };
       if (!actions[url.pathname]) return send(res, 404, { error: 'Ação desconhecida.' });
       return send(res, 200, await repository.mutate(actions[url.pathname]));

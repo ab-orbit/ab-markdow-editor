@@ -43,6 +43,8 @@ As duas opções vêm desativadas. As preferências ficam no Mac e sobrevivem ao
 
 Se o commit ou push falhar, o editor preserva a gravação local e mostra a etapa pendente. Salvar novamente tenta sincronizar usando a versão já gravada; uma falha de push não duplica o commit. O automático também tenta novamente no próximo intervalo. O Git continua respeitando hooks, identidade e credenciais locais; alterações já preparadas por outra ferramenta não entram no commit do editor. A execução do intervalo depende da aba aberta e pode ser adiada pelo navegador quando ela estiver suspensa.
 
+Nas configurações do repositório local, o ícone **Sincronizar repositório**, ao lado das alterações, cria um commit com todos os arquivos pendentes da pasta e faz push. Ele também tenta enviar commits já criados quando um push anterior falhou, sem duplicá-los. Respeita a preferência de perguntar a nota do commit, os arquivos ignorados pelo Git e as alterações preparadas por outras ferramentas. A ação usa os arquivos já gravados no disco; o botão Salvar do editor grava o documento em edição.
+
 ## Editor
 
 Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre as configurações, os arquivos do repositório e as preferências de salvamento em uma janela separada. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. Fechar essa janela ou usar Escape preserva o texto e o histórico de edição.

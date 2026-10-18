@@ -207,6 +207,9 @@ function App() {
   const [preferences, setPreferences] = useState<SavePreferences>(defaultPreferences);
   const [preferenceDraft, setPreferenceDraft] = useState<SavePreferences>(defaultPreferences);
   const [commitNoteOpen, setCommitNoteOpen] = useState(false);
+  const [commitTarget, setCommitTarget] = useState<'document' | 'repository'>('document');
+  const [repositorySyncing, setRepositorySyncing] = useState(false);
+  const [repositorySyncFeedback, setRepositorySyncFeedback] = useState('');
   const [commitNote, setCommitNote] = useState('');
   const [pendingSync, setPendingSync] = useState(false);
   const operationLock = useRef(false);
@@ -373,10 +376,26 @@ function App() {
     else if(browserMode) setError(`Nota preservada no navegador; ${githubSelection() ? 'envio ao GitHub' : 'cópia na pasta'} pendente. ${result.error}`);
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
+  async function syncRepository(message: string) {
+    setRepositorySyncing(true); setRepositorySyncFeedback('Sincronizando…');
+    try {
+      const result = await api<Pick<SaveResult, 'synced' | 'stage' | 'error'>>('sync', { repository: repository.repository, message });
+      await refresh();
+      setRepositorySyncFeedback(result.synced ? 'Repositório sincronizado com o remoto.' : `${result.stage === 'commit' ? 'Commit' : 'Envio'} pendente: ${result.error}`);
+    } catch (cause) {
+      setRepositorySyncFeedback(cause instanceof Error ? cause.message : 'Não foi possível sincronizar. Tente novamente.');
+    } finally { setRepositorySyncing(false); }
+  }
+  function requestRepositorySync() {
+    if (operationLock.current || busy || !repository.repository) return;
+    if (preferences.askCommitNote) {
+      setCommitTarget('repository'); setCommitNote(''); setCommitNoteOpen(true);
+    } else void run(() => syncRepository('Synchronize local notes'));
+  }
   function requestSave(automatic = false) {
     if (!draftReady || operationLock.current || busy || commitNoteOpen || conflict || !repository.repository) return;
     if (preferences.askCommitNote) {
-      setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
+      setCommitTarget('document'); setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
     } else void run(() => save(`${automatic ? 'Auto-save' : 'Update'} ${name}`));
   }
   autoSaveAction.current = () => {
@@ -424,7 +443,7 @@ function App() {
       <fieldset disabled={busy}><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('connect', { directory }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório conectado.'); }); }}><label>Pasta local do repositório<input placeholder="Clique em Selecionar pasta" value={directory} onChange={event => setDirectory(event.target.value)} required/></label><button type="button" className="primary" onClick={() => void chooseRepository()}><FolderOpen size={18}/>Selecionar pasta</button><button>Conectar caminho</button></form>
       <details><summary>Clonar um repositório por URL</summary><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('clone', { url, destination }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório clonado e conectado.'); }); }}><label>URL HTTPS ou SSH<input placeholder="git@github.com:usuario/repositorio.git" value={url} onChange={event => setUrl(event.target.value)} required/></label><label>Nova pasta local (caminho absoluto)<input placeholder="/Users/seu-nome/Documentos/meu-repo" value={destination} onChange={event => setDestination(event.target.value)} required/></label><button type="button" onClick={() => void chooseCloneDestination()}><FolderOpen size={18}/>Selecionar onde clonar</button><button>Clonar e conectar</button></form></details>
       <p>Usa o Git, o agente SSH e o gerenciador de credenciais do seu Mac. Configure a identidade Git e as credenciais antes de clonar ou enviar.</p>
-      {repository.status && <p aria-label="Alterações no repositório" style={{whiteSpace: 'pre-wrap', overflowWrap: 'anywhere'}}>{describeRepositoryChanges(repository.status)}</p>}</fieldset>
+      {repository.repository && <><div className="repository-sync"><p aria-label="Alterações no repositório">{repository.status ? describeRepositoryChanges(repository.status) : 'Nenhuma alteração local pendente.'}</p><button type="button" disabled={busy} aria-label="Sincronizar repositório" title="Sincronizar todas as alterações locais: criar commit e enviar ao remoto" aria-busy={repositorySyncing} onClick={requestRepositorySync}><RefreshCw size={18}/></button></div>{repositorySyncFeedback && <p role="status">{repositorySyncFeedback}</p>}</>}</fieldset>
     </details>}
     <section className="save-preferences" aria-label="Preferências de salvamento">
       <h3>Salvamento e sincronização</h3>
@@ -451,9 +470,9 @@ function App() {
       <button type="button" disabled={busy} onClick={() => void run(() => save(lastSaveNote.current, {name: conflict.name, version: conflict.currentVersion, backupBeforeReplace: true}))}>Substituir arquivo existente</button>
     </EditorDialog>}
     {commitNoteOpen && <EditorDialog title="Nota do commit" onClose={() => setCommitNoteOpen(false)}>
-      <form onSubmit={event => { event.preventDefault(); if (!commitNote.trim()) return; setCommitNoteOpen(false); void run(() => save(commitNote.trim())); }}>
+      <form onSubmit={event => { event.preventDefault(); if (!commitNote.trim()) return; setCommitNoteOpen(false); void run(() => commitTarget === 'repository' ? syncRepository(commitNote.trim()) : save(commitNote.trim())); }}>
         <label>Nota do commit<textarea autoFocus required maxLength={1000} value={commitNote} onChange={event => setCommitNote(event.target.value)} placeholder="Descreva o que mudou"/></label>
-        <footer><button type="button" onClick={() => setCommitNoteOpen(false)}>Cancelar</button><button type="submit" disabled={!commitNote.trim()}>Salvar, commit e push</button></footer>
+        <footer><button type="button" onClick={() => setCommitNoteOpen(false)}>Cancelar</button><button type="submit" disabled={!commitNote.trim()}>{commitTarget === 'repository' ? 'Commit e push' : 'Salvar, commit e push'}</button></footer>
       </form>
     </EditorDialog>}
     {!settingsOpen && statusMessages}
