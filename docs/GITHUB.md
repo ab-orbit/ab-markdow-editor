@@ -24,6 +24,10 @@ Offline saves retain the note and its original remote revision in the browser. R
 
 The sidebar reads Markdown files within the selected prefix, fetches their latest per-file commit timestamps, and displays the latest 100. Up to 1000 candidates are supported; choose a smaller dedicated repository/folder above that limit. Metadata is cached per authorized account and branch head; no note bodies are cached on the server.
 
+## External changes
+
+The active note's blob revision is checked every minute and when the foreground window regains focus. A read-only revision endpoint returns only the current blob SHA (or null after deletion), scoped to the selected repository/branch/folder. Clean documents refresh automatically. Dirty documents and pending offline writes require explicit confirmation before reloading; autosave pauses while a newer source is unresolved. Explicit reloads fail visibly offline instead of silently returning an older cached note. Late responses cannot replace a different document or edits typed while an automatic load was in flight.
+
 ## Verification
 
 - `npm test`: HTTP security/session/OAuth tests, real local Git commit trees, atomic note/image commits, idempotent writes, stale versions and concurrent branch updates. GitHub endpoints are represented by a local HTTP fixture.

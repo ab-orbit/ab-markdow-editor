@@ -21,6 +21,10 @@ export interface DraftSnapshot {
   pendingSync: boolean;
   /** Keep a retained draft from automatically publishing to a different checkout. */
   autoSavePaused?: boolean;
+  /** Private native Finder handle for reloading an external original without writing to it. */
+  finderSourceId?: string | null;
+  /** Attachment changes require the same reload confirmation as unsaved text. */
+  assetsDirty?: boolean;
   /** Durable image bytes; temporary object URLs are deliberately omitted. */
   assets: Pick<MarkdownAsset, 'path' | 'file'>[];
   /** Offline copy of the non-secret save preferences. */

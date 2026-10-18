@@ -253,3 +253,11 @@ body { font-family: var(--font-ui); }
  .repository-switch-preview { padding: 12px; }
  .repository-switch-preview dl > div { grid-template-columns: minmax(0,1fr); gap: 2px; }
 }
+
+.source-change { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border-panel); background: var(--status-warn-dim); color: var(--status-warn); font: 14px/1.5 var(--font-ui); flex-shrink: 0; }
+.source-change > svg { flex-shrink: 0; }
+.source-change > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.source-change button { flex-shrink: 0; font-size: 14px; }
+button.source-reload-pending { color: var(--status-warn); border-color: var(--status-warn); }
+.reload-confirmation { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 600px) { .source-change { flex-wrap: wrap; } .source-change button { margin-left: 28px; } }

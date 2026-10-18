@@ -1,4 +1,4 @@
-import { chromium } from "@playwright/test";
+import { chromium, expect } from "@playwright/test";
 import { createGitHubService } from "../server/github/service.mjs";
 import http from "node:http";
 import { promises as fs } from "node:fs";
@@ -141,6 +141,7 @@ try {
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  await page.clock.install();
   await page.goto(origin);
   await page
     .getByRole("button", { name: "Configurações", exact: true })
@@ -234,6 +235,24 @@ try {
     .filter({ hasText: "salvas no GitHub" })
     .waitFor();
   assert.equal(content, "# Editada offline");
+  content="# Atualizada em outro dispositivo";version="external-sha";branch="external-commit";
+  await page.clock.fastForward(61000);
+  await expect(editor).toHaveText(content);
+  await expect(page.getByLabel("Bancada Markdown")).toHaveAttribute("data-mode","source");
+  await editor.fill("# Meu rascunho no celular");
+  content="# Outra edição remota";version="external-sha-2";branch="external-commit-2";
+  await page.clock.fastForward(61000);
+  await expect(page.locator(".source-change")).toContainText("Suas edições foram mantidas");
+  await expect(editor).toHaveText("# Meu rascunho no celular");
+  await page.getByRole("button",{name:"Recarregar do GitHub",exact:true}).first().click();
+  const reloadDialog=page.getByRole("dialog",{name:"Recarregar do GitHub",exact:true});
+  await reloadDialog.getByRole("button",{name:"Continuar editando"}).click();
+  await expect(editor).toHaveText("# Meu rascunho no celular");
+  await page.screenshot({path:"docs/evidence/document-reload-github-mobile.png"});
+  await page.getByRole("button",{name:"Recarregar do GitHub",exact:true}).first().click();
+  await reloadDialog.getByRole("button",{name:"Recarregar e descartar rascunho"}).click();
+  await expect(editor).toHaveText(content);
+  await expect(page.locator(".source-change")).toHaveCount(0);
   await page
     .getByRole("button", { name: "Configurações", exact: true })
     .click();
@@ -257,7 +276,7 @@ try {
   assert.deepEqual(errors, []);
   await page.screenshot({ path: "docs/evidence/github-mobile-isolated.png" });
   console.log(
-    "PASS: mobile token login, repository/folder selection, remote note listing, open/edit/commit, offline queue/retry, logout restores isolated local library. GitHub API simulated; gateway and browser are real HTTP.",
+    "PASS: mobile token login, repository/folder selection, remote note listing, open/edit/commit, offline queue/retry, remote auto-refresh, protected dirty reload, and logout restores isolated local library. GitHub API simulated; gateway and browser are real HTTP.",
   );
 } finally {
   await browser.close();

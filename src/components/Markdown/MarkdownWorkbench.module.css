@@ -96,6 +96,9 @@
 .compact .assetHint { padding: 4px 16px; margin: 0; font-size: 11px; }
 .compact .editingToolbar { padding: 4px 12px; gap: 0; }
 .compact .editingToolbar button, .compact .editingToolbar select { min-height: 36px; min-width: 36px; padding: 6px; }
+@media (max-width: 1024px) {
+ .compact .toolbar button, .compact .editingToolbar button, .compact .editingToolbar select { min-height: 44px; min-width: 44px; }
+}
 @media (max-width: 760px) {
  .compact .toolbar { gap: 0 8px; padding: 4px 8px; }
  .compact .modes { order: 3; width: 100%; justify-content: center; }
@@ -129,7 +132,7 @@
 .dialog > header { position: sticky; top: -24px; z-index: 2; background: var(--bg-surface); padding: 4px 0; }
 @media (max-width: 430px) {
  .compact .toolbar { padding-left: 6px; padding-right: 6px; }
- .compact .actions { flex-wrap: nowrap; justify-content: space-between; width: 100%; }
+ .compact .actions { flex-wrap: wrap; justify-content: flex-end; width: 100%; }
  .compact .actions button { flex: 0 0 44px; min-width: 44px; padding-left: 0; padding-right: 0; }
 }
 @media (max-width: 899px) { .compact .assetHint { display: none; } }
@@ -155,3 +158,16 @@
  .compact[data-mode="read"] .reading strong { color: var(--text-secondary); }
 }
 @media (max-width: 359px) { .compact[data-mode="read"] .reading { padding-inline: 20px; } .compact[data-mode="read"] .reading h1 { font-size: 29px; } }
+
+/* Group export choices on narrow screens so adding reload does not create an orphan action row. */
+.exportMenu { display: none; }
+@media (max-width: 430px) {
+ .compact .desktopExport { display: none; }
+ .compact .exportMenu { display: block; position: relative; flex: 0 0 44px; width: 44px; }
+ .exportMenu > summary { display: flex; list-style: none; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid transparent; border-radius: var(--radius-sm); color: var(--text-muted); }
+ .exportMenu > summary::-webkit-details-marker { display: none; }
+ .exportMenu > summary svg { margin: 0; color: inherit; }
+ .exportMenu[open] > summary { border-color: var(--cyan); color: var(--cyan); }
+ .exportMenu > div { position: absolute; top: calc(100% + 4px); left: 0; z-index: 20; width: 190px; padding: 4px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg-elevated); }
+ .compact .exportMenu > div > button { display: flex; justify-content: flex-start; width: 100%; min-height: 44px; padding: 8px 12px; border-color: transparent; background: transparent; font-size: 14px; }
+}

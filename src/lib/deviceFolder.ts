@@ -57,3 +57,53 @@ export async function readDeviceNotes() {
  await scan(folder,'',0);
  return notes;
 }
+
+/** A single source read never creates directories or asks for permissions in the background. */
+async function locateDocument(name:string) {
+ const parts=safeParts(name),folder=await setting<Directory>('handle'),parent=await setting<Directory>('parent');
+ if(!folder)throw new Error('Selecione uma pasta nas configurações para recarregar do disco.');
+ if(await folder.queryPermission({mode:'readwrite'})!=='granted')throw new Error('Autorize novamente a pasta nas configurações para recarregar do disco.');
+ const hasSavedCopy=!!await setting(`revision:${await folderLabel()}:${name}`);
+ for(const root of [folder,hasSavedCopy ? null : parent].filter(Boolean) as Directory[]) {
+  try {
+   let directory:FileSystemDirectoryHandle=root;
+   for(const part of parts.slice(0,-1))directory=await directory.getDirectoryHandle(part);
+   const file=await(await directory.getFileHandle(parts.at(-1)!)).getFile();
+   if(file.size>5*1024*1024)throw new Error('O Markdown excede 5 MB.');
+   return {file,directory,isSavedFolder:root===folder};
+  }catch(error){if(!(error instanceof DOMException&&error.name==='NotFoundError'))throw error;}
+ }
+ return null;
+}
+/** Content hashes let saved files and read-only probes share an optimistic concurrency revision. */
+export async function textVersion(value:string) {return digest(new TextEncoder().encode(value));}
+export async function deviceDocumentVersion(name:string) {
+ const source=await locateDocument(name);
+ return {version:source ? await digest(new Uint8Array(await source.file.arrayBuffer())) : null};
+}
+/** Read a fresh note and its raster assets, acknowledging only the bytes actually read. */
+export async function readDeviceDocument(name:string) {
+ const source=await locateDocument(name);
+ if(!source)throw new Error('O arquivo foi removido da pasta. Seu rascunho continua no editor.');
+ const bytes=new Uint8Array(await source.file.arrayBuffer());
+ const value=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes),version=await digest(bytes);
+ const files:{path:string;data:string;mime:string}[]=[],warnings:string[]=[];let total=0;
+ const label=await folderLabel(),prefix=name.includes('/')?name.slice(0,name.lastIndexOf('/')+1):'';
+ for(const match of value.matchAll(/!\[[^\]]*\]\(<?([^\s)>]+)>?(?:\s+[^)]*)?\)/g)) {
+  let imagePath:string;try{imagePath=decodeURIComponent(match[1]);}catch{warnings.push('Referência de imagem inválida.');continue;}
+  if(/^[a-z][a-z0-9+.-]*:/i.test(imagePath)||files.some(file=>file.path===imagePath))continue;
+  try {
+   const parts=safeParts(imagePath);let directory=source.directory;
+   for(const part of parts.slice(0,-1))directory=await directory.getDirectoryHandle(part);
+   const image=await(await directory.getFileHandle(parts.at(-1)!)).getFile();
+   const mime=image.type||(/\.png$/i.test(imagePath)?'image/png':/\.webp$/i.test(imagePath)?'image/webp':/\.gif$/i.test(imagePath)?'image/gif':/\.jpe?g$/i.test(imagePath)?'image/jpeg':'');
+   if(image.size>10*1024*1024||total+image.size>40*1024*1024||files.length>=50||!/^image\/(png|jpeg|gif|webp)$/.test(mime))throw new Error('Imagem não suportada ou maior que o limite.');
+   const bytes=new Uint8Array(await image.arrayBuffer());total+=bytes.length;
+   let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+   files.push({path:imagePath,data:btoa(binary),mime});
+   if(source.isSavedFolder)await setting(`revision:${label}:${prefix}${imagePath}`,await digest(bytes));
+  }catch{warnings.push(`Imagem indisponível: ${imagePath}`);}
+ }
+ if(source.isSavedFolder)await setting(`revision:${label}:${name}`,version);
+ return {name,value,version,files,warnings,modifiedAt:new Date(source.file.lastModified).toISOString()};
+}

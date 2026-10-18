@@ -225,6 +225,11 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
     const listing = await request("library");
     assert.equal(listing.data.notes[0].name, "note.md");
     const original = (await request("document?name=note.md")).data;
+    const revision=await request("document-version?name=note.md&scope=github%3Aalice%2Fnotes%3Amain%3Ascriba");
+    assert.deepEqual(revision.data,{version:original.version});
+    assert.deepEqual((await request("document-version?name=missing.md")).data,{version:null});
+    assert.equal((await request("document-version?name=note.md&scope=wrong-scope")).status,409);
+    assert.equal((await request("document?name=note.md&scope=wrong-scope")).status,409);
     const png =
       "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=";
     const save = await request("save", {

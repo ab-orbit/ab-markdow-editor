@@ -32,14 +32,19 @@ const server = http.createServer(async (req, res) => {
       if (supplied.length !== token.length || !timingSafeEqual(supplied, Buffer.from(token))) return send(res, 403, { error: 'Sessão inválida. Reabra o aplicativo.' });
       if (req.headers.origin && req.headers.origin !== origin) return send(res, 403, { error: 'Origem inválida.' });
       if (req.method === 'GET') {
-        if (url.pathname === '/api/finder-document') {
+        if (['/api/finder-document', '/api/finder-document-version'].includes(url.pathname)) {
           const id = url.searchParams.get('id');
           if (!/^[a-f0-9-]{36}$/.test(id || '')) return send(res, 400, {error:'Documento inválido.'});
           const document = JSON.parse(await fs.readFile(path.join(stateDir, 'finder-inbox', `${id}.json`), 'utf8'));
+          if (url.pathname === '/api/finder-document-version' || url.searchParams.get('fresh') === '1') {
+            const source = new Repository(stateDir);source.root = path.dirname(document.filename);
+            if (url.pathname === '/api/finder-document-version') return send(res, 200, await source.documentVersion(path.basename(document.filename)));
+            Object.assign(document, await source.read(path.basename(document.filename)));
+          }
           const relative = repository.root ? path.relative(repository.root, document.filename) : '';
           const inRepository = !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
           const {filename, ...content} = document;
-          return send(res, 200, {...content, name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository});
+          return send(res, 200, {...content, name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository, repository:repository.root});
         }
         if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());
@@ -47,7 +52,10 @@ const server = http.createServer(async (req, res) => {
         if (url.pathname === '/api/library') return send(res, 200, await repository.library());
         if (url.pathname === '/api/recent') return send(res, 200, await repository.recent());
         if (url.pathname === '/api/files') return send(res, 200, await repository.list());
-        if (url.pathname === '/api/document') return send(res, 200, await repository.read(url.searchParams.get('name')));
+        if (['/api/document', '/api/document-version'].includes(url.pathname)) {
+          if (url.searchParams.has('repository') && url.searchParams.get('repository') !== repository.root) throw new Error('O repositório mudou. Abra as configurações para selecionar o destino correto.');
+          return send(res, 200, await (url.pathname === '/api/document' ? repository.read(url.searchParams.get('name')) : repository.documentVersion(url.searchParams.get('name'))));
+        }
       }
       if (req.method !== 'POST' || !req.headers['content-type']?.startsWith('application/json')) return send(res, 405, { error: 'Método inválido.' });
       let size = 0; const chunks = [];

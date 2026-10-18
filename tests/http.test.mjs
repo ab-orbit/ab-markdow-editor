@@ -304,3 +304,34 @@ test('Finder handoff reads only native inbox IDs and distinguishes imports from 
   assert.equal((await request('finder-document?id=../../settings')).status,400);
   assert.equal((await fetch(`${base}/api/finder-document?id=${id}`)).status,403);
 });
+
+test('document revision probes detect external edits/deletions without changing Git or the file', async () => {
+  await request('connect',{directory:checkout});
+  const file=path.join(checkout,'reload.md');await fs.writeFile(file,'# Before');
+  const initial=await request('document?name=reload.md'),head=await git(checkout,'rev-parse','HEAD');
+  assert.deepEqual((await request('document-version?name=reload.md')).body,{version:initial.body.version});
+  await fs.writeFile(file,'# Changed elsewhere');
+  const revision=await request('document-version?name=reload.md');
+  assert.equal(revision.status,200);assert.notEqual(revision.body.version,initial.body.version);
+  assert.equal((await request('document?name=reload.md&fresh=1')).body.value,'# Changed elsewhere');
+  assert.equal(await git(checkout,'rev-parse','HEAD'),head);assert.equal(await fs.readFile(file,'utf8'),'# Changed elsewhere');
+  assert.equal((await request('document-version?name=reload.md&repository=wrong-checkout')).status,400);
+  assert.equal((await request('document-version?name=../escape.md')).status,400);
+  await fs.rm(file);assert.deepEqual((await request('document-version?name=reload.md')).body,{version:null});
+});
+
+test('Finder snapshots remain readable after deletion; explicit reload reads only the original outside the checkout', async () => {
+  const directory=path.join(temporary,'finder-original'),inbox=path.join(temporary,'state','finder-inbox');
+  await fs.mkdir(directory);await fs.mkdir(inbox,{recursive:true});
+  const filename=path.join(directory,'outside.md'),id='ec186143-4722-433b-b508-a884c2360001';
+  await fs.writeFile(filename,'# Original');
+  await fs.writeFile(path.join(inbox,`${id}.json`),JSON.stringify({filename,value:'# Snapshot',version:'snapshot',files:[],warnings:[]}));
+  await fs.writeFile(filename,'# New original');
+  const fresh=await request(`finder-document?id=${id}&fresh=1`);
+  assert.equal(fresh.body.value,'# New original');assert.equal(fresh.body.inRepository,false);
+  assert.equal((await request(`finder-document-version?id=${id}`)).body.version,fresh.body.version);
+  assert.equal(await fs.readFile(filename,'utf8'),'# New original');
+  await fs.rm(directory,{recursive:true});
+  assert.deepEqual((await request(`finder-document-version?id=${id}`)).body,{version:null});
+  const cached=await request(`finder-document?id=${id}`);assert.equal(cached.status,200);assert.equal(cached.body.value,'# Snapshot');
+});

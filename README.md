@@ -14,9 +14,9 @@ cd ab-markdow-editor
 ./install.sh
 ```
 
-O instalador compila o editor, instala `~/Applications/AB Markdown.app`, cria um ícone na Mesa e abre o navegador padrão. O aplicativo inclui seu próprio runtime Node: depois da instalação, a pasta baixada pode ser movida ou removida. A primeira instalação precisa de internet. O instalador baixa a distribuição oficial do Node.js 22 LTS para a arquitetura do Mac, verifica SHA-256 e inclui o runtime completo no aplicativo, sem depender de Node/Homebrew/nvm já instalados. É necessário Git; se faltar, o macOS oferece instalar suas ferramentas de linha de comando e o instalador pede para ser executado novamente após essa instalação.
+O instalador compila o editor, instala `Scriba.app` em `/Applications` (ou `~/Applications`, sem acesso à pasta global), cria um ícone na Mesa e abre o navegador padrão. O aplicativo inclui seu próprio runtime Node: depois da instalação, a pasta baixada pode ser movida ou removida. A primeira instalação precisa de internet. O instalador baixa a distribuição oficial do Node.js 22 LTS para a arquitetura do Mac, verifica SHA-256 e inclui o runtime completo no aplicativo, sem depender de Node/Homebrew/nvm já instalados. É necessário Git; se faltar, o macOS oferece instalar suas ferramentas de linha de comando e o instalador pede para ser executado novamente após essa instalação.
 
-Abra **AB Markdown** na Mesa nas próximas vezes. O servidor escuta apenas em `127.0.0.1` numa porta livre, sem conta, API externa ou banco de dados. Fechar a aba mantém o servidor disponível para a próxima abertura.
+Abra **Scriba** na Mesa nas próximas vezes. O servidor escuta apenas em `127.0.0.1` numa porta livre, sem conta, API externa ou banco de dados. Fechar a aba mantém o servidor disponível para a próxima abertura.
 
 ## Escolher onde salvar
 
@@ -30,6 +30,14 @@ Abra **AB Markdown** na Mesa nas próximas vezes. O servidor escuta apenas em `1
 Salvar grava o documento UTF-8 e suas imagens, cria um commit apenas desses arquivos e faz push. Sem nota personalizada, usa `Update caminho/do/arquivo.md` (ou `Auto-save ...` no automático). Não cria commits vazios se nada mudou. O primeiro push de uma branch sem upstream usa `origin` e configura o acompanhamento automaticamente. A identidade Git (`user.name`/`user.email`) também deve estar configurada. A aplicação não coleta senhas nem configura autenticação: credenciais HTTPS, chave SSH e permissões remotas devem funcionar previamente no Terminal. Helpers que exigem interação podem precisar ser desbloqueados antes de abrir o app.
 
 Ao abrir outro arquivo, criar um documento ou trocar de repositório, o editor pede confirmação se houver alterações pendentes. Ao importar um `.md` pelo seletor, o editor identifica a versão original e reconhece o arquivo já existente na pasta quando o conteúdo de origem coincide. A abertura pela lista do repositório também mantém a versão do disco. Se houver outra versão, a janela **Resolver versões do arquivo** mantém o texto da aba e permite **Salvar uma cópia**, **Continuar editando** ou **Substituir arquivo existente**. A substituição confirma novamente a versão atual e guarda um backup privado em `~/Library/Application Support/AB Markdown/conflict-backups/`; se o disco mudar outra vez antes da confirmação, a sobrescrita continua bloqueada. Salvar com outro nome cria uma cópia; o original permanece.
+
+## Alterações externas e recarregar a nota
+
+A barra inclui **Recarregar do disco** no Mac e nas pastas autorizadas, **Recarregar do GitHub** no destino remoto ou **Recarregar nota** no armazenamento do navegador. O botão busca novamente o texto e as imagens da origem, mantendo o modo atual e a posição de leitura. Não faz commit nem push.
+
+O arquivo aberto é verificado a cada **5 segundos** no disco/navegador e a cada **1 minuto** no GitHub, também ao voltar à janela. Sem edições pendentes, uma versão diferente é carregada automaticamente. Se houver texto, imagens ou envio offline pendentes, o Scriba mantém o rascunho, mostra um aviso e pausa o salvamento automático dessa nota. Recarregar pede confirmação antes de descartar o rascunho. Se a origem for removida, o documento continua em memória.
+
+Arquivos externos abertos pelo Finder podem ser relidos da pasta original; salvar continua usando o destino configurado. A verificação depende da aba aberta e visível: o sistema pode suspender o aplicativo em segundo plano. Na versão local, alterações do GitHub chegam ao disco por seu fluxo Git habitual; a verificação não executa `pull` automaticamente.
 
 ## Salvamento automático e notas de commit
 

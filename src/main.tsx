@@ -1,14 +1,15 @@
 import {RepositorySwitch, type RepositorySwitchResult} from './RepositorySwitch';
 import {GitHubSettings} from './GitHubSettings';
-import {githubSelection,setGitHubSelection} from './lib/github';
+import {githubSelection,setGitHubSelection,libraryKey} from './lib/github';
 import {canChooseFolder, chooseDeviceFolder, folderLabel, disconnectFolder, authorizeDeviceFolder, saveToDeviceFolder} from './lib/deviceFolder';
 import {browserMode} from './lib/browserStore';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff, ArrowLeft, CircleCheck, CircleAlert, ArrowRightLeft, Unplug } from 'lucide-react';
-import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff, ArrowLeft, CircleCheck, CircleAlert, ArrowRightLeft, Unplug, RotateCw } from 'lucide-react';
+import { MarkdownWorkbench, type MarkdownMode } from './components/Markdown/MarkdownWorkbench';
 import { NoteThumbnail } from './NoteThumbnail';
 import { noteGroup, shortNoteDate } from './lib/noteDates';
+import { useDocumentReload } from './useDocumentReload';
 import { usePwa } from './usePwa';
 import { authorizedFetch } from './lib/session';
 import { loadDraft, persistDraft, type DraftSnapshot } from './lib/drafts';
@@ -132,6 +133,7 @@ function describeRepositoryChanges(status: string): string {
     return `${label}: ${file}`;
   }).join('\n');
 }
+function assetIdentity(items: {path:string;file:File}[]) {return JSON.stringify(items.map(({path,file})=>[path,file.name,file.size,file.type,file.lastModified]));}
 function App() {
   const pwa = usePwa();
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -203,9 +205,16 @@ function App() {
   const lastSaveNote = useRef('');
   const [version, setVersion] = useState<string | null>(null);
   const [assets, setAssets] = useState<MarkdownAsset[]>([]);
+  const [baselineAssets, setBaselineAssets] = useState('[]');
   const [initialAssets, setInitialAssets] = useState<{path: string; file: File}[]>([]);
   const [documentId, setDocumentId] = useState(0);
   const [saveRevision, setSaveRevision] = useState(0);
+  const reloadScrollTop = useRef(0);
+  const [reloadMode, setReloadMode] = useState<MarkdownMode | null>(null);
+  const currentMode = useRef<MarkdownMode>('live');
+  const reportMode = useCallback((mode: MarkdownMode) => {currentMode.current=mode;}, []);
+  const [finderSourceId, setFinderSourceId] = useState<string | null>(null);
+  const [openedScope, setOpenedScope] = useState<string | null>(null);
   const [preferences, setPreferences] = useState<SavePreferences>(defaultPreferences);
   const [preferenceDraft, setPreferenceDraft] = useState<SavePreferences>(defaultPreferences);
   const [commitNoteOpen, setCommitNoteOpen] = useState(false);
@@ -217,11 +226,14 @@ function App() {
   const [autoSavePaused, setAutoSavePaused] = useState(false);
   const operationLock = useRef(false);
   const autoSaveAction = useRef<() => void>(() => {});
+  const autoSaveCommit = useRef<() => void>(() => {});
+  const autoSaveChecking = useRef(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('ab-markdown-theme') || 'dark');
-  const dirty = value !== baseline || name !== loadedName;
+  const assetsDirty = assetIdentity(assets) !== baselineAssets;
+  const dirty = value !== baseline || name !== loadedName || assetsDirty;
   useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('ab-markdown-theme', theme); }, [theme]);
   async function refreshLibrary() {
     const library = await api<NoteLibrary>('library/initialize', {});
@@ -254,10 +266,11 @@ function App() {
       if (restored) {
         setRepository(restored.repository); setName(restored.name); setLoadedName(restored.loadedName);
         setValue(restored.value); setBaseline(restored.baseline); setVersion(restored.version);
-        setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync); setAutoSavePaused(!!restored.autoSavePaused);
+        setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync); setAutoSavePaused(!!restored.autoSavePaused); setFinderSourceId(restored.finderSourceId || null);
         setPreferences(restored.preferences); setPreferenceDraft(restored.preferences);
         restoringAssets.current = restored.assets.length > 0;
         setAssets(restored.assets.map(asset => ({ ...asset, url: '' })));
+        setBaselineAssets(restored.assetsDirty ? 'unsaved' : assetIdentity(restored.assets));
         setInitialAssets(restored.assets); setDocumentId(id => id + 1);
       }
       try {
@@ -267,6 +280,7 @@ function App() {
           setError('O rascunho pertence a outro repositório. Reconecte a pasta nas configurações antes de salvar.');
           setSettingsOpen(true);
         } else {
+          setOpenedScope(browserMode ? libraryKey() : info.repository);
           setRepository(info); setRepositoryConnected(!!info.repository); setFiles(info.repository ? await api<string[]>('files') : []);
           if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
           if (!info.repository) {setSettingsOpen(true);setSwitchRepositoryOpen(true);}
@@ -284,11 +298,11 @@ function App() {
         try {
         const finderId = !browserMode && new URLSearchParams(location.search).get('finder');
         if (finderId) {
-          const doc = await api<LoadedDocument & {name:string;inRepository:boolean}>(`finder-document?id=${encodeURIComponent(finderId)}`);
+          const doc = await api<LoadedDocument & {name:string;inRepository:boolean;repository:string|null}>(`finder-document?id=${encodeURIComponent(finderId)}`);
           if (!active) return;
           const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
-          resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);
-          if(!doc.inRepository && doc.version) setImportedVersion({name:doc.name,version:doc.version});
+          resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);setOpenedScope(doc.repository);
+          if(!doc.inRepository && doc.version) {setImportedVersion({name:doc.name,version:doc.version});setFinderSourceId(finderId);}
           history.replaceState(null, '', location.pathname);
           setError('');setSettingsOpen(false);setNotice(doc.inRepository ? 'Documento do Finder aberto no repositório.' : 'Documento do Finder importado. Salvar usará o repositório configurado; o original fica preservado.');
         }
@@ -300,10 +314,10 @@ function App() {
   }, [draftId]);
   useEffect(() => {
     if (!draftReady) return;
-    const snapshot: DraftSnapshot = {id: draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, assets: assets.map(({path,file}) => ({path,file})), preferences, updatedAt: Date.now()};
+    const snapshot: DraftSnapshot = {id: draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, finderSourceId, assetsDirty, assets: assets.map(({path,file}) => ({path,file})), preferences, updatedAt: Date.now()};
     latestDraft.current = snapshot;
     void persistDraft(snapshot).catch(() => setError('Não foi possível guardar o rascunho no navegador. Baixe o Markdown ou pacote para preservar suas alterações.'));
-  }, [draftReady, draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, assets, preferences]);
+  }, [draftReady, draftId, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, finderSourceId, assetsDirty, assets, preferences]);
   useEffect(() => {
     const flush = () => { if (latestDraft.current) void persistDraft(latestDraft.current).catch(() => {}); };
     const online = () => setOffline(false), disconnected = () => setOffline(true);
@@ -339,6 +353,7 @@ function App() {
   async function completeRepositorySwitch(result: RepositorySwitchResult) {
     setAutoSavePaused(!result.carriedFiles);
     if (result.carriedFiles) {
+      setOpenedScope(browserMode ? libraryKey() : result.info.repository);setFinderSourceId(null);
       if (result.folder) {setName(current => `${result.folder}/${current}`); setLoadedName(current => current ? `${result.folder}/${current}` : current);setImportedVersion(current => current ? {...current,name:`${result.folder}/${current.name}`} : null);}
     } else {setVersion(null); setImportedVersion(null); setLoadedName('');}
     setRepository(result.info); setRepositoryConnected(!!result.info.repository); setSwitchRepositoryOpen(false);
@@ -348,7 +363,8 @@ function App() {
   }
   const discard = () => !dirty || window.confirm('Há alterações não salvas. Deseja substituí-las?');
   function resetDocument(text = '', fileName = 'documento.md', hash: string | null = null, attached: {path: string; file: File}[] = []) {
-    setValue(text); setBaseline(text); setName(fileName); setLoadedName(fileName); setVersion(hash);
+    reloadScrollTop.current=0;setReloadMode(null);setFinderSourceId(null);setOpenedScope(browserMode ? libraryKey() : repository.repository);
+    setValue(text); setBaseline(text);setBaselineAssets(assetIdentity(attached)); setName(fileName); setLoadedName(fileName); setVersion(hash);
     setImportedVersion(null); setConflict(null); setPendingSync(false); setAutoSavePaused(false); restoringAssets.current = attached.length > 0; setAssets(attached.map(asset => ({...asset,url:''}))); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
   }
   async function openNote(fileName: string) {
@@ -361,11 +377,35 @@ function App() {
       setNotice(doc.warnings.length ? `Aberto com avisos: ${doc.warnings.join('; ')}` : 'Documento aberto.');
     });
   }
+  const sourceScope = browserMode ? libraryKey() : repository.repository;
+  const reloadLabel = finderSourceId || !browserMode || deviceFolder && !githubSelection() ? 'Recarregar do disco' : githubSelection() ? 'Recarregar do GitHub' : 'Recarregar nota';
+  const sourceQuery = `name=${encodeURIComponent(loadedName)}&folder=${encodeURIComponent(deviceFolder)}&${browserMode ? `scope=${encodeURIComponent(sourceScope || '')}` : `repository=${encodeURIComponent(repository.repository || '')}`}`;
+  const sourceReload = useDocumentReload<LoadedDocument>({
+    identity: JSON.stringify([sourceScope,deviceFolder,loadedName,version,documentId,finderSourceId]),
+    enabled: draftReady && name === loadedName && !autoSavePaused && (!!finderSourceId || !!version && !!repository.repository && sourceScope === openedScope),
+    blocked: busy || settingsOpen || commitNoteOpen || !!conflict || aboutOpen,
+    dirty, pending: pendingSync && !finderSourceId,
+    version: finderSourceId ? importedVersion?.version || null : version,
+    interval: browserMode && githubSelection() ? 60000 : 5000,
+    probe: () => api(finderSourceId ? `finder-document-version?id=${encodeURIComponent(finderSourceId)}` : `document-version?${sourceQuery}`),
+    load: () => api(finderSourceId ? `finder-document?id=${encodeURIComponent(finderSourceId)}&fresh=1` : `document?${sourceQuery}&fresh=1`),
+    apply: (doc,automatic) => {
+      const mode = currentMode.current;
+      const scrollTop=document.querySelector('[data-document-scroll]')?.scrollTop || 0;
+      const sourceId = finderSourceId;
+      const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data),character=>character.charCodeAt(0))],file.path.split('/').at(-1)!,{type:file.mime})}));
+      resetDocument(doc.value,loadedName,sourceId ? null : doc.version,attached);
+      reloadScrollTop.current=scrollTop;setReloadMode(mode);setPendingSync(!!doc.pendingSync);
+      if(sourceId){setFinderSourceId(sourceId);setImportedVersion({name:loadedName,version:doc.version!});}
+      setNotice(automatic ? 'Nota atualizada a partir da origem.' : 'Nota recarregada.');
+      void api<NoteLibrary>('library').then(library=>{setRecentNotes(library.recent);setPinnedNotes(library.pinned);}).catch(()=>{});
+    },
+  });
   async function registerImport(source: string, fileName: string) {
     await run(async () => {
       const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
       const originalVersion = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('');
-      setImportedVersion({ name: fileName, version: originalVersion });
+      setFinderSourceId(null);setImportedVersion({ name: fileName, version: originalVersion });
       setBaseline(source); setLoadedName(fileName); setVersion(null); setPendingSync(true); setConflict(null);
     });
   }
@@ -376,7 +416,7 @@ function App() {
     const baseVersion = !target && importedVersion?.name === name ? importedVersion.version : undefined;
     const result = await api<SaveResult>('save-sync', { repository: repository.repository, name: targetName, value, message: note, version: expected, baseVersion, backupBeforeReplace: target?.backupBeforeReplace, files: await Promise.all(assets.map(encodeAsset)) });
     setOffline(false); setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
-    setImportedVersion(null); setConflict(null); setPendingSync(!result.synced); setAutoSavePaused(false);
+    setBaselineAssets(assetIdentity(assets));setImportedVersion(null); setConflict(null); setPendingSync(!result.synced); setAutoSavePaused(false);setFinderSourceId(null);setOpenedScope(browserMode ? libraryKey() : repository.repository);
     await refresh();
     if (result.synced) setNotice(browserMode ? (githubSelection() ? 'Nota e imagens salvas no GitHub em um commit.' : deviceFolder ? `Nota salva em ${deviceFolder}.` : 'Nota salva neste navegador.') : 'Arquivo salvo, commit criado e enviado ao remoto.');
     else if(browserMode) setError(`Nota preservada no navegador; ${githubSelection() ? 'envio ao GitHub' : 'cópia na pasta'} pendente. ${result.error}`);
@@ -399,13 +439,19 @@ function App() {
     } else void run(() => syncRepository('Synchronize local notes'));
   }
   function requestSave(automatic = false) {
-    if (!draftReady || operationLock.current || busy || commitNoteOpen || conflict || !repository.repository) return;
+    if (!draftReady || operationLock.current || busy || sourceReload.reloading || sourceReload.confirmation || commitNoteOpen || conflict || !repository.repository) return;
     if (preferences.askCommitNote) {
       setCommitTarget('document'); setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
     } else void run(() => save(`${automatic ? 'Auto-save' : 'Update'} ${name}`));
   }
+  const canAutoSave = draftReady && !autoSavePaused && !sourceReload.change && !sourceReload.confirmation && !sourceReload.reloading && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict;
+  autoSaveCommit.current = () => {
+    if (draftReady && !autoSavePaused && !sourceReload.change && !sourceReload.confirmation && !sourceReload.reloading && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
+  };
   autoSaveAction.current = () => {
-    if (draftReady && !autoSavePaused && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict) requestSave(true);
+    if(!canAutoSave||autoSaveChecking.current)return;
+    autoSaveChecking.current=true;
+    void sourceReload.allowAutoSave().then(allowed=>{if(allowed)autoSaveCommit.current();}).finally(()=>{autoSaveChecking.current=false;});
   };
   useEffect(() => {
     if (!preferences.autoSave || !repository.repository) return;
@@ -483,6 +529,7 @@ function App() {
         <footer><button type="button" onClick={() => setCommitNoteOpen(false)}>Cancelar</button><button type="submit" disabled={!commitNote.trim()}>{commitTarget === 'repository' ? 'Commit e push' : 'Salvar, commit e push'}</button></footer>
       </form>
     </EditorDialog>}
+    {sourceReload.confirmation && <EditorDialog title={reloadLabel} onClose={sourceReload.cancel}><p>Há edições ou uma sincronização pendente. Recarregar substitui a versão mantida neste editor pela versão da origem.</p><footer className="reload-confirmation"><button type="button" onClick={sourceReload.cancel}>Continuar editando</button><button type="button" onClick={sourceReload.confirm}>Recarregar e descartar rascunho</button></footer></EditorDialog>}
     {!settingsOpen && statusMessages}
     <div className="editor-layout" hidden={settingsOpen} inert={settingsOpen || undefined}>
     {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
@@ -497,9 +544,10 @@ function App() {
         <button className="pin-note" type="button" disabled={busy || (offline && !browserMode)} aria-label={`${group.pinned ? 'Desafixar' : 'Fixar'} ${note.name}`} title={group.pinned ? 'Desafixar nota' : 'Fixar nota'} onClick={() => void togglePin(note, !group.pinned)}>{group.pinned ? <PinOff size={14}/> : <Pin size={14}/>}</button>
       </li>)}</ol></section>)}</nav>
     </aside>}
-    <fieldset disabled={!draftReady || busy} className="editor-container"><MarkdownWorkbench compact initialMode={window.matchMedia('(max-width: 899px)').matches && version ? 'read' : 'live'} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy} actions={<>
+    <fieldset disabled={!draftReady || busy || sourceReload.manualLock} className="editor-container"><MarkdownWorkbench compact initialScrollTop={reloadScrollTop.current} initialMode={reloadMode || (window.matchMedia('(max-width: 899px)').matches && version ? 'read' : 'live')} onModeChange={reportMode} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setFinderSourceId(null);setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy || sourceReload.manualLock} sourceStatus={sourceReload.change && <div className="source-change" role="status"><CircleAlert size={18} aria-hidden="true"/><span>{sourceReload.change.kind === 'deleted' ? 'O arquivo foi removido da origem. Seu texto continua no editor.' : sourceReload.change.kind === 'error' ? `Não foi possível recarregar: ${sourceReload.change.message}` : dirty || pendingSync ? 'A nota mudou fora do Scriba. Suas edições foram mantidas.' : sourceReload.reloading ? 'Carregando atualização da origem…' : 'Há uma versão mais recente na origem.'}</span>{sourceReload.change.kind !== 'deleted' && <button type="button" disabled={sourceReload.reloading} onClick={sourceReload.request}>{reloadLabel}</button>}</div>} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
+      <button type="button" aria-label={reloadLabel} title={`${reloadLabel}${sourceReload.change ? ' — alteração externa detectada' : ''}`} className={sourceReload.change ? 'source-reload-pending' : undefined} disabled={busy || sourceReload.reloading || name !== loadedName || !finderSourceId && (!version || !repository.repository || sourceScope !== openedScope || autoSavePaused)} aria-busy={sourceReload.reloading} onClick={sourceReload.request}><RotateCw size={18}/></button>
       {repository.repository && <button type="button" disabled={busy} aria-label={browserMode ? "Salvar nota" : "Salvar no repositório"} title={browserMode ? "Salvar nota (⌘S)" : "Salvar no repositório (⌘S)"} onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} title={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button>
       <button type="button" aria-label="Configurações" title="Configurações" aria-controls="settings-page" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>

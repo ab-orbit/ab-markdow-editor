@@ -402,6 +402,16 @@ export class Repository {
     return this.library();
   }
 
+  /** Lightweight source check: no image payloads and no Git mutation. */
+  async documentVersion(name) {
+    markdownName(name);
+    try {
+      const filename = await safeFile(this.requireRoot(), name);
+      if ((await fs.stat(filename)).size > MAX_TEXT) throw new Error('O Markdown excede 5 MB.');
+      return { version: digest(await fs.readFile(filename)) };
+    } catch(error) { if (error.code === 'ENOENT') return {version:null}; throw error; }
+  }
+
   async read(name) {
     markdownName(name);
     const root = this.requireRoot();

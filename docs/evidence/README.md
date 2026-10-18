@@ -83,3 +83,7 @@ A primeira nota fixada explica a plataforma, os recursos e o roadmap de Google D
 ## Celular e tablet — vertical, horizontal e área reduzida
 
 Veja as [44 capturas organizadas por motor, perfil e orientação](RESPONSIVE.md), cobrindo Visão, Ler, lateral aberta em tablet e redução de área para teclado. Repositórios sintéticos; matriz e limites documentados em [RESPONSIVE.md](../RESPONSIVE.md). A revisão também corrigiu a persistência de imagens no WebKit; os cenários finais exigem ausência de alertas e restauração de texto/imagem após reload.
+
+## Atualização externa da nota
+
+Veja os [cenários e capturas da recarga segura](DOCUMENT-RELOAD.md), incluindo alteração no disco, Finder, GitHub e outra aba, com preservação do rascunho.

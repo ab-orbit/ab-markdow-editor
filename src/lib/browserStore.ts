@@ -1,5 +1,5 @@
 import {githubSelection, githubRequest, libraryKey} from './github';
-import {saveToDeviceFolder, readDeviceNotes} from './deviceFolder';
+import {saveToDeviceFolder, readDeviceNotes, folderLabel, deviceDocumentVersion, readDeviceDocument, textVersion} from './deviceFolder';
 import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
 /** Public builds keep all user content in this origin's IndexedDB, never on the VPS. */
 export const browserMode = import.meta.env.VITE_STORAGE_MODE === 'browser';
@@ -20,15 +20,27 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
     const database=await db();
     const url=new URL(route,'https://browser.invalid/');
     const selection=githubSelection();const key=libraryKey();
+    const folder=!selection ? await folderLabel() : '';
+    if(url.searchParams.has('scope') && url.searchParams.get('scope')!==key || url.searchParams.has('folder') && !selection && url.searchParams.get('folder')!==folder)return Response.json({error:'O destino mudou. Reabra a nota.'},{status:409});
+    let disk:any=null;
+    if(folder && (url.pathname==='/document-version'||url.pathname==='/document'&&url.searchParams.get('fresh')==='1')) {
+      try {disk=await (url.pathname==='/document-version' ? deviceDocumentVersion(url.searchParams.get('name')||'') : readDeviceDocument(url.searchParams.get('name')||''));}
+      catch(error){return Response.json({error:error instanceof Error?error.message:'Não foi possível ler a pasta.'},{status:400});}
+      if(folder!==await folderLabel()||key!==libraryKey())return Response.json({error:'O destino mudou. Reabra a nota.'},{status:409});
+    }
+    const savedVersion=folder&&url.pathname==='/save-sync' ? await textVersion(body.value) : null;
     let remote:any=null, syncError='', syncResponse:Response|undefined;
-    if(selection && ['library/initialize','library','recent','document','save-sync'].includes(url.pathname.slice(1))){
+    if(selection && ['library/initialize','library','recent','document','document-version','save-sync'].includes(url.pathname.slice(1))){
       try {
-        const remoteRoute=url.pathname==='/save-sync'?'save':url.pathname==='/document'?`document${url.search}`:'library';
+        const remoteRoute=url.pathname==='/save-sync'?'save':['/document','/document-version'].includes(url.pathname)?`${url.pathname.slice(1)}${url.search}`:'library';
         syncResponse=await githubRequest(remoteRoute,url.pathname==='/save-sync'?body:undefined);
         remote=await syncResponse.json();
         if(!syncResponse.ok){if(url.pathname==='/save-sync'&&syncResponse.status===409)return Response.json(remote,{status:409});syncError=remote.error||'Conexão GitHub indisponível.';remote=null;}
       }catch{syncError='Sem conexão com o GitHub. Alterações preservadas neste navegador.';}
     }
+    if(selection && (url.pathname==='/document-version'||url.pathname==='/document'&&url.searchParams.get('fresh')==='1') && !remote)return Response.json({error:syncError||'Não foi possível ler o GitHub.'},{status:syncResponse?.status||503});
+    if(selection && key!==libraryKey())return Response.json({error:'O destino mudou. Reabra a nota.'},{status:409});
+    if(url.pathname==='/document-version'&&(remote||disk))return Response.json(remote||disk);
     const imported = url.pathname === '/folder/import' ? await readDeviceNotes() : [];
     let guide:Note|undefined;
     if(url.pathname==='/library/initialize'&&!selection) {
@@ -36,7 +48,8 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       guide={name:'Boas-vindas.md',version:crypto.randomUUID(),modifiedAt:new Date().toISOString(),value:'# Bem-vindo ao Scriba\n\n![Escriba egípcio](assets/boas-vindas.jpg)\n\nEscreva, organize e guarde suas notas Markdown neste navegador.\n\n## Comece aqui\n\nCrie uma nota, escreva e pressione Salvar ou ⌘S. Busque e fixe notas na lateral. Importe Markdown e ZIP e exporte suas notas com imagens.\n\n## Privacidade e armazenamento\n\nSuas notas ficam somente neste navegador e dispositivo. Não são enviadas ao nosso servidor. Limpar os dados do site remove as notas; exporte pacotes ZIP para backup. Não há sincronização automática entre dispositivos.\n\nRascunhos são preservados durante a edição. O salvamento automático da biblioteca vem ativado a cada 1 minuto e pode ser ajustado nas configurações.\n\n## Git e roadmap\n\nA versão local para Mac já permite selecionar um repositório e salvar com commit e push. Na versão pública, conecte GitHub nas configurações para selecionar um repositório e sincronizar notas também no celular. Google Drive e novos temas seguem no roadmap, ainda sem data.\n\n[Baixar versão local](https://github.com/ab-orbit/ab-markdow-editor)\n\nPowered by **Aeon Bridge Co.** — offered to community.',files:[{path:'assets/boas-vindas.jpg',data:btoa(binary),mime:'image/jpeg'}]};
     }
     const response = await new Promise<Response>((resolve,reject)=>{
-      const tx=database.transaction('library','readwrite'),store=tx.objectStore('library'),request=store.get(key);let result:unknown;let status=200;
+      const readOnly=url.pathname==='/document-version';
+      const tx=database.transaction('library',readOnly?'readonly':'readwrite'),store=tx.objectStore('library'),request=store.get(key);let result:unknown;let status=200;
       request.onsuccess=()=>{
         const state:State=request.result||initial();
         if(selection && remote?.notes){for(const item of remote.notes){const old=state.notes[item.name];state.notes[item.name]={...item,value:old?.value||'',files:old?.files||[],version:old?.cached?old.version:item.version,cached:old?.cached||false,pending:old?.pending||false};}}
@@ -49,17 +62,18 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
           case '/library/initialize':if(guide&&!state.notes[guide.name]){state.notes[guide.name]=guide;state.pins.unshift(guide.name);}result={...library(state),synchronization:selection&&syncResponse&&!syncResponse.ok?{synced:false,error:syncError}:undefined};break;
           case '/library':case '/recent':result=library(state);break;
           case '/pin':state.pins=state.pins.filter(item=>item!==name);if(body.pinned&&state.notes[name])state.pins.push(name);result=library(state);break;
-          case '/document':if(selection&&remote&&!state.notes[name]?.pending)state.notes[name]={...remote,name,modifiedAt:state.notes[name]?.modifiedAt||new Date().toISOString(),cached:true};if(selection&&!remote&&!state.notes[name]?.cached){status=400;result={error:syncError||'Abra esta nota online antes de usá-la offline.'};break;}result=state.notes[name]?{...state.notes[name],pendingSync:!!state.notes[name]?.pending,warnings:state.notes[name]?.pending?['Alterações locais aguardam envio ao GitHub.']:[]}:{error:'Nota não encontrada.'};if(!state.notes[name])status=404;break;
+          case '/document-version':result=selection?remote:disk||{version:state.notes[name]?.version??null};break;
+          case '/document':if(disk)state.notes[name]={...disk,cached:true};if(selection&&remote&&(!state.notes[name]?.pending||url.searchParams.get('fresh')==='1'))state.notes[name]={...remote,name,modifiedAt:state.notes[name]?.modifiedAt||new Date().toISOString(),cached:true};if(selection&&!remote&&!state.notes[name]?.cached){status=400;result={error:syncError||'Abra esta nota online antes de usá-la offline.'};break;}result=state.notes[name]?{...state.notes[name],pendingSync:!!state.notes[name]?.pending,warnings:state.notes[name]?.pending?['Alterações locais aguardam envio ao GitHub.']:[]}:{error:'Nota não encontrada.'};if(!state.notes[name])status=404;break;
           case '/thumbnail':result=state.notes[name]?.files[0]||null;break;
           case '/save-sync': {
             if(!name.trim()||!/\.(md|markdown|mdown)$/i.test(name)){status=400;result={error:'Informe um nome de arquivo Markdown (.md, .markdown ou .mdown).'};break;}
             const previous=state.notes[name];
             if(!selection&&previous&&previous.version!==body.version&&body.baseVersion!==previous.version){status=409;result={error:'Esta nota mudou em outra aba. Salve uma cópia ou reabra a nota.',conflict:{name,kind:body.version?'modified':'exists',currentVersion:previous.version}};break;}
-            const version=selection?(remote?.version??body.version??null):crypto.randomUUID();state.notes[name]={name,value:body.value,version,cached:true,pending:!!selection&&!remote,modifiedAt:new Date().toISOString(),files:(body.files||[]).map((file:any)=>({...file,mime:/\.png$/i.test(file.path)?'image/png':/\.webp$/i.test(file.path)?'image/webp':/\.gif$/i.test(file.path)?'image/gif':'image/jpeg'}))};result={version,synced:!selection||!!remote,error:syncError||undefined};break;
+            const version=selection?(remote?.version??body.version??null):savedVersion||crypto.randomUUID();state.notes[name]={name,value:body.value,version,cached:true,pending:!!selection&&!remote,modifiedAt:new Date().toISOString(),files:(body.files||[]).map((file:any)=>({...file,mime:/\.png$/i.test(file.path)?'image/png':/\.webp$/i.test(file.path)?'image/webp':/\.gif$/i.test(file.path)?'image/gif':'image/jpeg'}))};result={version,synced:!selection||!!remote,error:syncError||undefined};break;
           }
           default:status=400;result={error:'Esta função requer a versão local do Scriba.'};
         }
-        store.put(state,key);
+        if(!readOnly)store.put(state,key);
       };
       tx.oncomplete=()=>resolve(Response.json(result,{status}));tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
     });

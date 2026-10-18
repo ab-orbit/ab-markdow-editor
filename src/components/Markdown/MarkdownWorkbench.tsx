@@ -27,8 +27,14 @@ export interface MarkdownWorkbenchProps {
   onImport?: (source: string, name: string) => Promise<void>;
   /** Initial display mode, read once at mount. */
   initialMode?: MarkdownMode;
+  /** Preserve the document reading position across a source refresh. */
+  initialScrollTop?: number;
   /** Host actions displayed alongside the document's existing toolbar controls. */
   actions?: ReactNode;
+  /** Compact host status shown only when the open source changes externally. */
+  sourceStatus?: ReactNode;
+  /** Reports mode changes so a source reload preserves the selected presentation. */
+  onModeChange?: (mode: MarkdownMode) => void;
   /** Compact standalone layout with formatting available on demand. */
   compact?: boolean;
   /** Files loaded from the configured repository, applied on mount. */
@@ -44,8 +50,11 @@ export interface MarkdownWorkbenchProps {
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', actions, compact = false, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
+  useEffect(() => { onModeChange?.(mode); }, [mode,onModeChange]);
+  const pages = useRef<HTMLDivElement>(null);
+  useEffect(() => {const frame=requestAnimationFrame(()=>{if(pages.current)pages.current.scrollTop=initialScrollTop;});return()=>cancelAnimationFrame(frame);}, []);
   const [baseline, setBaseline] = useState(value);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -140,19 +149,24 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
       </div>
       <div className={styles.actions}>
         <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" title="Abrir .md / ZIP" onClick={() => input.current?.click()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
-        <button type="button" className={styles.download} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
-        <button type="button" className={styles.download} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
+        <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
+        <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
+        {compact && <details className={styles.exportMenu} onKeyDown={event => {if(event.key==='Escape'){event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>
+          <summary aria-label="Exportar nota" title="Exportar nota"><Download size={18} aria-hidden="true"/></summary>
+          <div role="group" aria-label="Exportar nota"><button type="button" onClick={event => {downloadMarkdown(value,fileName);event.currentTarget.closest('details')?.removeAttribute('open');}}><Download size={16} aria-hidden="true"/>Baixar .md</button><button type="button" disabled={busy} onClick={event => {void downloadPackage();event.currentTarget.closest('details')?.removeAttribute('open');}}><Package size={16} aria-hidden="true"/>Baixar pacote</button></div>
+        </details>}
         {compact && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} title="Formatação" aria-expanded={formattingOpen} onClick={() => setFormattingOpen(open => !open)}><Type size={18}/></button>}
         {actions}
       </div>
       <input ref={input} type="file" hidden aria-label="Arquivo Markdown" disabled={readOnly || busy} accept=".md,.markdown,.mdown,.zip,.bear,text/markdown,application/zip" onChange={event => { void open(event.target.files?.[0]); event.target.value = ''; }}/>
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>
     </header>
+    {sourceStatus}
     {(!compact || formattingOpen) && <EditingToolbar disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
     <div className={styles.modeHint}>{mode === 'live' ? 'Os marcadores aparecem na linha selecionada. Clique no texto para editar.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Volte a Escrever para editar.'}</div>
-    <div className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
+    <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
       <div className={styles.source} hidden={mode === 'read'}>
         <MarkdownEditor key={documentId} ref={editor} value={value} onChange={onChange} livePreview={mode === 'live'} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
       </div>

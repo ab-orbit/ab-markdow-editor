@@ -652,6 +652,7 @@ export function createGitHubService({
           "/github/select",
           "/github/library",
           "/github/document",
+          "/github/document-version",
           "/github/save",
         ].includes(url.pathname)
       )
@@ -712,6 +713,17 @@ export function createGitHubService({
         const result = await library(session);
         persist();
         return send(200, result);
+      }
+      if (["/github/document", "/github/document-version"].includes(url.pathname) && url.searchParams.has("scope")) {
+        const scope = session.selection ? `github:${session.selection.fullName}:${session.selection.branch}:${session.selection.folder}` : "state";
+        if (url.searchParams.get("scope") !== scope) throw fail("O repositório mudou. Reabra a nota no destino selecionado.", 409);
+      }
+      if (url.pathname === "/github/document-version") {
+        const name = filePath(session, url.searchParams.get("name"));
+        const {tree} = await snapshot(session);
+        const entry = tree.tree.find(item => item.type === "blob" && item.path === name);
+        persist();
+        return send(200, {version:entry?.sha || null});
       }
       if (url.pathname === "/github/document") {
         const result = await read(session, url.searchParams.get("name"));
