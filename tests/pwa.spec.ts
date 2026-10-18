@@ -15,7 +15,7 @@ for (const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wi
       for(const [key,value] of [['user.name','PWA Test'],['user.email','pwa@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])git('-C',repo,'config',key,value);
       await writeFile(join(repo,'README.md'),'# PWA\n');git('-C',repo,'add','.');git('-C',repo,'commit','-m','Initial');git('-C',repo,'remote','add','origin',remote);git('-C',repo,'push','-u','origin','main');
       await page.setViewportSize(viewport);await page.goto('/');page.on('dialog',dialog=>dialog.accept());
-      const settings=page.getByRole('dialog',{name:'Configurações',exact:true});const gear=page.getByRole('button',{name:'Configurações',exact:true});
+      const settings=page.getByRole('region', {name:'Configurações',exact:true});const gear=page.getByRole('button',{name:'Configurações',exact:true});
       await expect(settings).toBeVisible();
       if(!(await page.locator('details.repository').evaluate(el=>el.hasAttribute('open'))))await page.locator('details.repository > summary').click();
       await page.route('**/api/pick-folder',route=>route.fulfill({json:{directory:repo}}));
@@ -27,7 +27,7 @@ for (const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wi
       for(const icon of manifest.icons){const dimensions=await page.evaluate(async(src:string)=>{const image=await createImageBitmap(await(await fetch(src)).blob());return `${image.width}x${image.height}`;},icon.src);expect(dimensions).toBe(icon.sizes);}
       const cdp=await context.newCDPSession(page);const installability=await cdp.send('Page.getInstallabilityErrors');expect(installability.installabilityErrors.filter((error:{errorId:string})=>error.errorId!=='in-incognito')).toEqual([]);
       expect((await cdp.send('Page.getAppManifest')).url).toContain('/manifest.webmanifest');
-      await gear.click();await page.getByLabel('Caminho do arquivo no repositório').fill('caderno-pwa.md');await settings.getByRole('button',{name:'Fechar',exact:true}).click();
+      await gear.click();await page.getByLabel('Caminho do arquivo no repositório').fill('caderno-pwa.md');await settings.getByRole('button',{name:'Voltar ao editor',exact:true}).click();
       await page.getByRole('button',{name:'Fonte',exact:true}).click();const source=page.locator('.cm-content');await source.click();await page.keyboard.insertText('# Caderno PWA\n\nTexto com conexão.\n');
       const image=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=','base64');
       await page.getByLabel('Arquivos de imagem',{exact:true}).setInputFiles({name:'pixel.png',mimeType:'image/png',buffer:image});

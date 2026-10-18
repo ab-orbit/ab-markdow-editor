@@ -203,7 +203,7 @@ try {
     .waitFor();
   console.log("Destination refreshed");
   await page.screenshot({ path: "docs/evidence/github-mobile-settings.png" });
-  await page.getByRole("button", { name: "Fechar", exact: true }).click();
+  await page.getByRole("button", { name: "Voltar ao editor", exact: true }).click();
   await page.getByRole("button", { name: "Mostrar notas recentes" }).click();
   await page.getByRole("button", { name: "Remote.md", exact: true }).click();
   await page
@@ -245,7 +245,7 @@ try {
     .filter({ hasText: "Destino atualizado." })
     .waitFor();
   console.log("Destination refreshed");
-  await page.getByRole("button", { name: "Fechar", exact: true }).click();
+  await page.getByRole("button", { name: "Voltar ao editor", exact: true }).click();
   await page.getByRole("button", { name: "Mostrar notas recentes" }).click();
   await page
     .getByRole("button", { name: "Boas-vindas.md", exact: true })

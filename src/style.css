@@ -188,3 +188,18 @@ body { font-family: var(--font-ui); }
 .about-scriba dt { color: var(--text-muted); }
 .about-scriba dd { margin: 0; }
 .about-scriba a { color: var(--cyan); overflow-wrap: anywhere; }
+
+/* Settings is a full page; the mounted editor retains its document and cursor state. */
+.editor-layout[hidden] { display: none; }
+.settings-page { height: 100%; width: 100%; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: var(--bg-surface); color: var(--text-secondary); font: 16px/1.65 var(--font-ui); }
+.settings-page-header { position: sticky; top: 0; z-index: 3; background: var(--bg-surface); border-bottom: 1px solid var(--border-panel); }
+.settings-page-header > div { display: flex; align-items: center; gap: 24px; max-width: 1040px; margin: 0 auto; padding: 12px 24px; }
+.settings-page-header h1 { margin: 0; color: var(--text-primary); font-size: 22px; line-height: 1.4; }
+.settings-page-header h1:focus { outline: none; }
+.settings-page .settings-content { width: 100%; max-width: 1040px; margin: 0 auto; padding: 28px 24px 64px; }
+.settings-page input, .settings-page select, .settings-page textarea { max-width: 100%; }
+@media (max-width: 600px) {
+ .settings-page-header > div { padding: 10px 16px; gap: 16px; }
+ .settings-page-header h1 { font-size: 20px; }
+ .settings-page .settings-content { padding: 20px 16px 48px; }
+}

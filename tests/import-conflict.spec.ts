@@ -17,7 +17,7 @@ test(`${viewport.name}: local file import binds its original version; real confl
     for (const [key, value] of [['user.name','Import Test'],['user.email','import@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']]) git('-C',repo,'config',key,value);
     await writeFile(join(repo,'existing.md'), original); git('-C',repo,'add','.');git('-C',repo,'commit','-m','Initial');git('-C',repo,'remote','add','origin',remote);git('-C',repo,'push','-u','origin','main');
     await page.goto('/'); page.on('dialog', dialog => dialog.accept());
-    const settings = page.getByRole('dialog', { name: 'Configurações', exact: true });
+    const settings = page.getByRole('region', {name:'Configurações',exact:true});
     const gear = page.getByRole('button', { name: 'Configurações', exact: true });
     await expect(settings).toBeVisible();
     if (!(await page.locator('details.repository').evaluate(el => el.hasAttribute('open')))) await page.locator('details.repository > summary').click();

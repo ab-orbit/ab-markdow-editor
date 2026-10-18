@@ -10,7 +10,7 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wid
    for(const [key,value] of [['user.name','Sidebar Test'],['user.email','sidebar@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])git('-C',repo,'config',key,value);
    for(let i=0;i<105;i++){const filename=join(repo,`note-${String(i).padStart(3,'0')}.md`);await writeFile(filename,`# Nota ${i}\n\nConteúdo ${i}.`);const time=i>=102 ? new Date(Date.now()-(104-i)*86400000-2*3600000) : new Date(Date.UTC(2020,0,1,0,0,i));await utimes(filename,time,time);}
    git('-C',repo,'add','.');git('-C',repo,'commit','-m','Initial');git('-C',repo,'remote','add','origin',remote);git('-C',repo,'push','-u','origin','main');
-   await page.setViewportSize(viewport);await page.goto('/');const settings=page.getByRole('dialog',{name:'Configurações',exact:true});await expect(settings).toBeVisible();
+   await page.setViewportSize(viewport);await page.goto('/');const settings=page.getByRole('region', {name:'Configurações',exact:true});await expect(settings).toBeVisible();
    if(!(await page.locator('details.repository').evaluate(el=>el.hasAttribute('open'))))await page.locator('details.repository > summary').click();
    await page.route('**/api/pick-folder',route=>route.fulfill({json:{directory:repo}}));await page.getByRole('button',{name:'Selecionar pasta',exact:true}).click();await expect(settings).toHaveCount(0);
    if(viewport.name==='mobile')await page.getByRole('button',{name:'Mostrar notas recentes'}).click();
@@ -42,7 +42,7 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wid
    page.once('dialog',dialog=>dialog.accept());await sidebar.getByRole('button',{name:'note-103.md',exact:true}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();await expect(source).toContainText('Conteúdo 103');await source.click();await page.keyboard.insertText('Atualizado');
    await page.getByRole('button',{name:'Salvar no repositório',exact:true}).click();await expect(page.getByRole('status')).toHaveText('Arquivo salvo, commit criado e enviado ao remoto.');
    if(viewport.name==='mobile')await page.getByRole('button',{name:'Mostrar notas recentes'}).click();await expect(recent.locator('strong').first()).toHaveText('Nota 103');
-   await page.getByRole('button',{name:'Configurações',exact:true}).click();await page.getByRole('button',{name:'Usar tema claro'}).click();await settings.getByRole('button',{name:'Fechar',exact:true}).click();
+   await page.getByRole('button',{name:'Configurações',exact:true}).click();await page.getByRole('button',{name:'Usar tema claro'}).click();await settings.getByRole('button',{name:'Voltar ao editor',exact:true}).click();
    await page.screenshot({path:`docs/evidence/${viewport.name}-recent-notes-light.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   }finally{await rm(temporary,{recursive:true,force:true});}
  });

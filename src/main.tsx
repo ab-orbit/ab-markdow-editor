@@ -4,7 +4,7 @@ import {canChooseFolder, chooseDeviceFolder, folderLabel, disconnectFolder, auth
 import {browserMode} from './lib/browserStore';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff, ArrowLeft } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
 import { NoteThumbnail } from './NoteThumbnail';
 import { noteGroup, shortNoteDate } from './lib/noteDates';
@@ -138,7 +138,20 @@ function App() {
     if (restoringAssets.current && !items.length) return;
     restoringAssets.current = false; setAssets(items);
   }, []);
-  const [settingsOpen, setSettingsOpen] = useState(() => new URLSearchParams(location.search).has('github'));
+  const [settingsOpen, setSettingsOpenState] = useState(() => location.hash === '#settings' || new URLSearchParams(location.search).has('github'));
+  const settingsTitle = useRef<HTMLHeadingElement>(null);
+  const settingsWasOpen = useRef(false);
+  function setSettingsOpen(open: boolean) {
+    if(open && location.hash !== '#settings') history.pushState({scribaSettings:true}, '', `${location.pathname}${location.search}#settings`);
+    if(!open && location.hash === '#settings') history.replaceState(null, '', `${location.pathname}${location.search}`);
+    setSettingsOpenState(open);
+  }
+  function backToEditor() {
+    if(history.state?.scribaSettings) history.back(); else setSettingsOpen(false);
+  }
+  useEffect(() => {const url=new URL(location.href);if(url.searchParams.has('github')){url.searchParams.delete('github');url.hash='settings';history.replaceState(null,'',url.pathname+url.search+url.hash);}}, []);
+  useEffect(() => {const navigate=()=>setSettingsOpenState(location.hash === '#settings');window.addEventListener('popstate',navigate);window.addEventListener('hashchange',navigate);return()=>{window.removeEventListener('popstate',navigate);window.removeEventListener('hashchange',navigate);};}, []);
+  useEffect(() => {if(settingsOpen)settingsTitle.current?.focus();else if(settingsWasOpen.current)document.querySelector<HTMLButtonElement>('button[aria-label="Configurações"]')?.focus();settingsWasOpen.current=settingsOpen;},[settingsOpen]);
   useEffect(() => {const showNotes=()=>setNotesOpen(true);window.addEventListener('scriba:show-notes',showNotes);return()=>window.removeEventListener('scriba:show-notes',showNotes);}, []);
   const [repository, setRepository] = useState<RepositoryInfo>({ repository: null, branch: '', status: '' });
   const [directory, setDirectory] = useState('');
@@ -372,7 +385,8 @@ function App() {
   const statusMessages = <>{error && <div role="alert" className="error toast">{error}<button aria-label="Dispensar erro" onClick={() => setError('')}><X size={18}/></button></div>}{notice && <p role="status" className="notice toast">{notice}</p>}</>;
   return <main aria-busy={busy} className="editor-app">
     {aboutOpen && <EditorDialog title="Sobre o Scriba" onClose={() => setAboutOpen(false)}><div className="about-scriba"><img src="/icons/profile-v3/scribe-180.png" width="96" height="96" alt="Escriba egípcio, símbolo do Scriba"/><h1>Scriba</h1><p className="about-subtitle">AB Markdown Editor</p><p>Scriba vem do latim e significa escriba: quem registra e preserva a palavra escrita. O escriba egípcio da nossa marca representa esse cuidado com suas ideias — agora em notas Markdown que continuam suas.</p><dl><div><dt>Versão</dt><dd>{__APP_VERSION__}</dd></div><div><dt>Compilação</dt><dd><time dateTime={__BUILD_DATE__}>{new Date(__BUILD_DATE__).toLocaleDateString('pt-BR')}</time></dd></div><div><dt>Edição</dt><dd>{browserMode ? 'Web / PWA' : 'Local para Mac'}</dd></div><div><dt>Desenvolvido por</dt><dd>Aeon Bridge Co.</dd></div></dl><p>Powered by Aeon Bridge Co. — offered to community.</p><a href="https://github.com/ab-orbit/ab-markdow-editor" target="_blank" rel="noopener noreferrer">Código-fonte e documentação</a></div></EditorDialog>}
-    {settingsOpen && <EditorDialog title="Configurações" onClose={() => setSettingsOpen(false)}>
+    {settingsOpen && <section className="settings-page" id="settings-page" aria-labelledby="settings-title">
+    <header className="settings-page-header"><div><button type="button" onClick={backToEditor} aria-label="Voltar ao editor"><ArrowLeft size={20}/><span>Editor</span></button><h1 id="settings-title" ref={settingsTitle} tabIndex={-1}>Configurações</h1></div></header>
     <div className="settings-content">
     <section className="pwa-settings" aria-label="Aplicativo PWA">
       <div className="pwa-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>Scriba · AB Markdown Editor</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
@@ -411,7 +425,7 @@ function App() {
       </form>
     </section>
     {statusMessages}
-    </div></EditorDialog>}
+    </div></section>}
     {conflict && <EditorDialog title="Resolver versões do arquivo" onClose={() => setConflict(null)}>
       <p><strong>{conflict.name}</strong></p>
       <p>{conflict.kind === 'exists' ? 'Já existe um arquivo com esse nome na pasta.' : conflict.kind === 'deleted' ? 'O arquivo foi removido do disco desde a abertura.' : 'A nota mudou desde a abertura.'} Seu texto continua intacto no editor.</p>
@@ -429,7 +443,7 @@ function App() {
       </form>
     </EditorDialog>}
     {!settingsOpen && statusMessages}
-    <div className="editor-layout">
+    <div className="editor-layout" hidden={settingsOpen} inert={settingsOpen || undefined}>
     {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
       <div className="notes-heading"><button type="button" className="about-trigger" aria-label="Sobre o Scriba" title="Sobre o Scriba" onClick={() => setAboutOpen(true)}><img className="notes-logo" src={brandIcon} width="24" height="24" alt=""/></button><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length + visiblePinned.length} resultados` : `${recentNotes.length + pinnedNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || (offline && !browserMode)} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
       <label className="notes-search"><Search size={16} aria-hidden="true"/><input type="search" aria-label="Buscar nas notas recentes" placeholder="Buscar notas…" value={noteSearch} onChange={event => setNoteSearch(event.target.value)}/></label>
@@ -446,7 +460,7 @@ function App() {
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
       {repository.repository && <button type="button" disabled={busy} aria-label={browserMode ? "Salvar nota" : "Salvar no repositório"} title={browserMode ? "Salvar nota (⌘S)" : "Salvar no repositório (⌘S)"} onClick={() => requestSave()}><Save size={18}/></button>}
-      <button type="button" aria-label="Configurações" title="Configurações" aria-haspopup="dialog" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
+      <button type="button" aria-label="Configurações" title="Configurações" aria-controls="settings-page" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></fieldset>
     </div>
   </main>;

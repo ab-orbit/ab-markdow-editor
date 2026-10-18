@@ -16,7 +16,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       git('-C',repo,'add','.');git('-C',repo,'commit','-m','Initial');git('-C',repo,'remote','add','origin',remote);git('-C',repo,'push','-u','origin','main');
       await page.setViewportSize(viewport); await page.goto('/');
       page.on('dialog', dialog => dialog.accept());
-      const settings = page.getByRole('dialog', { name: 'Configurações', exact: true });
+      const settings = page.getByRole('region', {name:'Configurações',exact:true});
       const gear = page.getByRole('button', { name: 'Configurações', exact: true });
       await expect(settings).toBeVisible();
       const summary = page.locator('details.repository > summary');
@@ -41,7 +41,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await expect(page.getByLabel('Nova pasta local (caminho absoluto)')).toHaveValue(`${repo}/research`);
       await page.getByText('Clonar um repositório por URL', { exact: true }).click();
       await page.getByLabel('Caminho do arquivo no repositório').fill('notes/pesquisa.md');
-      await settings.getByRole('button', { name: 'Fechar', exact: true }).click();
+      await settings.getByRole('button',{name:'Voltar ao editor',exact:true}).click();
       const source = page.locator('.cm-content'); await source.click(); await page.keyboard.insertText('# Pesquisa\n\nTexto com **evidências**.\n\n- [ ] Conferir fontes\n');
       await gear.click();
       await page.keyboard.press('Escape');
@@ -72,7 +72,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await gear.click();
       await page.screenshot({ path: `docs/evidence/${viewport.name}-settings.png`, fullPage: true });
       await page.getByRole('button', { name: 'Usar tema claro' }).click();
-      await settings.getByRole('button', { name: 'Fechar', exact: true }).click();
+      await settings.getByRole('button',{name:'Voltar ao editor',exact:true}).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme','light');
       await page.screenshot({ path: `docs/evidence/${viewport.name}-repository-document-light.png`, fullPage: true });
       // Fake only browser time; filesystem, HTTP, Git commits and pushes remain real.
@@ -86,7 +86,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await page.getByRole('region', { name: 'Preferências de salvamento' }).scrollIntoViewIfNeeded();
       expect(await settings.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
       await page.screenshot({ path: `docs/evidence/${viewport.name}-autosave-settings.png`, fullPage: true });
-      await settings.getByRole('button', { name: 'Fechar', exact: true }).click();
+      await settings.getByRole('button',{name:'Voltar ao editor',exact:true}).click();
       await page.getByRole('button', { name: 'Fonte', exact: true }).click();
       await source.click(); await page.keyboard.insertText('Texto automático de um minuto.');
       await page.clock.fastForward(60000);
@@ -123,7 +123,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await page.getByLabel('Perguntar nota do commit a cada salvamento', { exact: true }).uncheck();
       await page.getByRole('button', { name: 'Salvar preferências', exact: true }).click();
       await expect(page.getByRole('status')).toHaveText('Preferências de salvamento atualizadas.');
-      await settings.getByRole('button', { name: 'Fechar', exact: true }).click();
+      await settings.getByRole('button',{name:'Voltar ao editor',exact:true}).click();
       await source.click(); await page.keyboard.insertText('Intervalo de dois minutos.');
       await page.clock.fastForward(60000);
       await expect(note).toHaveCount(0);
@@ -142,7 +142,7 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       await page.getByLabel('Intervalo (minutos)', { exact: true }).fill('1');
       await page.getByRole('button', { name: 'Salvar preferências', exact: true }).click();
       await expect(page.getByRole('status')).toHaveText('Preferências de salvamento atualizadas.');
-      await settings.getByRole('button', { name: 'Fechar', exact: true }).click();
+      await settings.getByRole('button',{name:'Voltar ao editor',exact:true}).click();
       const contrast = await page.evaluate(() => {
         const original = document.documentElement.dataset.theme;
         const results: {token: string; ratio: number}[] = [];
