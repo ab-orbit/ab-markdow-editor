@@ -1,6 +1,6 @@
 # Markdown editing
 
-Reusable client components for Next.js 16 / React 19. The lab is available at `/lab/markdown` and linked from `/lab`.
+React 19 client components in the standalone Scriba application. This extracted copy is independent of the original Lab.
 
 ```tsx
 'use client';
@@ -21,7 +21,7 @@ export function Notes() {
 }
 ```
 
-`MarkdownEditor` can be used separately with `value`, `onChange`, `livePreview`, `readOnly`, optional `assets` and `onImageFiles`. Its optional ref exposes `command`, `selection`, `replace` and `tables` for programmatic integration. `MarkdownReadingView` accepts `value`, optional registered `assets`, `onEditTable` and `onToggleTask`. The host owns source persistence. The workbench owns its session asset registry and package import/export. Its `initialMode` is read once on mount. Set `readOnly` to prevent interactive edits and imports.
+`MarkdownEditor` can be used separately with `value`, `onChange`, `livePreview`, `readOnly`, optional `assets` and `onImageFiles`. Its optional ref exposes `command`, `selection`, `replace`, `tables`, `editBlock` and `finishBlock` for programmatic integration. `MarkdownReadingView` accepts `value`, optional registered `assets`, `onEditTable` and `onToggleTask`. The host owns source persistence. The workbench owns its session asset registry and package import/export. Its `initialMode` is read once on mount. Set `readOnly` to prevent interactive edits and imports.
 
 ## Editing tools
 
@@ -31,6 +31,14 @@ export function Notes() {
 - Link dialog with selection preservation and protocol validation; footnote insertion with an unused numeric identifier and its definition.
 - GFM tables: insertion plus **Editar tabela** in Visão/Ler. The modal edits cells, adds/deletes rows and columns, changes column alignment and sorts body rows. Applying performs one source replacement; canceling leaves source untouched. The visual editor accepts up to 20 columns and 100 rows; larger tables remain editable as source.
 - Task checkboxes in Visão/Ler update the corresponding source marker and are undoable.
+
+## Source block interaction
+
+The host opens existing documents with `initialMode="read"`; new notes use `live`. `doubleClickToEdit` defaults to true. Reading nodes retain their original mdast offsets for double-click/Enter navigation. The workbench maps CRLF/CR offsets into CodeMirror's normalized LF document before resolving the block. Pure navigation does not emit source changes, preserving the parent value, including a UTF-8 BOM and original line endings.
+
+`blockEditing.ts` stores a transient source range in a CodeMirror StateField. Its effects map through edits and leave the saved document untouched. Double clicking selects the parser's paragraph, heading, code block or table, rather than a wrapped visual line or every paragraph following a heading. Moving the selection outside the block clears it. `Mod-Enter`, Escape and the formatting toolbar provide equivalent controls. Source mode retains native double-click word selection.
+
+The same CodeMirror instance owns the complete document throughout a reading/editing transition, preserving undo/redo and surrounding source. Standalone image widgets respect the revealed block range. Editor markers use platform text tokens and live mode shares the reading font. Modal and settings Escape handling takes priority over block completion.
 
 ## Images and portable packages
 
@@ -47,7 +55,7 @@ Package imports are limited to 50 MiB compressed and uncompressed data, 200 ZIP 
 ## Implementation
 
 - CodeMirror 6 owns selection, undo/redo, keyboard input, syntax parsing and editable text. The React wrapper mounts the editor in an effect, destroys it on unmount and synchronizes external changes without emitting feedback changes. Switching modes preserves the mounted editor and its history.
-- Syntax-tree decorations hide heading, emphasis, inline-code and strikethrough delimiters outside selected lines; registered standalone images use block widgets. These do not change the document. Fenced-code delimiters remain explicit. The CodeMirror grammar includes GFM tables, tasks and strikethrough.
+- Syntax-tree decorations hide heading, emphasis, inline-code and strikethrough delimiters outside the active inline span; an explicit block range reveals every delimiter within that range; registered standalone images use block widgets. These do not change the document. Fenced-code delimiters remain explicit. The CodeMirror grammar includes GFM tables, tasks and strikethrough.
 - `react-markdown` + `remark-gfm`, already used by this application, render the reading view. Raw HTML is skipped and the default URL filter remains active. Image components resolve only the local registry. Ordinary links open in another tab when clicked; footnote anchors stay in this document.
 - The split view is labeled **Visão**. Both columns stay aligned at the top even when their rendered heights differ. Defined footnotes retain their generated IDs and navigate within the page in both directions. Undefined markers such as `[^20]` are shown as `[20?]` with an accessible explanation; no source is fabricated and the original Markdown is unchanged. Code literals are not annotated.
 - All colors, fonts, radii and font scaling use the platform tokens. CSS variables also resolve inside CodeMirror, so platform and embed themes apply without remounting the editor. Styles are isolated in a CSS Module.
@@ -59,11 +67,11 @@ This is an independent browser implementation inspired by Bear's native attribut
 ## Checks
 
 ```sh
-npx vitest run src/components/Markdown src/lib/markdown
-npx tsc --noEmit
-npx eslint src/components/Markdown src/components/Lab/markdown src/app/lab/markdown src/lib/markdown
-# Requires the existing local app at localhost:3100; no backend session is needed.
-npx playwright test --config playwright.markdown.config.ts
+npm run build
+npm test
+node tests/block-editing.smoke.mjs
+MARKDOWN_BROWSER=webkit node tests/block-editing.smoke.mjs
+node tests/document-reload.smoke.mjs
 ```
 
-Browser checks cover formatting, undo/redo, links, footnotes, tasks, table cell edits, image picker/paste/drop, live image widgets, original image byte preservation, ZIP reopening, invalid-image rejection, the Lab entry and desktop/mobile native/embed themes. Screenshots are saved under `docs/evidence/markdown-lab/`.
+The block smoke test uses actual HTTP, temporary Git checkouts and browser pointer/keyboard interactions. It verifies default reading, inline and whole-block marker visibility, multi-line scope, undo/redo, exact saved source and commits, preference persistence, CRLF/BOM offsets, responsive layouts and Chromium touch input. It never uses the user's note repository.

@@ -1,6 +1,7 @@
 import { StateField, type EditorState } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
+import {rawBlockContains} from './blockEditing';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 
 class ImageWidget extends WidgetType {
@@ -23,7 +24,7 @@ export function imageDecorations(assets: readonly MarkdownAsset[]) {
     syntaxTree(state).iterate({ enter(node) {
       if (node.name !== 'Image') return;
       const line = state.doc.lineAt(node.from);
-      if (line.from !== node.from || line.to !== node.to || state.selection.ranges.some(range => range.from <= line.to && range.to >= line.from)) return;
+      if (line.from !== node.from || line.to !== node.to || rawBlockContains(state,node.from,node.to) || state.selection.ranges.some(range => range.from <= line.to && range.to >= line.from)) return;
       const match = state.sliceDoc(node.from, node.to).match(/^!\[([^\]]*)\]\((?:<([^>]+)>|([^\s)]+))\)$/);
       if (!match) return;
       const asset = resolveAsset(match[2] ?? match[3], assets);

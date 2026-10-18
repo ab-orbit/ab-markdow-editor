@@ -4,8 +4,11 @@ import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
 /** Public builds keep all user content in this origin's IndexedDB, never on the VPS. */
 export const browserMode = import.meta.env.VITE_STORAGE_MODE === 'browser';
 interface Note { name: string; value: string; version: string | null; title?: string; cached?: boolean; pending?: boolean; modifiedAt: string; files: {path:string;data:string;mime:string}[] }
-interface State { notes: Record<string,Note>; pins: string[]; preferences: {askCommitNote:boolean;autoSave:boolean;intervalMinutes:number} }
-const initial = ():State => ({notes:{},pins:[],preferences:{askCommitNote:false,autoSave:true,intervalMinutes:1}});
+interface State { notes: Record<string,Note>; pins: string[]; preferences: {askCommitNote:boolean;autoSave:boolean;intervalMinutes:number;
+  /** Gesture preference is private to this destination, alongside its existing save settings. */
+  doubleClickToEdit:boolean;
+} }
+const initial = ():State => ({notes:{},pins:[],preferences:{askCommitNote:false,autoSave:true,intervalMinutes:1,doubleClickToEdit:true}});
 let database: Promise<IDBDatabase>;
 function db() {
   return database ||= new Promise((resolve,reject)=>{const request=indexedDB.open('scriba-private-notes',1);request.onupgradeneeded=()=>request.result.createObjectStore('library');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
@@ -52,12 +55,13 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       const tx=database.transaction('library',readOnly?'readonly':'readwrite'),store=tx.objectStore('library'),request=store.get(key);let result:unknown;let status=200;
       request.onsuccess=()=>{
         const state:State=request.result||initial();
+        state.preferences={...initial().preferences,...state.preferences};
         if(selection && remote?.notes){for(const item of remote.notes){const old=state.notes[item.name];state.notes[item.name]={...item,value:old?.value||'',files:old?.files||[],version:old?.cached?old.version:item.version,cached:old?.cached||false,pending:old?.pending||false};}}
         const name=body?.name||url.searchParams.get('name')||'';
         switch(url.pathname) {
           case '/folder/import':for(const note of imported){const existing=state.notes[note.name];if(!existing)state.notes[note.name]={...note,version:crypto.randomUUID()};}result=library(state);break;
           case '/repository':result={repository:selection?`GitHub: ${selection.fullName}/${selection.folder}`:'Notas neste navegador',branch:selection?.branch||'',status:''};break;
-          case '/preferences':if(body)state.preferences={askCommitNote:!!selection&&!!body.askCommitNote,autoSave:!!body.autoSave,intervalMinutes:Math.max(1,Math.min(1440,Number(body.intervalMinutes)||1))};result=state.preferences;break;
+          case '/preferences':if(body)state.preferences={doubleClickToEdit:typeof body.doubleClickToEdit==='boolean'?body.doubleClickToEdit:state.preferences.doubleClickToEdit,askCommitNote:!!selection&&!!body.askCommitNote,autoSave:!!body.autoSave,intervalMinutes:Math.max(1,Math.min(1440,Number(body.intervalMinutes)||1))};result=state.preferences;break;
           case '/files':result=Object.keys(state.notes).sort();break;
           case '/library/initialize':if(guide&&!state.notes[guide.name]){state.notes[guide.name]=guide;state.pins.unshift(guide.name);}result={...library(state),synchronization:selection&&syncResponse&&!syncResponse.ok?{synced:false,error:syncError}:undefined};break;
           case '/library':case '/recent':result=library(state);break;

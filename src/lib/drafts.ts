@@ -28,7 +28,10 @@ export interface DraftSnapshot {
   /** Durable image bytes; temporary object URLs are deliberately omitted. */
   assets: Pick<MarkdownAsset, 'path' | 'file'>[];
   /** Offline copy of the non-secret save preferences. */
-  preferences: {askCommitNote: boolean; autoSave: boolean; intervalMinutes: number};
+  preferences: {askCommitNote: boolean; autoSave: boolean; intervalMinutes: number;
+    /** Missing in older snapshots; the host supplies the enabled default. */
+    doubleClickToEdit?: boolean;
+  };
   /** Last edit time for restoration into a new window. */
   updatedAt: number;
 }

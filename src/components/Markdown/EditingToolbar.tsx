@@ -1,4 +1,4 @@
-import { Bold, Italic, Strikethrough, Code, Braces, Quote, List, ListOrdered, ListChecks, Minus, Table2, Link, ImagePlus, Undo2, Redo2, IndentIncrease, IndentDecrease, Superscript } from 'lucide-react';
+import { Bold, Italic, Strikethrough, Code, Braces, Quote, List, ListOrdered, ListChecks, Minus, Table2, Link, ImagePlus, Undo2, Redo2, IndentIncrease, IndentDecrease, Superscript, SquareCode, Check } from 'lucide-react';
 import type { MarkdownCommand } from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
 
@@ -10,8 +10,9 @@ const groups = [
   [{ command: 'code', label: 'Código inline', Icon: Code }, { command: 'codeblock', label: 'Bloco de código', Icon: Braces }, { command: 'rule', label: 'Separador', Icon: Minus }],
 ] as const;
 
-export function EditingToolbar({ disabled, onCommand, onLink, onImage }: { disabled: boolean; onCommand: (command: MarkdownCommand) => void; onLink: () => void; onImage: () => void }) {
+export function EditingToolbar({ disabled, onCommand, onLink, onImage, onEditBlock, blockEditing = false }: { onEditBlock?: () => void; blockEditing?: boolean; disabled: boolean; onCommand: (command: MarkdownCommand) => void; onLink: () => void; onImage: () => void }) {
   return <div className={styles.editingToolbar} role="toolbar" aria-label="Ferramentas de edição">
+    {onEditBlock && <button type="button" disabled={disabled} onMouseDown={event=>event.preventDefault()} onClick={onEditBlock} aria-pressed={blockEditing} aria-label={blockEditing?'Concluir edição do bloco':'Editar bloco como Markdown'} title={blockEditing?'Concluir edição do bloco (Esc)':'Editar bloco como Markdown (⌘/Ctrl+Enter)'}>{blockEditing?<Check size={16} aria-hidden="true"/>:<SquareCode size={16} aria-hidden="true"/>}</button>}
     <select disabled={disabled} aria-label="Estilo do parágrafo" value="" onChange={event => { onCommand(event.target.value as MarkdownCommand); }}>
       <option value="" disabled>Título / texto</option><option value="paragraph">Texto</option><option value="heading1">Título 1</option><option value="heading2">Título 2</option><option value="heading3">Título 3</option>
     </select>

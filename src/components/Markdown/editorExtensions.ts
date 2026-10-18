@@ -4,13 +4,14 @@ import { codeFolding, foldGutter, foldKeymap, HighlightStyle, syntaxHighlighting
 import { Decoration, EditorView, keymap, ViewPlugin, type DecorationSet, type ViewUpdate } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { GFM } from '@lezer/markdown';
+import {blockEditingInteractions,rawBlockContains,rawBlockField} from './blockEditing';
 
-/** Hide only inline delimiters on inactive lines; the document never changes. */
+/** Reveal only the active inline span, or every delimiter in an explicitly opened block. */
 const markerVisibility = ViewPlugin.fromClass(class {
   decorations: DecorationSet;
   constructor(view: EditorView) { this.decorations = this.build(view); }
   update(update: ViewUpdate) {
-    if (update.docChanged || update.selectionSet || update.viewportChanged || syntaxTree(update.startState) !== syntaxTree(update.state)) {
+    if (update.docChanged || update.selectionSet || update.focusChanged || update.viewportChanged || update.startState.field(rawBlockField) !== update.state.field(rawBlockField) || syntaxTree(update.startState) !== syntaxTree(update.state)) {
       this.decorations = this.build(update.view);
     }
   }
@@ -20,9 +21,10 @@ const markerVisibility = ViewPlugin.fromClass(class {
       syntaxTree(view.state).iterate({ from, to, enter(node) {
         if (!['HeaderMark', 'EmphasisMark', 'CodeMark', 'StrikethroughMark'].includes(node.name)) return;
         if (node.node.parent?.name === 'FencedCode') return;
-        const line = view.state.doc.lineAt(node.from);
-        const selected = view.state.selection.ranges.some(range => range.from <= line.to && range.to >= line.from);
-        if (!selected) ranges.push(Decoration.replace({}).range(node.from, node.to));
+        const parent=node.node.parent!;
+        const selected=view.hasFocus&&(rawBlockContains(view.state,node.from,node.to)||view.state.selection.ranges.some(range=>range.empty?range.head>=parent.from&&range.head<=parent.to:range.from<parent.to&&range.to>parent.from));
+        if(!selected)ranges.push(Decoration.replace({}).range(node.from,node.to));
+        else ranges.push(Decoration.mark({class:'cm-markdown-marker'}).range(node.from,node.to));
       } });
     }
     return Decoration.set(ranges, true);
@@ -31,7 +33,7 @@ const markerVisibility = ViewPlugin.fromClass(class {
 
 /** CSS variables resolve in the editor subtree, including runtime theme changes. */
 export const editorExtensions = [
-  markdown({ extensions: [GFM] }), history(), codeFolding(), foldGutter(), keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap, indentWithTab]), EditorView.lineWrapping,
+  markdown({ extensions: [GFM] }), rawBlockField, history(), codeFolding(), foldGutter(), keymap.of([...defaultKeymap, ...historyKeymap, ...foldKeymap, indentWithTab]), EditorView.lineWrapping,
   EditorView.contentAttributes.of({ 'aria-label': 'Conteúdo Markdown', 'aria-multiline': 'true', role: 'textbox' }),
   syntaxHighlighting(HighlightStyle.define([
     { tag: tags.heading1, fontSize: '1.8em', fontWeight: '700', color: 'var(--text-primary)' },
@@ -52,8 +54,9 @@ export const editorExtensions = [
     '.cm-cursor': { borderLeftColor: 'var(--lime)' },
     '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': { backgroundColor: 'var(--lime-dim)' },
     '.cm-scroller': { overflow: 'auto' },
+    '.cm-markdown-marker': {color:'var(--text-muted)',fontWeight:'400',fontStyle:'normal'},
     '.cm-gutters': { backgroundColor: 'var(--bg-surface)', color: 'var(--text-muted)', border: 'none' },
   }),
 ];
 
-export const livePreviewExtension = markerVisibility;
+export const livePreviewExtension = (doubleClickToEdit=true) => [markerVisibility,blockEditingInteractions(doubleClickToEdit)];

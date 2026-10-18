@@ -37,6 +37,8 @@ export interface MarkdownWorkbenchProps {
   onModeChange?: (mode: MarkdownMode) => void;
   /** Compact standalone layout with formatting available on demand. */
   compact?: boolean;
+  /** Optional gesture for revealing an individual Markdown source block. */
+  doubleClickToEdit?: boolean;
   /** Files loaded from the configured repository, applied on mount. */
   initialAssets?: {path: string; file: File}[];
   /** Reports attached files so the host can persist the complete document. */
@@ -50,11 +52,15 @@ export interface MarkdownWorkbenchProps {
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
   useEffect(() => { onModeChange?.(mode); }, [mode,onModeChange]);
+  const workbench = useRef<HTMLElement>(null);
   const pages = useRef<HTMLDivElement>(null);
   useEffect(() => {const frame=requestAnimationFrame(()=>{if(pages.current)pages.current.scrollTop=initialScrollTop;});return()=>cancelAnimationFrame(frame);}, []);
+  const [activeBlock,setActiveBlock] = useState<SourceRange|null>(null);
+  const pendingBlock = useRef<SourceRange|null>(null);
+  const blockFromReading = useRef(false);
   const [baseline, setBaseline] = useState(value);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -93,6 +99,7 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
       const name = file.name.replace(/\.(zip|bear)$/i, '.md');
       onChange(source); onFileNameChange(name); setBaseline(source); setDocumentId(id => id + 1);
       await onImport?.(source, name);
+      blockFromReading.current=false;setMode('read');setReadingActionsOpen(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Não foi possível abrir o arquivo.');
     } finally { setBusy(false); }
@@ -130,6 +137,37 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
     finally { setBusy(false); }
   }
 
+  function editBlock(range:SourceRange) {
+    if(readOnly||busy)return;
+    // mdast offsets refer to the original string; CodeMirror normalizes CRLF/CR to LF.
+    const sourceRange={from:value.slice(0,range.from).replace(/\r\n?/g,'\n').length,to:value.slice(0,range.to).replace(/\r\n?/g,'\n').length};
+    blockFromReading.current=mode==='read';
+    if(mode==='live')editor.current?.editBlock(sourceRange);
+    else {pendingBlock.current=sourceRange;setMode('live');}
+  }
+  useEffect(()=>{if(mode==='live'&&pendingBlock.current){const range=pendingBlock.current;pendingBlock.current=null;editor.current?.editBlock(range);}},[mode]);
+  function blockChanged(range:SourceRange|null,finished:boolean) {
+    setActiveBlock(range);
+    if(finished&&blockFromReading.current){blockFromReading.current=false;setMode('read');}
+  }
+  function toggleBlock() {
+    if(activeBlock)editor.current?.finishBlock();
+    else if(mode==='live')editor.current?.editBlock();
+    else {pendingBlock.current=editor.current?.selection()||{from:0,to:0};blockFromReading.current=mode==='read';setMode('live');}
+  }
+  function changeMode(next:MarkdownMode) {blockFromReading.current=false;setMode(next);}
+  useEffect(()=>{
+    if(!activeBlock)return;
+    const finish=(event:KeyboardEvent)=>{
+      const element=workbench.current,target=event.target;
+      if(event.key!=='Escape'||event.defaultPrevented||!element||element.closest('[hidden],[inert]')||document.querySelector('dialog[open]'))return;
+      // Safari may leave focus on body after a toolbar click; modal/settings shortcuts keep priority.
+      if(target instanceof Element&&target!==document.body&&!element.contains(target))return;
+      event.preventDefault();editor.current?.finishBlock();
+    };
+    window.addEventListener('keydown',finish);return()=>window.removeEventListener('keydown',finish);
+  },[activeBlock]);
+
   function editTable(range: SourceRange) {
     if (readOnly || busy) return;
     try { setTableEdit({ range, table: parseEditableTable(value.slice(range.from, range.to)) }); }
@@ -139,19 +177,19 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
   const [formattingOpen, setFormattingOpen] = useState(false);
   const [readingActionsOpen, setReadingActionsOpen] = useState(false);
   const [noteInfoOpen, setNoteInfoOpen] = useState(false);
-  return <section className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} data-reading-actions={readingActionsOpen} aria-label="Bancada Markdown" aria-busy={busy}>
-    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" aria-label="Editar nota" onClick={() => setMode('live')}><Pencil size={20}/></button><button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
+  return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label="Bancada Markdown" aria-busy={busy}>
+    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" aria-label="Editar nota" onClick={() => changeMode('live')}><Pencil size={20}/></button><button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
     {noteInfoOpen && <EditorDialog title="Informações da nota" onClose={() => setNoteInfoOpen(false)}><p>{fileName}</p><p>{words} palavras · {value.length} caracteres</p><p>Leitura estimada: {Math.max(1, Math.ceil(words / 200))} min</p><p>Markdown · UTF-8</p></EditorDialog>}
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}</div>
       <div className={styles.modes} role="group" aria-label="Modo de edição">
-        {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={mode === key} onClick={() => setMode(key)}>{label}</button>)}
+        {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={mode === key} onClick={() => changeMode(key)}>{label}</button>)}
       </div>
       <div className={styles.actions}>
         <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" title="Abrir .md / ZIP" onClick={() => input.current?.click()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
-        {compact && <details className={styles.exportMenu} onKeyDown={event => {if(event.key==='Escape'){event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>
+        {compact && <details className={styles.exportMenu} onKeyDown={event => {if(event.key==='Escape'&&event.currentTarget.open){event.preventDefault();event.stopPropagation();event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>
           <summary aria-label="Exportar nota" title="Exportar nota"><Download size={18} aria-hidden="true"/></summary>
           <div role="group" aria-label="Exportar nota"><button type="button" onClick={event => {downloadMarkdown(value,fileName);event.currentTarget.closest('details')?.removeAttribute('open');}}><Download size={16} aria-hidden="true"/>Baixar .md</button><button type="button" disabled={busy} onClick={event => {void downloadPackage();event.currentTarget.closest('details')?.removeAttribute('open');}}><Package size={16} aria-hidden="true"/>Baixar pacote</button></div>
         </details>}
@@ -162,20 +200,21 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>
     </header>
     {sourceStatus}
-    {(!compact || formattingOpen) && <EditingToolbar disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
+    {(!compact || formattingOpen) && <EditingToolbar onEditBlock={toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
     <div className={styles.modeHint}>{mode === 'live' ? 'Os marcadores aparecem na linha selecionada. Clique no texto para editar.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Volte a Escrever para editar.'}</div>
     <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
       <div className={styles.source} hidden={mode === 'read'}>
-        <MarkdownEditor key={documentId} ref={editor} value={value} onChange={onChange} livePreview={mode === 'live'} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
+        <MarkdownEditor key={documentId} ref={editor} value={value} onChange={onChange} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
       </div>
-      {(mode === 'split' || mode === 'read') && <MarkdownReadingView value={value} assets={assets} onEditTable={!readOnly && !busy ? editTable : undefined} onToggleTask={!readOnly && !busy ? range => {
+      {(mode === 'split' || mode === 'read') && <MarkdownReadingView value={value} assets={assets} doubleClickToEdit={doubleClickToEdit} onEditBlock={!readOnly && !busy ? editBlock : undefined} onEditTable={!readOnly && !busy ? editTable : undefined} onToggleTask={!readOnly && !busy ? range => {
         const source = value.slice(range.from, range.to);
         const marker = source.match(/^(\s*(?:[-*+]|\d+[.)])\s+\[)([ xX])\]/);
         if (marker) editor.current?.replace(marker[2] === ' ' ? 'x' : ' ', { from: range.from + marker[1].length, to: range.from + marker[1].length + 1 });
       } : undefined}/>}
     </div>
+    <output className={styles.blockStatus} aria-live="polite">{activeBlock?'Markdown do bloco em edição. Escape conclui; clique em outro bloco para continuar.':''}</output>
     <footer className={styles.footer}><span>{words} palavras · {value.length} caracteres</span><span>{readOnly ? 'Somente leitura' : dirty ? 'Alterações nesta sessão' : 'Documento carregado'}</span><span>UTF-8 · .md</span></footer>
     {linkRange && <EditorDialog title="Inserir link" onClose={() => setLinkRange(null)}>
       {linkError && <p role="alert">{linkError}</p>}<form onSubmit={event => {

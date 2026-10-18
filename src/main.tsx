@@ -56,6 +56,8 @@ interface SavePreferences {
   askCommitNote: boolean;
   /** Enable scheduled save/commit/push while the editor is open. */
   autoSave: boolean;
+  /** Reveal the clicked source block without switching the whole document to raw mode. */
+  doubleClickToEdit: boolean;
   /** Schedule interval in whole minutes, between 1 and 1440. */
   intervalMinutes: number;
 }
@@ -69,7 +71,7 @@ interface SaveResult {
   /** Readable Git failure returned with a successful local save. */
   error?: string;
 }
-const defaultPreferences: SavePreferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1 };
+const defaultPreferences: SavePreferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1, doubleClickToEdit: true };
 interface DocumentFile {
   /** Document-relative image path. */
   path: string;
@@ -267,7 +269,7 @@ function App() {
         setRepository(restored.repository); setName(restored.name); setLoadedName(restored.loadedName);
         setValue(restored.value); setBaseline(restored.baseline); setVersion(restored.version);
         setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync); setAutoSavePaused(!!restored.autoSavePaused); setFinderSourceId(restored.finderSourceId || null);
-        setPreferences(restored.preferences); setPreferenceDraft(restored.preferences);
+        setPreferences({...defaultPreferences,...restored.preferences}); setPreferenceDraft({...defaultPreferences,...restored.preferences});
         restoringAssets.current = restored.assets.length > 0;
         setAssets(restored.assets.map(asset => ({ ...asset, url: '' })));
         setBaselineAssets(restored.assetsDirty ? 'unsaved' : assetIdentity(restored.assets));
@@ -500,9 +502,10 @@ function App() {
       {repository.repository && <><div className="repository-sync"><p aria-label="Alterações no repositório">{repository.status ? describeRepositoryChanges(repository.status) : 'Nenhuma alteração local pendente.'}</p><button type="button" disabled={busy} aria-label="Sincronizar repositório" title="Sincronizar todas as alterações locais: criar commit e enviar ao remoto" aria-busy={repositorySyncing} onClick={requestRepositorySync}><RefreshCw size={18}/></button></div>{repositorySyncFeedback && <p role="status" className="repository-sync-feedback" data-state={repositorySyncFeedback.state}>{repositorySyncFeedback.state === 'success' ? <CircleCheck size={18} aria-hidden="true"/> : repositorySyncFeedback.state === 'error' ? <CircleAlert size={18} aria-hidden="true"/> : <RefreshCw size={18} aria-hidden="true"/>}<span>{repositorySyncFeedback.message}</span></p>}</>}</fieldset>
     </details>}
     <section className="save-preferences" aria-label="Preferências de salvamento">
-      <h3>Salvamento e sincronização</h3>
+      <h3>Edição, salvamento e sincronização</h3>
       <form onSubmit={event => { event.preventDefault(); void run(async () => { const saved = await api<SavePreferences>('preferences', preferenceDraft); setPreferences(saved); setPreferenceDraft(saved); setNotice('Preferências de salvamento atualizadas.'); }); }}>
         <fieldset disabled={busy}>
+          <label className="check-option"><input type="checkbox" checked={preferenceDraft.doubleClickToEdit} onChange={event => setPreferenceDraft({ ...preferenceDraft, doubleClickToEdit: event.target.checked })}/>Editar blocos com duplo clique</label>
           {(!browserMode || !!githubSelection()) && <label className="check-option"><input type="checkbox" checked={preferenceDraft.askCommitNote} onChange={event => setPreferenceDraft({ ...preferenceDraft, askCommitNote: event.target.checked })}/>Perguntar nota do commit a cada salvamento</label>}
           <label className="check-option"><input type="checkbox" checked={preferenceDraft.autoSave} onChange={event => setPreferenceDraft({ ...preferenceDraft, autoSave: event.target.checked })}/>Ativar salvamento automático</label>
           <label>Intervalo (minutos)<input type="number" min="1" max="1440" step="1" required value={preferenceDraft.intervalMinutes} onChange={event => setPreferenceDraft({ ...preferenceDraft, intervalMinutes: Number(event.target.value) })}/></label>
@@ -544,7 +547,7 @@ function App() {
         <button className="pin-note" type="button" disabled={busy || (offline && !browserMode)} aria-label={`${group.pinned ? 'Desafixar' : 'Fixar'} ${note.name}`} title={group.pinned ? 'Desafixar nota' : 'Fixar nota'} onClick={() => void togglePin(note, !group.pinned)}>{group.pinned ? <PinOff size={14}/> : <Pin size={14}/>}</button>
       </li>)}</ol></section>)}</nav>
     </aside>}
-    <fieldset disabled={!draftReady || busy || sourceReload.manualLock} className="editor-container"><MarkdownWorkbench compact initialScrollTop={reloadScrollTop.current} initialMode={reloadMode || (window.matchMedia('(max-width: 899px)').matches && version ? 'read' : 'live')} onModeChange={reportMode} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setFinderSourceId(null);setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy || sourceReload.manualLock} sourceStatus={sourceReload.change && <div className="source-change" role="status"><CircleAlert size={18} aria-hidden="true"/><span>{sourceReload.change.kind === 'deleted' ? 'O arquivo foi removido da origem. Seu texto continua no editor.' : sourceReload.change.kind === 'error' ? `Não foi possível recarregar: ${sourceReload.change.message}` : dirty || pendingSync ? 'A nota mudou fora do Scriba. Suas edições foram mantidas.' : sourceReload.reloading ? 'Carregando atualização da origem…' : 'Há uma versão mais recente na origem.'}</span>{sourceReload.change.kind !== 'deleted' && <button type="button" disabled={sourceReload.reloading} onClick={sourceReload.request}>{reloadLabel}</button>}</div>} actions={<>
+    <fieldset disabled={!draftReady || busy || sourceReload.manualLock} className="editor-container"><MarkdownWorkbench compact initialScrollTop={reloadScrollTop.current} initialMode={reloadMode || (version || importedVersion || finderSourceId ? 'read' : 'live')} doubleClickToEdit={preferences.doubleClickToEdit} onModeChange={reportMode} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setFinderSourceId(null);setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy || sourceReload.manualLock} sourceStatus={sourceReload.change && <div className="source-change" role="status"><CircleAlert size={18} aria-hidden="true"/><span>{sourceReload.change.kind === 'deleted' ? 'O arquivo foi removido da origem. Seu texto continua no editor.' : sourceReload.change.kind === 'error' ? `Não foi possível recarregar: ${sourceReload.change.message}` : dirty || pendingSync ? 'A nota mudou fora do Scriba. Suas edições foram mantidas.' : sourceReload.reloading ? 'Carregando atualização da origem…' : 'Há uma versão mais recente na origem.'}</span>{sourceReload.change.kind !== 'deleted' && <button type="button" disabled={sourceReload.reloading} onClick={sourceReload.request}>{reloadLabel}</button>}</div>} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
       <button type="button" aria-label={reloadLabel} title={`${reloadLabel}${sourceReload.change ? ' — alteração externa detectada' : ''}`} className={sourceReload.change ? 'source-reload-pending' : undefined} disabled={busy || sourceReload.reloading || name !== loadedName || !finderSourceId && (!version || !repository.repository || sourceScope !== openedScope || autoSavePaused)} aria-busy={sourceReload.reloading} onClick={sourceReload.request}><RotateCw size={18}/></button>

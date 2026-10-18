@@ -75,7 +75,7 @@ function imageMime(bytes) {
 
 /** Owns one local checkout; settings stay outside the source and destination repositories. */
 export class Repository {
-  constructor(stateDir) { this.stateDir = stateDir; this.root = null; this.previousRoot = null; this.switchPlans = new Map(); this.queue = Promise.resolve(); this.preferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1 }; }
+  constructor(stateDir) { this.stateDir = stateDir; this.root = null; this.previousRoot = null; this.switchPlans = new Map(); this.queue = Promise.resolve(); this.preferences = { askCommitNote: false, autoSave: false, intervalMinutes: 1, doubleClickToEdit: true }; }
 
   async initialize() {
     await fs.mkdir(this.stateDir, { recursive: true, mode: 0o700 });
@@ -97,7 +97,8 @@ export class Repository {
 
   validatePreferences(input) {
     if (!input || typeof input.askCommitNote !== 'boolean' || typeof input.autoSave !== 'boolean' || !Number.isInteger(input.intervalMinutes) || input.intervalMinutes < 1 || input.intervalMinutes > 1440) throw new Error('Use um intervalo inteiro entre 1 e 1440 minutos.');
-    return { askCommitNote: input.askCommitNote, autoSave: input.autoSave, intervalMinutes: input.intervalMinutes };
+    if(input.doubleClickToEdit!==undefined&&typeof input.doubleClickToEdit!=='boolean')throw new Error('A opção de edição por duplo clique precisa estar ativada ou desativada.');
+    return { askCommitNote: input.askCommitNote, autoSave: input.autoSave, intervalMinutes: input.intervalMinutes, doubleClickToEdit: input.doubleClickToEdit ?? this.preferences.doubleClickToEdit ?? true };
   }
 
   async persistSettings(root = this.root, preferences = this.preferences, previousRepository = this.previousRoot) {

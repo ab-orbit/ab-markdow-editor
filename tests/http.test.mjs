@@ -158,11 +158,13 @@ test('first automatic push configures origin upstream for a new branch', async (
 });
 
 test('save preferences validate the interval, survive reconnect and a fresh server process', async () => {
-  assert.deepEqual((await request('preferences')).body, { askCommitNote: false, autoSave: false, intervalMinutes: 1 });
-  const preferences = { askCommitNote: true, autoSave: true, intervalMinutes: 2 };
+  assert.deepEqual((await request('preferences')).body, { askCommitNote: false, autoSave: false, intervalMinutes: 1, doubleClickToEdit: true });
+  const preferences = { askCommitNote: true, autoSave: true, intervalMinutes: 2, doubleClickToEdit: false };
   assert.equal((await request('preferences', { ...preferences, intervalMinutes: 0 })).status, 400);
   assert.equal((await request('preferences', { ...preferences, intervalMinutes: 1.5 })).status, 400);
   assert.equal((await request('preferences', preferences)).status, 200);
+  assert.equal((await request('preferences', {...preferences,doubleClickToEdit:'yes'})).status,400);
+  assert.equal((await request('preferences',{askCommitNote:true,autoSave:true,intervalMinutes:2})).body.doubleClickToEdit,false,'older clients retain the editing preference');
   await request('connect', { directory: checkout }); assert.deepEqual((await request('preferences')).body, preferences);
   const runtime = path.join(temporary, 'second-runtime.json');
   const second = spawn(process.execPath, ['server/index.mjs'], { cwd: new URL('..', import.meta.url), env: { ...process.env, PORT: '0', MARKDOWN_STATE_DIR: path.join(temporary, 'state'), MARKDOWN_RUNTIME_FILE: runtime }, stdio: 'pipe' });

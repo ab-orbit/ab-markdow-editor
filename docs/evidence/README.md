@@ -87,3 +87,7 @@ Veja as [44 capturas organizadas por motor, perfil e orientação](RESPONSIVE.md
 ## Atualização externa da nota
 
 Veja os [cenários e capturas da recarga segura](DOCUMENT-RELOAD.md), incluindo alteração no disco, Finder, GitHub e outra aba, com preservação do rascunho.
+
+## Edição por bloco e leitura por padrão
+
+Veja os [cenários e capturas da edição por bloco](BLOCK-EDITING.md): clique simples, duplo clique, teclado, preservação do Markdown e abertura em Ler no desktop e no celular.

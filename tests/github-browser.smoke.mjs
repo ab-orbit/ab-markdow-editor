@@ -210,6 +210,11 @@ try {
   await page
     .getByRole("heading", { name: "Nota remota", exact: true })
     .waitFor();
+  await expect(page.getByLabel("Bancada Markdown")).toHaveAttribute("data-mode","read");
+  await page.getByRole("heading",{name:"Nota remota",exact:true}).dblclick();
+  await expect(page.getByLabel("Bancada Markdown")).toHaveAttribute("data-block-editing","true");
+  await page.keyboard.press("Escape");
+  await expect(page.getByLabel("Bancada Markdown")).toHaveAttribute("data-mode","read");
   await page.getByRole("button", { name: "Editar nota", exact: true }).click();
   await page.getByRole("button", { name: "Fonte", exact: true }).click();
   const editor = page.locator(".cm-content");

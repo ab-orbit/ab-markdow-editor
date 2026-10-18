@@ -64,6 +64,18 @@ Na engrenagem, abra o repositório conectado:
 
 Cancelar a revisão mantém a conexão anterior. Um clone solicitado na revisão fica na nova pasta e pode ser reutilizado. Se escolher trocar sem levar a estrutura, o documento aberto continua no editor com o automático pausado até salvá-lo manualmente ou abrir outra nota. Alterações na origem ou no destino depois da revisão exigem uma nova revisão.
 
+## Edição por bloco e abertura em leitura
+
+Arquivos abrem em **Ler**, incluindo notas do repositório, arquivos importados e documentos do Finder. **Nova nota** começa em **Escrever**.
+
+- Dê **dois cliques** num título ou parágrafo para revelar e selecionar o Markdown daquele bloco. Os demais blocos mantêm sua formatação.
+- Em **Escrever**, um clique dentro de negrito, itálico, código inline ou tachado revela apenas os marcadores desse trecho. O duplo clique revela todos os marcadores do bloco, inclusive quando o parágrafo ocupa várias linhas.
+- **Esc** conclui a edição do bloco. Se entrou a partir de Ler, volta à leitura. Clicar em outro bloco encerra a exibição completa dos marcadores anteriores.
+- Pelo teclado, use **Enter** em um bloco focado na leitura ou **⌘/Ctrl+Enter** no editor. A barra de formatação também oferece **Editar bloco como Markdown** / **Concluir edição do bloco**.
+- **Editar blocos com duplo clique**, nas configurações, vem ativado e pode ser desligado. As alternativas de teclado continuam disponíveis. **Fonte** mantém o documento completo em Markdown e a seleção normal de palavras.
+
+Revelar marcadores altera só a apresentação. O texto continua sob o mesmo histórico de desfazer/refazer; salvar mantém o fluxo configurado de gravação, commit e push.
+
 ## Editor
 
 Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre uma página de configurações com o destino e as preferências de salvamento. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. O botão Editor volta ao documento preservando o texto e o histórico de edição.

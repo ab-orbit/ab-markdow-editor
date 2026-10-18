@@ -5,6 +5,7 @@ import { editorExtensions, livePreviewExtension } from './editorExtensions';
 import { runMarkdownCommand, sourceTables, type MarkdownCommand, type SourceRange } from './editorCommands';
 import type { MarkdownAsset } from '@/lib/markdown/assets';
 import { imageDecorations } from './imageDecorations';
+import {rawBlockField,revealBlock,revealBlockEffect,finishBlock,blockEditingFinished} from './blockEditing';
 
 export interface MarkdownEditorHandle {
   /** Apply an undoable formatting command to the current selection. */
@@ -13,6 +14,10 @@ export interface MarkdownEditorHandle {
   selection: () => SourceRange;
   /** Insert or replace source at explicit offsets in one undo step. */
   replace: (text: string, range?: SourceRange) => void;
+  /** Reveal a source block, retaining the surrounding live preview. */
+  editBlock: (range?: SourceRange) => void;
+  /** Finish the temporary source-block presentation. */
+  finishBlock: () => void;
   /** Return syntax-tree table ranges in the current source. */
   tables: () => SourceRange[];
 }
@@ -24,6 +29,10 @@ export interface MarkdownEditorProps {
   onChange: (value: string) => void;
   /** Hide inactive delimiters while retaining an editable source document. */
   livePreview?: boolean;
+  /** Enable the optional double-click gesture in live preview. */
+  doubleClickToEdit?: boolean;
+  /** Report the transient block range and explicit completion without changing the document. */
+  onBlockEditChange?: (range: SourceRange | null, finished: boolean) => void;
   /** Disable document changes while allowing selection and copying. */
   readOnly?: boolean;
   /** Registered local images used by live image widgets. */
@@ -36,12 +45,13 @@ const externalChange = Annotation.define<boolean>();
 
 /** A browser editor mounted after hydration; history survives mode switches. */
 const noAssets: readonly MarkdownAsset[] = [];
-export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorProps>(function MarkdownEditor({ value, onChange, livePreview = true, readOnly = false, assets = noAssets, onImageFiles }: MarkdownEditorProps, ref) {
+export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorProps>(function MarkdownEditor({ value, onChange, livePreview = true, doubleClickToEdit = true, onBlockEditChange, readOnly = false, assets = noAssets, onImageFiles }: MarkdownEditorProps, ref) {
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);
   const callback = useRef(onChange);
   const initialValue = useRef(value);
   const imageCallback = useRef(onImageFiles);
+  const blockCallback = useRef(onBlockEditChange);blockCallback.current=onBlockEditChange;
   const [compartments] = useState(() => ({ live: new Compartment(), editable: new Compartment(), images: new Compartment() }));
 
   useImperativeHandle(ref, () => ({
@@ -54,6 +64,8 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
       view.dispatch({ changes: { from: selection.from, to: selection.to, insert: text }, selection: { anchor: selection.from + text.length }, userEvent: 'input.insert' });
       view.focus();
     },
+    editBlock: range => {if(editor.current)revealBlock(editor.current,range?.from);},
+    finishBlock: () => {if(editor.current)finishBlock(editor.current);},
     tables: () => editor.current ? sourceTables(editor.current.state) : [],
   }), []);
 
@@ -86,6 +98,8 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
           },
         }),
         EditorView.updateListener.of(update => {
+          const previous=update.startState.field(rawBlockField),next=update.state.field(rawBlockField);
+          if(previous?.from!==next?.from||previous?.to!==next?.to)blockCallback.current?.(next,update.transactions.some(transaction=>transaction.annotation(blockEditingFinished)));
           if (update.docChanged && !update.transactions.some(transaction => transaction.annotation(externalChange))) {
             callback.current(update.state.doc.toString());
           }
@@ -104,11 +118,12 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
   }, [value]);
   useEffect(() => {
     editor.current?.dispatch({ effects: [
-      compartments.live.reconfigure(livePreview ? livePreviewExtension : []),
+      compartments.live.reconfigure(livePreview ? livePreviewExtension(doubleClickToEdit) : []),
+      ...(!livePreview?[revealBlockEffect.of(null)]:[]),
       compartments.editable.reconfigure([EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly)]),
       compartments.images.reconfigure(livePreview ? imageDecorations(assets) : []),
     ] });
-  }, [livePreview, readOnly, compartments, assets]);
+  }, [livePreview, doubleClickToEdit, readOnly, compartments, assets]);
 
   return <div ref={host} data-testid="markdown-editor" />;
 });
