@@ -24,6 +24,14 @@ const fetcher = async (url, options = {}) => {
   if (u.pathname === "/user") return reply({ login: "alice", id: 1 });
   if (u.pathname === "/user/repos")
     return reply([
+      ...["ab-orbit/zeta", "aeonbridge/project", "ab-orbit/Alpha"].map(
+        (full_name) => ({
+          full_name,
+          default_branch: "main",
+          private: false,
+          permissions: { push: true },
+        }),
+      ),
       {
         full_name: "alice/notes",
         default_branch: "main",
@@ -151,9 +159,40 @@ try {
       console.log((await page.locator("body").innerText()).slice(0, 3500));
       throw error;
     });
+  const picker = page.getByLabel("Repositório GitHub", { exact: true });
+  await picker
+    .locator('option[value="alice/notes"]')
+    .waitFor({ state: "attached" });
+  assert.deepEqual(
+    await picker
+      .locator("optgroup")
+      .evaluateAll((groups) => groups.map((group) => group.label)),
+    ["ab-orbit", "aeonbridge", "alice"],
+  );
+  assert.deepEqual(
+    await picker
+      .locator('optgroup[label="ab-orbit"] option')
+      .evaluateAll((options) => options.map((option) => option.value)),
+    ["ab-orbit/Alpha", "ab-orbit/zeta"],
+  );
+  const search = page.getByRole("combobox", { name: "Buscar repositório" });
+  await search.fill("NOTES");
+  assert.equal(await picker.locator("optgroup").count(), 1);
+  assert.equal(await page.locator("datalist option").count(), 1);
+  await search.fill("ALICE/NOTES");
+  assert.equal(await picker.inputValue(), "alice/notes");
+  await search.fill("missing-repository");
   await page
-    .getByLabel("Repositório GitHub", { exact: true })
-    .selectOption("alice/notes");
+    .getByText("Nenhum repositório encontrado.", { exact: true })
+    .waitFor();
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Usar este repositório", exact: true })
+      .isDisabled(),
+    true,
+  );
+  await search.fill("");
+  await picker.selectOption("alice/notes");
   console.log("Account connected");
   await page
     .getByRole("button", { name: "Usar este repositório", exact: true })
@@ -163,7 +202,7 @@ try {
     .filter({ hasText: "Destino atualizado." })
     .waitFor();
   console.log("Destination refreshed");
-  await page.screenshot({path:"docs/evidence/github-mobile-settings.png"});
+  await page.screenshot({ path: "docs/evidence/github-mobile-settings.png" });
   await page.getByRole("button", { name: "Fechar", exact: true }).click();
   await page.getByRole("button", { name: "Mostrar notas recentes" }).click();
   await page.getByRole("button", { name: "Remote.md", exact: true }).click();

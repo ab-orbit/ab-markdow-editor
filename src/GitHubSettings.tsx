@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { FolderGit2, RefreshCw } from "lucide-react";
 import {
   githubJson,
@@ -30,6 +30,31 @@ export function GitHubSettings({
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [token, setToken] = useState("");
+  const suggestionsId = useId();
+  const [repositoryQuery, setRepositoryQuery] = useState("");
+  const normalize = (value: string) =>
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase();
+  const collator = new Intl.Collator("en", {
+    numeric: true,
+    sensitivity: "base",
+  });
+  const matchingRepositories = [...repositories]
+    .filter((item) =>
+      normalize(item.fullName).includes(normalize(repositoryQuery.trim())),
+    )
+    .sort(
+      (a, b) =>
+        collator.compare(a.fullName.split("/")[0], b.fullName.split("/")[0]) ||
+        collator.compare(a.fullName.split("/")[1], b.fullName.split("/")[1]),
+    );
+  const repositoryGroups = new Map<string, Repository[]>();
+  for (const item of matchingRepositories) {
+    const owner = item.fullName.split("/")[0];
+    repositoryGroups.set(owner, [...(repositoryGroups.get(owner) || []), item]);
+  }
   async function run(action: () => Promise<void>) {
     setBusy(true);
     setError("");
@@ -126,7 +151,11 @@ export function GitHubSettings({
             {status.selection &&
               ` · ${status.selection.fullName}/${status.selection.folder}`}
           </p>
-          <p>{githubSelection() ? "Salvamento ativo no GitHub." : "Conta conectada. Use este repositório para ativar o salvamento no GitHub."}</p>
+          <p>
+            {githubSelection()
+              ? "Salvamento ativo no GitHub."
+              : "Conta conectada. Use este repositório para ativar o salvamento no GitHub."}
+          </p>
           <div className="settings-actions">
             {status.installUrl && (
               <a
@@ -158,6 +187,34 @@ export function GitHubSettings({
             }}
           >
             <label className="grow">
+              Buscar repositório
+              <input
+                aria-label="Buscar repositório"
+                type="search"
+                list={suggestionsId}
+                autoComplete="off"
+                placeholder="Organização ou nome do repositório"
+                value={repositoryQuery}
+                onChange={(event) => {
+                  const query = event.target.value;
+                  setRepositoryQuery(query);
+                  setRepo(
+                    repositories.find(
+                      (item) =>
+                        normalize(item.fullName) === normalize(query.trim()),
+                    )?.fullName || "",
+                  );
+                }}
+              />
+              <datalist id={suggestionsId}>
+                {matchingRepositories.map((item) => (
+                  <option key={item.fullName} value={item.fullName}>
+                    {item.private ? "Privado" : "Público"}
+                  </option>
+                ))}
+              </datalist>
+            </label>
+            <label className="grow">
               Repositório
               <select
                 aria-label="Repositório GitHub"
@@ -166,14 +223,25 @@ export function GitHubSettings({
                 required
               >
                 <option value="">Selecione um repositório</option>
-                {repositories.map((item) => (
-                  <option key={item.fullName} value={item.fullName}>
-                    {item.fullName}
-                    {item.private ? " · privado" : ""}
-                  </option>
+                {[...repositoryGroups].map(([owner, items]) => (
+                  <optgroup key={owner} label={owner}>
+                    {items.map((item) => (
+                      <option key={item.fullName} value={item.fullName}>
+                        {item.fullName.split("/")[1]}
+                        {item.private ? " · privado" : ""}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
             </label>
+            {repositoryQuery && (
+              <p role="status">
+                {matchingRepositories.length
+                  ? `${matchingRepositories.length} ${matchingRepositories.length === 1 ? "repositório encontrado" : "repositórios encontrados"}.`
+                  : "Nenhum repositório encontrado."}
+              </p>
+            )}
             <label>
               Pasta das notas
               <input
