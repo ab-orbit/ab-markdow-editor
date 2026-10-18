@@ -26,12 +26,15 @@ try {
   }
   browser = await chromium.launch({ channel: 'chrome', headless: true });
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-  const page = await context.newPage(), errors = [], api = [], remote = [];
+  const page = await context.newPage(), errors = [], api = [], remote = [], infrastructure = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => {
     const url = new URL(request.url());
     if (url.pathname.startsWith('/api/')) api.push(url.pathname);
-    if (url.origin !== origin && !['blob:', 'data:'].includes(url.protocol)) remote.push(url.origin + url.pathname);
+    // Cloudflare adds its existing analytics script to production HTML. It is
+    // not a drawing dependency; retain it separately rather than hiding traffic.
+    if (process.env.SCRIBA_URL && url.hostname === 'static.cloudflareinsights.com' && url.pathname.startsWith('/beacon.min.js/')) infrastructure.push(url.origin + url.pathname);
+    else if (url.origin !== origin && !['blob:', 'data:'].includes(url.protocol)) remote.push(url.origin + url.pathname);
   });
   await page.goto(origin);
   await page.getByLabel('Bancada Markdown').waitFor();
@@ -80,7 +83,8 @@ try {
   await expect(empty.getByText('Diagramas offline', { exact: true })).toHaveCount(0);
   await other.close();
   assert.deepEqual(errors, []); assert.deepEqual(api, []); assert.deepEqual(remote, []);
-  console.log(`PASS (${origin}): three engines first imported offline, ER/flowchart/tilde/CRLF, save/reload, per-block choice, browser isolation, mobile layout, no local API or off-origin assets.`);
+  console.log(`PASS (${origin}): three engines first imported offline, ER/flowchart/tilde/CRLF, save/reload, per-block choice, browser isolation, mobile layout, no local API or off-origin drawing assets.`);
+  if (infrastructure.length) console.log('Existing deployment analytics (separate from diagram assets):', [...new Set(infrastructure)]);
 } finally {
   await browser?.close();
   if (server) await new Promise(resolve => server.close(resolve));
