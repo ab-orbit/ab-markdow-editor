@@ -207,3 +207,21 @@ body { font-family: var(--font-ui); }
 .repository-sync { display: flex; align-items: flex-start; gap: 12px; margin-top: 12px; }
 .repository-sync p { flex: 1; margin: 8px 0; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .repository-sync button { flex: 0 0 44px; width: 44px; padding: 9px; }
+
+/* Connection belongs to the selected folder; sync feedback describes the last push. */
+.repository-summary-content { display: inline-grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; width: calc(100% - 24px); vertical-align: middle; padding: 2px 0; }
+.repository-path { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+.repository-path > svg { flex-shrink: 0; margin: 3px 0 0; }
+.repository-path > span { overflow-wrap: anywhere; }
+.repository .connection-status { display: inline-flex; align-items: center; gap: 6px; width: fit-content; max-width: 100%; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--status-ok); background: var(--status-ok-dim); }
+.repository .connection-status[data-state="pending"] { color: var(--status-warn); background: var(--status-warn-dim); }
+.repository .connection-status svg { flex-shrink: 0; margin: 0; color: inherit; }
+.repository .repository-sync-feedback { display: flex; align-items: flex-start; gap: 8px; overflow-wrap: anywhere; }
+.repository-sync-feedback > svg { flex-shrink: 0; margin-top: 4px; }
+.repository .repository-sync-feedback[data-state="success"] { color: var(--status-ok); }
+.repository .repository-sync-feedback[data-state="error"] { color: var(--status-warn); }
+.repository .repository-sync-feedback[data-state="syncing"] { color: var(--cyan); }
+@media (max-width: 600px) {
+ .repository-summary-content { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+ .repository-summary-content .connection-status { grid-row: 1; }
+}

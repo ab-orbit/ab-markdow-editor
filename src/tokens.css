@@ -719,8 +719,9 @@
      somem — #4ade80 dá 1.57:1, #f59e0b dá 2.15:1, #ef4444 dá 3.76:1 e
      #3b82f6 dá 3.68:1, todos abaixo dos 4.5:1 de texto normal. Mesmos valores
      dos acentos claros acima, já medidos. */
-  --status-ok:       #15803d;
-  --status-ok-dim:   rgba(21, 128, 61, 0.12);
+  /* Keep small success labels above 4.5:1 on their tinted backgrounds. */
+  --status-ok:       #116b32;
+  --status-ok-dim:   rgba(17, 107, 50, 0.12);
   --status-warn:     #a14a07;
   --status-warn-dim: rgba(161, 74, 7, 0.12);
   --status-alert:    #b91c1c;

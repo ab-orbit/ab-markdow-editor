@@ -33,6 +33,24 @@ try {
   await expect(page.locator('.repository > summary')).toContainText(checkout);await page.locator('.repository > summary').click();
   const sync=page.getByRole('button',{name:'Sincronizar repositório',exact:true});
   await expect(page.getByLabel('Alterações no repositório')).toHaveText('Ainda não versionado: scriba/');
+  const connection=page.locator('.repository-summary .connection-status');
+  await expect(connection).toHaveText('Pasta conectada');
+  await expect(connection).toHaveAttribute('data-state','connected');
+  for(const theme of ['dark','light']) {
+    await page.evaluate(value=>{document.documentElement.dataset.theme=value;},theme);
+    for(const [width,height] of [[1440,900],[390,844],[844,390],[768,1024]]) {
+      await page.setViewportSize({width,height});await sync.scrollIntoViewIfNeeded();
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+      const colors=await connection.evaluate(element=>({text:getComputedStyle(element).color,tint:getComputedStyle(element).backgroundColor,surface:getComputedStyle(element.closest('.repository')).backgroundColor}));
+      const rgb=value=>value.match(/[\d.]+/g).map(Number),foreground=rgb(colors.text),tint=rgb(colors.tint),surface=rgb(colors.surface),background=tint.slice(0,3).map((channel,index)=>channel*(tint[3]??1)+surface[index]*(1-(tint[3]??1)));
+      const luminance=channels=>channels.slice(0,3).map(channel=>channel/255).map(channel=>channel<=.04045?channel/12.92:((channel+.055)/1.055)**2.4).reduce((total,channel,index)=>total+channel*[.2126,.7152,.0722][index],0);
+      const values=[luminance(foreground),luminance(background)].sort((a,b)=>b-a);
+      assert.ok((values[0]+.05)/(values[1]+.05)>=4.5,`${theme} connection badge contrast`);
+      if(theme==='dark'&&width===1440||theme==='light'&&width===390)await page.locator('details.repository').screenshot({path:`docs/evidence/repository-connected-${theme}-${width}.png`});
+    }
+  }
+  await page.evaluate(()=>{document.documentElement.dataset.theme='dark';});await page.setViewportSize({width:1440,height:900});
+
   await sync.scrollIntoViewIfNeeded();await page.screenshot({path:'docs/evidence/repository-sync-desktop.png'});
   await sync.click();
   const dialog=page.getByRole('dialog',{name:'Nota do commit'});
@@ -41,16 +59,20 @@ try {
   await expect(sync).toBeDisabled();await expect(page.getByRole('status').filter({hasText:'Repositório sincronizado com o remoto.'})).toBeVisible();
   assert.equal(calls,1);assert.equal(await git(remote,'show','main:scriba/Nova.md'),'# Nota para sincronizar');assert.equal(await git(remote,'log','-1','--pretty=%s'),'Publish local note folder');
   await expect(page.getByLabel('Alterações no repositório')).toHaveText('Nenhuma alteração local pendente.');
+  await expect(page.locator('.repository-sync-feedback')).toHaveAttribute('data-state','success');
   const head=await git(checkout,'rev-parse','HEAD');
   await sync.click();await dialog.getByRole('button',{name:'Cancelar',exact:true}).click();assert.equal(calls,1);assert.equal(await git(checkout,'rev-parse','HEAD'),head);
   await git(checkout,'remote','set-url','origin',path.join(directory,'missing.git'));await fs.writeFile(path.join(checkout,'scriba','Retry.md'),'# Retry safely');
   await page.reload();await expect(page.locator('.repository > summary')).toContainText(checkout);await page.locator('.repository > summary').click();await sync.click();await dialog.getByLabel('Nota do commit',{exact:true}).fill('Keep local commit');await dialog.getByRole('button',{name:'Commit e push',exact:true}).click();
-  await expect(page.getByRole('status').filter({hasText:'Envio pendente:'})).toBeVisible();await expect(sync).toBeEnabled();
+  await expect(page.getByRole('status').filter({hasText:'Envio pendente:'})).toBeVisible();await expect(sync).toBeEnabled();await expect(connection).toHaveText('Pasta conectada');await expect(page.locator('.repository-sync-feedback')).toHaveAttribute('data-state','error');
   const retryHead=await git(checkout,'rev-parse','HEAD');assert.notEqual(retryHead,head);
   await git(checkout,'remote','set-url','origin',remote);await sync.click();await dialog.getByLabel('Nota do commit',{exact:true}).fill('Retry pending push');await dialog.getByRole('button',{name:'Commit e push',exact:true}).click();
   await expect(page.getByRole('status').filter({hasText:'Repositório sincronizado com o remoto.'})).toBeVisible();
   assert.equal(await git(remote,'rev-parse','main'),retryHead);assert.equal(await git(checkout,'rev-parse','HEAD'),retryHead);
   await page.setViewportSize({width:390,height:844});await sync.scrollIntoViewIfNeeded();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:'docs/evidence/repository-sync-mobile.png'});
+  await page.locator('.repository > summary').click();await expect(connection).toBeVisible();
+  await page.route('**/api/repository',route=>route.fulfill({status:400,json:{error:'Pasta indisponível (teste).'}}));await page.reload();
+  await expect(connection).toHaveText('Conexão indisponível');await expect(connection).toHaveAttribute('data-state','pending');
   assert.deepEqual(errors,[]);
-  console.log('PASS: sync icon commits and pushes a real folder, honors commit-note preference, handles cancellation and retries a failed push; desktop/mobile fit.');
+  console.log('PASS: sync icon commits and pushes a real folder, honors commit-note preference, handles cancellation and retries a failed push; connection badge persists while collapsed, unavailable folders stay unconfirmed, and four viewports in both themes meet contrast requirements.');
 }finally{await browser?.close();if(server){server.kill();await new Promise(resolve=>server.once('exit',resolve));}await fs.rm(directory,{recursive:true,force:true});}

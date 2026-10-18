@@ -4,7 +4,7 @@ import {canChooseFolder, chooseDeviceFolder, folderLabel, disconnectFolder, auth
 import {browserMode} from './lib/browserStore';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff, ArrowLeft } from 'lucide-react';
+import { FolderGit2, FolderOpen, Save, Upload, Sun, Moon, FilePlus2, Settings, X, Download, CloudOff, PanelLeft, FileText, RefreshCw, Search, Pin, PinOff, ArrowLeft, CircleCheck, CircleAlert } from 'lucide-react';
 import { MarkdownWorkbench } from './components/Markdown/MarkdownWorkbench';
 import { NoteThumbnail } from './NoteThumbnail';
 import { noteGroup, shortNoteDate } from './lib/noteDates';
@@ -174,6 +174,7 @@ function App() {
   useEffect(() => {if(settingsOpen)settingsTitle.current?.focus();else if(settingsWasOpen.current)document.querySelector<HTMLButtonElement>('button[aria-label="Configurações"]')?.focus();settingsWasOpen.current=settingsOpen;},[settingsOpen]);
   useEffect(() => {const showNotes=()=>setNotesOpen(true);window.addEventListener('scriba:show-notes',showNotes);return()=>window.removeEventListener('scriba:show-notes',showNotes);}, []);
   const [repository, setRepository] = useState<RepositoryInfo>({ repository: null, branch: '', status: '' });
+  const [repositoryConnected, setRepositoryConnected] = useState(false);
   const [directory, setDirectory] = useState('');
   const [url, setUrl] = useState('');
   const [destination, setDestination] = useState('');
@@ -209,7 +210,7 @@ function App() {
   const [commitNoteOpen, setCommitNoteOpen] = useState(false);
   const [commitTarget, setCommitTarget] = useState<'document' | 'repository'>('document');
   const [repositorySyncing, setRepositorySyncing] = useState(false);
-  const [repositorySyncFeedback, setRepositorySyncFeedback] = useState('');
+  const [repositorySyncFeedback, setRepositorySyncFeedback] = useState<{message: string; state: 'syncing' | 'success' | 'error'} | null>(null);
   const [commitNote, setCommitNote] = useState('');
   const [pendingSync, setPendingSync] = useState(false);
   const operationLock = useRef(false);
@@ -234,7 +235,10 @@ function App() {
   }
   async function refresh() {
     if(browserMode && !githubSelection() && await folderLabel()) await api('folder/import',{});
-    const info = await api<RepositoryInfo>('repository'); setRepository(info);
+    let info: RepositoryInfo;
+    try { info = await api<RepositoryInfo>('repository'); }
+    catch (cause) { setRepositoryConnected(false); throw cause; }
+    setRepository(info); setRepositoryConnected(!!info.repository);
     setFiles(info.repository ? await api<string[]>('files') : []);
     if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
     return info;
@@ -261,7 +265,7 @@ function App() {
           setError('O rascunho pertence a outro repositório. Reconecte a pasta nas configurações antes de salvar.');
           setSettingsOpen(true);
         } else {
-          setRepository(info); setFiles(info.repository ? await api<string[]>('files') : []);
+          setRepository(info); setRepositoryConnected(!!info.repository); setFiles(info.repository ? await api<string[]>('files') : []);
           if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
           if (!info.repository) setSettingsOpen(true);
         }
@@ -269,6 +273,7 @@ function App() {
         setPreferences(saved); setPreferenceDraft(saved); setOffline(false);
       } catch (cause) {
         if (!active) return;
+        setRepositoryConnected(false);
         if (cause instanceof LocalApiError) { setError(cause.message); setSettingsOpen(true); setOffline(false); }
         else setOffline(true);
         if (restored) setNotice('Rascunho recuperado no navegador. Continue editando offline; o Git sincroniza quando o aplicativo local voltar.');
@@ -377,13 +382,13 @@ function App() {
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
   }
   async function syncRepository(message: string) {
-    setRepositorySyncing(true); setRepositorySyncFeedback('Sincronizando…');
+    setRepositorySyncing(true); setRepositorySyncFeedback({message: 'Sincronizando…', state: 'syncing'});
     try {
       const result = await api<Pick<SaveResult, 'synced' | 'stage' | 'error'>>('sync', { repository: repository.repository, message });
       await refresh();
-      setRepositorySyncFeedback(result.synced ? 'Repositório sincronizado com o remoto.' : `${result.stage === 'commit' ? 'Commit' : 'Envio'} pendente: ${result.error}`);
+      setRepositorySyncFeedback({message: result.synced ? 'Repositório sincronizado com o remoto.' : `${result.stage === 'commit' ? 'Commit' : 'Envio'} pendente: ${result.error}`, state: result.synced ? 'success' : 'error'});
     } catch (cause) {
-      setRepositorySyncFeedback(cause instanceof Error ? cause.message : 'Não foi possível sincronizar. Tente novamente.');
+      setRepositorySyncFeedback({message: cause instanceof Error ? cause.message : 'Não foi possível sincronizar. Tente novamente.', state: 'error'});
     } finally { setRepositorySyncing(false); }
   }
   function requestRepositorySync() {
@@ -438,12 +443,12 @@ function App() {
     {browserMode && <section className="storage-settings" aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : 'Armazenamento privado neste navegador'}</p>{githubSelection() && <p>Repositório: <a href={`https://github.com/${githubSelection()!.fullName}`} target="_blank" rel="noopener noreferrer">{githubSelection()!.fullName}</a></p>}{canChooseFolder() ? <div className="settings-actions"><button disabled={busy} onClick={() => {if(!discard())return;void run(async () => {const label=await chooseDeviceFolder();setGitHubSelection(null);resetDocument();setDeviceFolder(label);const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`${count} notas carregadas. Pasta: ${label}.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`Pasta lida: ${count} notas disponíveis na lista.`);})}>Autorizar pasta e carregar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setGitHubSelection(null);resetDocument();await refresh();setDeviceFolder('');})}>Usar somente navegador</button></>}</div> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. GitHub está disponível na seção acima; Google Drive está previsto.</p></section>}
     {browserMode && <section className="repository" aria-label="Sincronização com GitHub e Git"><h3><FolderGit2 size={20}/> GitHub / repositório Git</h3><p>Use um repositório local ou clone uma URL Git. Na versão local, cada salvamento grava o arquivo, cria um commit e faz push usando suas credenciais.</p><div className="settings-actions"><a className="settings-action" href="http://127.0.0.1:43127/" target="_blank" rel="noopener noreferrer">Abrir editor local com Git</a><a className="settings-action" href="https://github.com/ab-orbit/ab-markdow-editor#readme" target="_blank" rel="noopener noreferrer">Instalar no Mac</a></div><p>Abra o aplicativo Scriba no Mac antes de conectar. No editor local, abra Configurações para selecionar a pasta ou clonar o repositório. As notas deste site continuam separadas; use Baixar pacote e importe no editor local para transferi-las.</p><p>No celular e tablet, use a seção GitHub acima para conectar sua conta e selecionar um repositório. O armazenamento no navegador e a pasta do dispositivo continuam como alternativas.</p></section>}
     {!browserMode && <details className="repository" open={!repository.repository || undefined}>
-      <summary><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></summary>
+      <summary className="repository-summary"><span className="repository-summary-content"><span className="repository-path"><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></span>{repository.repository && <span className="connection-status" data-state={repositoryConnected ? 'connected' : 'pending'}>{repositoryConnected ? <CircleCheck size={16} aria-hidden="true"/> : <CircleAlert size={16} aria-hidden="true"/>}{repositoryConnected ? 'Pasta conectada' : draftReady ? 'Conexão indisponível' : 'Verificando conexão…'}</span>}</span></summary>
       {repository.githubUrl && <p>Repositório: <a href={repository.githubUrl} target="_blank" rel="noopener noreferrer">{repository.githubUrl.replace('https://github.com/', '')}</a></p>}
       <fieldset disabled={busy}><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('connect', { directory }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório conectado.'); }); }}><label>Pasta local do repositório<input placeholder="Clique em Selecionar pasta" value={directory} onChange={event => setDirectory(event.target.value)} required/></label><button type="button" className="primary" onClick={() => void chooseRepository()}><FolderOpen size={18}/>Selecionar pasta</button><button>Conectar caminho</button></form>
       <details><summary>Clonar um repositório por URL</summary><form onSubmit={event => { event.preventDefault(); if (!discard()) return; void run(async () => { const info = await api<RepositoryInfo>('clone', { url, destination }); setRepository(info); resetDocument(); await refresh(); setSettingsOpen(false); setNotice('Repositório clonado e conectado.'); }); }}><label>URL HTTPS ou SSH<input placeholder="git@github.com:usuario/repositorio.git" value={url} onChange={event => setUrl(event.target.value)} required/></label><label>Nova pasta local (caminho absoluto)<input placeholder="/Users/seu-nome/Documentos/meu-repo" value={destination} onChange={event => setDestination(event.target.value)} required/></label><button type="button" onClick={() => void chooseCloneDestination()}><FolderOpen size={18}/>Selecionar onde clonar</button><button>Clonar e conectar</button></form></details>
       <p>Usa o Git, o agente SSH e o gerenciador de credenciais do seu Mac. Configure a identidade Git e as credenciais antes de clonar ou enviar.</p>
-      {repository.repository && <><div className="repository-sync"><p aria-label="Alterações no repositório">{repository.status ? describeRepositoryChanges(repository.status) : 'Nenhuma alteração local pendente.'}</p><button type="button" disabled={busy} aria-label="Sincronizar repositório" title="Sincronizar todas as alterações locais: criar commit e enviar ao remoto" aria-busy={repositorySyncing} onClick={requestRepositorySync}><RefreshCw size={18}/></button></div>{repositorySyncFeedback && <p role="status">{repositorySyncFeedback}</p>}</>}</fieldset>
+      {repository.repository && <><div className="repository-sync"><p aria-label="Alterações no repositório">{repository.status ? describeRepositoryChanges(repository.status) : 'Nenhuma alteração local pendente.'}</p><button type="button" disabled={busy} aria-label="Sincronizar repositório" title="Sincronizar todas as alterações locais: criar commit e enviar ao remoto" aria-busy={repositorySyncing} onClick={requestRepositorySync}><RefreshCw size={18}/></button></div>{repositorySyncFeedback && <p role="status" className="repository-sync-feedback" data-state={repositorySyncFeedback.state}>{repositorySyncFeedback.state === 'success' ? <CircleCheck size={18} aria-hidden="true"/> : repositorySyncFeedback.state === 'error' ? <CircleAlert size={18} aria-hidden="true"/> : <RefreshCw size={18} aria-hidden="true"/>}<span>{repositorySyncFeedback.message}</span></p>}</>}</fieldset>
     </details>}
     <section className="save-preferences" aria-label="Preferências de salvamento">
       <h3>Salvamento e sincronização</h3>

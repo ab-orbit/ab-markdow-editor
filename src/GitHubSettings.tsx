@@ -1,5 +1,5 @@
 import { useEffect, useId, useState } from "react";
-import { FolderGit2, RefreshCw } from "lucide-react";
+import { FolderGit2, RefreshCw, CircleCheck } from "lucide-react";
 import {
   githubJson,
   githubSelection,
@@ -147,7 +147,7 @@ export function GitHubSettings({
       {status?.connected && (
         <>
           <p>
-            Conectado como <strong>{status.user?.login}</strong>
+            <span className="connection-status" data-state="connected"><CircleCheck size={16} aria-hidden="true"/>Conectado como <strong>{status.user?.login}</strong></span>
             {status.selection &&
               ` · ${status.selection.fullName}/${status.selection.folder}`}
           </p>
