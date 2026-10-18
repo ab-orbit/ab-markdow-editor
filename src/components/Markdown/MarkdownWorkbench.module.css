@@ -83,6 +83,8 @@
 .compact .toolbar button { padding: 6px 8px; min-width: 36px; min-height: 36px; }
 .compact .filename { font-size: 12px; min-width: 80px; }
 .compact .filename svg { display: none; }
+.compact .filename button { flex: 0 0 auto; padding: 4px; }
+.compact .filename button svg { display: block; color: inherit; }
 .compact .modes { border: 0; padding: 0; background: transparent; }
 .compact .modes button { font-size: 12px; }
 .compact .actions { gap: 0; }

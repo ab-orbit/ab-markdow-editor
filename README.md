@@ -76,6 +76,16 @@ Arquivos abrem em **Ler**, incluindo notas do repositório, arquivos importados 
 
 Revelar marcadores altera só a apresentação. O texto continua sob o mesmo histórico de desfazer/refazer; salvar mantém o fluxo configurado de gravação, commit e push.
 
+## Atalhos para arquivos
+
+- **⌘O** abre o seletor de Markdown/ZIP do sistema. O arquivo abre em **Ler**.
+- **⌘S** salva no destino ativo e mantém o fluxo de commit/push e a preferência de mensagem de commit.
+- **⌘W**, quando o navegador entrega esse atalho ao Scriba, fecha a nota atual. Com alterações ou sincronização pendente, oferece **Salvar e fechar**, **Fechar sem salvar** e **Cancelar**. O **× ao lado do nome do arquivo** executa a mesma ação e está sempre disponível na barra da nota. No celular, expanda **Mais opções da nota** para exibir a barra.
+
+Salvar e fechar aguarda a gravação e a sincronização completas. Cancelar a mensagem de commit, encontrar um conflito ou falhar no envio mantém a nota aberta. Fechar uma nota não remove o arquivo salvo. O estado sem nota aberta também é preservado ao reabrir a página. No Windows/Linux, use **Ctrl** em vez de ⌘.
+
+**Fechar a aba é uma ação do navegador:** Chrome/Safari podem reservar ⌘W e não entregar o evento à página. Nesse caso, o navegador oferece seu aviso padrão de sair/permanecer quando existem alterações; ele não permite trocar esse aviso por um diálogo com salvamento assíncrono. Cancele a saída e use ⌘S ou o × da nota para concluir o salvamento antes de sair. O Scriba continua protegendo o rascunho no navegador. Referências: [atalhos reservados e Keyboard Lock](https://developer.chrome.com/docs/capabilities/web-apis/keyboard-lock), [beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event).
+
 ## Editor
 
 Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre uma página de configurações com o destino e as preferências de salvamento. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. O botão Editor volta ao documento preservando o texto e o histórico de edição.

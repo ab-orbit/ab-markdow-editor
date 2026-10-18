@@ -28,6 +28,22 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 input[type="checkbox"] { display: inline-block; width: 44px; height: 44px; min-height: 44px; padding: 0; margin: 0 6px 0 0; vertical-align: middle; }
 
 button.primary { color: var(--lime); border-color: var(--lime); background: var(--lime-trace); }
+.workbench-container { height: 100%; min-height: 0; }
+.workbench-container[hidden] { display: none; }
+.close-document-dialog { max-width: 580px; font-family: var(--font-ui); }
+.close-document-dialog p { overflow-wrap: anywhere; }
+.close-document-dialog footer { flex-wrap: wrap; }
+.close-document-dialog footer button { flex: 1 1 auto; }
+.empty-document { height: 100%; display: flex; flex-direction: column; font-family: var(--font-ui); }
+.empty-document-toolbar { display: flex; justify-content: flex-end; flex-shrink: 0; gap: 4px; padding: 4px 12px; border-bottom: 1px solid var(--border-panel); }
+.empty-document-toolbar > button { min-width: 44px; padding: 8px; background: transparent; border-color: transparent; }
+.empty-document-toolbar > button:first-child { margin-right: auto; }
+.empty-document-content { flex: 1; align-content: center; text-align: center; overflow-y: auto; padding: 32px 24px; }
+.empty-document-content h1 { font-size: 24px; margin-top: 16px; }
+.empty-document-content p { color: var(--text-muted); margin: 12px 0 24px; }
+.empty-document-content > div { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+.empty-document-content kbd { font-size: 12px; color: var(--text-muted); margin-left: 8px; }
+@media (max-width: 600px) { .close-document-dialog footer { flex-direction: column-reverse; align-items: stretch; } }
 html[data-theme="dark"] { color-scheme: dark; }
 html[data-theme="light"] { color-scheme: light; }
 

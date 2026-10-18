@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil } from 'lucide-react';
+import { useEffect, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
+import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, X } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -14,7 +14,15 @@ import type { MarkdownCommand, SourceRange } from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
 
 export type MarkdownMode = 'live' | 'source' | 'split' | 'read';
+export interface MarkdownWorkbenchHandle {
+  /** Invoke the same native chooser as the Open toolbar action, within a user gesture. */
+  openFile: () => void;
+  /** File/package operations must finish before the host saves or closes the note. */
+  isBusy: () => boolean;
+}
 export interface MarkdownWorkbenchProps {
+  /** Host commands reuse the workbench's file input and operation guards. */
+  ref?: Ref<MarkdownWorkbenchHandle>;
   /** Markdown owned by the consuming screen. */
   value: string;
   /** Receives source edits and successful local file imports. */
@@ -47,12 +55,16 @@ export interface MarkdownWorkbenchProps {
   saveRevision?: number;
   /** Prevent document changes and imports. */
   readOnly?: boolean;
+  /** Standalone hosts can own the complete text/image/pending-sync unload guard. */
+  warnBeforeUnload?: boolean;
+  /** Optional document-close command, separate from closing a browser tab. */
+  onClose?: () => void;
 }
 
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0 }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
   useEffect(() => { onModeChange?.(mode); }, [mode,onModeChange]);
   const workbench = useRef<HTMLElement>(null);
@@ -74,6 +86,8 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
   const imageInput = useRef<HTMLInputElement>(null);
   const imageRange = useRef<SourceRange>({ from: 0, to: 0 });
   const editor = useRef<MarkdownEditorHandle>(null);
+  function chooseFile() { if (!readOnly && !busy) input.current?.click(); }
+  useImperativeHandle(ref, () => ({openFile: chooseFile, isBusy: () => busy}));
   const { assets, replace: replaceAssets, append: appendAssets } = useMarkdownAssets();
   useEffect(() => { if (initialAssets) replaceAssets(initialAssets); }, []);
   useEffect(() => { onAssetsChange?.(assets); }, [assets, onAssetsChange]);
@@ -82,11 +96,11 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
   const words = value.trim() ? value.trim().split(/\s+/u).length : 0;
 
   useEffect(() => {
-    if (!dirty) return;
+    if (!dirty || !warnBeforeUnload) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
-  }, [dirty]);
+  }, [dirty, warnBeforeUnload]);
 
   async function open(file?: File) {
     if (!file || readOnly || busy) return;
@@ -181,12 +195,12 @@ export function MarkdownWorkbench({ value, onChange, fileName, onFileNameChange,
     {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" aria-label="Editar nota" onClick={() => changeMode('live')}><Pencil size={20}/></button><button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
     {noteInfoOpen && <EditorDialog title="Informações da nota" onClose={() => setNoteInfoOpen(false)}><p>{fileName}</p><p>{words} palavras · {value.length} caracteres</p><p>Leitura estimada: {Math.max(1, Math.ceil(words / 200))} min</p><p>Markdown · UTF-8</p></EditorDialog>}
     <header className={styles.toolbar}>
-      <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}</div>
+      <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}{onClose && <button type="button" disabled={readOnly || busy} aria-label="Fechar nota" aria-keyshortcuts="Meta+W Control+W" title="Fechar nota (⌘W / Ctrl+W, quando disponível no navegador)" onClick={onClose}><X size={16} aria-hidden="true"/></button>}</div>
       <div className={styles.modes} role="group" aria-label="Modo de edição">
         {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={mode === key} onClick={() => changeMode(key)}>{label}</button>)}
       </div>
       <div className={styles.actions}>
-        <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" title="Abrir .md / ZIP" onClick={() => input.current?.click()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
+        <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={chooseFile}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
         {compact && <details className={styles.exportMenu} onKeyDown={event => {if(event.key==='Escape'&&event.currentTarget.open){event.preventDefault();event.stopPropagation();event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>

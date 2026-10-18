@@ -3,6 +3,8 @@ import type { MarkdownAsset } from './markdown/assets';
 export interface DraftSnapshot {
   /** Per-tab stable draft id; new windows receive their own copy of the latest draft. */
   id: string;
+  /** Explicit document closure restores an empty workspace instead of a discarded note. */
+  documentClosed?: boolean;
   /** Checkout identity retained for offline editing and safe reconnection. */
   repository: {repository: string | null; branch: string; status: string};
   /** Current document-relative filename. */
