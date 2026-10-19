@@ -6,7 +6,7 @@
   "simulatorOS": "18.6",
   "native": {
     "bundleId": "com.aeonbridge.scriba",
-    "releaseArchive": "COMPILED_UNSIGNED",
+    "releaseArchive": "SIGNED_AND_IPA_EXPORTED",
     "hostedTests": {
       "iPhone16ProMax": 4,
       "iPadPro13M4": 4
@@ -17,7 +17,10 @@
     },
     "screenshots": "docs/app-store/screenshots",
     "privacyManifest": "PRESENT",
-    "bridgeLogging": "DISABLED"
+    "bridgeLogging": "DISABLED",
+    "ipaBytes": 26517862,
+    "ipaSignatureVerification": "PASS",
+    "appStoreProvisioning": "PASS"
   },
   "httpGitTests": {
     "passed": 54,
@@ -39,10 +42,15 @@
     "bundleVerification": "PASS"
   },
   "distribution": {
-    "signed": false,
-    "uploaded": false,
+    "signed": true,
+    "uploaded": true,
     "testersInvited": false,
     "physicalDeviceValidation": "PENDING",
-    "storeReview": "NOT_SUBMITTED"
+    "storeReview": "NOT_SUBMITTED",
+    "appRegistered": true,
+    "appStoreConnectId": "6824664840",
+    "uploadVerifiedAt": "2026-10-19T21:04:20+00:00",
+    "uploadEvidence": "Xcode Organizer: App upload complete; App 1.13.0 (1) uploaded",
+    "processingStatus": "NOT_YET_CHECKED_IN_APP_STORE_CONNECT"
   }
 }

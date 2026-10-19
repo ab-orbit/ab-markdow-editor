@@ -32,7 +32,7 @@ Files import supports UTF-8 Markdown up to 5 MB, local PNG/JPEG/GIF/WebP images 
 ## App Store preparation
 
 - Bundle identifier candidate: `com.aeonbridge.scriba`; confirm availability in the selected Apple Developer team before registering the app.
-- Team requested by the owner: **Aeon Bridge Co.** Review/support contact: **contact@aeonbridge.com**. Do not infer a Team ID from the company name or email.
+- Brand/copyright: **Aeon Bridge Co.** Review/support contact: **contact@aeonbridge.com**. Select the owner's authorized signing team locally; the brand is independent of the Apple Developer team name. Do not infer a Team ID from the company name or email.
 - Portuguese listing draft: [metadata.pt-BR.json](metadata.pt-BR.json). Review notes describe useful offline and native features, not a website-only wrapper. Release is manual.
 - Public support and privacy pages: `https://scriba.aeonbridge.app/support.html` and `https://scriba.aeonbridge.app/privacy.html`.
 - `PrivacyInfo.xcprivacy` declares private UserDefaults (`CA92.1`), in-container file metadata (`C617.1`) and user-selected directory metadata (`3B52.1`). Optional GitHub synchronization is accounted for in the data declarations. The privacy manifest is not a substitute for answering the App Store Connect privacy questionnaire.
@@ -46,9 +46,9 @@ Signing/export command, once the authorized team is available in Xcode:
 SCRIBA_APPLE_TEAM_ID=ABCDEFGHIJ npm run ios:archive
 ```
 
-This creates an archive and exports an IPA; it does not silently submit an incomplete app or accept new legal agreements. A valid distribution signature, App Store Connect app registration, final review contact details, age/privacy ratings, real simulator screenshots, physical-device checks and TestFlight verification must precede public release. An unsigned simulator build cannot be uploaded as an App Store binary.
+This creates an archive and exports an IPA; it does not silently submit an incomplete app or accept new legal agreements. App Store distribution requires a valid distribution signature, an App Store Connect record and the required listing, review-contact, age/privacy and screenshot fields. Physical-device and TestFlight checks complement simulator verification, especially for third-party Files providers. An unsigned simulator build cannot be uploaded as an App Store binary.
 
-Release preparation completed with an unsigned ARM64 archive, four normalized store screenshots, five native tests on each simulator family, 54 HTTP/Git tests and offline Chrome/WebKit checks. See [release evidence and remaining distribution steps](../evidence/app-store/README.md). Signing, upload, invitations and Apple review are separate states; this repository does not imply they have happened.
+Release preparation includes a signed ARM64 archive and an exported App Store IPA, four normalized store screenshots, five native tests on each simulator family, 54 HTTP/Git tests and offline Chrome/WebKit checks. The App Store Connect record is `6824664840`. See [release evidence and remaining distribution steps](../evidence/app-store/README.md) for the current upload, invitation and review status; these are separate states.
 
 ## PWA Builder
 
