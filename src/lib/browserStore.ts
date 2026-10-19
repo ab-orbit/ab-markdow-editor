@@ -1,6 +1,7 @@
 import {githubSelection, githubRequest, libraryKey} from './github';
 import {saveToDeviceFolder, readDeviceNotes, folderLabel, deviceDocumentVersion, readDeviceDocument, textVersion} from './deviceFolder';
 import diagramManual from '../../docs/Scriba-Diagramas.md?raw';
+import {extendDiagramManual} from '../../server/diagram-manual.mjs';
 import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
 /** Public builds keep all user content in this origin's IndexedDB, never on the VPS. */
 export const browserMode = import.meta.env.VITE_STORAGE_MODE === 'browser';
@@ -9,6 +10,8 @@ interface State { notes: Record<string,Note>; pins: string[];
   /** Seed metadata persists user decisions to edit, unpin or remove a reference. */
   diagramManualVersion?: number;
   diagramManualName?: string;
+  /** Append the ZenUML reference once, respecting subsequent edits and removal. */
+  diagramManualZenUmlVersion?: number;
  preferences: {askCommitNote:boolean;autoSave:boolean;intervalMinutes:number;
   /** Gesture preference is private to this destination, alongside its existing save settings. */
   doubleClickToEdit:boolean;
@@ -30,21 +33,47 @@ async function snapshot(database:IDBDatabase,key:string):Promise<State> {
   });
 }
 /** Prepare a normal, destination-scoped note, adopting owned copies and avoiding user files. */
-async function prepareDiagramManual(database:IDBDatabase,key:string,remote:any,hasGitHub:boolean) {
+interface PreparedManual {note:Note;created:boolean;updated?:boolean;extensionDone?:boolean;baseVersion?:string|null;baseValue?:string;baseRemoteVersion?:string|null}
+async function prepareDiagramManual(database:IDBDatabase,key:string,remote:any,hasGitHub:boolean):Promise<PreparedManual|undefined> {
   const state=await snapshot(database,key);
-  if(state.diagramManualVersion)return undefined;
   const known=new Map<string,any>((remote?.notes||[]).map((note:Note)=>[note.name,note]));
   const owned=(value:string)=>value.includes('<!-- scriba-reference:diagram-manual version=');
+  async function extend(note:Note,created=false):Promise<PreparedManual> {
+    const previous=state.notes[note.name],value=extendDiagramManual(note.value,diagramManual);
+    if(value===null)return {note,created,extensionDone:true};
+    const updated:Note={...note,value,cached:true,version:hasGitHub?note.version:crypto.randomUUID(),modifiedAt:new Date().toISOString(),pending:hasGitHub};
+    if(hasGitHub&&remote) {
+      try {
+        const response=await githubRequest('save',{...updated,scope:key,message:'Extend Scriba diagram manual with ZenUML'}),result=await response.json();
+        if(response.ok){updated.version=result.version;updated.pending=false;}
+        else return {note,created}; // A remote conflict never replaces local or remote annotations.
+      }catch{/* Preserve the appended section privately for a later explicit save. */}
+    }
+    return {note:updated,created,updated:true,extensionDone:true,baseVersion:previous?.version,baseValue:previous?.value,baseRemoteVersion:note.version};
+  }
+  if(state.diagramManualVersion) {
+    if(state.diagramManualZenUmlVersion||!state.diagramManualName)return undefined;
+    const name=state.diagramManualName;let note=state.notes[name];
+    if(hasGitHub&&remote&&known.has(name)&&!note?.pending) {
+      try {
+        const response=await githubRequest(`document?name=${encodeURIComponent(name)}&scope=${encodeURIComponent(key)}`),doc=await response.json();
+        if(!response.ok)return undefined;
+        note={...doc,name,cached:true,pending:false,modifiedAt:known.get(name).modifiedAt||new Date().toISOString()};
+      }catch{return undefined;}
+    }
+    if(!note?.value||!owned(note.value))return undefined;
+    return extend(note);
+  }
   for(let suffix=1;suffix<1000;suffix++) {
     if(key!==libraryKey())throw new Error('O destino mudou. Reabra a biblioteca.');
     const name=`Scriba-Diagramas${suffix===1?'':`-${suffix}`}.md`;
     const local=state.notes[name];
-    if(local&&owned(local.value))return {note:local,created:false};
+    if(local&&owned(local.value))return extend(local);
     if(local||known.has(name)) {
       if(hasGitHub&&known.has(name)) {
         try {
           const response=await githubRequest(`document?name=${encodeURIComponent(name)}&scope=${encodeURIComponent(key)}`),doc=await response.json();
-          if(response.ok&&owned(doc.value))return {note:{...doc,name,cached:true,pending:false,modifiedAt:known.get(name).modifiedAt||new Date().toISOString()} as Note,created:false};
+          if(response.ok&&owned(doc.value))return extend({...doc,name,cached:true,pending:false,modifiedAt:known.get(name).modifiedAt||new Date().toISOString()} as Note);
         }catch{/* An unknown remote file is never replaced by a bundled example. */}
       }
       continue;
@@ -52,12 +81,12 @@ async function prepareDiagramManual(database:IDBDatabase,key:string,remote:any,h
     const note:Note={name,value:diagramManual,version:hasGitHub?null:crypto.randomUUID(),cached:true,pending:hasGitHub,modifiedAt:new Date().toISOString(),files:[]};
     if(hasGitHub) {
       try {
-        const response=await githubRequest('save',{...note,scope:key,message:'Add Scriba diagram reference v1.0.0'}),result=await response.json();
+        const response=await githubRequest('save',{...note,scope:key,message:'Add Scriba diagram reference v1.1.0'}),result=await response.json();
         if(response.ok){note.version=result.version;note.pending=false;}
         else if(response.status===409&&result.conflict){known.set(name,{});suffix--;continue;}
       }catch{/* The complete source remains available privately offline for a later save. */}
     }
-    return {note,created:true};
+    return {note,created:true,extensionDone:true};
   }
   throw new Error('Não foi possível escolher um nome livre para o manual de diagramas.');
 }
@@ -96,6 +125,7 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
     }
     const reference=url.pathname==='/library/initialize' ? await prepareDiagramManual(database,key,remote,!!selection) : undefined;
     if(key!==libraryKey())return Response.json({error:'O destino mudou. Reabra a biblioteca.'},{status:409});
+    let referenceApplied=false;
     const response = await new Promise<Response>((resolve,reject)=>{
       const readOnly=url.pathname==='/document-version';
       const tx=database.transaction('library',readOnly?'readonly':'readwrite'),store=tx.objectStore('library'),request=store.get(key);let result:unknown;let status=200;
@@ -111,14 +141,24 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
           case '/files':result=Object.keys(state.notes).sort();break;
           case '/library/initialize': {
             if(guide&&!state.notes[guide.name]){state.notes[guide.name]=guide;state.pins.unshift(guide.name);}
+            if(reference&&state.diagramManualVersion&&!state.diagramManualZenUmlVersion) {
+              const existing=state.notes[reference.note.name];
+              // Recheck the snapshot after network I/O: another tab may have edited meanwhile.
+              if(!reference.updated||(existing?.version===reference.baseVersion&&existing?.value===reference.baseValue||reference.baseVersion===undefined&&!existing?.cached&&!existing?.value&&existing?.version===reference.baseRemoteVersion)) {
+                if(reference.updated){state.notes[reference.note.name]=reference.note;referenceApplied=true;}
+                if(reference.extensionDone)state.diagramManualZenUmlVersion=1;
+              }
+            }
             if(reference&&!state.diagramManualVersion) {
               const existing=state.notes[reference.note.name];
               // Recheck after async preparation: another tab may have saved or seeded meanwhile.
-              if(!existing||(!existing.cached&&!existing.value&&existing.version===reference.note.version)||existing.value.includes('<!-- scriba-reference:diagram-manual version=')) {
-                state.notes[reference.note.name]=existing?.cached?existing:reference.note;
+              if((!existing||(!existing.cached&&!existing.value&&existing.version===reference.note.version)||existing.value.includes('<!-- scriba-reference:diagram-manual version='))&&(!reference.updated||(existing?.version===reference.baseVersion&&existing?.value===reference.baseValue||reference.baseVersion===undefined&&!existing?.cached&&!existing?.value&&existing?.version===reference.baseRemoteVersion))) {
+                state.notes[reference.note.name]=existing?.cached&&!reference.updated?existing:reference.note;
+                referenceApplied=state.notes[reference.note.name]===reference.note&&(reference.created||!!reference.updated);
                 const guideIndex=guide?state.pins.indexOf(guide.name):-1;
                 if(!state.pins.includes(reference.note.name))state.pins.splice(guideIndex<0?0:guideIndex+1,0,reference.note.name);
                 state.diagramManualVersion=1;state.diagramManualName=reference.note.name;
+                if(reference.extensionDone)state.diagramManualZenUmlVersion=1;
               }
             }
             const pending=!!reference?.note.pending;
@@ -141,7 +181,7 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       };
       tx.oncomplete=()=>resolve(Response.json(result,{status}));tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
     });
-    if(!selection&&folder&&reference?.created&&response.ok) {
+    if(!selection&&folder&&reference&&referenceApplied&&response.ok) {
       try{await saveToDeviceFolder(reference.note);}
       catch(error){const result=await response.json();return Response.json({...result,synchronization:{synced:false,error:error instanceof Error?error.message:String(error)}});}
     }

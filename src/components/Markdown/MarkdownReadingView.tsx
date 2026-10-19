@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { remarkMissingFootnotes } from './remarkMissingFootnotes';
 import { remarkHeadingIds } from './remarkHeadingIds';
 import { remarkDiagramIds } from './remarkDiagramIds';
-import { diagramIdentity } from '@/lib/markdown/diagrams';
+import { diagramIdentity, diagramLanguage } from '@/lib/markdown/diagrams';
 import styles from './MarkdownWorkbench.module.css';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 import type { SourceRange } from './editorCommands';
@@ -61,11 +61,12 @@ const components: Components = {
     const settings = useContext(context);
     const code = node?.children.find(child => child.type === 'element' && child.tagName === 'code');
     const classes = code?.type === 'element' ? code.properties.className : undefined;
-    if (code?.type === 'element' && Array.isArray(classes) && classes.some(name => String(name).toLowerCase() === 'language-mermaid')) {
+    const language = Array.isArray(classes) ? classes.map(name => diagramLanguage(String(name).replace(/^language-/i, ''))).find(Boolean) : undefined;
+    if (code?.type === 'element' && language) {
       const source = code.children.map(child => child.type === 'text' ? child.value : '').join('');
       const from = node?.position?.start.offset, to = node?.position?.end.offset;
       const occurrence = Number(code.properties['data-diagram-ordinal'] ?? code.properties.dataDiagramOrdinal ?? 0);
-      return <div {...blockProps(node, settings)}><DiagramBlock source={source} identity={diagramIdentity(settings.diagramScope || 'document', source, occurrence)} legacyIdentity={`${settings.diagramScope}:${from}`} onEdit={settings.onEditBlock && from !== undefined && to !== undefined ? () => settings.onEditBlock!({ from, to }) : undefined}/></div>;
+      return <div {...blockProps(node, settings)}><DiagramBlock source={source} language={language} identity={diagramIdentity(settings.diagramScope || 'document', source, occurrence, language)} legacyIdentity={`${settings.diagramScope}:${from}`} onEdit={settings.onEditBlock && from !== undefined && to !== undefined ? () => settings.onEditBlock!({ from, to }) : undefined}/></div>;
     }
     return <pre {...props} {...blockProps(node, settings)}/>;
   },

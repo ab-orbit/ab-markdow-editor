@@ -31,7 +31,7 @@ try {
   await page.goto(origin);
   try{await page.getByRole('button',{name:'Scriba-Diagramas.md',exact:true}).click({timeout:15000});}catch(error){console.log(await page.locator('body').innerText());console.log({errors,outside});throw error;}
   await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');
-  const figures=page.locator('article figure[data-diagram-engine]');await expect(figures).toHaveCount(examples.length);
+  const figures=page.locator('article figure[data-diagram-engine]:not([data-diagram-engine=zenuml])');await expect(figures).toHaveCount(examples.length);
   await page.getByRole('link',{name:'Estruturas e contratos',exact:true}).click();
   assert.equal(decodeURIComponent(new URL(page.url()).hash),'#estruturas-e-contratos');
   await expect(page.locator('#estruturas-e-contratos')).toBeInViewport();

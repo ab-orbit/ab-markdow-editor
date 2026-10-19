@@ -1,12 +1,23 @@
 import createDOMPurify from 'dompurify';
 
 /** Renderer choices affect presentation only; Markdown remains the saved source. */
-export type DiagramEngine = 'mermaid' | 'pele' | 'beautiful';
+export type DiagramEngine = 'mermaid' | 'pele' | 'beautiful' | 'zenuml';
+export type DiagramLanguage = 'mermaid' | 'zenuml';
 export const diagramEngines = [
   { id: 'mermaid', label: 'Mermaid', version: '12.2.0' },
   { id: 'pele', label: 'Pele', version: '1.6.0' },
   { id: 'beautiful', label: 'Beautiful Mermaid', version: '1.1.3' },
+  { id: 'zenuml', label: 'ZenUML', version: '4.7.2' },
 ] as const;
+
+/** ZenUML is a separate sequence DSL, including Mermaid's `zenuml` directive. */
+export function diagramLanguage(info: string): DiagramLanguage | undefined {
+  const language = info.trim().split(/\s+/)[0].toLowerCase();
+  return language === 'mermaid' || language === 'zenuml' ? language : undefined;
+}
+export function usesZenUml(source: string, language: DiagramLanguage = 'mermaid') {
+  return language === 'zenuml' || /^\s*zenuml(?:\s*\r?\n|\s*$)/i.test(source);
+}
 
 /** Colors and text metrics are resolved from the existing application tokens. */
 export interface DiagramAppearance {
@@ -32,6 +43,7 @@ let mermaidQueue: Promise<unknown> = Promise.resolve();
 let mermaidImport: Promise<typeof import('mermaid')> | undefined;
 let peleImport: Promise<typeof import('pele')> | undefined;
 let beautifulImport: Promise<typeof import('beautiful-mermaid')> | undefined;
+let zenumlImport: Promise<typeof import('./zenuml')> | undefined;
 let purifier: ReturnType<typeof createDOMPurify> | undefined;
 
 /** Keep local SVG definitions while blocking resources outside the document. */
@@ -108,6 +120,7 @@ export function scopeDiagramSvg(svg: string, prefix: string) {
 async function loadRenderer(engine: DiagramEngine) {
   if (engine === 'mermaid') return (mermaidImport ??= import('mermaid').catch(error => { mermaidImport = undefined; throw error; }));
   if (engine === 'pele') return (peleImport ??= import('pele').catch(error => { peleImport = undefined; throw error; }));
+  if (engine === 'zenuml') return (zenumlImport ??= import('./zenuml').catch(error => { zenumlImport = undefined; throw error; }));
   return (beautifulImport ??= import('beautiful-mermaid').catch(error => { beautifulImport = undefined; throw error; }));
 }
 
@@ -150,6 +163,8 @@ async function draw(engine: DiagramEngine, source: string, appearance: DiagramAp
         idPrefix: id, fontFamily: appearance.font, fontSize: 15, maxWidth: width,
         images: false, links: false, limit: 50_000, maxEdges: 1_000,
       }).svg;
+    } else if (engine === 'zenuml') {
+      svg = await (library as typeof import('./zenuml')).renderZenUml(source);
     } else {
       svg = (library as typeof import('beautiful-mermaid')).renderMermaidSVG(source, {
         bg: 'var(--diagram-bg)', fg: 'var(--diagram-fg)', line: 'var(--text-muted)',
@@ -200,7 +215,7 @@ export function diagramKey(source: string) {
 }
 /** Content plus duplicate occurrence survives paragraph edits before a drawing. */
 export function diagramSourceKey(source: string) { return diagramKey(source.replace(/\r\n?/g, '\n').replace(/\n+$/, '')); }
-export function diagramIdentity(scope: string, source: string, occurrence = 0) { return `${scope}:mermaid:${diagramSourceKey(source)}:${occurrence}`; }
+export function diagramIdentity(scope: string, source: string, occurrence = 0, language: DiagramLanguage = 'mermaid') { return `${scope}:${language}:${diagramSourceKey(source)}:${occurrence}`; }
 function readPreferences() {
   if (!preferences) {
     try { preferences = JSON.parse(localStorage.getItem(PREFERENCE_KEY) || '{}'); } catch { preferences = {}; }

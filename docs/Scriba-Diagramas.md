@@ -2,16 +2,17 @@
 
 <!-- scriba-reference:diagram-manual version=1 -->
 
-**Edição 1.0.1 · 19 de outubro de 2026.** Uma biblioteca de exemplos para escolher uma representação, adaptar seu código e comparar o resultado no Scriba. O arquivo é versionado com o produto e aparece como nota fixada junto ao guia.
+**Edição 1.1.0 · 19 de outubro de 2026.** Uma biblioteca de exemplos para escolher uma representação, adaptar seu código e comparar o resultado no Scriba. O arquivo é versionado com o produto e aparece como nota fixada junto ao guia.
 
 ## Como usar este manual
 
 1. Comece pela pergunta que precisa responder. Cada exemplo apresenta uma pergunta, uma forma de ler o desenho e uma orientação de adaptação.
-2. O bloco `mermaid` aparece como desenho em **Ler**, **Visão** e na prévia de **Escrever**. Use o **lápis sobre o desenho** para revelar o Markdown. **Fonte** mostra o arquivo completo; copie apenas o exemplo que precisa para sua própria nota.
+2. Os blocos `mermaid` e `zenuml` aparecem como desenho em **Ler**, **Visão** e na prévia de **Escrever**. Use o **lápis sobre o desenho** para revelar o Markdown. **Fonte** mostra o arquivo completo; copie apenas o exemplo que precisa para sua própria nota.
 3. Compare **Mermaid 12.2.0**, **Pele 1.6.0** e **Beautiful Mermaid 1.1.3** pelo seletor de cada desenho. A escolha não altera o código. A cobertura dos exemplos está na matriz abaixo.
 4. Ative a **lupa 2×** para inspecionar detalhes; passe o mouse ou arraste o dedo. **Esc** desativa. No teclado, use Tab até o desenho e as setas para explorar.
-5. Use a **roda do mouse** ou **− / +** para ampliar o desenho. Arraste para navegar e clique no percentual para voltar a 100%. **Ver código** mostra a sintaxe destacada; **Copiar** leva somente o código Mermaid. **Baixar diagrama** oferece SVG vetorial e PNG com fundo transparente, sempre com o desenho inteiro.
-6. Preserve a pergunta e uma explicação textual ao reutilizar o código. Pessoas que não veem o gráfico também precisam entender a decisão ou o dado.
+5. Use a **roda do mouse** ou **− / +** para ampliar o desenho. Arraste para navegar e clique no percentual para voltar a 100%. **Ver código** mostra a sintaxe destacada; **Copiar** leva somente o código do diagrama. **Baixar diagrama** oferece SVG vetorial e PNG com fundo transparente, sempre com o desenho inteiro.
+6. Para **ZenUML 4.7.2**, vá à seção dedicada no fim deste mesmo manual. Os blocos usam uma linguagem própria de sequência e o Scriba identifica seu motor automaticamente.
+7. Preserve a pergunta e uma explicação textual ao reutilizar o código. Pessoas que não veem o gráfico também precisam entender a decisão ou o dado.
 
 Todos os nomes de acervos, números, datas e cenários deste manual são **ilustrativos**. “Acervo Aurora” é um sistema fictício usado para conversar sobre pesquisa, curadoria e trabalho com evidências. As arquiteturas, automações e modelos de dados são propostas de domínio; não descrevem funcionalidades já implementadas no Scriba nem anunciam um compromisso de roadmap.
 
@@ -21,7 +22,7 @@ Todos os nomes de acervos, números, datas e cenários deste manual são **ilust
 | --- | --- |
 | O que acontece em seguida e onde há decisão? | Fluxograma |
 | Quem faz cada etapa? | Raias ou casos de uso |
-| Quem envia o quê, em qual ordem? | Sequência |
+| Quem envia o quê, em qual ordem? | Sequência Mermaid ou ZenUML |
 | Em que condição um objeto pode estar? | Estados |
 | Quais entidades existem e como se relacionam? | ER ou classes |
 | Qual requisito será comprovado por qual teste? | Requisitos |
@@ -88,6 +89,7 @@ Os sufixos `-beta` fazem parte da sintaxe de algumas famílias experimentais. El
 - [Métricas e conjuntos](#métricas-e-conjuntos)
 - [Decisões e aprendizado](#decisões-e-aprendizado)
 - [Diagnóstico](#diagnóstico)
+- [ZenUML — interações descritas como código](#zenuml-interações-descritas-como-código)
 
 ## Convenções para construir e revisar
 
@@ -1539,3 +1541,729 @@ Sintaxe consultada na documentação oficial da versão `mermaid@12.2.0`, acompa
 A próxima revisão deve preservar os identificadores dos exemplos, testar novamente os blocos e atualizar a matriz quando mudar uma dependência. Os exemplos servem como corpus de regressão do produto para sintaxe, legibilidade, seleção de motor, tema, lupa e navegação.
 
 Powered by **Aeon Bridge Co.** — offered to community.
+
+<!-- scriba-extension:zenuml-v1:start -->
+
+## ZenUML — interações descritas como código
+
+**Seção 1.0 · @zenuml/core 4.7.2 · 19/10/2026.** ZenUML descreve **diagramas de sequência**: participantes, mensagens, ativações e fragmentos de controle. As variações abaixo são formas de representar interações; não são novos motores de ER, classes, fluxogramas ou gráficos estatísticos. Para essas outras famílias, use as seções Mermaid deste mesmo manual.
+
+No Scriba, use uma cerca **`zenuml`**. Também é aceita a cerca `mermaid` cujo primeiro comando é `zenuml`, como na integração oficial do Mermaid. O motor é identificado automaticamente como **ZenUML**. `sequenceDiagram` continua usando o seletor Mermaid / Pele / Beautiful Mermaid: trocar a sintaxe exige adaptar o código, e não apenas escolher outro motor.
+
+**Controles disponíveis:** roda do mouse, − / +, arrastar, lupa 2×, código com cores de sintaxe, copiar, SVG vetorial e PNG transparente. O código permanece no Markdown. O desenho usa SVG nativo, fonte local e ícones vetoriais distribuídos com a biblioteca; não precisa enviar a nota a um serviço de diagramas. Depois de o aplicativo concluir seu cache offline, os recursos continuam disponíveis sem rede.
+
+**Referências primárias:** [repositório e licença MIT](https://github.com/mermaid-js/zenuml-core), [referência da linguagem](https://github.com/mermaid-js/zenuml-core/blob/main/docs/DSL_SYNTAX.md), [API SVG e fontes](https://github.com/mermaid-js/zenuml-core/blob/main/types/index.d.ts) e [ZenUML no Mermaid](https://mermaid.js.org/syntax/zenuml.html). Os exemplos usam o Acervo Aurora fictício já apresentado neste arquivo.
+
+### Roteiro de consulta ZenUML
+
+| Preciso representar… | Exemplo desta seção |
+| --- | --- |
+| Uma primeira interação, sem declarar tudo | [Começo mínimo](#zenuml-começo-mínimo) |
+| Pessoas, fronteiras, controle e armazenamento | [Papéis de participantes](#zenuml-papéis-de-participantes) |
+| Fronteiras entre equipes e nomes legíveis | [Grupos e aliases](#zenuml-grupos-aliases-e-estereótipos) |
+| Parâmetros, resultados e modificadores | [Assinaturas e atribuições](#zenuml-assinaturas-e-atribuições) |
+| Pilha de chamadas, recursão e retorno | [Ativações](#zenuml-ativações-autochamadas-e-retornos) |
+| Eventos e respostas assíncronas | [Eventos](#zenuml-eventos-e-respostas-assíncronas) e [aliases de retorno](#zenuml-anotações-de-retorno) |
+| Nascimento de uma instância | [Criação de objetos](#zenuml-criação-de-objetos) |
+| Alternativas e expressões de guarda | [Condições](#zenuml-condições-alternativas) e [expressões](#zenuml-expressões-e-valores) |
+| Uma etapa opcional | [Opt](#zenuml-etapa-opcional) |
+| Repetição | [Laços](#zenuml-laços-e-seus-aliases) |
+| Trabalho concorrente e exclusão mútua | [Par](#zenuml-trabalho-em-paralelo) e [Critical](#zenuml-região-crítica) |
+| Fases, exceções ou outro diagrama | [Frames](#zenuml-seções-frames-e-blocos), [exceções](#zenuml-exceções-e-limpeza) e [Ref](#zenuml-referências-a-outras-interações) |
+| Explicações, divisões e idioma | [Notas](#zenuml-divisores-e-comentários), [iniciador](#zenuml-iniciador-explícito) e [Unicode](#zenuml-identificadores-unicode) |
+| Serviços cloud ou componentes de infraestrutura | [AWS](#zenuml-serviços-aws), [Azure e Google Cloud](#zenuml-azure-e-google-cloud), [infraestrutura](#zenuml-componentes-de-infraestrutura) e [catálogo](#zenuml-catálogo-de-anotações-vetoriais) |
+| Um arquivo com delimitadores de outro editor | [Delimitadores](#zenuml-delimitadores-de-arquivos-importados) |
+| Um caso completo para adaptar | [Publicação resiliente](#zenuml-caso-completo-publicação-resiliente) |
+
+<!-- zenuml-verification:start -->
+A cobertura dos exemplos desta seção é verificada no teste de navegador `tests/zenuml.smoke.mjs`. Cada bloco precisa passar pelo parser e produzir um SVG visível no Scriba; os testes também exercitam leitura, edição, código, zoom, lupa e exportação. A verificação não promete todas as combinações possíveis da linguagem.
+<!-- zenuml-verification:end -->
+
+### ZenUML: começo mínimo
+
+**Pergunta:** Quem consulta o catálogo e recebe a resposta?
+
+<!-- zenuml-example: zen-minimal capability=implicit -->
+```zenuml
+title Consulta ao Acervo Aurora
+Catalogo.buscar("história urbana")
+```
+
+**Leia assim:** O participante `Catalogo` é inferido da chamada. A origem sem nome representa um chamador externo. Não confunda essa origem implícita com uma pessoa já identificada.
+
+**Adapte:** Comece assim para rascunhar uma conversa. Declare o iniciador e os participantes quando a identidade de quem chama fizer parte da pergunta.
+
+### ZenUML: papéis de participantes
+
+**Pergunta:** Quais papéis colaboram na entrada de uma evidência?
+
+<!-- zenuml-example: zen-roles capability=participants -->
+```zenuml
+title Papéis na curadoria
+@Actor Pesquisadora
+@Boundary Portal
+@Control Curadoria
+@Entity Evidencia
+@Database Catalogo
+@Collections Colecao
+@Queue Eventos
+@Starter(Pesquisadora)
+Pesquisadora -> Portal.enviar(fonte) {
+  Curadoria.validar(fonte) {
+    Evidencia.criar()
+    Catalogo.gravar()
+    Colecao.listar()
+    Eventos: evidenciaRecebida
+  }
+}
+```
+
+**Leia assim:** `@Actor`, `@Boundary`, `@Control`, `@Entity`, `@Database` e `@Queue` distinguem responsabilidades com vetores locais. `@Collections` é aceito pela linguagem, mas o SVG desta versão usa o rótulo sem um pictograma próprio para essa anotação.
+
+**Adapte:** Escolha o papel pela responsabilidade, não pelo fornecedor do software. Uma anotação desconhecida continua sendo um participante textual; não implica que exista um ícone para ela.
+
+### ZenUML: grupos, aliases e estereótipos
+
+**Pergunta:** Onde termina a experiência da pesquisadora e começa o processamento interno?
+
+<!-- zenuml-example: zen-groups capability=groups -->
+```zenuml
+title Fronteiras da consulta
+group "Experiência" {
+  @Actor Pessoa as "Pesquisadora"
+  @Boundary Portal 150 as "Portal do acervo"
+}
+group "Curadoria" {
+  @Control <<API>> Servico as "Serviço de busca"
+  @Database Base as "Catálogo"
+}
+@Starter(Pessoa)
+Pessoa -> Portal.consultar(termo) {
+  Servico.buscar(termo) {
+    Base.ler(termo)
+    return resultados
+  }
+}
+```
+
+**Leia assim:** `group` envolve colunas; `as` troca somente o nome exibido, mantendo um identificador curto no código. `<<API>>` é um estereótipo textual. `150` pede largura mínima para o participante.
+
+**Adapte:** Use nomes estáveis no código e rótulos que façam sentido para a equipe. A largura explícita aumenta o tamanho total do desenho e pode exigir zoom no celular.
+
+### ZenUML: assinaturas e atribuições
+
+**Pergunta:** Qual informação entra em cada chamada e qual resultado é usado depois?
+
+<!-- zenuml-example: zen-signatures capability=signatures -->
+```zenuml
+title Contrato da consulta
+@Actor Analista
+@Control Busca
+@Database Catalogo
+@Starter(Analista)
+Analista -> Busca.consultar(String termo, int limite) {
+  String consulta = Busca.normalizar(termo)
+  const resultados = Catalogo.buscar(termo=consulta, limite=20)
+  readonly politica = Busca.configuracao()
+  static versao = Busca.versao()
+  await indice = Busca.carregarIndice()
+  Busca.filtros.aplicar(resultados)
+  return resultados
+}
+```
+
+**Leia assim:** Há parâmetros posicionais, nomeados, declarações tipadas e captura do retorno com `=`. Chamadas encadeadas podem descrever o método de um subsistema. `const`, `readonly`, `static` e `await` são elementos de notação: o diagrama não executa essas instruções nem garante semântica de concorrência por usá-las.
+
+**Adapte:** Prefira a mensagem que explica a colaboração. Tipar todos os parâmetros só ajuda quando o contrato é a questão em análise. Um `;` no final de uma chamada é opcional.
+
+### ZenUML: ativações, autochamadas e retornos
+
+**Pergunta:** Qual chamada mantém outra em andamento e em que ponto devolve o controle?
+
+<!-- zenuml-example: zen-activation capability=activation -->
+```zenuml
+title Pilha de revisão
+@Actor Revisora
+@Control Curadoria
+@Database Catalogo
+@Starter(Revisora)
+Revisora -> Curadoria.revisar(id) {
+  Curadoria.checarConsistencia() {
+    Curadoria.normalizar()
+    return
+  }
+  Catalogo.buscarFonte(id) {
+    return fonte
+  }
+  return parecer
+}
+```
+
+**Leia assim:** Chaves após uma mensagem representam sua ativação e as chamadas que ela contém. Uma chamada do participante para ele mesmo gera uma autochamada. `return`, com ou sem valor, encerra a colaboração atual.
+
+**Adapte:** Uma ativação representa controle e contexto; não é uma escala de tempo medida. Evite sugerir duração pelo tamanho visual de uma barra.
+
+### ZenUML: eventos e respostas assíncronas
+
+**Pergunta:** Quem publica uma alteração sem esperar todo o processamento?
+
+<!-- zenuml-example: zen-async capability=async -->
+```zenuml
+title Publicar evento de curadoria
+@Boundary Portal
+@Control Curadoria
+@Queue Eventos
+@Control Indexador
+Portal -> Curadoria: solicitar revisão de EV-42
+Curadoria -> Eventos: evidência revisada EV-42
+Eventos -> Indexador: atualizar índice
+Indexador --> Eventos: índice atualizado
+Curadoria --> Portal: revisão recebida
+```
+
+**Leia assim:** `-> Participante: texto` envia uma mensagem assíncrona com texto até o fim da linha. `-->` descreve a resposta. Os dois pontos distinguem esse texto livre da chamada de método `Participante.metodo()`.
+
+**Adapte:** Coloque o identificador de correlação no texto quando eventos de várias operações puderem se misturar. O desenho não implementa fila, entrega ou retentativa.
+
+### ZenUML: anotações de retorno
+
+**Pergunta:** Como deixar explícito que uma mensagem responde a outra?
+
+<!-- zenuml-example: zen-return-annotations capability=reply -->
+```zenuml
+title Respostas explícitas
+@Boundary Portal
+@Control Curadoria
+Portal -> Curadoria: revisar EV-42
+@Return Curadoria -> Portal: recebida
+Portal -> Curadoria: consultar andamento
+@Reply Curadoria -> Portal: em revisão
+Portal -> Curadoria: consultar resultado
+@return Curadoria -> Portal: aprovada
+@reply Curadoria -> Portal: operação concluída
+```
+
+**Leia assim:** `@Return` e `@Reply`, inclusive os aliases minúsculos mostrados, marcam uma mensagem assíncrona de retorno. Para uma chamada com ativação, o comando `return valor` costuma ser mais direto.
+
+**Adapte:** Use uma convenção consistente. Uma anotação de retorno não transforma uma operação de rede real em chamada síncrona.
+
+### ZenUML: criação de objetos
+
+**Pergunta:** Em qual etapa passa a existir uma sessão ou tarefa de revisão?
+
+<!-- zenuml-example: zen-creation capability=creation -->
+```zenuml
+title Objetos criados durante a revisão
+@Control Curadoria
+Curadoria.iniciar(id) {
+  new Sessao()
+  tarefa = new Tarefa(id)
+  Registro registro = new Registro(id, "aberto") {
+    Registro.validar()
+    return registro
+  }
+  return tarefa
+}
+```
+
+**Leia assim:** `new` faz a instância aparecer na altura de sua criação. A sintaxe permite criação simples, atribuída, tipada, com argumentos e com um bloco de inicialização.
+
+**Adapte:** Dê a cada instância um nome compreensível. A linguagem documenta criação; não há aqui uma promessa de destruição de objetos ou de suporte a todas as extensões UML.
+
+### ZenUML: condições alternativas
+
+**Pergunta:** Como o estado da fonte determina o encaminhamento da revisão?
+
+<!-- zenuml-example: zen-alternatives capability=conditional -->
+```zenuml
+title Decidir o próximo passo
+@Control Curadoria
+@Control Pesquisa
+@Control Publicacao
+if (fonte.verificada()) {
+  Publicacao.preparar()
+} else if (fonte.recuperavel()) {
+  Pesquisa.complementar()
+} else {
+  Curadoria.devolver("fonte ausente")
+}
+```
+
+**Leia assim:** `if`, `else if` e `else` criam alternativas dentro de um fragmento. As condições são descrições do caminho, e não código executado pelo leitor.
+
+**Adapte:** Torne as saídas distinguíveis. Quando só existe um caminho condicional adicional, prefira `opt`.
+
+### ZenUML: expressões e valores
+
+**Pergunta:** Quais guardas documentam a liberação de um lote?
+
+<!-- zenuml-example: zen-expressions capability=expressions -->
+```zenuml
+title Guardas da publicação
+@Control Curadoria
+@Control Publicacao
+if (pronto && !cancelado && total >= 1) {
+  if (origem in fontes) {
+    Curadoria.registrar(contagem=42, proporcao=3.14)
+  }
+  opt (tentativas * atraso < timeout) {
+    Curadoria.configurar(espera=500ms, limite=2GB)
+  }
+  if (custo <= $99.99 || patrocinado == true) {
+    Publicacao.agendar(data=null, motivo="amostra")
+  }
+}
+```
+
+**Leia assim:** São aceitas comparações (`==`, `!=`, `<`, `>`, `<=`, `>=`), operadores booleanos e aritméticos, chamadas em expressões, `in`, strings, números, unidades, valores monetários, `true`, `false`, `null` e `nil`. Texto livre também pode descrever uma guarda, como no exemplo de laços.
+
+**Adapte:** Uma expressão descreve um contrato; não valida moeda, unidade ou tipos. Preserve a regra de negócio no texto que acompanha o diagrama.
+
+### ZenUML: etapa opcional
+
+**Pergunta:** Quando uma revisão precisa de uma segunda leitura?
+
+<!-- zenuml-example: zen-optional capability=optional -->
+```zenuml
+title Revisão complementar
+@Control Curadoria
+@Actor Especialista
+Curadoria.revisar() {
+  opt (tema sensível) {
+    Especialista.avaliar()
+  }
+  Curadoria.concluir()
+}
+```
+
+**Leia assim:** `opt` envolve somente o trabalho que pode ser omitido. O restante da interação continua fora do fragmento.
+
+**Adapte:** Dê nome ao motivo da opcionalidade. Evite usar `opt` para esconder uma alternativa que precisa de tratamento explícito.
+
+### ZenUML: laços e seus aliases
+
+**Pergunta:** Como repetir tarefas de coleta, validação e atualização?
+
+<!-- zenuml-example: zen-loops capability=loops -->
+```zenuml
+title Repetições na coleta
+@Control Coleta
+@Control Curadoria
+while (fila.temItens()) {
+  Coleta.lerProximo()
+}
+for (fonte in fontes) {
+  Curadoria.validar(fonte)
+}
+foreach (evidencia in lote) {
+  Curadoria.anotar(evidencia)
+}
+forEach (revisora in equipe) {
+  Curadoria.notificar(revisora)
+}
+loop (até concluir a revisão) {
+  Curadoria.verificarPendencias()
+}
+```
+
+**Leia assim:** `while`, `for`, `foreach`, `forEach` e `loop` são representações de repetição. A condição entre parênteses pode ser omitida quando não é relevante, por exemplo `loop { Coleta.poll() }`.
+
+**Adapte:** Documente uma condição de término. **Limitação medida:** o pacote 4.7.2 rejeita o `for (i = 0; i < 10; i++)` com ponto e vírgula mostrado na documentação upstream; use `for (item in itens)` ou uma condição textual validada como acima.
+
+### ZenUML: trabalho em paralelo
+
+**Pergunta:** Quais consultas podem ocorrer independentemente?
+
+<!-- zenuml-example: zen-parallel capability=parallel -->
+```zenuml
+title Complementar o contexto
+@Control Pesquisa
+@Database Arquivo
+@Control Territorio
+@Control Referencias
+Pesquisa.complementar() {
+  par {
+    Arquivo.buscarDocumentos()
+    Territorio.buscarIndicadores()
+    Referencias.buscarCitacoes()
+  }
+  Pesquisa.consolidar()
+}
+```
+
+**Leia assim:** `par` reúne colaborações concorrentes. A consolidação está fora do fragmento para indicar a etapa posterior.
+
+**Adapte:** Registre no texto se o processo espera todas as respostas, a primeira resposta ou um prazo. O fragmento não implementa essa política.
+
+### ZenUML: região crítica
+
+**Pergunta:** Qual mudança exige acesso exclusivo ao catálogo?
+
+<!-- zenuml-example: zen-critical capability=critical -->
+```zenuml
+title Publicar uma revisão por vez
+@Control Curadoria
+@Database Catalogo
+critical (bloqueio da evidência) {
+  Catalogo.lerVersao()
+  Catalogo.gravarRevisao()
+}
+Curadoria.notificarConclusao()
+```
+
+**Leia assim:** `critical` comunica uma região que precisa de exclusão mútua ou de garantias equivalentes.
+
+**Adapte:** Explique qual recurso é protegido e por qual mecanismo. Um retângulo no diagrama não equivale a uma transação, um mutex ou controle de versão implementado.
+
+### ZenUML: seções, frames e blocos
+
+**Pergunta:** Como separar a coleta da avaliação mantendo a mesma interação?
+
+<!-- zenuml-example: zen-sections capability=section -->
+```zenuml
+title Etapas da curadoria
+@Control Coleta
+@Control Curadoria
+section(Coleta) {
+  Coleta.obterFonte()
+}
+frame(Avaliacao) {
+  Curadoria.verificar()
+}
+{
+  Curadoria.registrarHistorico()
+}
+```
+
+**Leia assim:** `section` e `frame` agrupam mensagens sob um rótulo. Um bloco apenas com chaves é uma seção anônima.
+
+**Adapte:** Use fases que ajudam a revisão. Para referenciar uma interação mantida em outro diagrama, prefira `ref`.
+
+### ZenUML: exceções e limpeza
+
+**Pergunta:** Como tratar falhas diferentes e liberar recursos em qualquer resultado?
+
+<!-- zenuml-example: zen-exceptions capability=exceptions -->
+```zenuml
+title Recuperar a coleta
+@Control Coleta
+@Database Origem
+@Control Auditoria
+@Control Sessao
+try {
+  Origem.baixar()
+} catch (Timeout e) {
+  Coleta.reagendar(e)
+} catch (FormatoInvalido e) {
+  Auditoria.registrar(e)
+} finally {
+  Sessao.liberar()
+}
+try {
+  Auditoria.enviarResumo()
+} catch {
+  Auditoria.guardarLocal()
+}
+```
+
+**Leia assim:** `try`, vários `catch` e `finally` tornam visíveis as consequências de uma falha. O parâmetro de `catch` é opcional.
+
+**Adapte:** Separe retentativa de descarte. Registre limites e idempotência fora do desenho; uma chamada de recuperação também pode falhar.
+
+### ZenUML: referências a outras interações
+
+**Pergunta:** Como reutilizar um fluxo conhecido sem repetir cada mensagem?
+
+<!-- zenuml-example: zen-reference capability=reference -->
+```zenuml
+title Publicação com dependências
+@Control Publicacao
+@Control Identidade
+ref(Autenticacao)
+Publicacao.preparar()
+ref(ValidacaoDeFontes, RevisaoPorPares)
+Publicacao.concluir()
+```
+
+**Leia assim:** `ref` dá nome a outra interação ou a mais de uma. O nome é uma referência de leitura; o Scriba não busca, executa nem incorpora automaticamente outro arquivo por causa dele.
+
+**Adapte:** Acrescente um link Markdown para a especificação correspondente no texto da nota.
+
+### ZenUML: divisores e comentários
+
+**Pergunta:** Que observações e mudanças de fase ajudam a interpretar a coleta?
+
+<!-- zenuml-example: zen-notes capability=notes -->
+```zenuml
+title Fases com observações
+@Control Coleta
+@Control Curadoria
+== Preparação ==
+// A autorização da fonte é verificada antes da coleta.
+Coleta.verificarAutorizacao()
+== Revisão ==
+// O comentário pertence à próxima mensagem.
+Curadoria.revisar() // A anotação não executa uma política.
+Curadoria.registrarParecer()
+```
+
+**Leia assim:** O divisor começa com `==` na **coluna zero**. Comentários `//` são associados à próxima instrução e podem aparecer como observação no desenho.
+
+**Adapte:** Use comentários para explicar decisões, não para guardar segredos. Eles continuam presentes na nota e podem aparecer no SVG exportado.
+
+### ZenUML: iniciador explícito
+
+**Pergunta:** Quem inicia a interação quando a ordem visual das colunas é diferente?
+
+<!-- zenuml-example: zen-starter capability=starter -->
+```zenuml
+title Revisora como iniciadora
+@Database Catalogo
+@Control Curadoria
+@Actor Revisora
+@starter(Revisora)
+Curadoria.reabrir("EV-42") {
+  Catalogo.lerHistorico()
+  return historico
+}
+```
+
+**Leia assim:** `@Starter` e `@starter` definem o chamador externo pelo identificador. Declarar primeiro o banco não significa que ele iniciou a revisão.
+
+**Adapte:** Evite colocar esse iniciador também como destino inicial sem intenção: isso pode criar uma autochamada.
+
+### ZenUML: serviços AWS
+
+**Pergunta:** Como um evento de revisão atravessa computação, fila e armazenamento?
+
+<!-- zenuml-example: zen-aws capability=aws -->
+```zenuml
+title Evento de revisão na AWS
+@Lambda Funcao as "Validar revisão"
+@SQS Fila as "Fila de indexação"
+@S3 Arquivo as "Fontes originais"
+@RDS Catalogo as "Metadados"
+Funcao.validar() {
+  Arquivo.ler()
+  Catalogo.gravar()
+  Fila: revisaoConcluida EV-42
+}
+```
+
+**Leia assim:** As anotações escolhem ícones locais de participantes. A interação continua sendo um diagrama de sequência; não é um mapa de rede, uma implantação automática nem uma medição de latência.
+
+**Adapte:** Troque o fornecedor somente quando isso importar para o contrato. Os ícones preservam a identidade visual fornecida pela biblioteca.
+
+### ZenUML: Azure e Google Cloud
+
+**Pergunta:** Como mostrar uma integração entre serviços de fornecedores distintos?
+
+<!-- zenuml-example: zen-cloud capability=cloud -->
+```zenuml
+title Integração entre serviços cloud
+@AzureFunction Entrada as "Função de entrada"
+@AzureSQL Registro as "Registro de operações"
+@PubSub Eventos as "Eventos de pesquisa"
+@CloudStorage Objetos as "Documentos"
+Entrada.receber() {
+  Registro.gravar()
+  Objetos.armazenar()
+  Eventos: documentoRecebido
+}
+```
+
+**Leia assim:** O catálogo inclui vetores Azure e Google Cloud, além dos AWS. Os nomes de anotações são consultados sem diferenciar maiúsculas de minúsculas.
+
+**Adapte:** Explique no texto as fronteiras de confiança, credenciais e dados compartilhados. Um ícone não comprova configuração ou interoperabilidade.
+
+### ZenUML: componentes de infraestrutura
+
+**Pergunta:** Que componentes genéricos participam da publicação do catálogo?
+
+<!-- zenuml-example: zen-infrastructure capability=infrastructure -->
+```zenuml
+title Publicar o catálogo
+@Browser Portal
+@API Servico
+@PostgreSQL Banco
+@Redis Cache
+@ApacheKafka Eventos
+Portal -> Servico.publicar() {
+  Banco.gravar()
+  Cache.invalidar()
+  Eventos: catalogoPublicado
+  return publicado
+}
+```
+
+**Leia assim:** O pacote também inclui componentes de aplicação e infraestrutura, como navegador, API, bancos e broker. Não é necessário usar exclusivamente símbolos UML ou cloud.
+
+**Adapte:** Separe o papel de um componente de seu produto específico. Use `@Database` quando o fornecedor não for relevante.
+
+### ZenUML: identificadores Unicode
+
+**Pergunta:** Como manter nomes compreensíveis para uma equipe que documenta em português?
+
+<!-- zenuml-example: zen-unicode capability=unicode -->
+```zenuml
+title Revisão em português
+@Actor Pesquisadora as "Pesquisadora responsável"
+@Control Curadoria as "Curadoria do acervo"
+@Database Catálogo
+@Starter(Pesquisadora)
+Pesquisadora -> Curadoria.revisarEvidência("EV-42") {
+  Catálogo.buscarReferências("memória urbana")
+  return "parecer disponível"
+}
+```
+
+**Leia assim:** Nomes, métodos e rótulos podem conter letras Unicode. Aspas delimitam rótulos com espaços. O título é uma diretiva do começo do bloco; `title.metodo()` é uma chamada, não um título.
+
+**Adapte:** Use identificadores curtos e aliases para rótulos extensos. A linguagem também aceita emoji Unicode e shortcodes `[nome]`; este manual prefere rótulos e ícones vetoriais para manter leitura e exportação consistentes. A cobertura de glifos varia conforme a fonte disponível.
+
+### ZenUML: delimitadores de arquivos importados
+
+**Pergunta:** Como aproveitar uma interação recebida com delimitadores de outro editor?
+
+<!-- zenuml-example: zen-wrappers capability=wrappers -->
+```zenuml
+@startzenuml
+!theme plain
+title Interação importada
+@Actor Revisora
+@Control Curadoria
+Revisora -> Curadoria.revisar("EV-42")
+@endzenuml
+```
+
+**Leia assim:** `@startzenuml` / `@endzenuml` e os aliases `@startuml` / `@enduml` são delimitadores tolerados e ignorados pelo parser. Uma linha `!theme ...` na coluna zero também é ignorada; o Scriba continua acompanhando seu próprio tema.
+
+**Adapte:** Os delimitadores não traduzem a linguagem PlantUML. O conteúdo entre eles ainda precisa ser ZenUML. Uma sequência PlantUML completa com comandos diferentes deve ser adaptada antes de renderizar.
+
+### ZenUML: caso completo — publicação resiliente
+
+**Pergunta:** Como publicar uma revisão com alternativas, validação concorrente e recuperação?
+
+<!-- zenuml-example: zen-complete capability=complete -->
+```zenuml
+title Publicação resiliente no Acervo Aurora
+group "Experiência" {
+  @Actor Revisora
+  @Boundary Portal
+}
+group "Curadoria" {
+  @Control Servico as "Serviço de curadoria"
+  @Database Catalogo as "Catálogo"
+  @Queue Eventos
+}
+@Starter(Revisora)
+Revisora -> Portal.publicar("EV-42") {
+  Servico.preparar("EV-42") {
+    par {
+      Catalogo.verificarFonte()
+      Catalogo.verificarPermissoes()
+    }
+    if (revisao.aprovada()) {
+      try {
+        critical (versão da evidência) {
+          Catalogo.gravarRevisao()
+        }
+        Eventos: revisaoPublicada EV-42
+        return "publicada"
+      } catch (VersaoDivergente e) {
+        return "revisar alterações concorrentes"
+      } finally {
+        Servico.registrarTentativa()
+      }
+    } else {
+      return "aguardando revisão"
+    }
+  }
+}
+```
+
+**Leia assim:** Grupos delimitam responsabilidades; `par` reúne verificações; `if` decide o caminho; `critical` marca a escrita exclusiva; `try/catch/finally` explicita recuperação e registro. A numeração hierárquica do motor ajuda a acompanhar chamadas aninhadas, mas não é uma linha do tempo medida.
+
+**Adapte:** Recorte o diagrama se a equipe precisar discutir somente a autorização, o conflito de versão ou o evento. Preserve a pergunta, os resultados possíveis e uma explicação em texto.
+
+### ZenUML: catálogo de anotações vetoriais
+
+`@Nome Identificador as "Rótulo"` escolhe um tipo de participante. O pacote 4.7.2 distribui os vetores listados abaixo; o Scriba os inclui no aplicativo, inclusive o catálogo cloud carregado sob demanda. O cache offline inclui esse catálogo. Uma anotação fora da lista mantém seu rótulo textual. `@Collections` é reconhecida pela sintaxe, mas não tem vetor próprio nesta saída SVG.
+
+**Papéis UML e atalhos locais:** `@Actor`, `@Boundary`, `@Control`, `@Entity`, `@Database`, `@Queue`, `@EC2`, `@IAM`, `@Lambda`, `@SNS`, `@SQS`, `@AzureFunction`, `@Cognito`, `@ElasticBeanstalk`, `@Kinesis`, `@Lightsail` e `@SageMaker`.
+
+<!-- zenuml-icon-catalog:start -->
+
+| Grupo | Anotações do pacote |
+| --- | --- |
+| AWS · IoT | `@awsiotlora`, `@awsiotgreengrasscomponent`, `@awsiotthingcoffeepot`, `@awsiotlambda`, `@awsiotthingwindfarm`, `@awsiotthingvibrationsensor`, `@awsiotdevicedefenderjobs`, `@awsiotdevicemanagementfleethub`, `@awsiottopic`, `@awsiotcertificate`, `@awsiotthingrelay`, `@awsiotanalyticschannel` |
+| AWS · IoT (continuação) | `@awsiotthingcamera`, `@awsiotthingdoorlock`, `@awsiotpolicy`, `@awsiotthingfreertos`, `@awsiotsitewiseassetproperties`, `@awsiotthingtempvibrationsensor`, `@awsiotthingplc`, `@awsiotaction`, `@awsiotalexavoice`, `@awsiotalexaenabled`, `@awsiotthingutility`, `@awsiotactuator` |
+| AWS · IoT (continuação) | `@awsiotthingtempsensor`, `@awsiothttpprotocol`, `@awsiotcoredevicelocation`, `@awsiotalexaskill`, `@awsiotanalyticsnotebook`, `@awsiothardwareboard`, `@awsiotthingcar`, `@awsiotthinglightbulb`, `@awsiotsitewiseasset`, `@awsiotsitewisedatastreams`, `@awsiotgreengrasscomponentnucleus`, `@awsiotthinghouse` |
+| AWS · IoT (continuação) | `@awsiotoverairupdate`, `@awsiotthingbank`, `@awsiotsensor`, `@awsiotsitewiseassethierarchy`, `@awsiotgreengrassartifact`, `@awsiotthingtravel`, `@awsiotmqttprotocol`, `@awsiotshadow`, `@awsiotfiretv`, `@awsiotgreengrassconnector`, `@awsiotgreengrassipc`, `@awsiothttp2protocol` |
+| AWS · IoT (continuação) | `@awsiotfiretvstick`, `@awsiotcoredeviceadvisor`, `@awsiotthingindustrialpc`, `@awsiotdesiredstate`, `@awsiotecho`, `@awsiotgreengrassrecipe`, `@awsiotgreengrasscomponentprivate`, `@awsiotgreengrassstreammanager`, `@awsiotthingmedicalemergency`, `@awsiotthingthermostat`, `@awsiotsitewiseassetmodel`, `@awsiotthingstacklight` |
+| AWS · IoT (continuação) | `@awsiotthingtemphumiditysensor`, `@awsiotgreengrasscomponentpublic`, `@awsiotsailboat`, `@awsiotrule`, `@awsiotthingbicycle`, `@awsiotreportedstate`, `@awsiotsimulator`, `@awsiotthingpoliceemergency`, `@awsiotanalyticsdatastore`, `@awsiotdevicetester`, `@awsiotanalyticspipeline`, `@awsiotthingfactory` |
+| AWS · IoT (continuação) | `@awsiotthinghumiditysensor`, `@awsiotgreengrassprotocol`, `@awsiotservo`, `@awsiotanalyticsdataset`, `@awsiotgreengrassmachinelearning`, `@awsiotthinggeneric`, `@awsiotdevicegateway`, `@awsiotthingcart` |
+| AWS · Machine Learning | `@amazonrekognitionvideo`, `@amazonsagemakermodel`, `@amazonsagemakeranalyzelending`, `@amazonsagemakershadowtesting`, `@amazondevopsguruinsights`, `@amazonsagemakernotebook`, `@amazonsagemakercanvas`, `@amazonsagemakertrain`, `@amazonsagemakergeospatialml`, `@amazonrekognitionimage` |
+| AWS · Quantum Technologies | `@amazonbraketsimulator`, `@amazonbraketnoisesimulator`, `@amazonbraketchip`, `@amazonbraketsimulator1`, `@amazonbraketmanagedsimulator`, `@amazonbraketsimulator3`, `@amazonbraketchandelier`, `@amazonbrakettensornetwork`, `@amazonbraketsimulator4`, `@amazonbraketqpu`, `@amazonbraketstatevector`, `@amazonbraketsimulator2` |
+| AWS · Analytics | `@amazonopensearchobservability`, `@amazonredshiftra3`, `@amazonredshiftstreaming`, `@amazonemrengine`, `@amazonredshiftqueryeditor`, `@redshift`, `@amazonehrhdfscluster`, `@amazonmskconnect`, `@awsgluedatacatalog`, `@amazondatzonedataportal`, `@amazondatzonebusinessdatacatalog`, `@amazondatzonedataprojects` |
+| AWS · Analytics (continuação) | `@amazonredshiftdensestorage`, `@awsgluedataquality`, `@awsgluecrawler`, `@amazonquicksightreports`, `@awslakeformationdatalake`, `@amazonopensearchultrawarm`, `@amazoncloudsearchsearchdocuments`, `@amazonopensearchingestion`, `@amazonathenadatasource`, `@amazonopensearchadminnode`, `@amazonopensearchdashboards`, `@amazonopensearchindex` |
+| AWS · Analytics (continuação) | `@awsglueray`, `@amazonredshiftdatasharing`, `@amazonredshiftautocopy`, `@amazonredshiftdensecompute`, `@amazonredshiftml`, `@amazonopensearchtraces`, `@amazonemrcluster`, `@amazonopensearchdatanode`, `@awsdataexchangeapi` |
+| AWS · End User Computing | `@amazonworkspaces`, `@amazonworkspacescore`, `@amazonworkspacesweb` |
+| AWS · Security Identity Compliance | `@awsdirservicesimplead`, `@awswafbadbot`, `@awsidentityaccesssts`, `@awsidentityaccessaddon`, `@amazoninspectoragent`, `@awsidentityaccessdataencryption`, `@awsidentityaccessmfatoken`, `@awsdirserviceadconnector`, `@awsidentityaccesspermissions`, `@awswaflabels`, `@awscertmgrca`, `@awsidentityaccessstsalt` |
+| AWS · Security Identity Compliance (continuação) | `@awsdirservicemanagedmsad`, `@awssecurityhubfinding`, `@awswafrule`, `@awsidentityaccessrole`, `@awsidentityaccesslongtermcredential`, `@awsidentityaccesstempcredential`, `@awswaffilteringrule`, `@awswafbot`, `@awsshieldadvanced`, `@awsidentityaccessanalyzer`, `@iam`, `@awswafbotcontrol` |
+| AWS · Security Identity Compliance (continuação) | `@awsidentityaccessrolesanywhere`, `@awsidentityaccessdataencryptionkey`, `@awsnetworkfirewallendpoints`, `@awswafmanagedrule`, `@awskeymanagementexternalkeystore` |
+| AWS · Blockchain | `@amazonblockchain` |
+| AWS · Application Integration | `@amazoneventbridgesaas`, `@amazoneventbridgeschema`, `@amazonmqbroker`, `@amazoneventbridgeschemaregistry`, `@amazoneventbridgedefaultbus`, `@amazonsnsnotification`, `@amazoneventbridgeevent`, `@amazonnshttpnotification`, `@amazoneventbridgepipes`, `@amazoneventbridgerule`, `@amazonapigatewayendpoint`, `@amazoneventbridgescheduler` |
+| AWS · Application Integration (continuação) | `@amazonsqsqueue`, `@sqs`, `@amazonsqsmessage`, `@amazoneventbridgecustomeventbus`, `@amazonsnstopic`, `@sns` |
+| AWS · Management Governance | `@awsssmpatchmanager`, `@awscloudformationtemplate`, `@awsopsworkslayers`, `@amazoncloudwatchmetricsinsights`, `@amazoncloudwatchdataprotection`, `@amazoncloudwatchalarm`, `@awstrustedadvisorchecksecurity`, `@awstrustedadvisorcheckperformance`, `@amazoncloudwatchrule`, `@awsopsworksresources`, `@amazoncloudwatcheventtime`, `@awsorgsmanagementaccount` |
+| AWS · Management Governance (continuação) | `@awslicensemanagerlicenseblending`, `@amazoncloudwatcheventevent`, `@amazoncloudwatchsynthetics`, `@awsssmstatemanager`, `@awscloudformationstack`, `@awsopsworksinstances`, `@awsssmruncommand`, `@awsopsworksdeployments`, `@awsssmautomation`, `@awsssmchangecalendar`, `@awsorgsorganizationalunit`, `@awsssmsessionmanager` |
+| AWS · Management Governance (continuação) | `@awstrustedadvisorcheckcost`, `@awsopsworksstack2`, `@awslicensemanagerapplicationdiscovery`, `@awsssmopscenter`, `@awsssminventory`, `@awsopsworkspermissions`, `@awsopsworksapps`, `@awscloudformationchangeset`, `@awsssmdocuments`, `@awsssmapplicationmanager`, `@awsorgsaccount`, `@awscloudtrailcloudtraillake` |
+| AWS · Management Governance (continuação) | `@awsssmmaintenancewindows`, `@awssmmincidentmanager`, `@amazoncloudwatchevidently`, `@amazoncloudwatchrum`, `@awsssmparameterstore`, `@amazoncloudwatchlogs`, `@cloudwatch`, `@awsssmchangemanager`, `@awsopsworksmonitoring`, `@awsssmcompliance`, `@awsssmdistributor`, `@amazoncloudwatchobservability` |
+| AWS · Management Governance (continuação) | `@awstrustedadvisorcheckfault`, `@awstrustedadvisorchecklist` |
+| AWS · Networking Content Delivery | `@amazonroute53routetable`, `@amazoncloudfrontdistribution`, `@amazonroute53routingcontrols`, `@amazonroute53arc`, `@amazonvpctrafficmirroring`, `@amazonvpcreachabilityanalyzer`, `@awscloudmapnamespace`, `@awstransitgatewayattachment`, `@amazonvpcigw`, `@amazoncloudfrontedgelocation`, `@awscloudwansegmentnetwork`, `@awscloudmapservice` |
+| AWS · Networking Content Delivery (continuação) | `@awsappmeshvirtualrouter`, `@amazonvpcendpoints`, `@amazonvpcvpnconnection`, `@amazoncloudfrontstreaming`, `@amazonvpcpeering`, `@amazonroute53resolverdnsfirewall`, `@amazonroute53hostedzone`, `@amazonvpcvpngateway`, `@amazoncloudfrontfunctions`, `@cloudfront`, `@amazoneaelasticnetworkadapter`, `@awsappmeshvirtualgateway` |
+| AWS · Networking Content Delivery (continuação) | `@amazonroute53resolverlogging`, `@elasticlbclassic`, `@amazonroute53resolver`, `@awscloudwancorenetworkedge`, `@awsappmeshvirtualservice`, `@amazonvpcflowlogs`, `@awscloudmapresource`, `@awsdirectconnectgateway`, `@amazonvpcnetworkaccessanalyzer`, `@elasticlbapp`, `@amazonvpcvpc`, `@vpc` |
+| AWS · Networking Content Delivery (continuação) | `@amazonvpccarriergateway`, `@amazoneaelasticnetworkinterface`, `@awscloudwanrouteattachment`, `@amazonroute53readiness`, `@awsappmeshvirtualnode`, `@elasticlbgateway`, `@amazonvpcrouter`, `@awsappmeshmesh`, `@amazonvpcnatgateway`, `@amazonvpcnetworkacl`, `@amazonvpccustomer`, `@elasticlbnetwork` |
+| AWS · Storage | `@amazons3replication`, `@amazons3onezone`, `@awsbackuplegalhold`, `@awsstoragegateaway`, `@amazonefsstandard`, `@efs`, `@elasticfilesystem`, `@amazons3bucket`, `@s3`, `@awsstoragegateawayfile`, `@awsfsxfile`, `@amazons3glacierinstant` |
+| AWS · Storage (continuação) | `@amazonfilecache`, `@amazons3standardia`, `@amazons3generalaccess`, `@amazons3lambda`, `@amazons3objectlock`, `@awsbackupvirtualmachine`, `@amazonec2gp3`, `@amazonefsfilesys`, `@awssnowballimportexport`, `@amazons3object`, `@awsbackupcache`, `@amazons3lambdaobject` |
+| AWS · Storage (continuação) | `@awsbackupgateway`, `@awsbackuprto`, `@awsbackupvaultlock`, `@awsbackupvirtualtape`, `@amazonebsdatalifecycle`, `@awsbackupplan`, `@amazonfilecaches3`, `@awsbackupcloudformation`, `@awsbackuptapegateway`, `@awsbackupvmware`, `@amazonefsonezoneia`, `@amazons3replicationtime` |
+| AWS · Storage (continuação) | `@awsbackupstorage`, `@amazonefsintelligenttiering`, `@amazons3glacierdeep`, `@amazons3select`, `@amazons3outposts`, `@awsfilegateway`, `@amazons3glacier`, `@awsbackupvmmonitor`, `@amazons3multiregion`, `@awsbackupvault`, `@awsbackupauditmanager`, `@amazonfilecachehybridnfs` |
+| AWS · Storage (continuação) | `@amazonefselasticthroughput`, `@awsbackupawsbackupfors3`, `@amazons3standard`, `@amazonefsonezone`, `@awsstoragegateawayvolume`, `@awsbackuprestore`, `@amazonebsvolumes`, `@amazons3lens`, `@awsbackupcompute`, `@amazonvpclogs`, `@amazons3batch`, `@amazonefsinfrequent` |
+| AWS · Storage (continuação) | `@amazons3tiering`, `@awsbackuprpo`, `@awsbackupcompliance`, `@amazonebssnapshot`, `@awsbackupdatabase`, `@awsbackupfsx`, `@amazons3glacierflex`, `@glacier`, `@s3glacier`, `@amazons3bucketobject`, `@amazonebsvolume`, `@ebs` |
+| AWS · Storage (continuação) | `@amazons3vault` |
+| AWS · Containers | `@amazoneksoutposts`, `@amazonecscontainer2`, `@amazonecrimage`, `@amazonecstask`, `@amazonecsservice`, `@amazonecscontainer1`, `@amazonecrregistry`, `@amazonecscontainer3`, `@ecs`, `@amazonecscopilotcli`, `@amazonecsserviceconnect` |
+| AWS · Compute | `@amazonec2extractor`, `@amazonec2ami`, `@awselasticbeanstalkdeployment`, `@awslambdafunction`, `@lambda`, `@amazonec2instance`, `@ec2`, `@amazonec2autoscaling`, `@amazonec2spotinstance`, `@awselasticbeanstalkapp`, `@amazonec2instancecloudwatch`, `@amazonec2rescue` |
+| AWS · Compute (continuação) | `@amazonec2instances`, `@amazonec2dbinstance`, `@amazonec2elasticip` |
+| AWS · Database | `@amazonrdsoptimizedwrites`, `@amazondynamodbtblclass`, `@amazonrdsinstancealternate`, `@amazondynamodbattributes`, `@amazonrdsauroramysqlalternative`, `@amazondynamodbitem`, `@amazonrdsaurorapgsqlalt`, `@amazondynamodbitems`, `@amazonrdsauroraalternate`, `@amazonrdsaurorasqlalt`, `@amazonrdsinstance`, `@rds` |
+| AWS · Database (continuação) | `@amazonrdsmultiaz`, `@amazondocdbelasticclusters`, `@amazonrdstrustedextpgsql`, `@amazonrdsaurorasql`, `@amazondynamodbglobal`, `@amazonrdsoracle`, `@amazonrdsoraclealternate`, `@amazondynamodbstream`, `@amazonrdstrustedpgsql`, `@amazondax`, `@amazonelasticache4redis`, `@elasticache` |
+| AWS · Database (continuação) | `@amazonrdsproxy`, `@amazondynamodbaccesstable`, `@amazonrdsauroramysql`, `@amazonrdspiops`, `@awsdbmigrationserviceworkflow`, `@amazondynamodbattribute`, `@amazonrdsbluegreendeploy`, `@amazondynamodbtable`, `@dynamodb`, `@amazonrdsaurorainstance`, `@amazonrdsauroradbinstance`, `@amazonelasticache4memcached` |
+| AWS · Database (continuação) | `@amazonrdsproxyalternate`, `@amazonrdsaurorapgsql`, `@amazonrdsauroradbinstancealternate`, `@amazonelasticachecachenode`, `@amazonrdsmultiazcluster` |
+| AWS · Migration Transfer | `@awstransferfamilyftps`, `@awstransferfamilysftp`, `@awsmainframemodruntime`, `@awstransferfamilyftp`, `@awsmigrationhubrefactor`, `@awsmainframemoddeveloper`, `@awsdiscoveryagent`, `@awsmainframemodcompiler`, `@awsmigrationhubrefactorapp`, `@awsdiscoveryagentlesscollector`, `@awsmainframemodanalyzer`, `@awsdatasyndiscovery` |
+| AWS · Migration Transfer (continuação) | `@awsmigrationhubrefactorservice`, `@awsdatasyngagent`, `@awsmainframemodconverter`, `@awstransferfamilyas2`, `@awsdiscoverymigrationevaluator` |
+| AWS · Media Services | `@awscloudinterface`, `@awsmediaconnectgateway` |
+| AWS · Robotics | `@awsrobomakercloudextensions`, `@awsrobomakersimulation`, `@awsrobomakerfleetmanagement`, `@awsrobomakerdevenv` |
+| AWS · Front End Web Mobile | `@awsamplifystudio`, `@amazonlocationmap`, `@amazonlocationplace`, `@amazonlocationtrack`, `@amazonlocationgeofence`, `@amazonlocationroutes` |
+| AWS · Developer Tools | `@awscloud9` |
+| AWS · Business Applications | `@amazonemailservice`, `@amazonpinpointjourney` |
+| Azure | `@azureactivedirectory`, `@azurebackup`, `@azurecdn`, `@azuredatafactory`, `@azuredevops`, `@azurefunction`, `@azuresql`, `@cosmosdb`, `@logicapps`, `@virtualmachine` |
+| Google Cloud | `@bigtable`, `@bigquery`, `@cloudcdn`, `@clouddns`, `@cloudinterconnect`, `@cloudloadbalancing`, `@cloudsql`, `@cloudstorage`, `@datalab`, `@dataproc`, `@googleiam`, `@googlesecurity` |
+| Google Cloud (continuação) | `@googlevpc`, `@pubsub`, `@securityscanner`, `@stackdriver`, `@visionapi` |
+| Aplicação e infraestrutura | `@client`, `@server`, `@browser`, `@service`, `@controller`, `@api`, `@ui`, `@mobile`, `@externalsystem`, `@application`, `@loadbalancer`, `@network` |
+| Aplicação e infraestrutura (continuação) | `@cache`, `@webserver`, `@messagequeue`, `@scheduler`, `@gateway`, `@authenticationservice`, `@mailserver`, `@github`, `@docker`, `@gitlab`, `@jenkins`, `@postgresql` |
+| Aplicação e infraestrutura (continuação) | `@mongodb`, `@kubernetes`, `@apachekafka`, `@elasticsearch`, `@auth0`, `@redis` |
+
+<!-- zenuml-icon-catalog:end -->
+
+### ZenUML: limites e portabilidade
+
+- **Gramática própria:** `A.metodo()` e `A -> B: evento` são ZenUML. `A->>B: evento`, `alt`, `end`, `activate` e `deactivate` pertencem à sintaxe `sequenceDiagram` do Mermaid e não são intercambiáveis.
+- **Leitura em outro produto:** um leitor Markdown sem integração ZenUML exibe a cerca como código. Para compartilhar somente o desenho, use SVG ou PNG.
+- **Retornos e ativações:** use chaves e `return` para documentar a pilha de chamadas. Não há neste adaptador comandos de duração medida, animação, simulação, destruição de instância ou execução do pseudocódigo.
+- **Temas:** o Scriba acompanha seus temas claro e escuro usando tokens do aplicativo; os temas próprios `default`, `mermaid`, `clean-light`, `clean-dark` e `neon` da biblioteca não são opções extras na interface. O fundo externo da exportação é transparente; caixas e fragmentos mantêm seus preenchimentos.
+- **Cores autorais:** a linguagem aceita hexadecimal ao fim de uma declaração de participante. Use com cuidado: uma cor escolhida para o tema claro pode perder contraste no escuro. Os exemplos preferem os tokens do Scriba.
+- **Segurança e recursos:** não há HTML bruto, scripts, imagens remotas ou links executáveis no SVG. O Scriba aplica o mesmo sanitizador dos outros motores e mantém o limite de 50 mil caracteres por bloco. Ícones e a fonte IBM Plex Sans são recursos locais distribuídos com o pacote.
+- **Fonte nos arquivos exportados:** o SVG e a rasterização PNG incorporam a fonte local do motor para preservar suas medidas fora do aplicativo. IBM Plex Sans usa licença SIL OFL 1.1; o pacote ZenUML usa MIT. O catálogo mantém a identidade visual dos ícones de seus fornecedores.
+- **Erros de sintaxe:** o Scriba mostra a linha e coluna informadas pelo parser e mantém o botão Código disponível. O parser upstream tolera algumas entradas incompletas; isso não torna todo pseudocódigo válido.
+- **Cobertura:** estes exemplos cobrem as famílias de construções documentadas, seus principais aliases e três grupos de ícones. O catálogo enumera as anotações; não promete todas as combinações de posicionamento, texto e símbolos. O `for` com três expressões separadas por `;` é a incompatibilidade medida descrita acima.
+
+<!-- scriba-extension:zenuml-v1:end -->

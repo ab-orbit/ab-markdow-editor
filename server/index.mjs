@@ -88,7 +88,7 @@ const server = http.createServer(async (req, res) => {
     const relative = decodeURIComponent(url.pathname).slice(1);
     if (relative.split('/').some(part => part === '..' || part.startsWith('.')) || relative.includes('\\')) return send(res, 404, { error: 'Arquivo inválido.' });
     const file = await fs.readFile(path.join(dist, relative));
-    const mime = { '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json', '.html': 'text/html; charset=utf-8' }[path.extname(relative)] || 'application/octet-stream';
+    const mime = { '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json', '.html': 'text/html; charset=utf-8' }[path.extname(relative)] || 'application/octet-stream';
     if (relative === 'sw.js') { res.setHeader('Service-Worker-Allowed', '/'); res.setHeader('Cache-Control', 'no-cache'); }
     res.writeHead(200, { 'Content-Type': mime }); res.end(file);
   } catch (error) { send(res, error.code === 'DOCUMENT_CONFLICT' ? 409 : 400, { error: error.code === 'ENOENT' ? 'Arquivo ou pasta não encontrado.' : error.message, ...(error.conflict ? { code: error.code, conflict: error.conflict } : {}) }); }

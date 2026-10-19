@@ -108,11 +108,13 @@ Limites: 5 MB de texto, 10 MB por imagem, 40 MB de imagens e 50 imagens por docu
 
 Blocos de código `mermaid` viram diagramas em **Ler**, **Visão** e na prévia de **Escrever**. Sobre cada desenho, o seletor permite alternar entre **Mermaid**, **Pele** e **Beautiful Mermaid** para comparar a apresentação. A escolha é independente por bloco e fica neste navegador; o arquivo Markdown permanece intacto. O lápis revela o código original.
 
+Blocos **`zenuml`** e blocos **`mermaid` iniciados por `zenuml`** usam automaticamente **@zenuml/core 4.7.2**, com SVG nativo, numeração de mensagens, fonte local e ícones vetoriais cloud. As licenças distribuídas estão em `public/licenses/`. É uma linguagem própria de sequência. O motor compartilha zoom, lupa, código, cópia e exportação; não converte automaticamente `sequenceDiagram` para ZenUML. A [seção dedicada do manual](docs/Scriba-Diagramas.md#zenuml--interações-descritas-como-código) apresenta chamadas, eventos, retornos, grupos, criação, condições, laços, concorrência, regiões críticas e exceções. Veja a [validação no navegador](docs/evidence/zenuml/README.md).
+
 Mermaid é o padrão. Beautiful Mermaid tem cobertura menor e avisa quando o tipo não é suportado, mantendo o seletor disponível. Os três funcionam offline depois que a PWA conclui seu cache. Veja [exemplos](examples/diagramas.md), [detalhes](docs/DIAGRAMS.md) e [capturas/testes](docs/evidence/DIAGRAMS.md).
 
-O botão **Lupa** amplia em **2×** a região sob o mouse sem redesenhar o diagrama. No toque, arraste o dedo; no teclado, use Tab e as setas. **Esc** ou o mesmo botão desativa a lupa. Funciona nos três motores, em Ler, Visão e Escrever.
+O botão **Lupa** amplia em **2×** a região sob o mouse sem redesenhar o diagrama. No toque, arraste o dedo; no teclado, use Tab e as setas. **Esc** ou o mesmo botão desativa a lupa. Funciona em Mermaid, Pele, Beautiful Mermaid e ZenUML, em Ler, Visão e Escrever.
 
-A **roda do mouse** amplia o desenho de 100% a 600%, mantendo o ponto sob o ponteiro. Arraste para navegar; **−**, **+** e o percentual oferecem os mesmos controles por toque/teclado. Clique no percentual para ajustar à largura. O zoom reutiliza o SVG existente. **Ver código** abre um painel com destaque de sintaxe Mermaid, fundo distinto e **Copiar**. O botão **Baixar diagrama** oferece **SVG vetorial** ou **PNG transparente**: exporta o desenho inteiro, com o estilo do renderizador escolhido, independentemente do zoom. Essas ações não alteram nem salvam a nota. Veja as [capturas e a validação](docs/evidence/reading-experience/README.md).
+A **roda do mouse** amplia o desenho de 100% a 600%, mantendo o ponto sob o ponteiro. Arraste para navegar; **−**, **+** e o percentual oferecem os mesmos controles por toque/teclado. Clique no percentual para ajustar à largura. O zoom reutiliza o SVG existente. **Ver código** abre um painel com destaque de sintaxe Mermaid ou ZenUML, fundo distinto e **Copiar**. O botão **Baixar diagrama** oferece **SVG vetorial** ou **PNG transparente**: exporta o desenho inteiro, com o estilo do renderizador escolhido, independentemente do zoom. Essas ações não alteram nem salvam a nota. Veja as [capturas e a validação](docs/evidence/reading-experience/README.md).
 
 
 ## Desenvolvimento e testes
@@ -192,10 +194,12 @@ The account login button requires one-time activation of the organization's GitH
 
 ## Contextual diagram reference
 
-[Scriba — Manual contextual de diagramas](docs/Scriba-Diagramas.md) is the canonical, versioned Portuguese reference: 58 original examples across 33 Mermaid families (including the `info` diagnostic), with a question, interpretation, adaptation advice and measured compatibility for each example. The manual covers processes, state, data models, C4 architecture, planning, quantitative charts and analytical frameworks.
+[Scriba — Manual contextual de diagramas](docs/Scriba-Diagramas.md) is the canonical, versioned Portuguese reference: 58 original examples across 33 Mermaid families (including the `info` diagnostic), plus 25 ZenUML sequence examples and a catalog of 513 cloud/infrastructure annotation keys, with a question, interpretation, adaptation advice and measured compatibility for each example. The manual covers processes, state, data models, C4 architecture, planning, quantitative charts and analytical frameworks.
 
 Version 1.8 adds an editable pinned copy beside the platform guide, including existing libraries. Browser storage, selected GitHub destinations and the Mac Git checkout each receive their own copy once. Existing unrelated filenames get a numbered alternative; copied references are adopted. Later edits, unpinning and deletion are respected. Local-only repository switches do not trigger an automatic commit or push. The macOS installer includes the canonical source so seeding works offline.
 
 The reference's Unicode index links navigate inside the note. Compare engines, reveal the original source and use the existing magnifier on each drawing. Compatibility is limited to the tested examples, not a guarantee for every grammar combination. [Browser-rendering evidence](docs/evidence/diagram-reference/README.md) records the exact versions and results.
 
 Validation: `npm test`; local build followed by `node tests/diagram-reference.smoke.mjs`; public build followed by `node tests/diagram-reference-browser.smoke.mjs`. The browser checks use isolated storage and test repositories, never real user notes.
+
+ZenUML reference upgrades append the versioned section to an existing owned manual once, preserving previous bytes, annotations and unpinned state. Deleted manuals and user replacements are not restored or overwritten. Browser, device-folder and Git destinations keep their existing save/conflict behavior.

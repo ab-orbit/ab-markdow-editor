@@ -1,14 +1,16 @@
 import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ChevronDown, Pencil, ZoomIn, ZoomOut, Minus, Plus, Code2, Download } from 'lucide-react';
-import { diagramEngines, diagramKey, migrateDiagramEngine, renderDiagram, scopeDiagramSvg, selectedDiagramEngine, setDiagramEngine, subscribeDiagramEngine, type DiagramAppearance, type DiagramEngine, type DiagramResult } from '@/lib/markdown/diagrams';
+import { diagramEngines, diagramKey, migrateDiagramEngine, renderDiagram, scopeDiagramSvg, selectedDiagramEngine, setDiagramEngine, subscribeDiagramEngine, usesZenUml, type DiagramLanguage, type DiagramAppearance, type DiagramEngine, type DiagramResult } from '@/lib/markdown/diagrams';
 import styles from './DiagramBlock.module.css';
 import { ZoomableDiagram, type DiagramZoomHandle } from './ZoomableDiagram';
 import { DiagramSource } from './DiagramSource';
 import { downloadDiagram } from '@/lib/markdown/diagramExport';
 
 interface DiagramBlockProps {
-  /** The parser-provided source inside one Mermaid fence. */
+  /** The parser-provided source inside one diagram fence. */
   source: string;
+  /** Fence dialect; ZenUML remains distinct from Mermaid sequenceDiagram syntax. */
+  language?: DiagramLanguage;
   /** Stable document/block identity keeps duplicate diagrams independently selectable. */
   identity?: string;
   /** Previous offset identity, retained only to migrate presentation preferences. */
@@ -30,7 +32,7 @@ function appearanceAt(element: Element): DiagramAppearance {
 }
 
 /** One source-backed diagram, with presentation controls above the drawing. */
-export const DiagramBlock = memo(function DiagramBlock({ source: originalSource, identity, legacyIdentity, onEdit, onLayout }: DiagramBlockProps) {
+export const DiagramBlock = memo(function DiagramBlock({ source: originalSource, language = 'mermaid', identity, legacyIdentity, onEdit, onLayout }: DiagramBlockProps) {
   // Normalize only the drawing input, never the source stored by the workbench.
   const source = originalSource.replace(/\r\n?/g, '\n').replace(/\n+$/, '');
   const frame = useRef<HTMLElement>(null);
@@ -49,8 +51,10 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
   const [exporting, setExporting] = useState(false), [exportError, setExportError] = useState('');
   const key = diagramKey(identity || source);
   const legacyKey = legacyIdentity ? diagramKey(legacyIdentity) : undefined;
-  const engine = useSyncExternalStore<DiagramEngine>(subscribeDiagramEngine, () => selectedDiagramEngine(key, legacyKey), () => 'mermaid');
+  const preference = useSyncExternalStore<DiagramEngine>(subscribeDiagramEngine, () => selectedDiagramEngine(key, legacyKey), () => 'mermaid');
   useEffect(() => { migrateDiagramEngine(key, legacyKey); }, [key, legacyKey]);
+  const zenuml = usesZenUml(source, language);
+  const engine: DiagramEngine = zenuml ? 'zenuml' : preference === 'zenuml' ? 'mermaid' : preference;
   const definition = diagramEngines.find(item => item.id === engine)!;
   const roundedWidth = Math.max(200, Math.round(width / 8) * 8);
   // CSS-driven renderers keep their SVG across color-theme changes.
@@ -79,7 +83,9 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
 
   useEffect(() => {
     const snapshot = request.current;
-    if (!visible || !width || !snapshot.appearance) return;
+    // Re-entering the viewport must retain this block's SVG and zoom even
+    // after other diagrams have evicted its source from the shared LRU.
+    if (!visible || !width || !snapshot.appearance || drawing?.key === requestKey) return;
     let abandoned = false;
     // Coalesce typing; switching a selector never sets application-wide busy state.
     const timer = window.setTimeout(() => {
@@ -94,7 +100,7 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
       });
     }, 120);
     return () => { abandoned = true; clearTimeout(timer); };
-  }, [requestKey, visible, !!width, instance]);
+  }, [requestKey, visible, !!width, instance, drawing?.key]);
 
   useEffect(() => {
     const measured = requestAnimationFrame(() => { if (frame.current?.isConnected) layout.current?.(); });
@@ -115,26 +121,29 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
     const element = canvas.current?.querySelector<SVGSVGElement>('[data-diagram-drawing] > svg');
     if (!element || exporting) return;
     setExporting(true); setExportError(''); if (exportMenu.current) exportMenu.current.open = false;
-    try { await downloadDiagram(element, format, `diagrama-${engine}`); }
+    try {
+      const font = zenuml ? await (await import('@/lib/markdown/zenuml')).zenUmlExportFont() : '';
+      await downloadDiagram(element, format, `diagrama-${engine}`, font);
+    }
     catch (cause) { setExportError(cause instanceof Error ? cause.message : 'Não foi possível exportar. Tente novamente ou escolha SVG.'); }
     finally { setExporting(false); }
   }
 
-  return <figure ref={frame} className={styles.diagram} data-diagram-engine={engine} data-diagram-state={error ? 'error' : current ? 'ready' : 'loading'} data-diagram-magnifying={magnifying} aria-label="Diagrama Mermaid">
+  return <figure ref={frame} className={styles.diagram} data-diagram-engine={engine} data-diagram-state={error ? 'error' : current ? 'ready' : 'loading'} data-diagram-magnifying={magnifying} aria-label={zenuml ? 'Diagrama ZenUML' : 'Diagrama Mermaid'}>
     <div className={styles.controls} onDoubleClick={event => event.stopPropagation()}>
       {current && <output className={styles.timing} title={`${definition.label} ${definition.version} · tempo de desenho; o primeiro uso pode carregar recursos internos${current.cached ? ' · resultado em cache' : ''}`} aria-label={`Tempo de desenho: ${current.milliseconds.toFixed(1)} milissegundos${current.cached ? ', em cache' : ''}`}>{current.milliseconds < 1 ? '<1' : Math.round(current.milliseconds)} ms</output>}
-      <div className={styles.picker}>
+      {zenuml ? <span className={styles.engineLabel} title="ZenUML 4.7.2 · sintaxe própria de sequência">ZenUML</span> : <div className={styles.picker}>
         <select aria-label="Renderizador do diagrama" value={engine} onChange={event => setDiagramEngine(key, event.target.value as DiagramEngine)}>
-          {diagramEngines.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
+          {diagramEngines.filter(item => item.id !== 'zenuml').map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </select>
         <ChevronDown size={14} aria-hidden="true"/>
-      </div>
+      </div>}
       <button className={`${styles.edit} ${styles.magnifierButton}`} type="button" aria-label={magnifying ? 'Desativar lupa do diagrama' : 'Ativar lupa do diagrama'} title={magnifying ? 'Desativar lupa (Esc)' : 'Lupa 2× · mouse, toque ou teclado'} aria-pressed={magnifying} aria-controls={current ? `${instance}-drawing` : undefined} disabled={!current && !magnifying} onClick={() => setMagnifying(value => !value)}>{magnifying ? <ZoomOut size={16} aria-hidden="true"/> : <ZoomIn size={16} aria-hidden="true"/>}</button>
       {onEdit && <button className={styles.edit} type="button" aria-label="Editar código do diagrama" title="Editar código do diagrama" onClick={onEdit}><Pencil size={15} aria-hidden="true"/></button>}
     </div>
     <div ref={canvas} className={styles.canvas} aria-busy={!current && !error}>
       {current ? <ZoomableDiagram ref={zoomer} svg={current.svg} magnifying={magnifying} id={`${instance}-drawing`} onZoom={setZoom} onLayout={() => layout.current?.()}/>
-        : error ? <div className={styles.failure} role="alert"><strong>{definition.label}</strong><span>{error}</span><span className={styles.help}>Troque o renderizador acima ou edite o código.</span></div>
+        : error ? <div className={styles.failure} role="alert"><strong>{definition.label}</strong><span>{error}</span><span className={styles.help}>{zenuml ? 'Confira as chaves, mensagens e condições no código ZenUML.' : 'Troque o renderizador acima ou edite o código.'}</span></div>
         : <div className={styles.loading} role="status">Preparando {definition.label}…</div>}
     </div>
     <div className={styles.diagramFooter} onDoubleClick={event => event.stopPropagation()}>
@@ -146,6 +155,6 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
       </details>
     </div>
     {exportError && <p className={styles.exportError} role="alert">{exportError}</p>}
-    {codeOpen && <DiagramSource source={originalSource} id={`${instance}-code`} onLayout={() => layout.current?.()}/>}
+    {codeOpen && <DiagramSource source={originalSource} language={zenuml ? 'zenuml' : 'mermaid'} id={`${instance}-code`} onLayout={() => layout.current?.()}/>}
   </figure>;
 });

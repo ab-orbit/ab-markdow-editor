@@ -1,0 +1,240 @@
+{
+  "version": "4.7.2",
+  "testedAt": "2026-10-19T14:03:12.875Z",
+  "browser": "chrome",
+  "mode": "browser",
+  "examples": [
+    {
+      "id": "zen-minimal",
+      "capability": "implicit",
+      "source": "title Consulta ao Acervo Aurora\nCatalogo.buscar(\"história urbana\")\n",
+      "texts": 4,
+      "paths": 3,
+      "width": 316,
+      "height": 201
+    },
+    {
+      "id": "zen-roles",
+      "capability": "participants",
+      "source": "title Papéis na curadoria\n@Actor Pesquisadora\n@Boundary Portal\n@Control Curadoria\n@Entity Evidencia\n@Database Catalogo\n@Collections Colecao\n@Queue Eventos\n@Starter(Pesquisadora)\nPesquisadora -> Portal.enviar(fonte) {\n  Curadoria.validar(fonte) {\n    Evidencia.criar()\n    Catalogo.gravar()\n    Colecao.listar()\n    Eventos: evidenciaRecebida\n  }\n}\n",
+      "texts": 20,
+      "paths": 20,
+      "width": 848.5,
+      "height": 441
+    },
+    {
+      "id": "zen-groups",
+      "capability": "groups",
+      "source": "title Fronteiras da consulta\ngroup \"Experiência\" {\n  @Actor Pessoa as \"Pesquisadora\"\n  @Boundary Portal 150 as \"Portal do acervo\"\n}\ngroup \"Curadoria\" {\n  @Control <<API>> Servico as \"Serviço de busca\"\n  @Database Base as \"Catálogo\"\n}\n@Starter(Pessoa)\nPessoa -> Portal.consultar(termo) {\n  Servico.buscar(termo) {\n    Base.ler(termo)\n    return resultados\n  }\n}\n",
+      "texts": 16,
+      "paths": 13,
+      "width": 610,
+      "height": 317
+    },
+    {
+      "id": "zen-signatures",
+      "capability": "signatures",
+      "source": "title Contrato da consulta\n@Actor Analista\n@Control Busca\n@Database Catalogo\n@Starter(Analista)\nAnalista -> Busca.consultar(String termo, int limite) {\n  String consulta = Busca.normalizar(termo)\n  const resultados = Catalogo.buscar(termo=consulta, limite=20)\n  readonly politica = Busca.configuracao()\n  static versao = Busca.versao()\n  await indice = Busca.carregarIndice()\n  Busca.filtros.aplicar(resultados)\n  return resultados\n}\n",
+      "texts": 22,
+      "paths": 19,
+      "width": 637,
+      "height": 619
+    },
+    {
+      "id": "zen-activation",
+      "capability": "activation",
+      "source": "title Pilha de revisão\n@Actor Revisora\n@Control Curadoria\n@Database Catalogo\n@Starter(Revisora)\nRevisora -> Curadoria.revisar(id) {\n  Curadoria.checarConsistencia() {\n    Curadoria.normalizar()\n    return\n  }\n  Catalogo.buscarFonte(id) {\n    return fonte\n  }\n  return parecer\n}\n",
+      "texts": 17,
+      "paths": 15,
+      "width": 385,
+      "height": 447
+    },
+    {
+      "id": "zen-async",
+      "capability": "async",
+      "source": "title Publicar evento de curadoria\n@Boundary Portal\n@Control Curadoria\n@Queue Eventos\n@Control Indexador\nPortal -> Curadoria: solicitar revisão de EV-42\nCuradoria -> Eventos: evidência revisada EV-42\nEventos -> Indexador: atualizar índice\nIndexador --> Eventos: índice atualizado\nCuradoria --> Portal: revisão recebida\n",
+      "texts": 15,
+      "paths": 12,
+      "width": 663.5,
+      "height": 307
+    },
+    {
+      "id": "zen-return-annotations",
+      "capability": "reply",
+      "source": "title Respostas explícitas\n@Boundary Portal\n@Control Curadoria\nPortal -> Curadoria: revisar EV-42\n@Return Curadoria -> Portal: recebida\nPortal -> Curadoria: consultar andamento\n@Reply Curadoria -> Portal: em revisão\nPortal -> Curadoria: consultar resultado\n@return Curadoria -> Portal: aprovada\n@reply Curadoria -> Portal: operação concluída\n",
+      "texts": 17,
+      "paths": 8,
+      "width": 300.5,
+      "height": 371
+    },
+    {
+      "id": "zen-creation",
+      "capability": "creation",
+      "source": "title Objetos criados durante a revisão\n@Control Curadoria\nCuradoria.iniciar(id) {\n  new Sessao()\n  tarefa = new Tarefa(id)\n  Registro registro = new Registro(id, \"aberto\") {\n    Registro.validar()\n    return registro\n  }\n  return tarefa\n}\n",
+      "texts": 24,
+      "paths": 6,
+      "width": 689.5,
+      "height": 537
+    },
+    {
+      "id": "zen-alternatives",
+      "capability": "conditional",
+      "source": "title Decidir o próximo passo\n@Control Curadoria\n@Control Pesquisa\n@Control Publicacao\nif (fonte.verificada()) {\n  Publicacao.preparar()\n} else if (fonte.recuperavel()) {\n  Pesquisa.complementar()\n} else {\n  Curadoria.devolver(\"fonte ausente\")\n}\n",
+      "texts": 17,
+      "paths": 12,
+      "width": 595.5,
+      "height": 512
+    },
+    {
+      "id": "zen-expressions",
+      "capability": "expressions",
+      "source": "title Guardas da publicação\n@Control Curadoria\n@Control Publicacao\nif (pronto && !cancelado && total >= 1) {\n  if (origem in fontes) {\n    Curadoria.registrar(contagem=42, proporcao=3.14)\n  }\n  opt (tentativas * atraso < timeout) {\n    Curadoria.configurar(espera=500ms, limite=2GB)\n  }\n  if (custo <= $99.99 || patrocinado == true) {\n    Publicacao.agendar(data=null, motivo=\"amostra\")\n  }\n}\n",
+      "texts": 25,
+      "paths": 12,
+      "width": 600.5,
+      "height": 697
+    },
+    {
+      "id": "zen-optional",
+      "capability": "optional",
+      "source": "title Revisão complementar\n@Control Curadoria\n@Actor Especialista\nCuradoria.revisar() {\n  opt (tema sensível) {\n    Especialista.avaliar()\n  }\n  Curadoria.concluir()\n}\n",
+      "texts": 13,
+      "paths": 10,
+      "width": 398,
+      "height": 416
+    },
+    {
+      "id": "zen-loops",
+      "capability": "loops",
+      "source": "title Repetições na coleta\n@Control Coleta\n@Control Curadoria\nwhile (fila.temItens()) {\n  Coleta.lerProximo()\n}\nfor (fonte in fontes) {\n  Curadoria.validar(fonte)\n}\nforeach (evidencia in lote) {\n  Curadoria.anotar(evidencia)\n}\nforEach (revisora in equipe) {\n  Curadoria.notificar(revisora)\n}\nloop (até concluir a revisão) {\n  Curadoria.verificarPendencias()\n}\n",
+      "texts": 33,
+      "paths": 16,
+      "width": 371,
+      "height": 902
+    },
+    {
+      "id": "zen-parallel",
+      "capability": "parallel",
+      "source": "title Complementar o contexto\n@Control Pesquisa\n@Database Arquivo\n@Control Territorio\n@Control Referencias\nPesquisa.complementar() {\n  par {\n    Arquivo.buscarDocumentos()\n    Territorio.buscarIndicadores()\n    Referencias.buscarCitacoes()\n  }\n  Pesquisa.consolidar()\n}\n",
+      "texts": 17,
+      "paths": 19,
+      "width": 698,
+      "height": 498
+    },
+    {
+      "id": "zen-critical",
+      "capability": "critical",
+      "source": "title Publicar uma revisão por vez\n@Control Curadoria\n@Database Catalogo\ncritical (bloqueio da evidência) {\n  Catalogo.lerVersao()\n  Catalogo.gravarRevisao()\n}\nCuradoria.notificarConclusao()\n",
+      "texts": 12,
+      "paths": 13,
+      "width": 428.5,
+      "height": 406
+    },
+    {
+      "id": "zen-sections",
+      "capability": "section",
+      "source": "title Etapas da curadoria\n@Control Coleta\n@Control Curadoria\nsection(Coleta) {\n  Coleta.obterFonte()\n}\nframe(Avaliacao) {\n  Curadoria.verificar()\n}\n{\n  Curadoria.registrarHistorico()\n}\n",
+      "texts": 15,
+      "paths": 12,
+      "width": 372,
+      "height": 516
+    },
+    {
+      "id": "zen-exceptions",
+      "capability": "exceptions",
+      "source": "title Recuperar a coleta\n@Control Coleta\n@Database Origem\n@Control Auditoria\n@Control Sessao\ntry {\n  Origem.baixar()\n} catch (Timeout e) {\n  Coleta.reagendar(e)\n} catch (FormatoInvalido e) {\n  Auditoria.registrar(e)\n} finally {\n  Sessao.liberar()\n}\ntry {\n  Auditoria.enviarResumo()\n} catch {\n  Auditoria.guardarLocal()\n}\n",
+      "texts": 28,
+      "paths": 19,
+      "width": 582,
+      "height": 789
+    },
+    {
+      "id": "zen-reference",
+      "capability": "reference",
+      "source": "title Publicação com dependências\n@Control Publicacao\n@Control Identidade\nref(Autenticacao)\nPublicacao.preparar()\nref(ValidacaoDeFontes, RevisaoPorPares)\nPublicacao.concluir()\n",
+      "texts": 14,
+      "paths": 12,
+      "width": 525,
+      "height": 357
+    },
+    {
+      "id": "zen-notes",
+      "capability": "notes",
+      "source": "title Fases com observações\n@Control Coleta\n@Control Curadoria\n== Preparação ==\n// A autorização da fonte é verificada antes da coleta.\nColeta.verificarAutorizacao()\n== Revisão ==\n// O comentário pertence à próxima mensagem.\nCuradoria.revisar() // A anotação não executa uma política.\nCuradoria.registrarParecer()\n",
+      "texts": 14,
+      "paths": 9,
+      "width": 412,
+      "height": 481
+    },
+    {
+      "id": "zen-starter",
+      "capability": "starter",
+      "source": "title Revisora como iniciadora\n@Database Catalogo\n@Control Curadoria\n@Actor Revisora\n@starter(Revisora)\nCuradoria.reabrir(\"EV-42\") {\n  Catalogo.lerHistorico()\n  return historico\n}\n",
+      "texts": 10,
+      "paths": 9,
+      "width": 388.5,
+      "height": 267
+    },
+    {
+      "id": "zen-aws",
+      "capability": "aws",
+      "source": "title Evento de revisão na AWS\n@Lambda Funcao as \"Validar revisão\"\n@SQS Fila as \"Fila de indexação\"\n@S3 Arquivo as \"Fontes originais\"\n@RDS Catalogo as \"Metadados\"\nFuncao.validar() {\n  Arquivo.ler()\n  Catalogo.gravar()\n  Fila: revisaoConcluida EV-42\n}\n",
+      "texts": 13,
+      "paths": 10,
+      "width": 756.5,
+      "height": 337
+    },
+    {
+      "id": "zen-cloud",
+      "capability": "cloud",
+      "source": "title Integração entre serviços cloud\n@AzureFunction Entrada as \"Função de entrada\"\n@AzureSQL Registro as \"Registro de operações\"\n@PubSub Eventos as \"Eventos de pesquisa\"\n@CloudStorage Objetos as \"Documentos\"\nEntrada.receber() {\n  Registro.gravar()\n  Objetos.armazenar()\n  Eventos: documentoRecebido\n}\n",
+      "texts": 13,
+      "paths": 13,
+      "width": 828,
+      "height": 337
+    },
+    {
+      "id": "zen-infrastructure",
+      "capability": "infrastructure",
+      "source": "title Publicar o catálogo\n@Browser Portal\n@API Servico\n@PostgreSQL Banco\n@Redis Cache\n@ApacheKafka Eventos\nPortal -> Servico.publicar() {\n  Banco.gravar()\n  Cache.invalidar()\n  Eventos: catalogoPublicado\n  return publicado\n}\n",
+      "texts": 16,
+      "paths": 14,
+      "width": 538,
+      "height": 353
+    },
+    {
+      "id": "zen-unicode",
+      "capability": "unicode",
+      "source": "title Revisão em português\n@Actor Pesquisadora as \"Pesquisadora responsável\"\n@Control Curadoria as \"Curadoria do acervo\"\n@Database Catálogo\n@Starter(Pesquisadora)\nPesquisadora -> Curadoria.revisarEvidência(\"EV-42\") {\n  Catálogo.buscarReferências(\"memória urbana\")\n  return \"parecer disponível\"\n}\n",
+      "texts": 10,
+      "paths": 9,
+      "width": 679.5,
+      "height": 267
+    },
+    {
+      "id": "zen-wrappers",
+      "capability": "wrappers",
+      "source": "@startzenuml\n!theme plain\ntitle Interação importada\n@Actor Revisora\n@Control Curadoria\nRevisora -> Curadoria.revisar(\"EV-42\")\n@endzenuml\n",
+      "texts": 7,
+      "paths": 5,
+      "width": 573.5,
+      "height": 201
+    },
+    {
+      "id": "zen-complete",
+      "capability": "complete",
+      "source": "title Publicação resiliente no Acervo Aurora\ngroup \"Experiência\" {\n  @Actor Revisora\n  @Boundary Portal\n}\ngroup \"Curadoria\" {\n  @Control Servico as \"Serviço de curadoria\"\n  @Database Catalogo as \"Catálogo\"\n  @Queue Eventos\n}\n@Starter(Revisora)\nRevisora -> Portal.publicar(\"EV-42\") {\n  Servico.preparar(\"EV-42\") {\n    par {\n      Catalogo.verificarFonte()\n      Catalogo.verificarPermissoes()\n    }\n    if (revisao.aprovada()) {\n      try {\n        critical (versão da evidência) {\n          Catalogo.gravarRevisao()\n        }\n        Eventos: revisaoPublicada EV-42\n        return \"publicada\"\n      } catch (VersaoDivergente e) {\n        return \"revisar alterações concorrentes\"\n      } finally {\n        Servico.registrarTentativa()\n      }\n    } else {\n      return \"aguardando revisão\"\n    }\n  }\n}\n",
+      "texts": 43,
+      "paths": 27,
+      "width": 834.5,
+      "height": 1033
+    }
+  ],
+  "icons": {
+    "tested": 513,
+    "missing": []
+  },
+  "migration": "preserved annotations, CRLF, unpin and later section removal",
+  "errors": [],
+  "outside": []
+}

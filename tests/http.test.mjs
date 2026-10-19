@@ -361,10 +361,10 @@ test('diagram reference upgrades existing checkouts without overwriting collisio
   assert.equal(await git(upstream,'show',`main:${name}`),changed.trimEnd());
   await fs.rm(path.join(repo,name));await request('library/initialize',{});await assert.rejects(fs.access(path.join(repo,name)));assert.equal(await git(repo,'rev-parse','HEAD'),head);
 });
-test('already copied diagram references are adopted intact without creating duplicate commits',async()=>{
+test('already copied diagram references retain annotations and receive the ZenUML extension once',async()=>{
   const value='# Meu manual anotado\n\n<!-- scriba-reference:diagram-manual version=1 -->\n\nAlterações preservadas.\n';
   const {repo}=await referenceCheckout('reference-adopt',{'Scriba-Diagramas.md':value});const head=await git(repo,'rev-parse','HEAD');
-  const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.pinned[0].name,'Scriba-Diagramas.md');assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),value);assert.equal(await git(repo,'rev-parse','HEAD'),head);
+  const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.pinned[0].name,'Scriba-Diagramas.md');const extended=await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8');assert.ok(extended.startsWith(value));assert.match(extended,/scriba-extension:zenuml-v1:start/);assert.notEqual(await git(repo,'rev-parse','HEAD'),head);const next=await git(repo,'rev-parse','HEAD');await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),next);assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),extended);
 });
 test('failed reference synchronization preserves the full file and seed marker for explicit retry',async()=>{
   const {repo}=await referenceCheckout('reference-pending',{'User.md':'# Existing'});
@@ -373,4 +373,23 @@ test('failed reference synchronization preserves the full file and seed marker f
   assert.equal(await git(repo,'diff','--cached','--name-only'),'User.md');
   const head=await git(repo,'rev-parse','HEAD');const value=await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8');assert.match(value,/scriba-reference:diagram-manual/);
   await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),head);assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),value);await assert.rejects(fs.access(path.join(repo,'Scriba-Diagramas-2.md')));
+});
+
+
+test('ZenUML upgrade preserves CRLF annotations and unpinned state and respects later section deletion',async()=>{
+  const name='Scriba-Diagramas.md',value='# Manual anotado\r\n\r\n<!-- scriba-reference:diagram-manual version=1 -->\r\n\r\nMinha revisão particular.\r\n';
+  const {repo,upstream}=await referenceCheckout('zenuml-upgrade',{[name]:value,'User.md':'# Minha nota'},['User.md']);
+  const file=path.join(temporary,'state','library.json'),state=JSON.parse(await fs.readFile(file,'utf8'));
+  state[await fs.realpath(repo)]={pinned:['User.md'],welcomeImageVersion:1,diagramManualVersion:1,diagramManualName:name};await fs.writeFile(file,JSON.stringify(state));
+  const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.synchronization.synced,true);assert.deepEqual(result.body.pinned.map(item=>item.name),['User.md']);
+  const extended=await fs.readFile(path.join(repo,name),'utf8');assert.ok(extended.startsWith(value));assert.ok(extended.includes('```zenuml\r\n'));assert.equal(extended.replace(/\r\n/g,'').includes('\n'),false);assert.equal((extended.match(/scriba-extension:zenuml-v1:start/g)||[]).length,1);
+  assert.equal(await git(upstream,'show',`main:${name}`),extended.replace(/\r\n/g,'\n').trimEnd());
+  const head=await git(repo,'rev-parse','HEAD');await fs.writeFile(path.join(repo,name),value);await request('library/initialize',{});assert.equal(await fs.readFile(path.join(repo,name),'utf8'),value);assert.equal(await git(repo,'rev-parse','HEAD'),head);
+  await fs.rm(path.join(repo,name));await request('library/initialize',{});await assert.rejects(fs.access(path.join(repo,name)));
+});
+
+test('ZenUML upgrade never appends to a user replacement without the owned manual marker',async()=>{
+  const name='Scriba-Diagramas.md',value='# Minha própria referência\n';const {repo}=await referenceCheckout('zenuml-replaced',{[name]:value});
+  const file=path.join(temporary,'state','library.json'),state=JSON.parse(await fs.readFile(file,'utf8'));state[await fs.realpath(repo)]={pinned:[],welcomeImageVersion:1,diagramManualVersion:1,diagramManualName:name};await fs.writeFile(file,JSON.stringify(state));
+  const head=await git(repo,'rev-parse','HEAD');await request('library/initialize',{});assert.equal(await fs.readFile(path.join(repo,name),'utf8'),value);assert.equal(await git(repo,'rev-parse','HEAD'),head);
 });

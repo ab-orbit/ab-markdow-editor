@@ -1,0 +1,2 @@
+# Keep the formatting of verbatim third-party license notices.
+public/licenses/*.txt -whitespace

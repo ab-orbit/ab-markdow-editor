@@ -3,7 +3,7 @@ import { downloadBlob } from './files';
 const vectorStyles = ['fill', 'fill-opacity', 'fill-rule', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stop-color', 'stop-opacity', 'color', 'opacity', 'font-family', 'font-size', 'font-weight', 'font-style', 'font-variant', 'letter-spacing', 'text-anchor', 'dominant-baseline', 'alignment-baseline', 'text-decoration', 'text-transform', 'white-space', 'paint-order', 'visibility', 'display', 'marker-start', 'marker-mid', 'marker-end', 'clip-path', 'mask', 'filter'];
 
 /** Freeze the selected renderer's resolved styles so exported SVG works outside Scriba. */
-function portableSvg(original: SVGSVGElement): { source: string; width: number; height: number } {
+function portableSvg(original: SVGSVGElement, fontFaceCss = ''): { source: string; width: number; height: number } {
   const clone = original.cloneNode(true) as SVGSVGElement;
   const before = [original, ...original.querySelectorAll<SVGElement>('*')], after = [clone, ...clone.querySelectorAll<SVGElement>('*')];
   before.forEach((element, index) => {
@@ -15,6 +15,10 @@ function portableSvg(original: SVGSVGElement): { source: string; width: number; 
     }
   });
   clone.querySelectorAll('style').forEach(element => element.remove());
+  if (fontFaceCss) {
+    const font = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+    font.textContent = fontFaceCss; clone.prepend(font);
+  }
   const box = original.viewBox.baseVal, bounds = original.getBoundingClientRect();
   const width = box.width || bounds.width, height = box.height || bounds.height;
   if (!(width > 0 && height > 0) || !Number.isFinite(width + height)) throw new Error('O diagrama ainda não tem dimensões para exportar.');
@@ -27,9 +31,9 @@ function portableSvg(original: SVGSVGElement): { source: string; width: number; 
 }
 
 /** Export the complete vector drawing, independent of the current viewport, pan and zoom. */
-export async function downloadDiagram(element: SVGSVGElement, format: 'svg' | 'png', filename: string): Promise<void> {
+export async function downloadDiagram(element: SVGSVGElement, format: 'svg' | 'png', filename: string, fontFaceCss = ''): Promise<void> {
   await document.fonts?.ready;
-  const { source, width, height } = portableSvg(element), blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+  const { source, width, height } = portableSvg(element, fontFaceCss), blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
   if (format === 'svg') { downloadBlob(blob, `${filename}.svg`); return; }
   const url = URL.createObjectURL(blob);
   try {

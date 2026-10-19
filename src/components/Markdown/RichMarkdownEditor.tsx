@@ -11,7 +11,7 @@ import CodeBlock from '@tiptap/extension-code-block';
 import { Plugin } from '@tiptap/pm/state';
 import { Mapping } from '@tiptap/pm/transform';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
-import { diagramIdentity, diagramSourceKey } from '@/lib/markdown/diagrams';
+import { diagramIdentity, diagramSourceKey, diagramLanguage } from '@/lib/markdown/diagrams';
 import type { MarkdownCommand, SourceRange } from './editorCommands';
 import { DiagramBlock } from './DiagramBlock';
 import { ReadingSource } from './readingSource';
@@ -46,7 +46,7 @@ const context = createContext<{ assets: readonly MarkdownAsset[]; scope: string;
 
 function DiagramNode({ node }: NodeViewProps) {
   const settings = useContext(context);
-  return <NodeViewWrapper contentEditable={false} className={styles.richDiagram}><DiagramBlock source={node.attrs.code} identity={diagramIdentity(settings.scope, node.attrs.code, node.attrs.diagramOrdinal)} legacyIdentity={`${settings.scope}:${node.attrs.sourceStart}`} onEdit={() => settings.editDiagram(node.attrs.code, node.attrs.sourceStart)}/></NodeViewWrapper>;
+  return <NodeViewWrapper contentEditable={false} className={styles.richDiagram}><DiagramBlock source={node.attrs.code} language={node.attrs.language} identity={diagramIdentity(settings.scope, node.attrs.code, node.attrs.diagramOrdinal, node.attrs.language)} legacyIdentity={`${settings.scope}:${node.attrs.sourceStart}`} onEdit={() => settings.editDiagram(node.attrs.code, node.attrs.sourceStart)}/></NodeViewWrapper>;
 }
 function ImageNode({ node }: NodeViewProps) {
   const { assets } = useContext(context), asset = resolveAsset(node.attrs.src || '', assets);
@@ -83,14 +83,15 @@ const FootnoteReference = EditorNode.create({
 });
 const MermaidNode = EditorNode.create({
   name: 'mermaidDiagram', group: 'block', atom: true, isolating: true,
-  addAttributes: () => ({ code: { default: '' }, diagramOrdinal: { default: 0, rendered: false } }),
+  addAttributes: () => ({ code: { default: '' }, language: { default: 'mermaid' }, diagramOrdinal: { default: 0, rendered: false } }),
   parseHTML: () => [], renderHTML: () => ['div', { 'data-mermaid-source': '' }],
-  renderMarkdown: node => `\`\`\`mermaid\n${node.attrs?.code}\n\`\`\``,
+  renderMarkdown: node => `\`\`\`${node.attrs?.language || 'mermaid'}\n${node.attrs?.code}\n\`\`\``,
   addNodeView: () => ReactNodeViewRenderer(DiagramNode, { stopEvent: () => true }),
 });
 const DiagramAwareCode = CodeBlock.extend({
   parseMarkdown(token, helpers) {
-    if ((token.lang || '').trim().toLowerCase() === 'mermaid') return helpers.createNode('mermaidDiagram', { code: token.text || '' });
+    const language = diagramLanguage(token.lang || '');
+    if (language) return helpers.createNode('mermaidDiagram', { code: token.text || '', language });
     return helpers.createNode('codeBlock', { language: token.lang || null }, token.text ? [helpers.createTextNode(token.text)] : []);
   },
 });
@@ -120,7 +121,7 @@ const SourceIdentity = Extension.create({
         const occurrences = new Map<string, number>();
         newState.doc.descendants((node, position) => {
           if (node.type.name !== 'mermaidDiagram') return;
-          const key = diagramSourceKey(node.attrs.code), ordinal = occurrences.get(key) || 0;
+          const key = `${node.attrs.language}:${diagramSourceKey(node.attrs.code)}`, ordinal = occurrences.get(key) || 0;
           occurrences.set(key, ordinal + 1);
           if (node.attrs.diagramOrdinal !== ordinal) {
             const current = tr.doc.nodeAt(position)!;
@@ -220,10 +221,11 @@ export default function RichMarkdownEditor({ ref, value, onChange, assets, diagr
 
   function editDiagram(code: string, preferredStart: number | null) {
     const source = editor ? ledger.current.serialize(editor) : value;
-    const fences = /(^|\n)([ \t]*)(`{3,}|~{3,})mermaid[^\n]*\n([\s\S]*?)\n\2\3/g;
+    const fences = /(^|\n)([ \t]*)(`{3,}|~{3,})(?:mermaid|zenuml)[^\n]*\n([\s\S]*?)\n\2\3/gi;
     let match: RegExpExecArray | null, closest: SourceRange | null = null, distance = Infinity;
+    const normalize = (text: string) => text.replace(/\r\n?/g, '\n').replace(/\n+$/, '');
     while ((match = fences.exec(source))) {
-      if (match[4].replace(/\r\n?/g, '\n') !== code.replace(/\r\n?/g, '\n')) continue;
+      if (normalize(match[4]) !== normalize(code)) continue;
       const from = match.index + match[1].length;
       const delta = Math.abs(from - (preferredStart ?? from));
       if (delta < distance) { distance = delta; closest = { from, to: match.index + match[0].length }; }

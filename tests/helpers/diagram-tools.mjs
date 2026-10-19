@@ -9,7 +9,9 @@ export async function checkDiagramTools(page, figure, source, { webkit = false, 
   const svg = figure.locator('[data-diagram-drawing] > svg'), original = await svg.elementHandle();
   const timing = await figure.locator('output').getAttribute('aria-label');
   const bounds = await viewport.boundingBox();
-  await page.mouse.move(bounds.x + bounds.width * .55, bounds.y + Math.min(bounds.height * .4, 150));
+  // Locator hover waits for stable layout and verifies the actual hit target;
+  // raw coordinates can become stale after scrolling a long lazy-rendered note.
+  await viewport.hover({ position: { x: bounds.width * .55, y: Math.min(bounds.height * .4, 150) } });
   const scroll = await page.locator('[data-document-scroll]').evaluate(element => element.scrollTop);
   await page.mouse.wheel(0, -180);
   await expect.poll(async () => Number(await viewport.getAttribute('data-diagram-zoom'))).toBeGreaterThan(1.1);

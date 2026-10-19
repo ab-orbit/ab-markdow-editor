@@ -25,7 +25,7 @@ try {
   await expect(pinned.locator('li')).toHaveCount(2);await expect(pinned.getByRole('button',{name:manualName,exact:true})).toBeVisible();
   const first=await readState(page);assert.equal(first.notes[manualName].value,manual);assert.deepEqual(first.pins,['Boas-vindas.md',manualName]);
   assert.ok(!await pinned.locator('.note-preview').last().innerText().then(value=>value.includes('scriba-reference:')));
-  await pinned.getByRole('button',{name:manualName,exact:true}).click();await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');await expect(page.locator('article figure[data-diagram-engine]')).toHaveCount(58);
+  await pinned.getByRole('button',{name:manualName,exact:true}).click();await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');await expect(page.locator('article figure[data-diagram-engine]')).toHaveCount(83);
   await page.getByRole('link',{name:'Métricas e conjuntos',exact:true}).click();await expect(page.locator('#métricas-e-conjuntos')).toBeInViewport();
   const diagram=page.locator('article figure[data-diagram-engine]').nth(43);await diagram.scrollIntoViewIfNeeded();await expect(diagram).toHaveAttribute('data-diagram-state','ready',{timeout:30000});
   for(const viewport of [{width:1440,height:900,name:'desktop'},{width:390,height:844,name:'mobile'},{width:844,height:390,name:'mobile-landscape'},{width:820,height:1180,name:'tablet'},{width:1180,height:820,name:'tablet-landscape'}]) {
@@ -39,7 +39,7 @@ try {
   await expect.poll(async()=>(await readState(page)).pins.includes(manualName)).toBe(false);
   await page.reload();await expect.poll(async()=>(await readState(page)).pins.includes(manualName)).toBe(false);assert.equal((await readState(page)).notes[manualName].value,edited);assert.equal(Object.keys((await readState(page)).notes).filter(name=>name.startsWith('Scriba-Diagramas')).length,1);
   await page.evaluate(async()=>{await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller)await new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true}));});
-  await fresh.setOffline(true);await page.reload();await page.getByRole('button',{name:manualName,exact:true}).click();await page.getByRole('status').filter({hasText:'Documento aberto.'}).waitFor();await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');await expect(page.locator('article figure[data-diagram-engine]')).toHaveCount(58);
+  await fresh.setOffline(true);await page.reload();await page.getByRole('button',{name:manualName,exact:true}).click();await page.getByRole('status').filter({hasText:'Documento aberto.'}).waitFor();await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');await expect(page.locator('article figure[data-diagram-engine]')).toHaveCount(83);
   const offlineFirst=page.locator('article figure[data-diagram-engine]').first();await expect.poll(async()=>{try{await offlineFirst.scrollIntoViewIfNeeded({timeout:1000});}catch{/* Re-resolve after an asynchronous note restore. */}return await offlineFirst.getAttribute('data-diagram-state');},{timeout:30000}).toBe('ready');await fresh.setOffline(false);await fresh.close();
   if(!process.env.SCRIBA_URL) {
     const legacy=await context(),old=await legacy.newPage();await old.goto(origin);await old.getByRole('button',{name:manualName,exact:true}).waitFor();
@@ -63,6 +63,11 @@ try {
     await gitPage.reload();await gitPage.getByRole('button',{name:'Scriba-Diagramas-2.md',exact:true}).waitFor();assert.equal(writes,1);await github.close();
     notes.get('Scriba-Diagramas-2.md').value+='\nAnotação remota preservada.\n';
     const adopted=await githubContext(),adoptPage=await adopted.newPage();await adoptPage.goto(origin);await adoptPage.getByRole('button',{name:'Scriba-Diagramas-2.md',exact:true}).click();await expect(adoptPage.locator('article')).toContainText('Anotação remota preservada.');assert.equal(writes,1);await adopted.close();
+    const legacyRemote='# Manual remoto anotado\n\n<!-- scriba-reference:diagram-manual version=1 -->\n\nPreservar minha anotação.\n';
+    notes.get('Scriba-Diagramas-2.md').value=legacyRemote;notes.get('Scriba-Diagramas-2.md').version='legacy-reference';
+    const upgraded=await githubContext(),upgradePage=await upgraded.newPage();await upgradePage.goto(origin);await upgradePage.getByRole('button',{name:'Scriba-Diagramas-2.md',exact:true}).click();
+    await expect(upgradePage.locator('article')).toContainText('ZenUML — interações descritas como código');assert.ok(notes.get('Scriba-Diagramas-2.md').value.startsWith(legacyRemote));assert.equal(writes,2);
+    await upgradePage.reload();await upgradePage.getByRole('button',{name:'Scriba-Diagramas-2.md',exact:true}).waitFor();assert.equal(writes,2);await upgraded.close();
     notes.clear();unavailable=true;const pending=await githubContext(),pendingPage=await pending.newPage();await pendingPage.goto(origin);await pendingPage.getByRole('button',{name:manualName,exact:true}).click();await expect(pendingPage.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');assert.equal((await readState(pendingPage,key)).notes[manualName].pending,true);assert.equal((await readState(pendingPage,key)).notes[manualName].version,null);
     await pendingPage.getByRole('status').filter({hasText:'Aberto com avisos:'}).waitFor();unavailable=false;await pendingPage.getByRole('button',{name:'Salvar nota',exact:true}).click();try{await expect.poll(async()=>!!(await readState(pendingPage,key)).notes[manualName].pending,{timeout:15000}).toBe(false);}catch(error){console.log({writes,remoteNotes:[...notes.keys()],fixtureRequests,fixtureFailures,alerts:await pendingPage.getByRole('alert').allTextContents()});throw error;}assert.equal(notes.get(manualName).value,manual);await pending.close();
   }
