@@ -91,4 +91,3 @@ export async function downloadExcalidraw(source: string, format: 'svg' | 'png' |
     } finally { canvas.width = 1; canvas.height = 1; }
   }
 }
-
