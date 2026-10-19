@@ -2,6 +2,7 @@ import ReactMarkdown, { type Components, type ExtraProps } from 'react-markdown'
 import { Children, cloneElement, createContext, createElement, isValidElement, useContext, type HTMLAttributes, type InputHTMLAttributes, type MouseEvent, type KeyboardEvent } from 'react';
 import remarkGfm from 'remark-gfm';
 import { remarkMissingFootnotes } from './remarkMissingFootnotes';
+import { remarkHeadingIds } from './remarkHeadingIds';
 import styles from './MarkdownWorkbench.module.css';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 import type { SourceRange } from './editorCommands';
@@ -92,6 +93,6 @@ const components: Components = {
 /** Render GFM with stable source-backed blocks and isolated diagram components. */
 export function MarkdownReadingView({ value, assets = [], diagramScope = 'document', ...settings }: MarkdownReadingViewProps) {
   return <context.Provider value={{ ...settings, assets, diagramScope }}><article className={styles.reading} aria-label="Prévia Markdown">
-    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMissingFootnotes]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={components}>{value}</ReactMarkdown>
+    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMissingFootnotes, remarkHeadingIds]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={components}>{value}</ReactMarkdown>
   </article></context.Provider>;
 }

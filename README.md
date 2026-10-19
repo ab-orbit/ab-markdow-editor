@@ -181,3 +181,13 @@ The native launcher receives Finder document events and imports the selected Mar
 In Settings → GitHub, connect an account, choose an existing repository and the notes folder (`scriba` by default). Saving commits the Markdown and its images together. Browser-only notes and the Mac's local Git repository remain alternatives. Offline changes stay private on the device until saved online; automatic saving works while the note is open.
 
 The account login button requires one-time activation of the organization's GitHub App. A repository-limited fine-grained token can also be used. See [authentication, deployment and conflict handling](docs/GITHUB.md).
+
+## Contextual diagram reference
+
+[Scriba — Manual contextual de diagramas](docs/Scriba-Diagramas.md) is the canonical, versioned Portuguese reference: 58 original examples across 33 Mermaid families (including the `info` diagnostic), with a question, interpretation, adaptation advice and measured compatibility for each example. The manual covers processes, state, data models, C4 architecture, planning, quantitative charts and analytical frameworks.
+
+Version 1.8 adds an editable pinned copy beside the platform guide, including existing libraries. Browser storage, selected GitHub destinations and the Mac Git checkout each receive their own copy once. Existing unrelated filenames get a numbered alternative; copied references are adopted. Later edits, unpinning and deletion are respected. Local-only repository switches do not trigger an automatic commit or push. The macOS installer includes the canonical source so seeding works offline.
+
+The reference's Unicode index links navigate inside the note. Compare engines, reveal the original source and use the existing magnifier on each drawing. Compatibility is limited to the tested examples, not a guarantee for every grammar combination. [Browser-rendering evidence](docs/evidence/diagram-reference/README.md) records the exact versions and results.
+
+Validation: `npm test`; local build followed by `node tests/diagram-reference.smoke.mjs`; public build followed by `node tests/diagram-reference-browser.smoke.mjs`. The browser checks use isolated storage and test repositories, never real user notes.

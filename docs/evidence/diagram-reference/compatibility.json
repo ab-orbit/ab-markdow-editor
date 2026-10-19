@@ -1,0 +1,1252 @@
+{
+  "version": "1.0.0",
+  "testedAt": "2026-10-19T06:32:21.833Z",
+  "engines": {
+    "mermaid": "12.2.0",
+    "pele": "1.6.0",
+    "beautiful": "1.1.3"
+  },
+  "examples": [
+    {
+      "id": "flow-review",
+      "family": "flowchart",
+      "source": "flowchart TD\n  Capture[Registrar observação] --> Source{Fonte verificável?}\n  Source -->|Sim| Review[Revisar interpretação]\n  Source -->|Ainda não| Research[Buscar fonte primária]\n  Research --> Source\n  Review --> Publish[Incluir no dossiê]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 169.8 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 7.1 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 74.6 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "flow-edges",
+      "family": "flowchart",
+      "source": "flowchart LR\n  Source[(Catálogo de fontes)] -. consulta .-> Analyst[Analisar contexto]\n  Analyst ==>|fluxo principal| Brief[Produzir síntese]\n  Brief -->|revisão| Reviewer[Revisar afirmações]\n  Reviewer -->|ajustes| Analyst\n  Reviewer -->|aprovação| Archive[(Arquivo de pesquisa)]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 44.8 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.5 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 10.2 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "flow-shapes",
+      "family": "flowchart",
+      "source": "flowchart TB\n  Start([Início]) --> Input[/Pergunta de pesquisa/]\n  Input --> Task[Coletar referências]\n  Task --> Check{Cobertura suficiente?}\n  Check -->|Sim| Reusable[[Aplicar roteiro de revisão]]\n  Check -->|Não| Task\n  Reusable --> Store[(Dossiê versionado)]\n  Store --> Finish([Encerramento])\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 92.3 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.0 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 11.1 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "flow-bt",
+      "family": "flowchart",
+      "source": "flowchart BT\n  PublicData[Dados públicos] --> Evidence[Evidências verificadas]\n  Interviews[Entrevistas consentidas] --> Evidence\n  Evidence --> Hypothesis[Hipóteses comparadas]\n  Hypothesis --> Recommendation[Recomendação contextualizada]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 30.8 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.0 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 4.5 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "flow-rl",
+      "family": "flowchart",
+      "source": "flowchart RL\n  Decision[Decisão registrada] --> Claim[Afirmação citada]\n  Claim --> Evidence[Recorte verificável]\n  Evidence --> Document[Documento original]\n  Document --> Origin[Instituição publicadora]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 29.4 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 4.0 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "flow-boundaries",
+      "family": "flowchart",
+      "source": "flowchart LR\n  subgraph Collection[Coleta]\n    Search[Pesquisar] --> Register[Registrar fonte]\n  end\n  subgraph Curation[Curadoria]\n    Validate[Validar referência] --> Classify[Classificar evidência]\n  end\n  subgraph Delivery[Entrega]\n    Synthesize[Escrever síntese] --> Review[Revisar dossiê]\n  end\n  Register --> Validate\n  Classify --> Synthesize\n  Review -->|pendência| Search\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 47.2 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.3 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 14.7 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "flow-modern-shapes",
+      "family": "flowchart",
+      "source": "flowchart LR\n  Question@{ shape: doc, label: \"Pergunta registrada\" }\n  Collection@{ shape: cyl, label: \"Acervo de evidências\" }\n  Review@{ shape: manual, label: \"Revisão humana\" }\n  Decision@{ shape: diam, label: \"Pronto para síntese?\" }\n  Question --> Collection --> Review --> Decision\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 30.5 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.1 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.4 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "swim-review",
+      "family": "swimlane",
+      "source": "swimlane-beta LR\n  subgraph Research[Pesquisa]\n    Find[Encontrar fonte] --> Submit[Enviar evidência]\n  end\n  subgraph Review[Revisão]\n    Verify[Verificar citação] --> Accept[Aceitar referência]\n  end\n  subgraph Editorial[Editorial]\n    Draft[Escrever síntese] --> Deliver[Entregar dossiê]\n  end\n  Submit --> Verify\n  Accept --> Draft\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 50.6 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.5 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "usecase-roles",
+      "family": "usecase",
+      "source": "usecase-beta\ndirection LR\nactor Researcher(\"Pesquisadora\")\nactor Reviewer(\"Revisora\")\nsystemBoundary Workspace[\"Acervo Aurora\"]\n  Capture(\"Registrar evidência\")\n  Organize(\"Organizar dossiê\")\n  Verify(\"Verificar referência\")\n  Review(\"Revisar síntese\")\nend\nResearcher --> Capture\nResearcher --> Organize\nReviewer --> Review\nCapture ..> : include Verify\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 66.5 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.1 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "journey-evidence",
+      "family": "journey",
+      "source": "journey\n  title Preparar um dossiê de pesquisa\n  section Descoberta\n    Definir pergunta: 4: Pesquisa\n    Encontrar fonte primária: 2: Pesquisa\n  section Organização\n    Relacionar referências: 3: Pesquisa\n    Revisar interpretação: 4: Pesquisa, Revisão\n  section Entrega\n    Consultar síntese: 5: Leitura\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 21.9 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.2 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "sequence-save",
+      "family": "sequence",
+      "source": "sequenceDiagram\n  autonumber\n  actor Writer as Autora\n  participant Editor as Editor\n  participant Disk as Armazenamento local\n  participant Remote as Repositório remoto\n  Writer->>Editor: Salvar nota\n  activate Editor\n  Editor->>Disk: Gravar Markdown\n  Disk-->>Editor: Gravação concluída\n  Editor->>Remote: Enviar revisão\n  Remote-->>Editor: Revisão recebida\n  Editor-->>Writer: Confirmar sincronização\n  deactivate Editor\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 27.5 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.4 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "sequence-retry",
+      "family": "sequence",
+      "source": "sequenceDiagram\n  participant Client as Curadoria\n  participant Source as Catálogo de fontes\n  loop Até três tentativas\n    Client->>Source: Consultar identificador\n    alt Fonte disponível\n      Source-->>Client: Referência e data\n    else Serviço indisponível\n      Source-->>Client: Falha temporária\n      Note over Client: Aguardar antes de repetir\n    end\n  end\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 17.6 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.5 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "sequence-parallel",
+      "family": "sequence",
+      "source": "sequenceDiagram\n  participant Analyst as Analista\n  participant Registry as Registro público\n  participant Archive as Arquivo documental\n  par Consultar cadastro\n    Analyst->>Registry: Buscar instituição\n    Registry-->>Analyst: Identificador\n  and Consultar documento\n    Analyst->>Archive: Buscar publicação\n    Archive-->>Analyst: Documento\n  end\n  opt Divergência entre referências\n    Analyst->>Archive: Solicitar versão anterior\n    Archive-->>Analyst: Histórico disponível\n  end\n  Note over Analyst: Comparar as duas evidências\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 16.1 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.8 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.3 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "sequence-async",
+      "family": "sequence",
+      "source": "sequenceDiagram\n  participant Queue as Fila de revisão\n  participant Coordinator as Coordenação\n  Coordinator-)Queue: Solicitar revisão\n  create participant Worker as Revisão temporária\n  Queue->>Worker: Entregar tarefa\n  Worker-->>Coordinator: Revisão concluída\n  destroy Worker\n  Coordinator->>Worker: Encerrar participação\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 11.5 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.2 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "state-note",
+      "family": "state",
+      "source": "stateDiagram-v2\n  [*] --> Draft\n  state \"Rascunho\" as Draft\n  state \"Salva localmente\" as Local\n  state \"Sincronizada\" as Synced\n  state \"Envio pendente\" as Pending\n  Draft --> Local: salvar\n  Local --> Synced: envio confirmado\n  Local --> Pending: envio falhou\n  Pending --> Synced: tentar novamente\n  Synced --> Draft: editar\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 50.2 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 7.5 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "state-composite",
+      "family": "state",
+      "source": "stateDiagram-v2\n  [*] --> Intake\n  Intake --> Review: evidência recebida\n  state Review {\n    [*] --> SourceCheck\n    SourceCheck --> Interpretation: fonte confirmada\n    Interpretation --> [*]: parecer registrado\n  }\n  Review --> Approved: revisão concluída\n  Approved --> [*]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 49.1 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.3 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 5.6 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "state-choice",
+      "family": "state",
+      "source": "stateDiagram-v2\n  state HasSource <<choice>>\n  state Checks <<fork>>\n  state Ready <<join>>\n  [*] --> HasSource\n  HasSource --> Rejected: sem referência\n  HasSource --> Checks: referência disponível\n  Checks --> Identity\n  Checks --> DateCheck\n  Identity --> Ready\n  DateCheck --> Ready\n  Ready --> Accepted\n  Accepted --> [*]\n  Rejected --> [*]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 45.5 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.1 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 9.7 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "er-notes",
+      "family": "er",
+      "source": "erDiagram\n  NOTEBOOK ||--o{ NOTE : contains\n  NOTE ||--o{ REVISION : records\n  NOTE ||--o{ ATTACHMENT : includes\n  NOTE ||--o{ NOTE_TAG : classifies\n  TAG ||--o{ NOTE_TAG : identifies\n  NOTE {\n    string id PK\n    string notebook_id FK\n    string title\n    datetime updated_at\n  }\n  REVISION {\n    string id PK\n    string note_id FK\n    string content_hash UK\n  }\n  ATTACHMENT {\n    string id PK\n    string note_id FK\n    string relative_path\n  }\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 51.7 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 7.1 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "er-cardinality",
+      "family": "er",
+      "source": "erDiagram\n  DOSSIER ||--|{ SECTION : requires\n  SECTION ||--o{ EVIDENCE : contains\n  SOURCE |o..o{ EVIDENCE : may_support\n  REVIEWER }o..o{ EVIDENCE : reviews\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 33.0 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.8 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.2 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "class-domain",
+      "family": "class",
+      "source": "classDiagram\n  class Note {\n    +String id\n    +String title\n    +revise(content) Revision\n  }\n  class Revision {\n    +String hash\n    +String content\n  }\n  class Storage {\n    <<interface>>\n    +read(path) Note\n    +save(note) Revision\n  }\n  class BrowserStorage\n  class GitStorage\n  Note \"1\" *-- \"1..*\" Revision : history\n  Storage <|.. BrowserStorage\n  Storage <|.. GitStorage\n  Note ..> Storage : persists through\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 59.4 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.9 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 4.6 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "class-relations",
+      "family": "class",
+      "source": "classDiagram\n  Document <|-- Report : specializes\n  Collection \"1\" o-- \"0..*\" Document : groups\n  Reviewer \"1\" --> \"0..*\" Document : reviews\n  ExportService ..> Document : reads\n  class Document {\n    <<abstract>>\n    +String title\n    +render() String\n  }\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 50.4 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.3 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "requirements-evidence",
+      "family": "requirement",
+      "source": "requirementDiagram\n  requirement PreserveDraft {\n    id: REQ_01\n    text: Preserve unsaved note after reload\n    risk: high\n    verifymethod: test\n  }\n  element DraftStore {\n    type: component\n  }\n  element ReloadTest {\n    type: browser_test\n  }\n  DraftStore - satisfies -> PreserveDraft\n  ReloadTest - verifies -> PreserveDraft\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 33.9 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.8 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "mindmap-context",
+      "family": "mindmap",
+      "source": "mindmap\n  root((Contexto de pesquisa))\n    Pergunta\n      Escopo territorial\n      Horizonte temporal\n    Atores\n      Instituições\n      Pessoas afetadas\n    Evidências\n      Fontes primárias\n      Contrapontos\n    Entregas\n      Síntese\n      Lacunas abertas\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 84.5 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.2 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "tree-files",
+      "family": "treeView",
+      "source": "treeView-beta\n├── notes/\n│   ├── context.md\n│   ├── evidence.md\n│   └── decisions.md\n├── assets/\n│   ├── source-table.png\n│   └── field-photo.jpg\n└── exports/\n    └── research-package.zip\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 45.0 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.8 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "railroad-combinators",
+      "family": "railroad",
+      "source": "railroad-beta\ntitle Referência para uma seção\nreference = sequence(nonterminal(\"note\"), optional(sequence(terminal(\"#\"), nonterminal(\"heading\")))) ;\nnote = oneOrMore(nonterminal(\"letter\")) ;\nheading = oneOrMore(nonterminal(\"letter\")) ;\nletter = choice(terminal(\"a\"), terminal(\"b\"), terminal(\"c\")) ;\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 21.1 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.2 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "railroad-ebnf",
+      "family": "railroad",
+      "source": "railroad-ebnf-beta\ntitle Referência em EBNF\nreference = name, [ \"#\", name ] ;\nname = letter, { letter } ;\nletter = \"a\" | \"b\" | \"c\" ;\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 21.3 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.1 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "railroad-abnf",
+      "family": "railroad",
+      "source": "railroad-abnf-beta\ntitle Referência em ABNF\nreference = name [ \"#\" name ] ;\nname = 1*ALPHA ;\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 21.1 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "railroad-peg",
+      "family": "railroad",
+      "source": "railroad-peg-beta\ntitle Referência em PEG\nReference <- Name (\"#\" Name)? ;\nName <- Letter+ ;\nLetter <- \"a\" / \"b\" / \"c\" ;\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 15.8 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "block-layout",
+      "family": "block",
+      "source": "block-beta\n  columns 3\n  Header[\"Busca e ações\"]:3\n  Navigation[\"Notas\"] Reading[\"Documento\"]:2\n  Footer[\"Estado e estatísticas\"]:3\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 23.3 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.4 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "architecture-services",
+      "family": "architecture",
+      "source": "architecture-beta\n  group workspace(cloud)[Acervo Aurora]\n  service api(server)[Consulta] in workspace\n  service metadata(database)[Metadados] in workspace\n  service files(disk)[Documentos] in workspace\n  api:R -- L:metadata\n  api:B -- T:files\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 40.2 milissegundos",
+          "svg": 8
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.0 milissegundos",
+          "svg": 8
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "c4-context",
+      "family": "c4",
+      "source": "C4Context\n  title Contexto do Acervo Aurora\n  Person(analyst, \"Analista\", \"Investiga uma pergunta\")\n  System(workspace, \"Acervo Aurora\", \"Organiza evidências e sínteses\")\n  System_Ext(sources, \"Fontes primárias\", \"Publicam documentos verificáveis\")\n  Rel(analyst, workspace, \"Consulta e organiza\")\n  Rel(workspace, sources, \"Referencia\")\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 23.2 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.2 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "c4-container",
+      "family": "c4",
+      "source": "C4Container\n  title Containers do Acervo Aurora\n  Person(analyst, \"Analista\")\n  System_Boundary(workspace, \"Acervo Aurora\") {\n    Container(web, \"Consulta web\", \"Navegador\", \"Apresenta dossiês\")\n    Container(api, \"API de consulta\", \"HTTP\", \"Resolve consultas\")\n    ContainerDb(store, \"Acervo\", \"Armazenamento\", \"Mantém referências\")\n  }\n  Rel(analyst, web, \"Consulta\")\n  Rel(web, api, \"Solicita referências\", \"HTTPS\")\n  Rel(api, store, \"Lê metadados\")\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 15.3 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "c4-component",
+      "family": "c4",
+      "source": "C4Component\n  title Componentes de consulta\n  Container_Boundary(api, \"API de consulta\") {\n    Component(entry, \"Entrada HTTP\", \"Handler\", \"Recebe consultas\")\n    Component(check, \"Validação\", \"Contrato\", \"Verifica parâmetros\")\n    Component(search, \"Busca\", \"Serviço\", \"Localiza referências\")\n  }\n  Rel(entry, check, \"Valida\")\n  Rel(check, search, \"Encaminha consulta válida\")\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 11.5 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "c4-dynamic",
+      "family": "c4",
+      "source": "C4Dynamic\n  title Abrir um dossiê no sistema hipotético\n  Person(analyst, \"Analista\")\n  Container(web, \"Consulta web\", \"Navegador\")\n  Container(api, \"API\", \"HTTP\")\n  Rel(analyst, web, \"Abre dossiê\")\n  Rel(web, api, \"Solicita metadados\")\n  Rel(api, web, \"Entrega referências\")\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 11.7 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.8 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "c4-deployment",
+      "family": "c4",
+      "source": "C4Deployment\n  title Implantação hipotética do Acervo Aurora\n  Deployment_Node(device, \"Dispositivo da analista\", \"Computador\") {\n    Container(web, \"Consulta web\", \"Navegador\", \"Apresenta o dossiê\")\n  }\n  Deployment_Node(cloud, \"Ambiente de consulta\", \"Serviço remoto\") {\n    Container(api, \"API\", \"HTTP\", \"Responde consultas públicas\")\n  }\n  Rel(web, api, \"Consulta metadados\", \"HTTPS\")\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 13.9 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.8 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "packet-envelope",
+      "family": "packet",
+      "source": "packet-beta\n  0-7: \"Versão\"\n  8-15: \"Tipo de mensagem\"\n  16-31: \"Tamanho do conteúdo\"\n  32-63: \"Identificador de revisão\"\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 19.3 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.0 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "agentflow-review",
+      "family": "agentflow",
+      "source": "agentflow-beta LR\n  question[\"Pergunta\"]@{ shape: input }\n  flow research[\"Pesquisa assistida\"]\n    gather[\"Reunir evidências\"]@{ shape: task }\n    catalog[\"Consultar catálogo\"]@{ shape: tool }\n    protocol[\"Protocolo de fontes\"]@{ shape: refdoc }\n    gather --> catalog\n    gather -.- protocol\n  end\n  human[\"Revisão humana\"]@{ shape: decision }\n  deliver[\"Registrar síntese aprovada\"]@{ shape: action }\n  question --> research --> human\n  human --> deliver\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 45.7 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.4 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "gantt-research",
+      "family": "gantt",
+      "source": "gantt\n  title Rodada ilustrativa de pesquisa\n  dateFormat YYYY-MM-DD\n  excludes weekends\n  section Preparação\n    Definir pergunta :done, scope, 2027-02-01, 2d\n  section Evidências\n    Coletar fontes :active, collect, after scope, 4d\n    Revisar referências :crit, review, after collect, 2d\n  section Entrega\n    Publicar dossiê :milestone, delivery, after review, 0d\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 35.7 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "gantt-parallel",
+      "family": "gantt",
+      "source": "gantt\n  title Trilhas paralelas de preparação\n  dateFormat YYYY-MM-DD\n  section Conteúdo\n    Revisar corpus :content, 2027-03-01, 3d\n  section Experiência\n    Observar uso :experience, 2027-03-01, 3d\n  section Integração\n    Comparar achados :merge, 2027-03-04, 2d\n    Fechar rodada :milestone, after merge, 0d\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 8.3 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "timeline-learning",
+      "family": "timeline",
+      "source": "timeline\n  title Evolução ilustrativa de uma investigação\n  section Exploração\n    Semana 1 : Definição do problema : Primeiras referências\n    Semana 2 : Lacuna de dados identificada\n  section Consolidação\n    Semana 3 : Hipóteses revisadas : Contrapontos incorporados\n    Semana 4 : Síntese entregue : Perguntas abertas registradas\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 19.5 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 4.3 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "kanban-backlog",
+      "family": "kanban",
+      "source": "kanban\n  planned[Planejado]\n    scope[Delimitar a pergunta]\n  collecting[Coletando]\n    sources[Localizar fonte primária]@{ priority: 'High' }\n  reviewing[Em revisão]\n    claims[Conferir duas afirmações]\n  complete[Concluído]\n    glossary[Registrar glossário]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 43.7 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.9 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "git-review",
+      "family": "gitGraph",
+      "source": "gitGraph\n  commit id: \"escopo\"\n  branch research\n  checkout research\n  commit id: \"fontes\"\n  commit id: \"revisao\"\n  checkout main\n  merge research\n  commit id: \"entrega\" tag: \"dossie-v1\"\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 22.9 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.5 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "git-maintenance",
+      "family": "gitGraph",
+      "source": "gitGraph\n  commit id: \"base\" tag: \"v1\"\n  branch correction\n  commit id: \"corrigir-citacao\" type: HIGHLIGHT\n  checkout main\n  branch evolution\n  commit id: \"nova-secao\"\n  checkout main\n  merge correction\n  merge evolution\n  commit id: \"consolidar\" tag: \"v2\"\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 12.6 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "pie-corpus",
+      "family": "pie",
+      "source": "pie showData\n  title Corpus ilustrativo de 100 documentos\n  \"Relatórios públicos\" : 45\n  \"Normas\" : 30\n  \"Estudos acadêmicos\" : 25\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 15.4 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.9 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "quadrant-priority",
+      "family": "quadrantChart",
+      "source": "quadrantChart\n  title Hipóteses de prioridade\n  x-axis Menor esforço --> Maior esforço\n  y-axis Menor impacto --> Maior impacto\n  quadrant-1 Planejar investimento\n  quadrant-2 Experimentar primeiro\n  quadrant-3 Manter simples\n  quadrant-4 Revisar hipótese\n  Busca contextual: [0.35, 0.80]\n  Novo conector: [0.85, 0.75]\n  Ajuste de rótulos: [0.15, 0.25]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 16.1 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.3 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "xy-bars",
+      "family": "xychart",
+      "source": "xychart-beta\n  title \"Evidências revisadas por rodada\"\n  x-axis [R1, R2, R3, R4]\n  y-axis \"Documentos\" 0 --> 80\n  bar [25, 40, 60, 72]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 16.7 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.5 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.5 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "xy-line",
+      "family": "xychart",
+      "source": "xychart-beta\n  title \"Cobertura ilustrativa de fontes\"\n  x-axis [S1, S2, S3, S4]\n  y-axis \"Cobertura percentual\" 0 --> 100\n  line [20, 45, 70, 85]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 8.6 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.5 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "xy-combined",
+      "family": "xychart",
+      "source": "xychart-beta\n  title \"Entrada e revisão de documentos\"\n  x-axis [R1, R2, R3, R4]\n  y-axis \"Documentos\" 0 --> 80\n  bar [50, 65, 70, 75]\n  line [25, 40, 60, 72]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 8.0 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.4 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.6 milissegundos",
+          "svg": 4
+        }
+      }
+    },
+    {
+      "id": "radar-quality",
+      "family": "radar",
+      "source": "radar-beta\n  title Comparação ilustrativa de propostas\n  axis clarity[\"Clareza\"], evidence[\"Evidência\"], access[\"Acesso\"], maintenance[\"Manutenção\"]\n  curve first[\"Proposta A\"]{4, 5, 3, 4}\n  curve second[\"Proposta B\"]{3, 4, 5, 3}\n  min 0\n  max 5\n  graticule polygon\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 16.3 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "sankey-triage",
+      "family": "sankey",
+      "source": "sankey-beta\n\"Recebidos\",\"Elegiveis\",80\n\"Recebidos\",\"Descartados\",25\n\"Recebidos\",\"Pendentes\",15\n\"Elegiveis\",\"Revisados\",60\n\"Elegiveis\",\"Aguardando revisao\",20\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 16.2 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.6 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "treemap-acervo",
+      "family": "treemap",
+      "source": "treemap-beta\n\"Acervo ilustrativo\"\n  \"Instituições\"\n    \"Regulação\": 30\n    \"Financiamento\": 20\n  \"Território\"\n    \"Infraestrutura\": 25\n    \"População\": 15\n  \"Método\"\n    \"Referências\": 10\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 34.1 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 13.3 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "venn-evidence",
+      "family": "venn",
+      "source": "venn-beta\n  title Critérios de inclusão no dossiê\n  set Relevante\n  set Verificavel[\"Verificável\"]\n  set Atual\n  union Relevante,Verificavel[\"Sustentada\"]\n  union Relevante,Atual[\"Oportuna\"]\n  union Verificavel,Atual[\"Atualizada\"]\n  union Relevante,Verificavel,Atual[\"Priorizar revisão\"]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 21.8 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 5.5 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "events-command",
+      "family": "eventmodeling",
+      "source": "eventmodeling\n  tf 01 ui EvidenceForm\n  tf 02 cmd RegisterEvidence { sourceId: string }\n  tf 03 evt EvidenceRegistered { evidenceId: string }\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 86.5 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.7 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "events-projection",
+      "family": "eventmodeling",
+      "source": "eventmodeling\n  tf 01 evt EvidenceReviewed\n  tf 02 rmo ReviewedEvidenceIndex\n  tf 03 ui ResearchDashboard\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 10.5 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.5 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "ishikawa-delay",
+      "family": "ishikawa",
+      "source": "ishikawa-beta\n  Revisão do dossiê atrasada\n  Processo\n    Critério de aceite pouco claro\n    Muitas devoluções\n  Informação\n    Fonte sem identificação\n    Data da evidência ausente\n  Pessoas\n    Capacidade de revisão limitada\n  Ferramentas\n    Busca pouco precisa\n    Duplicatas difíceis de localizar\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 18.0 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 1.1 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "wardley-capabilities",
+      "family": "wardley",
+      "source": "wardley-beta\ntitle Capacidades de um acervo de pesquisa\nanchor \"Leitura confiável\" [0.95, 0.60]\ncomponent \"Síntese contextual\" [0.78, 0.35]\ncomponent \"Evidências curadas\" [0.58, 0.50]\ncomponent \"Armazenamento\" [0.22, 0.85]\n\"Leitura confiável\" -> \"Síntese contextual\"\n\"Síntese contextual\" -> \"Evidências curadas\"\n\"Evidências curadas\" -> \"Armazenamento\"\nevolve \"Síntese contextual\" 0.55\nnote \"Padronizar critérios antes de automatizar\" [0.42, 0.25]\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 21.7 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 3.9 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "cynefin-decisions",
+      "family": "cynefin",
+      "source": "cynefin-beta\n  title Abordagens para problemas de pesquisa\n  clear\n    \"Aplicar checklist de referência\"\n  complicated\n    \"Revisar uma metodologia especializada\"\n  complex\n    \"Experimentar uma nova forma de curadoria\"\n  chaotic\n    \"Conter exposição de um dado sensível\"\n  confusion\n    \"Delimitar um incidente ainda desconhecido\"\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 51.0 milissegundos, em cache",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 2.8 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    },
+    {
+      "id": "renderer-info",
+      "family": "info",
+      "source": "info\n",
+      "results": {
+        "mermaid": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 14.9 milissegundos",
+          "svg": 4
+        },
+        "pele": {
+          "state": "ready",
+          "timing": "Tempo de desenho: 0.5 milissegundos",
+          "svg": 4
+        },
+        "beautiful": {
+          "state": "error",
+          "error": "Beautiful Mermaid\nBeautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.\nTroque o renderizador acima ou edite o código."
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "outside": []
+}

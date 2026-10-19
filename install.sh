@@ -45,6 +45,8 @@ RESOURCES="$APP_DIR/Contents/Resources"
 /usr/bin/osacompile -o "$APP_DIR" "$SOURCE_DIR/scripts/launcher.applescript"
 mkdir -p "$RESOURCES/scripts"
 cp -R dist server native "$RESOURCES/"
+mkdir -p "$RESOURCES/docs"
+cp docs/Scriba-Diagramas.md "$RESOURCES/docs/"
 cp scripts/launch.mjs scripts/stop.mjs "$RESOURCES/scripts/"
 cp -R "$NODE_HOME" "$RESOURCES/runtime"
 "$RESOURCES/runtime/bin/node" --version
@@ -56,8 +58,8 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>CFBundleName</key><string>Scriba</string>
 <key>CFBundleDisplayName</key><string>Scriba</string>
 <key>CFBundleIdentifier</key><string>com.aeonbridge.markdown</string>
-<key>CFBundleVersion</key><string>1.7.2</string>
-<key>CFBundleShortVersionString</key><string>1.7.2</string>
+<key>CFBundleVersion</key><string>1.8.0</string>
+<key>CFBundleShortVersionString</key><string>1.8.0</string>
 <key>CFBundleExecutable</key><string>droplet</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>

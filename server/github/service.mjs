@@ -733,7 +733,12 @@ export function createGitHubService({
       if (req.method === "POST" && url.pathname === "/github/save") {
         const result = await serialize(
           session.selection?.fullName + "/" + session.selection?.branch,
-          () => save(session, body),
+          () => {
+            const scope = session.selection ? `github:${session.selection.fullName}:${session.selection.branch}:${session.selection.folder}` : "state";
+            if (body.scope && body.scope !== scope) throw fail("O repositório mudou. Reabra a biblioteca no destino selecionado.", 409);
+            // Each request owns a decrypted session snapshot, including its destination.
+            return save(session, body);
+          },
         );
         persist();
         return send(result.conflict ? 409 : 200, result);

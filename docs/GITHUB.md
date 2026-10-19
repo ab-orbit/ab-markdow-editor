@@ -18,7 +18,7 @@ Production environment: `/etc/scriba-github.env`; service: `scriba-github`; stat
 
 ## Saving and conflicts
 
-Each save creates the Markdown and new image blobs, one tree and one commit, then updates the branch reference with `force: false`. Existing unrelated files remain in the base tree. Document blob revisions reject stale writes. A concurrent branch change refuses the reference update, preserving both the current remote branch and local draft. Identical retries create no extra commit. Existing images with different bytes require a new filename.
+Each save creates the Markdown and new image blobs, one tree and one commit, then updates the branch reference with `force: false`. Existing unrelated files remain in the base tree. Saves include the browser destination scope; the gateway rejects a stale repository/branch/folder selection before creating any blobs. Document blob revisions reject stale writes. A concurrent branch change refuses the reference update, preserving both the current remote branch and local draft. Identical retries create no extra commit. Existing images with different bytes require a new filename.
 
 Offline saves retain the note and its original remote revision in the browser. Reopening a pending local note does not replace it with older remote content. Once online, save the pending note or keep it open with automatic saving enabled. Pending notes are not synchronized in a closed/backgrounded PWA; iOS can suspend it. Repository protection rules and GitHub permission/rate limits can refuse saves; the browser copy remains available for export or retry.
 

@@ -260,7 +260,7 @@ test('guide is seeded once, committed and pushed; pins persist per checkout with
   for(const [key,value] of [['user.name','Library Test'],['user.email','library@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])await git(repo,'config',key,value);
   await fs.writeFile(path.join(repo,'note.md'),'# Minha nota\n\nConteúdo');await git(repo,'add','.');await git(repo,'commit','-m','Initial');await git(repo,'remote','add','origin',upstream);
   await request('connect',{directory:repo});
-  const initialized=await request('library/initialize',{});assert.equal(initialized.status,200);assert.equal(initialized.body.synchronization.synced,true);assert.equal(initialized.body.pinned[0].name,'AB-Markdown-Guia.md');
+  const initialized=await request('library/initialize',{});assert.equal(initialized.status,200);assert.equal(initialized.body.synchronization.synced,true);assert.equal(initialized.body.pinned[0].name,'AB-Markdown-Guia.md');assert.equal(initialized.body.pinned[1].name,'Scriba-Diagramas.md');assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),await fs.readFile(new URL('../docs/Scriba-Diagramas.md',import.meta.url),'utf8'));assert.match(await git(upstream,'show','main:Scriba-Diagramas.md'),/Manual contextual de diagramas/);
   const thumbnail=await request('thumbnail?name=AB-Markdown-Guia.md');assert.equal(thumbnail.status,200);assert.equal(thumbnail.body.mime,'image/jpeg');assert.ok(Buffer.from(thumbnail.body.data,'base64').length>1000);
   const diskImage=await fs.readFile(path.join(repo,'assets','escriba-welcome-v1.jpg'));assert.equal(thumbnail.body.data,diskImage.toString('base64'));
   assert.ok(await git(upstream,'cat-file','-s','main:assets/escriba-welcome-v1.jpg'));
@@ -269,8 +269,8 @@ test('guide is seeded once, committed and pushed; pins persist per checkout with
   const head=await git(repo,'rev-parse','HEAD');assert.equal((await request('library/initialize',{})).body.synchronization,undefined);assert.equal(await git(repo,'rev-parse','HEAD'),head);
   assert.equal((await request('pin',{name:'note.md',pinned:true})).status,200);
   await request('connect',{directory:checkout});assert.equal((await request('library')).body.pinned.length,0);await request('connect',{directory:repo});
-  const persisted=await request('library');assert.deepEqual(persisted.body.pinned.map(note=>note.name),['AB-Markdown-Guia.md','note.md']);assert.equal(await git(repo,'rev-parse','HEAD'),head);
-  await request('pin',{name:'note.md',pinned:false});assert.equal((await request('library')).body.pinned.length,1);
+  const persisted=await request('library');assert.deepEqual(persisted.body.pinned.map(note=>note.name),['AB-Markdown-Guia.md','Scriba-Diagramas.md','note.md']);assert.equal(await git(repo,'rev-parse','HEAD'),head);
+  await request('pin',{name:'note.md',pinned:false});assert.equal((await request('library')).body.pinned.length,2);
   assert.equal((await request('pin',{name:'../note.md',pinned:true})).status,400);
 });
 
@@ -290,7 +290,7 @@ test('existing guides gain the welcome image once while preserving user edits', 
   const name='AB-Markdown-Guia.md';const text='# AB Markdown — Guia da plataforma\n\nMeu conteúdo editado deve permanecer.\n';
   await fs.writeFile(path.join(repo,name),text);await git(repo,'add','.');await git(repo,'commit','-m','Old guide');await git(repo,'remote','add','origin',upstream);
   const info=await request('connect',{directory:repo});const file=path.join(temporary,'state','library.json');const state=JSON.parse(await fs.readFile(file,'utf8'));state[info.body.repository]={pinned:[name]};await fs.writeFile(file,JSON.stringify(state));
-  const migrated=await request('library/initialize',{});assert.equal(migrated.status,200);assert.equal(migrated.body.synchronization.synced,true);const updated=await fs.readFile(path.join(repo,name),'utf8');assert.match(updated,/Meu conteúdo editado deve permanecer/);assert.equal(updated.split('escriba-welcome-v1.jpg').length-1,1);
+  const migrated=await request('library/initialize',{});assert.equal(migrated.status,200);assert.equal(migrated.body.synchronization.synced,true);assert.equal(migrated.body.pinned[0].name,name);const updated=await fs.readFile(path.join(repo,name),'utf8');assert.match(updated,/Meu conteúdo editado deve permanecer/);assert.equal(updated.split('escriba-welcome-v1.jpg').length-1,1);
   const head=await git(repo,'rev-parse','HEAD');await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),head);assert.match(await git(upstream,'show',`main:${name}`),/escriba-welcome-v1.jpg/);
 });
 
@@ -336,4 +336,41 @@ test('Finder snapshots remain readable after deletion; explicit reload reads onl
   await fs.rm(directory,{recursive:true});
   assert.deepEqual((await request(`finder-document-version?id=${id}`)).body,{version:null});
   const cached=await request(`finder-document?id=${id}`);assert.equal(cached.status,200);assert.equal(cached.body.value,'# Snapshot');
+});
+
+/** Legacy checkouts model upgrades without re-running first-install guide setup. */
+async function referenceCheckout(label, files, pins=[]) {
+  const repo=path.join(temporary,label),upstream=path.join(temporary,`${label}.git`);
+  await fs.mkdir(repo);await fs.mkdir(upstream);await git(repo,'init','-b','main');await git(upstream,'init','--bare','-b','main');
+  for(const [key,value] of [['user.name','Reference Test'],['user.email','test@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])await git(repo,'config',key,value);
+  for(const [name,value] of Object.entries(files))await fs.writeFile(path.join(repo,name),value);
+  await git(repo,'add','.');await git(repo,'commit','-m','Existing notes');await git(repo,'remote','add','origin',upstream);await git(repo,'push','-u','origin','main');
+  const connected=await request('connect',{directory:repo});assert.equal(connected.status,200);
+  const file=path.join(temporary,'state','library.json'),state=JSON.parse(await fs.readFile(file,'utf8'));state[connected.body.repository]={pinned:pins,welcomeImageVersion:1};await fs.writeFile(file,JSON.stringify(state));
+  return {repo,upstream};
+}
+test('diagram reference upgrades existing checkouts without overwriting collisions or later user decisions',async()=>{
+  const text='# Minha referência particular\n', {repo,upstream}=await referenceCheckout('reference-collision',{'Scriba-Diagramas.md':text,'User.md':'# Nota do usuário'},['User.md']);
+  const first=await request('library/initialize',{});assert.equal(first.status,200);assert.equal(first.body.synchronization.synced,true);
+  const name='Scriba-Diagramas-2.md';assert.deepEqual(first.body.pinned.map(note=>note.name),[name,'User.md']);
+  assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),text);
+  const original=(await request(`document?name=${name}`)).body;const changed=original.value+'\nMinha anotação ao manual.\n';
+  assert.equal((await request('save-sync',{name,value:changed,version:original.version,files:[],message:'Annotate reference'})).body.synced,true);
+  await request('pin',{name,pinned:false});const head=await git(repo,'rev-parse','HEAD');
+  await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),head);assert.equal(await fs.readFile(path.join(repo,name),'utf8'),changed);assert.ok(!(await request('library')).body.pinned.some(note=>note.name===name));
+  assert.equal(await git(upstream,'show',`main:${name}`),changed.trimEnd());
+  await fs.rm(path.join(repo,name));await request('library/initialize',{});await assert.rejects(fs.access(path.join(repo,name)));assert.equal(await git(repo,'rev-parse','HEAD'),head);
+});
+test('already copied diagram references are adopted intact without creating duplicate commits',async()=>{
+  const value='# Meu manual anotado\n\n<!-- scriba-reference:diagram-manual version=1 -->\n\nAlterações preservadas.\n';
+  const {repo}=await referenceCheckout('reference-adopt',{'Scriba-Diagramas.md':value});const head=await git(repo,'rev-parse','HEAD');
+  const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.pinned[0].name,'Scriba-Diagramas.md');assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),value);assert.equal(await git(repo,'rev-parse','HEAD'),head);
+});
+test('failed reference synchronization preserves the full file and seed marker for explicit retry',async()=>{
+  const {repo}=await referenceCheckout('reference-pending',{'User.md':'# Existing'});
+  await fs.writeFile(path.join(repo,'User.md'),'# Staged user work');await git(repo,'add','User.md');
+  const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.synchronization.synced,false);assert.equal(result.body.synchronization.stage,'commit');
+  assert.equal(await git(repo,'diff','--cached','--name-only'),'User.md');
+  const head=await git(repo,'rev-parse','HEAD');const value=await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8');assert.match(value,/scriba-reference:diagram-manual/);
+  await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),head);assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),value);await assert.rejects(fs.access(path.join(repo,'Scriba-Diagramas-2.md')));
 });

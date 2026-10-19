@@ -239,10 +239,16 @@ export class Repository {
     // A reviewed local-only switch must not trigger the guide's automatic first push.
     const library = await this.libraryState();
     const entry = library[plan.target] || {pinned:[], welcomeImageVersion:1};
+    entry.referenceAutoSync = publish;
     if (plan.carryFiles && plan.mode !== 'remote') {
       const included = new Set(plan.entries.map(file=>file.name));
       const sourcePins = (library[plan.source]?.pinned || []).filter(name=>included.has(name)).map(name=>plan.folder ? `${plan.folder}/${name}` : name);
       entry.pinned = [...new Set([...(entry.pinned || []), ...sourcePins])];
+      const reference = library[plan.source];
+      if (reference?.diagramManualName && included.has(reference.diagramManualName)) {
+        entry.diagramManualName = plan.folder ? `${plan.folder}/${reference.diagramManualName}` : reference.diagramManualName;
+        entry.diagramManualVersion = reference.diagramManualVersion;
+      }
     }
     library[plan.target] = entry;
     await this.persistLibrary(library);
@@ -315,7 +321,7 @@ export class Repository {
           let text;
           try { const buffer = Buffer.alloc(8192); const {bytesRead} = await file.read(buffer, 0, buffer.length, 0); text = buffer.subarray(0, bytesRead).toString('utf8'); }
           finally { await file.close(); }
-          const lines = text.replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/, '').split(/\r?\n/);
+          const lines = text.replace(/<!--[\s\S]*?-->/g, '').replace(/^---\r?\n[\s\S]*?\r?\n---(?:\r?\n|$)/, '').split(/\r?\n/);
           const heading = lines.find(line => /^#{1,6}\s+/.test(line));
           const plain = line => line.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[#*_`>~]/g, '').trim();
           const title = heading ? plain(heading).slice(0, 160) : name.split('/').at(-1);
@@ -350,44 +356,71 @@ export class Repository {
     return { pinned: names.flatMap(name => byName.has(name) ? [byName.get(name)] : []), recent: notes.filter(note => !names.includes(note.name)).slice(0, 100) };
   }
 
-  /** Seed a normal editable Markdown guide once, without overwriting any user file. */
+  /** Seed editable reference notes once per checkout; never replace an existing user file. */
   async initializeLibrary() {
     const root = this.requireRoot();
     const state = await this.libraryState();
-    if (state[root]) {
-      const entry = state[root];
-      if (!entry.welcomeImageVersion) {
-        const name = entry.guideName || entry.pinned.find(item => /^AB-Markdown-Guia(?:-\d+)?\.md$/.test(item));
-        let synchronization;
-        if (name) {
-          try {
-            const doc = await this.read(name);
-            if (doc.value.startsWith('# AB Markdown — Guia da plataforma') && !doc.value.includes(welcomeImage)) {
-              const image = `![Boas-vindas ao Escriba — um escriba egípcio escrevendo em papiro](${welcomeImage})`;
-              const value = doc.value.replace(/^(#[^\n]*\n)/, `$1\n${image}\n`);
-              const data = await fs.readFile(new URL('./assets/escriba-welcome-v1.jpg', import.meta.url));
-              synchronization = await this.saveAndSync({name, value, version:doc.version, files:[{path:welcomeImage, data:data.toString('base64')}], message:'Add welcome image to AB Markdown guide'});
-            }
-          } catch (error) { if (error.code !== 'ENOENT') throw error; }
-        }
-        entry.welcomeImageVersion = 1;
-        await this.persistLibrary(state);
-        return {...await this.library(), ...(synchronization ? {synchronization} : {})};
+    let synchronization;
+    const rememberSync = result => {
+      if (synchronization?.synced !== false) synchronization = result;
+    };
+    if (!state[root]) {
+      let name = 'AB-Markdown-Guia.md';
+      for (let suffix = 2; ; suffix++) {
+        const filename = await safeFile(root, name);
+        try { await fs.access(filename); name = `AB-Markdown-Guia-${suffix}.md`; }
+        catch (error) { if (error.code === 'ENOENT') break; throw error; }
       }
-      return this.library();
+      const value = await fs.readFile(new URL('./guide.md', import.meta.url), 'utf8');
+      const image = await fs.readFile(new URL('./assets/escriba-welcome-v1.jpg', import.meta.url));
+      rememberSync(await this.saveAndSync({ name, value, version: null, files:[{path:welcomeImage, data:image.toString('base64')}], message: 'Add AB Markdown platform guide' }));
+      state[root] = { pinned: [name], guideName:name, welcomeImageVersion:1 };
+      await this.persistLibrary(state);
     }
-    let name = 'AB-Markdown-Guia.md';
-    for (let suffix = 2; ; suffix++) {
-      const filename = await safeFile(root, name);
-      try { await fs.access(filename); name = `AB-Markdown-Guia-${suffix}.md`; }
-      catch (error) { if (error.code === 'ENOENT') break; throw error; }
+    const entry = state[root];
+    entry.pinned ||= [];
+    if (!entry.welcomeImageVersion) {
+      const name = entry.guideName || entry.pinned.find(item => /^AB-Markdown-Guia(?:-\d+)?\.md$/.test(item));
+      if (name) {
+        try {
+          const doc = await this.read(name);
+          if (doc.value.startsWith('# AB Markdown — Guia da plataforma') && !doc.value.includes(welcomeImage)) {
+            const image = `![Boas-vindas ao Escriba — um escriba egípcio escrevendo em papiro](${welcomeImage})`;
+            const value = doc.value.replace(/^(#[^\n]*\n)/, `$1\n${image}\n`);
+            const data = await fs.readFile(new URL('./assets/escriba-welcome-v1.jpg', import.meta.url));
+            rememberSync(await this.saveAndSync({name, value, version:doc.version, files:[{path:welcomeImage, data:data.toString('base64')}], message:'Add welcome image to AB Markdown guide'}));
+          }
+        } catch (error) { if (error.code !== 'ENOENT') throw error; }
+      }
+      entry.welcomeImageVersion = 1;
+      await this.persistLibrary(state);
     }
-    const value = await fs.readFile(new URL('./guide.md', import.meta.url), 'utf8');
-    const image = await fs.readFile(new URL('./assets/escriba-welcome-v1.jpg', import.meta.url));
-    const synchronization = await this.saveAndSync({ name, value, version: null, files:[{path:welcomeImage, data:image.toString('base64')}], message: 'Add AB Markdown platform guide' });
-    state[root] = { pinned: [name], guideName:name, welcomeImageVersion:1 };
-    await this.persistLibrary(state);
-    return { ...await this.library(), synchronization };
+    // A persisted marker respects later edits, deletion and unpinning. Filename
+    // collisions select a new name; an already copied reference is adopted intact.
+    if (!entry.diagramManualVersion) {
+      let name = 'Scriba-Diagramas.md', exists = false;
+      for (let suffix = 2; ; suffix++) {
+        try {
+          const doc = await this.read(name);
+          if (doc.value.includes('<!-- scriba-reference:diagram-manual version=')) { exists = true; break; }
+          name = `Scriba-Diagramas-${suffix}.md`;
+        } catch (error) { if (error.code === 'ENOENT') break; throw error; }
+      }
+      if (!exists) {
+        const value = await fs.readFile(new URL('../docs/Scriba-Diagramas.md', import.meta.url), 'utf8');
+        const document = {name, value, version:null, files:[], message:'Add Scriba diagram reference v1.0.0'};
+        // Respect a repository switch that was explicitly reviewed without publishing.
+        if (entry.referenceAutoSync === false) await this.save(document);
+        else rememberSync(await this.saveAndSync(document));
+      }
+      const guideName = entry.guideName || entry.pinned.find(item => /^AB-Markdown-Guia(?:-\d+)?\.md$/.test(item));
+      const guideIndex = entry.pinned.indexOf(guideName);
+      if (!entry.pinned.includes(name)) entry.pinned.splice(guideIndex < 0 ? 0 : guideIndex + 1, 0, name);
+      entry.diagramManualVersion = 1;
+      entry.diagramManualName = name;
+      await this.persistLibrary(state);
+    }
+    return { ...await this.library(), ...(synchronization ? {synchronization} : {}) };
   }
 
   async pin({ name, pinned }) {

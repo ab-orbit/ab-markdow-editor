@@ -26,7 +26,7 @@ try {
     await git(root, 'remote', 'add', 'origin', remote); await git(root, 'push', '-u', 'origin', 'main');
     originalHead = await git(root, 'rev-parse', 'HEAD');
     await fs.writeFile(path.join(state, 'settings.json'), JSON.stringify({ repository: root, preferences: { autoSave: false, askCommitNote: false, intervalMinutes: 1 } }));
-    await fs.writeFile(path.join(state, 'library.json'), JSON.stringify({ [root]: { pinned: ['Selecao.md'], welcomeImageVersion: 1 } }));
+    await fs.writeFile(path.join(state, 'library.json'), JSON.stringify({ [root]: { pinned: ['Selecao.md'], welcomeImageVersion: 1, diagramManualVersion: 1 } }));
     const runtime = path.join(directory, 'runtime.json');
     server = spawn(process.execPath, ['server/index.mjs'], { cwd: new URL('..', import.meta.url), env: { ...process.env, PORT: '0', MARKDOWN_STATE_DIR: state, MARKDOWN_RUNTIME_FILE: runtime }, stdio: 'pipe' });
     for (let attempt = 0; attempt < 100; attempt++) { try { origin = JSON.parse(await fs.readFile(runtime, 'utf8')).url; break; } catch { await new Promise(resolve => setTimeout(resolve, 50)); } }

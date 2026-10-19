@@ -19,7 +19,7 @@ try {
   for(const [key,value] of [['user.name','Scriba Test'],['user.email','test@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])await git(checkout,'config',key,value);
   await fs.writeFile(path.join(checkout,'README.md'),'# Notes');await git(checkout,'add','.');await git(checkout,'commit','-m','Initial');await git(checkout,'remote','add','origin',remote);await git(checkout,'push','-u','origin','main');
   await fs.writeFile(path.join(state,'settings.json'),JSON.stringify({repository:checkout,preferences:{askCommitNote:true,autoSave:false,intervalMinutes:1}}));
-  await fs.writeFile(path.join(state,'library.json'),JSON.stringify({[checkout]:{pinned:[],welcomeImageVersion:1}}));
+  await fs.writeFile(path.join(state,'library.json'),JSON.stringify({[checkout]:{pinned:[],welcomeImageVersion: 1, diagramManualVersion: 1}}));
   await fs.mkdir(path.join(checkout,'scriba'));await fs.writeFile(path.join(checkout,'scriba','Nova.md'),'# Nota para sincronizar');
   const runtime=path.join(directory,'runtime.json');
   server=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'0',MARKDOWN_STATE_DIR:state,MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});

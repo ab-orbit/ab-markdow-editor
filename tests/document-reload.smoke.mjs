@@ -20,7 +20,7 @@ try {
  const longText='# Leitura longa\n\n'+Array.from({length:80},(_,i)=>`Parágrafo ${i+1}. Texto suficiente para verificar a posição de leitura.`).join('\n\n');await fs.writeFile(path.join(root,'Long.md'),longText);
  await git(root,'add','.');await git(root,'commit','-m','Initial');await git(root,'remote','add','origin',remote);await git(root,'push','-u','origin','main');
  await fs.writeFile(path.join(state,'settings.json'),JSON.stringify({repository:root,preferences:{autoSave:true,askCommitNote:false,intervalMinutes:1}}));
- await fs.writeFile(path.join(state,'library.json'),JSON.stringify({[root]:{pinned:['A.md','B.md','Long.md'],welcomeImageVersion:1}}));
+ await fs.writeFile(path.join(state,'library.json'),JSON.stringify({[root]:{pinned:['A.md','B.md','Long.md'],welcomeImageVersion: 1, diagramManualVersion: 1}}));
  const runtime=path.join(directory,'runtime.json');server=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'0',MARKDOWN_STATE_DIR:state,MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});
  let origin;for(let i=0;i<100;i++){try{origin=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}assert.ok(origin);
  browser=await chromium.launch({channel:'chrome',headless:true});

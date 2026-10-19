@@ -21,7 +21,7 @@ try {
   await fs.writeFile(path.join(root, 'Nota.md'), original);
   await git(root, 'add', '.'); await git(root, 'commit', '-m', 'Initial'); await git(root, 'remote', 'add', 'origin', remote); await git(root, 'push', '-u', 'origin', 'main');
   await fs.writeFile(path.join(state, 'settings.json'), JSON.stringify({repository: root, preferences: {askCommitNote: false, autoSave: false, intervalMinutes: 1}}));
-  await fs.writeFile(path.join(state, 'library.json'), JSON.stringify({[root]: {pinned: ['Nota.md'], welcomeImageVersion: 1}}));
+  await fs.writeFile(path.join(state, 'library.json'), JSON.stringify({[root]: {pinned: ['Nota.md'], welcomeImageVersion: 1, diagramManualVersion: 1}}));
   const runtime = path.join(directory, 'runtime.json');
   server = spawn(process.execPath, ['server/index.mjs'], {cwd: new URL('..', import.meta.url), env: {...process.env, PORT: '0', MARKDOWN_STATE_DIR: state, MARKDOWN_RUNTIME_FILE: runtime}, stdio: 'pipe'});
   let origin;

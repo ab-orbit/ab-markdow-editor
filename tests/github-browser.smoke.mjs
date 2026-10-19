@@ -194,6 +194,15 @@ try {
   );
   await search.fill("");
   await picker.selectOption("alice/notes");
+  // This single-document gateway fixture predates the reference corpus. Keep its
+  // unrelated save assertions isolated; reference seeding has its own HTTP/UI test.
+  await page.evaluate(() => new Promise((resolve,reject) => {
+    const request=indexedDB.open('scriba-private-notes',1);
+    request.onsuccess=()=>{const db=request.result,tx=db.transaction('library','readwrite');
+      tx.objectStore('library').put({notes:{},pins:[],diagramManualVersion:1,preferences:{askCommitNote:false,autoSave:false,intervalMinutes:1,doubleClickToEdit:true}},'github:alice/notes:main:scriba');
+      tx.oncomplete=()=>{db.close();resolve();};tx.onerror=()=>reject(tx.error);
+    };
+  }));
   console.log("Account connected");
   await page
     .getByRole("button", { name: "Usar este repositório", exact: true })

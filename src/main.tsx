@@ -417,7 +417,7 @@ function App() {
     await run(async () => {
       const doc = await api<LoadedDocument>(`document?name=${encodeURIComponent(fileName)}`);
       const attached = doc.files.map(file => ({ path: file.path, file: new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, { type: file.mime }) }));
-      resetDocument(doc.value, fileName, doc.version, attached); setPendingSync(!!doc.pendingSync); setSelected(fileName); setSettingsOpen(false);
+      resetDocument(doc.value, fileName, doc.version, attached); setReloadMode('read'); setPendingSync(!!doc.pendingSync); setSelected(fileName); setSettingsOpen(false);
       if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false);
       setNotice(doc.warnings.length ? `Aberto com avisos: ${doc.warnings.join('; ')}` : 'Documento aberto.');
     });

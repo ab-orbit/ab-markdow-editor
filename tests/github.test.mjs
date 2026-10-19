@@ -232,6 +232,9 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
     assert.equal((await request("document?name=note.md&scope=wrong-scope")).status,409);
     const png =
       "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=";
+    const beforeScopedSave = await git("rev-parse", "HEAD");
+    assert.equal((await request("save", {name:"Scriba-Diagramas.md", value:"# Reference", version:null, files:[], scope:"github:other/repo:main:scriba"})).status,409);
+    assert.equal(await git("rev-parse", "HEAD"),beforeScopedSave);
     const save = await request("save", {
       name: "note.md",
       value: "# Updated\n\n![Image](assets/image.png)",

@@ -1,10 +1,15 @@
 import {githubSelection, githubRequest, libraryKey} from './github';
 import {saveToDeviceFolder, readDeviceNotes, folderLabel, deviceDocumentVersion, readDeviceDocument, textVersion} from './deviceFolder';
+import diagramManual from '../../docs/Scriba-Diagramas.md?raw';
 import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
 /** Public builds keep all user content in this origin's IndexedDB, never on the VPS. */
 export const browserMode = import.meta.env.VITE_STORAGE_MODE === 'browser';
 interface Note { name: string; value: string; version: string | null; title?: string; cached?: boolean; pending?: boolean; modifiedAt: string; files: {path:string;data:string;mime:string}[] }
-interface State { notes: Record<string,Note>; pins: string[]; preferences: {askCommitNote:boolean;autoSave:boolean;intervalMinutes:number;
+interface State { notes: Record<string,Note>; pins: string[];
+  /** Seed metadata persists user decisions to edit, unpin or remove a reference. */
+  diagramManualVersion?: number;
+  diagramManualName?: string;
+ preferences: {askCommitNote:boolean;autoSave:boolean;intervalMinutes:number;
   /** Gesture preference is private to this destination, alongside its existing save settings. */
   doubleClickToEdit:boolean;
 } }
@@ -14,8 +19,47 @@ function db() {
   return database ||= new Promise((resolve,reject)=>{const request=indexedDB.open('scriba-private-notes',1);request.onupgradeneeded=()=>request.result.createObjectStore('library');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
 }
 function library(state:State) {
-  const summary=(note:Note)=>({name:note.name,modifiedAt:note.modifiedAt,title:note.value.match(/^#\s+(.+)$/m)?.[1]||note.title||note.name,preview:note.value.replace(/!\[[^\]]*\]\([^)]*\)/g,'').replace(/[#*`>\[\]]/g,'').replace(/\s+/g,' ').slice(0,160),hasImage:note.files.length>0});
+  const summary=(note:Note)=>({name:note.name,modifiedAt:note.modifiedAt,title:note.value.match(/^#\s+(.+)$/m)?.[1]||note.title||note.name,preview:note.value.replace(/<!--[\s\S]*?-->/g,'').replace(/!\[[^\]]*\]\([^)]*\)/g,'').replace(/[#*`>\[\]]/g,'').replace(/\s+/g,' ').slice(0,160),hasImage:note.files.length>0});
   return {pinned:state.pins.filter(name=>state.notes[name]).map(name=>summary(state.notes[name])),recent:Object.values(state.notes).filter(note=>!state.pins.includes(note.name)).sort((a,b)=>b.modifiedAt.localeCompare(a.modifiedAt)).slice(0,100).map(summary)};
+}
+/** Read outside a write transaction: GitHub requests must never keep IndexedDB locked. */
+async function snapshot(database:IDBDatabase,key:string):Promise<State> {
+  return new Promise((resolve,reject)=>{
+    const tx=database.transaction('library','readonly'),request=tx.objectStore('library').get(key);
+    tx.oncomplete=()=>resolve(request.result||initial());tx.onerror=()=>reject(tx.error);
+  });
+}
+/** Prepare a normal, destination-scoped note, adopting owned copies and avoiding user files. */
+async function prepareDiagramManual(database:IDBDatabase,key:string,remote:any,hasGitHub:boolean) {
+  const state=await snapshot(database,key);
+  if(state.diagramManualVersion)return undefined;
+  const known=new Map<string,any>((remote?.notes||[]).map((note:Note)=>[note.name,note]));
+  const owned=(value:string)=>value.includes('<!-- scriba-reference:diagram-manual version=');
+  for(let suffix=1;suffix<1000;suffix++) {
+    if(key!==libraryKey())throw new Error('O destino mudou. Reabra a biblioteca.');
+    const name=`Scriba-Diagramas${suffix===1?'':`-${suffix}`}.md`;
+    const local=state.notes[name];
+    if(local&&owned(local.value))return {note:local,created:false};
+    if(local||known.has(name)) {
+      if(hasGitHub&&known.has(name)) {
+        try {
+          const response=await githubRequest(`document?name=${encodeURIComponent(name)}&scope=${encodeURIComponent(key)}`),doc=await response.json();
+          if(response.ok&&owned(doc.value))return {note:{...doc,name,cached:true,pending:false,modifiedAt:known.get(name).modifiedAt||new Date().toISOString()} as Note,created:false};
+        }catch{/* An unknown remote file is never replaced by a bundled example. */}
+      }
+      continue;
+    }
+    const note:Note={name,value:diagramManual,version:hasGitHub?null:crypto.randomUUID(),cached:true,pending:hasGitHub,modifiedAt:new Date().toISOString(),files:[]};
+    if(hasGitHub) {
+      try {
+        const response=await githubRequest('save',{...note,scope:key,message:'Add Scriba diagram reference v1.0.0'}),result=await response.json();
+        if(response.ok){note.version=result.version;note.pending=false;}
+        else if(response.status===409&&result.conflict){known.set(name,{});suffix--;continue;}
+      }catch{/* The complete source remains available privately offline for a later save. */}
+    }
+    return {note,created:true};
+  }
+  throw new Error('Não foi possível escolher um nome livre para o manual de diagramas.');
 }
 /** Transactions serialize cross-tab edits and reject stale document revisions. */
 export async function browserFetch(route:string, body?:any):Promise<Response> {
@@ -36,7 +80,7 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
     if(selection && ['library/initialize','library','recent','document','document-version','save-sync'].includes(url.pathname.slice(1))){
       try {
         const remoteRoute=url.pathname==='/save-sync'?'save':['/document','/document-version'].includes(url.pathname)?`${url.pathname.slice(1)}${url.search}`:'library';
-        syncResponse=await githubRequest(remoteRoute,url.pathname==='/save-sync'?body:undefined);
+        syncResponse=await githubRequest(remoteRoute,url.pathname==='/save-sync'?{...body,scope:key}:undefined);
         remote=await syncResponse.json();
         if(!syncResponse.ok){if(url.pathname==='/save-sync'&&syncResponse.status===409)return Response.json(remote,{status:409});syncError=remote.error||'Conexão GitHub indisponível.';remote=null;}
       }catch{syncError='Sem conexão com o GitHub. Alterações preservadas neste navegador.';}
@@ -48,8 +92,10 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
     let guide:Note|undefined;
     if(url.pathname==='/library/initialize'&&!selection) {
       const image=await fetch(welcomeUrl); const bytes=new Uint8Array(await image.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
-      guide={name:'Boas-vindas.md',version:crypto.randomUUID(),modifiedAt:new Date().toISOString(),value:'# Bem-vindo ao Scriba\n\n![Escriba egípcio](assets/boas-vindas.jpg)\n\nEscreva, organize e guarde suas notas Markdown neste navegador.\n\n## Comece aqui\n\nCrie uma nota, escreva e pressione Salvar ou ⌘S. Busque e fixe notas na lateral. Importe Markdown e ZIP e exporte suas notas com imagens.\n\n## Privacidade e armazenamento\n\nSuas notas ficam somente neste navegador e dispositivo. Não são enviadas ao nosso servidor. Limpar os dados do site remove as notas; exporte pacotes ZIP para backup. Não há sincronização automática entre dispositivos.\n\nRascunhos são preservados durante a edição. O salvamento automático da biblioteca vem ativado a cada 1 minuto e pode ser ajustado nas configurações.\n\n## Git e roadmap\n\nA versão local para Mac já permite selecionar um repositório e salvar com commit e push. Na versão pública, conecte GitHub nas configurações para selecionar um repositório e sincronizar notas também no celular. Google Drive e novos temas seguem no roadmap, ainda sem data.\n\n[Baixar versão local](https://github.com/ab-orbit/ab-markdow-editor)\n\nPowered by **Aeon Bridge Co.** — offered to community.',files:[{path:'assets/boas-vindas.jpg',data:btoa(binary),mime:'image/jpeg'}]};
+      guide={name:'Boas-vindas.md',version:crypto.randomUUID(),modifiedAt:new Date().toISOString(),value:'# Bem-vindo ao Scriba\n\n![Escriba egípcio](assets/boas-vindas.jpg)\n\nEscreva, organize e guarde suas notas Markdown neste navegador.\n\n## Comece aqui\n\nCrie uma nota, escreva e pressione Salvar ou ⌘S. Busque e fixe notas na lateral. Importe Markdown e ZIP e exporte suas notas com imagens.\n\n## Privacidade e armazenamento\n\nSuas notas ficam somente neste navegador e dispositivo. Não são enviadas ao nosso servidor. Limpar os dados do site remove as notas; exporte pacotes ZIP para backup. Não há sincronização automática entre dispositivos.\n\nRascunhos são preservados durante a edição. O salvamento automático da biblioteca vem ativado a cada 1 minuto e pode ser ajustado nas configurações.\n\n## Manual de diagramas\n\nAbra a nota fixada Scriba — Manual contextual de diagramas para explorar exemplos editáveis de processos, dados, arquitetura, planejamento e análise. Compare os motores no seletor de cada desenho.\n\n## Git e roadmap\n\nA versão local para Mac já permite selecionar um repositório e salvar com commit e push. Na versão pública, conecte GitHub nas configurações para selecionar um repositório e sincronizar notas também no celular. Google Drive e novos temas seguem no roadmap, ainda sem data.\n\n[Baixar versão local](https://github.com/ab-orbit/ab-markdow-editor)\n\nPowered by **Aeon Bridge Co.** — offered to community.',files:[{path:'assets/boas-vindas.jpg',data:btoa(binary),mime:'image/jpeg'}]};
     }
+    const reference=url.pathname==='/library/initialize' ? await prepareDiagramManual(database,key,remote,!!selection) : undefined;
+    if(key!==libraryKey())return Response.json({error:'O destino mudou. Reabra a biblioteca.'},{status:409});
     const response = await new Promise<Response>((resolve,reject)=>{
       const readOnly=url.pathname==='/document-version';
       const tx=database.transaction('library',readOnly?'readonly':'readwrite'),store=tx.objectStore('library'),request=store.get(key);let result:unknown;let status=200;
@@ -63,7 +109,21 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
           case '/repository':result={repository:selection?`GitHub: ${selection.fullName}/${selection.folder}`:'Notas neste navegador',branch:selection?.branch||'',status:''};break;
           case '/preferences':if(body)state.preferences={doubleClickToEdit:typeof body.doubleClickToEdit==='boolean'?body.doubleClickToEdit:state.preferences.doubleClickToEdit,askCommitNote:!!selection&&!!body.askCommitNote,autoSave:!!body.autoSave,intervalMinutes:Math.max(1,Math.min(1440,Number(body.intervalMinutes)||1))};result=state.preferences;break;
           case '/files':result=Object.keys(state.notes).sort();break;
-          case '/library/initialize':if(guide&&!state.notes[guide.name]){state.notes[guide.name]=guide;state.pins.unshift(guide.name);}result={...library(state),synchronization:selection&&syncResponse&&!syncResponse.ok?{synced:false,error:syncError}:undefined};break;
+          case '/library/initialize': {
+            if(guide&&!state.notes[guide.name]){state.notes[guide.name]=guide;state.pins.unshift(guide.name);}
+            if(reference&&!state.diagramManualVersion) {
+              const existing=state.notes[reference.note.name];
+              // Recheck after async preparation: another tab may have saved or seeded meanwhile.
+              if(!existing||(!existing.cached&&!existing.value&&existing.version===reference.note.version)||existing.value.includes('<!-- scriba-reference:diagram-manual version=')) {
+                state.notes[reference.note.name]=existing?.cached?existing:reference.note;
+                const guideIndex=guide?state.pins.indexOf(guide.name):-1;
+                if(!state.pins.includes(reference.note.name))state.pins.splice(guideIndex<0?0:guideIndex+1,0,reference.note.name);
+                state.diagramManualVersion=1;state.diagramManualName=reference.note.name;
+              }
+            }
+            const pending=!!reference?.note.pending;
+            result={...library(state),synchronization:pending||selection&&syncError?{synced:false,error:syncError||'Manual disponível neste navegador; salve-o para enviar ao GitHub.'}:undefined};break;
+          }
           case '/library':case '/recent':result=library(state);break;
           case '/pin':state.pins=state.pins.filter(item=>item!==name);if(body.pinned&&state.notes[name])state.pins.push(name);result=library(state);break;
           case '/document-version':result=selection?remote:disk||{version:state.notes[name]?.version??null};break;
@@ -81,6 +141,10 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       };
       tx.oncomplete=()=>resolve(Response.json(result,{status}));tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
     });
+    if(!selection&&folder&&reference?.created&&response.ok) {
+      try{await saveToDeviceFolder(reference.note);}
+      catch(error){const result=await response.json();return Response.json({...result,synchronization:{synced:false,error:error instanceof Error?error.message:String(error)}});}
+    }
     if(!selection&&url.pathname==='/save-sync'&&response.ok){const result=await response.json();try{await saveToDeviceFolder(body);}catch(error){return Response.json({...result,synced:false,error:error instanceof Error?error.message:String(error)});}return Response.json(result);}
     return response;
   } catch {return Response.json({error:'Não foi possível acessar o armazenamento deste navegador. Exporte suas notas para preservar uma cópia.'},{status:500});}

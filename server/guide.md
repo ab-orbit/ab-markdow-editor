@@ -28,6 +28,10 @@ Os documentos e as imagens ficam no repositório escolhido. Rascunhos ficam nest
 
 O aplicativo local deve estar aberto para acessar os arquivos e executar Git. Push precisa de conexão ao remoto. Se a sincronização falhar, o arquivo local é preservado e o editor informa a etapa pendente.
 
+## Manual de diagramas
+
+A nota fixada **Scriba — Manual contextual de diagramas** reúne exemplos editáveis de processos, dados, arquitetura, planejamento, métricas e análise. Cada exemplo explica uma pergunta, a leitura do desenho e como adaptá-lo; o seletor sobre o gráfico compara os três motores sem alterar o Markdown.
+
 ## Roadmap previsto
 
 - **Google Drive:** conectar uma pasta do Drive e sincronizar notas, com indicação de estado e tratamento de conflitos. Ainda não disponível.

@@ -1,0 +1,53 @@
+{
+  "release": "1.8.0",
+  "referenceEdition": "1.0.0",
+  "httpTests": {
+    "passed": 50,
+    "failed": 0
+  },
+  "corpus": {
+    "examples": 58,
+    "familiesIncludingDiagnostic": 33,
+    "mermaid": "58/58",
+    "pele": "58/58",
+    "beautiful": "21/58"
+  },
+  "publicBrowsers": [
+    "Chrome",
+    "WebKit"
+  ],
+  "viewports": [
+    [
+      1440,
+      900
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      844,
+      390
+    ],
+    [
+      820,
+      1180
+    ],
+    [
+      1180,
+      820
+    ]
+  ],
+  "verified": [
+    "pinned once in fresh and existing libraries",
+    "filename collisions and adoption",
+    "user edits and unpin persistence",
+    "Unicode section navigation",
+    "exact Markdown source and exports",
+    "offline note and diagram reading",
+    "GitHub scoped creation and offline retry",
+    "GitHub gateway and mobile flow",
+    "local Git commit/push and pending synchronization recovery"
+  ],
+  "physicalDevicesTested": false
+}
