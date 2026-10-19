@@ -586,7 +586,7 @@ export class Repository {
     }
   }
 
-  /** Commit all explicitly requested checkout changes, then retry a normal, non-forced push. */
+  /** Commit the requested checkout changes, integrate remote updates and push normally. */
   async sync({ repository: expectedRepository, message = 'Synchronize local notes', paths = null }) {
     const root = this.requireRoot();
     if (expectedRepository !== root) throw new Error('O repositório mudou. Reabra as configurações antes de sincronizar.');
@@ -620,13 +620,56 @@ export class Repository {
     }
   }
 
+  /** Merge incoming commits without rewriting history, stashing edits or choosing a conflict winner. */
+  async integrateRemote(branch, upstream) {
+    const root = this.requireRoot();
+    const remote = upstream ? await git(root, ['config', '--get', `branch.${branch}.remote`]) : 'origin';
+    if (remote !== '.') await git(root, ['fetch', '--no-tags', remote]);
+    const target = upstream ? '@{upstream}' : `refs/remotes/origin/${branch}`;
+    let remoteHead;
+    try { remoteHead = await git(root, ['rev-parse', '--verify', `${target}^{commit}`]); }
+    catch (error) { if (upstream) throw error; return false; }
+    if (!Number(await git(root, ['rev-list', '--count', `HEAD..${remoteHead}`]))) return false;
+
+    // A merge must start from a clean index/worktree and must never replace another Git operation.
+    for (const marker of ['MERGE_HEAD', 'CHERRY_PICK_HEAD', 'REVERT_HEAD', 'rebase-merge', 'rebase-apply']) {
+      const filename = path.resolve(root, await git(root, ['rev-parse', '--git-path', marker]));
+      const exists = await fs.access(filename).then(() => true, error => { if (error.code === 'ENOENT') return false; throw error; });
+      if (exists) throw new Error('Há uma integração do Git em andamento. Finalize ou cancele essa operação antes de sincronizar.');
+    }
+    if (await git(root, ['status', '--porcelain'])) throw new Error('Há outras alterações locais ainda sem commit. Sua nota foi preservada. Use Sincronizar nas configurações para incluir essas alterações antes de receber as atualizações do GitHub.');
+    try { await git(root, ['merge-base', 'HEAD', remoteHead]); }
+    catch { throw new Error('Os históricos local e remoto não têm uma origem comum. Selecione outro repositório nas configurações para transferir as notas com segurança.'); }
+    try {
+      await git(root, ['merge', '--no-edit', '--ff', '-m', 'Merge remote notes with Scriba', remoteHead]);
+    } catch (error) {
+      const conflicts = await git(root, ['-c', 'core.quotepath=false', 'diff', '--name-only', '--diff-filter=U']);
+      const merging = await git(root, ['rev-parse', '--verify', 'MERGE_HEAD']).then(() => true, () => false);
+      // Only abort the merge started above. Never reset the checkout or discard either commit.
+      if (merging) {
+        try { await git(root, ['merge', '--abort']); }
+        catch { throw new Error('A integração do Git foi interrompida e precisa ser revisada na pasta local. Os commits dos dois lados continuam preservados.'); }
+      }
+      if (conflicts) throw new Error(`Conflito entre as alterações locais e as do GitHub: ${conflicts.split('\n').join(', ')}. A integração foi cancelada e as duas versões estão preservadas nos seus commits. Resolva o conflito na pasta local antes de sincronizar novamente.`);
+      throw error;
+    }
+    return true;
+  }
+
   async push() {
     const root = this.requireRoot();
     const branch = await git(root, ['branch', '--show-current']);
     if (!branch) throw new Error('Selecione uma branch antes de enviar ao remoto.');
     let upstream = false;
     try { upstream = !!await git(root, ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}']); } catch { /* First push creates the upstream on origin. */ }
-    await git(root, upstream ? ['push'] : ['push', '-u', 'origin', branch]);
+    await this.integrateRemote(branch, upstream);
+    const args = upstream ? ['push'] : ['push', '-u', 'origin', branch];
+    try { await git(root, args); }
+    catch (error) {
+      // Another device may publish between fetch and push. Retry once only if new commits arrived.
+      if (!await this.integrateRemote(branch, upstream)) throw error;
+      await git(root, args);
+    }
     return this.info();
   }
 }

@@ -79,12 +79,17 @@ test('failed commit releases only the newly prepared index and retains the files
   assert.equal(await git(checkout,'diff','--cached','--name-only'),'');assert.equal(await fs.readFile(path.join(checkout,'scriba','hook.md'),'utf8'),'# Still here');
   await git(checkout,'config','core.hooksPath','/dev/null');assert.equal((await request({})).body.synced,true);
 });
-test('a diverged remote rejects the push and keeps its existing history',async()=>{
+test('a diverged remote merges independent changes and preserves both histories',async()=>{
   const other=path.join(directory,'other');await git(directory,'clone',remote,other);
   await git(other,'config','user.name','Other');await git(other,'config','user.email','other@example.invalid');await git(other,'config','commit.gpgsign','false');await git(other,'config','core.hooksPath','/dev/null');
   await fs.writeFile(path.join(other,'remote.md'),'# Remote');await git(other,'add','.');await git(other,'commit','-m','Remote change');await git(other,'push');
   const remoteHead=await git(remote,'rev-parse','main');
   await fs.writeFile(path.join(checkout,'scriba','local.md'),'# Local');
-  const result=await request({});assert.equal(result.body.synced,false);assert.equal(result.body.stage,'push');
-  assert.equal(await git(remote,'rev-parse','main'),remoteHead);assert.equal(await fs.readFile(path.join(checkout,'scriba','local.md'),'utf8'),'# Local');
+  const result=await request({});assert.equal(result.body.synced,true,result.body.error);
+  const head=await git(checkout,'rev-parse','HEAD');
+  assert.equal(await git(remote,'rev-parse','main'),head);
+  await git(checkout,'merge-base','--is-ancestor',remoteHead,head);
+  assert.equal(await fs.readFile(path.join(checkout,'remote.md'),'utf8'),'# Remote');
+  assert.equal(await git(remote,'show','main:scriba/local.md'),'# Local');
+  assert.equal(await git(checkout,'status','--porcelain'),'');
 });
