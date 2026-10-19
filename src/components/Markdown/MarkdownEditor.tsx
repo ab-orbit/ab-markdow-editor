@@ -30,6 +30,8 @@ export interface MarkdownEditorProps {
   value: string;
   /** Receives document edits without a Markdown-to-HTML round trip. */
   onChange: (value: string) => void;
+  /** Report selected source characters without lifting selection into document state. */
+  onSelectionChange?: (characters: number) => void;
   /** Hide inactive delimiters while retaining an editable source document. */
   livePreview?: boolean;
   /** Enable the optional double-click gesture in live preview. */
@@ -48,10 +50,11 @@ const externalChange = Annotation.define<boolean>();
 
 /** A browser editor mounted after hydration; history survives mode switches. */
 const noAssets: readonly MarkdownAsset[] = [];
-export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorProps>(function MarkdownEditor({ value, onChange, livePreview = true, doubleClickToEdit = true, onBlockEditChange, readOnly = false, assets = noAssets, onImageFiles, diagramScope = 'document' }: MarkdownEditorProps, ref) {
+export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorProps>(function MarkdownEditor({ value, onChange, onSelectionChange, livePreview = true, doubleClickToEdit = true, onBlockEditChange, readOnly = false, assets = noAssets, onImageFiles, diagramScope = 'document' }: MarkdownEditorProps, ref) {
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);
   const callback = useRef(onChange);
+  const selectionCallback = useRef(onSelectionChange); selectionCallback.current = onSelectionChange;
   const initialValue = useRef(value);
   const imageCallback = useRef(onImageFiles);
   const blockCallback = useRef(onBlockEditChange);blockCallback.current=onBlockEditChange;
@@ -101,6 +104,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
           },
         }),
         EditorView.updateListener.of(update => {
+          if ((update.selectionSet || update.docChanged || update.focusChanged) && update.view.hasFocus && !host.current?.closest('[hidden]')) {
+            selectionCallback.current?.(update.state.selection.ranges.reduce((total, range) => total + range.to - range.from, 0));
+          }
           const previous=update.startState.field(rawBlockField),next=update.state.field(rawBlockField);
           if(previous?.from!==next?.from||previous?.to!==next?.to)blockCallback.current?.(next,update.transactions.some(transaction=>transaction.annotation(blockEditingFinished)));
           if (update.docChanged && !update.transactions.some(transaction => transaction.annotation(externalChange))) {

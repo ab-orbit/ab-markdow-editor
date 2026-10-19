@@ -45,6 +45,8 @@
 .reading th { color: var(--text-primary); background: var(--bg-elevated); }
 .image { display: inline-block; padding: 8px 12px; color: var(--text-muted); border: 1px dashed var(--border-strong); }
 .footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 14px 20px; border-top: 1px solid var(--border-panel); font-size: var(--text-base); color: var(--text-muted); }
+.statistics { min-width: 0; font-variant-numeric: tabular-nums; }
+.selectionCount { color: var(--cyan); font-weight: 600; white-space: nowrap; }
 .error { padding: 12px 20px; color: var(--status-alert); border-bottom: 1px solid var(--border-panel); font-size: var(--text-lg); }
 .editingToolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; padding: 8px 16px; border-bottom: 1px solid var(--border-panel); background: var(--bg-base); }
 .toolGroup { display: flex; align-items: center; flex-wrap: wrap; border-left: 1px solid var(--border-base); padding-left: 6px; }
@@ -153,6 +155,8 @@
  .mobileReadingBar button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
  .compact[data-mode="read"][data-reading-actions="false"] > .toolbar { display: none; }
  .compact[data-mode="read"] > .footer, .compact[data-mode="read"] > .editingToolbar { display: none; }
+ .compact[data-mode="read"] > .footer:has(.selectionCount) { display: flex; }
+ .compact .footer:has(.selectionCount) > span:not(.statistics) { display: none; }
  .compact[data-mode="read"] .reading { max-width: 740px; padding: 16px 25px 64px; font-family: var(--font-ui); font-size: 17px; line-height: 1.8; letter-spacing: .005em; }
  .compact[data-mode="read"] .reading h1 { font-size: 32px; line-height: 1.3; letter-spacing: -.015em; margin: 0 0 40px; }
  .compact[data-mode="read"] .reading h2 { font-size: 25px; line-height: 1.4; margin: 40px 0 24px; }

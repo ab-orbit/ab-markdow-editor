@@ -9,6 +9,7 @@ import { EditingToolbar } from './EditingToolbar';
 import { EditorDialog } from './EditorDialog';
 import { TableEditorDialog } from './TableEditorDialog';
 import { useMarkdownAssets } from './useMarkdownAssets';
+import { SelectionStatistics, type SelectionStatisticsHandle } from './SelectionStatistics';
 import type { MarkdownAsset } from '@/lib/markdown/assets';
 import type { MarkdownCommand, SourceRange } from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
@@ -89,6 +90,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const imageInput = useRef<HTMLInputElement>(null);
   const imageRange = useRef<SourceRange>({ from: 0, to: 0 });
   const editor = useRef<MarkdownEditorHandle>(null);
+  const statistics = useRef<SelectionStatisticsHandle>(null);
   function chooseFile(reloadOriginal = false) {
     if (readOnly || busy) return;
     reloadImport.current = reloadOriginal;setError('');input.current?.click();
@@ -231,7 +233,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     <div className={styles.modeHint}>{mode === 'live' ? 'Os marcadores aparecem na linha selecionada. Clique no texto para editar.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Volte a Escrever para editar.'}</div>
     <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
       <div className={styles.source} hidden={mode === 'read'}>
-        <MarkdownEditor key={documentId} ref={editor} diagramScope={diagramScope} value={value} onChange={onChange} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
+        <MarkdownEditor key={documentId} ref={editor} diagramScope={diagramScope} value={value} onChange={onChange} onSelectionChange={characters => statistics.current?.setEditorSelection(characters)} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
       </div>
       {(mode === 'split' || mode === 'read') && <MarkdownReadingView diagramScope={diagramScope} value={value} assets={assets} doubleClickToEdit={doubleClickToEdit} onEditBlock={!readOnly && !busy ? editBlock : undefined} onEditTable={!readOnly && !busy ? editTable : undefined} onToggleTask={!readOnly && !busy ? range => {
         const source = value.slice(range.from, range.to);
@@ -240,7 +242,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       } : undefined}/>}
     </div>
     <output className={styles.blockStatus} aria-live="polite">{activeBlock?'Markdown do bloco em edição. Escape conclui; clique em outro bloco para continuar.':''}</output>
-    <footer className={styles.footer}><span>{words} palavras · {value.length} caracteres</span><span>{readOnly ? 'Somente leitura' : dirty ? 'Alterações nesta sessão' : 'Documento carregado'}</span><span>UTF-8 · .md</span></footer>
+    <footer className={styles.footer} aria-label="Estatísticas do documento"><SelectionStatistics ref={statistics} container={pages} resetKey={`${mode}:${documentId}`} words={words} characters={value.length}/><span>{readOnly ? 'Somente leitura' : dirty ? 'Alterações nesta sessão' : 'Documento carregado'}</span><span>UTF-8 · .md</span></footer>
     {linkRange && <EditorDialog title="Inserir link" onClose={() => setLinkRange(null)}>
       {linkError && <p role="alert">{linkError}</p>}<form onSubmit={event => {
         event.preventDefault();

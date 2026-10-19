@@ -94,6 +94,8 @@ Depois de configurar o repositório, a tela mostra somente o editor. A engrenage
 
 Mantém os modos **Escrever**, **Fonte**, **Visão** e **Ler**, formatação, desfazer/refazer, tabelas editáveis, tarefas, referências, imagens por seleção/colagem/arrastar, importação de Markdown/ZIP/Bear e exportação `.md`/ZIP. Imagens inseridas são gravadas na pasta `assets/` ao lado do documento; imagens remotas não são buscadas automaticamente. Os temas claro e escuro usam uma cópia dos tokens do app original.
 
+O rodapé mostra palavras e caracteres totais. Ao selecionar texto, acrescenta **N selecionados**, incluindo espaços e quebras de linha. Em Ler, conta o texto exibido; em Escrever/Fonte, conta o Markdown selecionado. A contagem desaparece ao desfazer a seleção. No celular em leitura, a barra aparece durante a seleção. Veja a [validação com capturas](docs/evidence/SELECTION-STATISTICS.md).
+
 Limites: 5 MB de texto, 10 MB por imagem, 40 MB de imagens e 50 imagens por documento. O editor não executa HTML incorporado. Não aceita caminhos que escapem do repositório, links simbólicos ou alterações em `.git`. O commit recusa operar quando já há arquivos no stage para evitar misturar trabalho de outras ferramentas. Hooks Git continuam sendo respeitados.
 
 ## Diagramas
@@ -103,6 +105,7 @@ Blocos de código `mermaid` viram diagramas em **Ler**, **Visão** e na prévia 
 Mermaid é o padrão. Beautiful Mermaid tem cobertura menor e avisa quando o tipo não é suportado, mantendo o seletor disponível. Os três funcionam offline depois que a PWA conclui seu cache. Veja [exemplos](examples/diagramas.md), [detalhes](docs/DIAGRAMS.md) e [capturas/testes](docs/evidence/DIAGRAMS.md).
 
 O botão **Lupa** amplia em **2×** a região sob o mouse sem redesenhar o diagrama. No toque, arraste o dedo; no teclado, use Tab e as setas. **Esc** ou o mesmo botão desativa a lupa. Funciona nos três motores, em Ler, Visão e Escrever.
+
 
 ## Desenvolvimento e testes
 
