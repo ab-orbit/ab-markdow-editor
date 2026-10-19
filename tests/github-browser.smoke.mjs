@@ -224,7 +224,7 @@ try {
   await expect(page.getByLabel("Bancada Markdown")).toHaveAttribute("data-block-editing","true");
   await page.keyboard.press("Escape");
   await expect(page.getByLabel("Bancada Markdown")).toHaveAttribute("data-mode","read");
-  await page.getByRole("button", { name: "Editar nota", exact: true }).click();
+  await page.getByRole("button", { name: "Mais opções da nota", exact: true }).click();
   await page.getByRole("button", { name: "Fonte", exact: true }).click();
   const editor = page.locator(".cm-content");
   await editor.fill("# Editada no celular");

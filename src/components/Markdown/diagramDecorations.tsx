@@ -4,17 +4,18 @@ import { Decoration, EditorView, WidgetType } from '@codemirror/view';
 import { createRoot, type Root } from 'react-dom/client';
 import { DiagramBlock } from './DiagramBlock';
 import { rawBlockContains, revealBlock } from './blockEditing';
+import { diagramIdentity, diagramSourceKey } from '@/lib/markdown/diagrams';
 
 const roots = new WeakMap<HTMLElement, Root>();
 
 class DiagramWidget extends WidgetType {
-  constructor(readonly source: string, readonly from: number, readonly scope: string) { super(); }
-  eq(other: DiagramWidget) { return this.source === other.source && this.from === other.from && this.scope === other.scope; }
+  constructor(readonly source: string, readonly from: number, readonly scope: string, readonly occurrence: number) { super(); }
+  eq(other: DiagramWidget) { return this.source === other.source && this.from === other.from && this.scope === other.scope && this.occurrence === other.occurrence; }
   get estimatedHeight() { return 260; }
   toDOM(view: EditorView) {
     const element = document.createElement('div'); element.className = 'md-live-diagram';
     const root = createRoot(element); roots.set(element, root);
-    root.render(<DiagramBlock source={this.source} identity={`${this.scope}:${this.from}`} onEdit={() => { revealBlock(view, this.from); }} onLayout={() => { if (element.isConnected) view.requestMeasure(); }}/>);
+    root.render(<DiagramBlock source={this.source} identity={diagramIdentity(this.scope, this.source, this.occurrence)} legacyIdentity={`${this.scope}:${this.from}`} onEdit={() => { revealBlock(view, this.from); }} onLayout={() => { if (element.isConnected) view.requestMeasure(); }}/>);
     return element;
   }
   ignoreEvent() { return true; }
@@ -29,13 +30,16 @@ class DiagramWidget extends WidgetType {
 export function diagramDecorations(scope: string) {
   function build(state: EditorState) {
     const ranges: ReturnType<Decoration['range']>[] = [];
+    const occurrences = new Map<string, number>();
     syntaxTree(state).iterate({ enter(node) {
       if (node.name !== 'FencedCode') return;
       const info = node.node.getChild('CodeInfo');
       if (!info || state.sliceDoc(info.from, info.to).trim().split(/\s+/)[0].toLowerCase() !== 'mermaid') return;
       const parts: string[] = [];
       for (let child = node.node.firstChild; child; child = child.nextSibling) if (child.name === 'CodeText') parts.push(state.sliceDoc(child.from, child.to));
-      const widget = new DiagramWidget(parts.join(''), node.from, scope);
+      const source = parts.join(''), key = diagramSourceKey(source), occurrence = occurrences.get(key) || 0;
+      occurrences.set(key, occurrence + 1);
+      const widget = new DiagramWidget(source, node.from, scope, occurrence);
       const active = rawBlockContains(state, node.from, node.to) || state.selection.ranges.some(range => range.from <= node.to && range.to >= node.from);
       ranges.push(active
         ? Decoration.widget({ block: true, side: 1, widget }).range(node.to)

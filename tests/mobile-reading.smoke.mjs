@@ -8,6 +8,6 @@ try{for(const [width,height] of [[390,844],[844,390],[768,1024],[1024,768]]){
  const heading=p.getByRole('heading',{name:'Ontologias para Mapeamento de Ecossistemas Organizacionais',exact:true});await heading.waitFor();assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  if(width<900){assert.equal(await p.getByRole('button',{name:'Fonte',exact:true}).isVisible(),false);await p.getByRole('button',{name:'Informações da nota'}).click();await p.getByRole('heading',{name:'Informações da nota'}).waitFor();await p.keyboard.press('Escape');}
  await p.screenshot({path:`docs/evidence/mobile-reading-${width}x${height}.png`});
- if(width<900){await p.getByRole('button',{name:'Editar nota',exact:true}).click();await p.getByRole('button',{name:'Fonte',exact:true}).waitFor();await p.getByRole('button',{name:'Ler',exact:true}).click();await p.getByRole('button',{name:'Voltar às notas'}).click();await p.getByRole('button',{name:'ontologias.md',exact:true}).waitFor();}
+ if(width<900){await p.getByRole('button',{name:'Editar nota',exact:true}).click();await p.getByRole('textbox',{name:'Texto da nota',exact:true}).waitFor();await p.getByRole('button',{name:'Concluir edição',exact:true}).filter({visible:true}).click();await p.getByRole('button',{name:'Voltar às notas'}).click();await p.getByRole('button',{name:'ontologias.md',exact:true}).waitFor();}
  await p.close();
 }console.log('PASS: mobile/tablet reading portrait/landscape, compact controls, note info, editing and sidebar navigation.');}finally{await b.close();}

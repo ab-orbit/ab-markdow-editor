@@ -6,6 +6,7 @@ import path from 'node:path';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { checkDiagramMagnifier } from './helpers/diagram-magnifier.mjs';
+import { checkDiagramTools } from './helpers/diagram-tools.mjs';
 
 const exec = promisify(execFile);
 const git = async (cwd, ...args) => (await exec('git', ['-C', cwd, ...args])).stdout.trim();
@@ -14,7 +15,8 @@ const tick = String.fromCharCode(96), fence = tick.repeat(3);
 const er = 'erDiagram\n  NOTEBOOK ||--o{ NOTE : contains\n  NOTEBOOK {\n    string title\n  }\n  NOTE {\n    int id PK\n    string text\n  }';
 const flow = 'flowchart LR\n  A[Capturar notas] --> B{Revisar?}\n  B -->|Sim| C[Organizar]\n  B -->|Depois| D[Guardar]\n  C --> D';
 const gantt = 'gantt\n  title Entrega\n  dateFormat YYYY-MM-DD\n  section Scriba\n  Comparar motores :a1, 2026-10-18, 3d';
-const source = `# Comparar diagramas\n\nA mesma nota, três formas de desenhar.\n\n${fence}mermaid\n${er}\n${fence}\n\n## Processo\n\n${fence}mermaid\n${flow}\n${fence}\n\n## Cronograma\n\n${fence}mermaid\n${gantt}\n${fence}\n\n## Exemplo literal\n\n${tick.repeat(4)}markdown\n${fence}mermaid\nflowchart LR\n  EXAMPLE --> ONLY\n${fence}\n${tick.repeat(4)}\n\n## Cerca alternativa\n\n~~~mermaid\nflowchart LR\n  TILDE --> SUPPORTED\n~~~\n\n## Outra cópia independente\n\n${fence}mermaid\n${er}\n${fence}\n`;
+const sequence = 'sequenceDiagram\n  participant Usuario\n  participant Banco\n  participant Notificacao\n  alt Condição Aprovada\n    Usuario->>Banco: Processar pagamento\n    Banco-->>Usuario: Sucesso\n  else Condição Recusada\n    Usuario->>Banco: Processar pagamento\n    Banco-->>Usuario: Cartão Recusado\n  end\n  opt Enviar comprovante por e-mail\n    Usuario->>Notificacao: Disparar e-mail\n  end';
+const source = `# Comparar diagramas\n\nA mesma nota, três formas de desenhar.\n\n${fence}mermaid\n${er}\n${fence}\n\n## Processo\n\n${fence}mermaid\n${flow}\n${fence}\n\n## Cronograma\n\n${fence}mermaid\n${gantt}\n${fence}\n\n## Exemplo literal\n\n${tick.repeat(4)}markdown\n${fence}mermaid\nflowchart LR\n  EXAMPLE --> ONLY\n${fence}\n${tick.repeat(4)}\n\n## Cerca alternativa\n\n~~~mermaid\nflowchart LR\n  TILDE --> SUPPORTED\n~~~\n\n## Outra cópia independente\n\n${fence}mermaid\n${er}\n${fence}\n\n## Condicionais: alternativas e opcionais\n\n${fence}mermaid\n${sequence}\n${fence}\n`;
 let server, browser, page;
 try {
   const state = path.join(directory, 'state'), checkout = path.join(directory, 'notes'), remote = path.join(directory, 'remote.git');
@@ -47,7 +49,7 @@ try {
   const diagrams = page.locator('article figure[data-diagram-engine]');
   const first = diagrams.first();
   await expect(workbench).toHaveAttribute('data-mode', 'read');
-  await expect(diagrams).toHaveCount(5);
+  await expect(diagrams).toHaveCount(6);
   async function choose(figure, engine) {
     await figure.scrollIntoViewIfNeeded();
     await figure.getByRole('combobox', { name: 'Renderizador do diagrama' }).selectOption(engine);
@@ -60,6 +62,7 @@ try {
     await expect(first).toContainText('NOTEBOOK'); await expect(first).toContainText('NOTE');
     await expect(first.getByRole('combobox')).toBeEnabled();
     measurements.push({ engine, timing: await first.locator('output').getAttribute('aria-label') });
+    await checkDiagramTools(page, first, `${er}\n`, { webkit: webKit, screenshot: !webKit ? `docs/evidence/reading-experience/diagram-code-${engine}.png` : undefined });
     await checkDiagramMagnifier(page, first, webKit ? undefined : `docs/evidence/magnifier-${engine}-desktop.png`);
     if (!webKit) await page.screenshot({ path: `docs/evidence/diagrams-${engine}-desktop.png` });
   }
@@ -82,18 +85,21 @@ try {
     return ids.filter((id, index) => ids.indexOf(id) !== index);
   });
   assert.deepEqual(duplicateIds, []);
+  const conditional = diagrams.nth(5); await choose(conditional, 'mermaid');
+  await checkDiagramTools(page, conditional, `${sequence}\n`, { webkit: webKit, screenshot: !webKit ? 'docs/evidence/reading-experience/diagram-sequence-code-desktop.png' : undefined });
   await first.scrollIntoViewIfNeeded();
   await page.getByRole('button', { name: 'Usar tema claro', exact: true }).click();
   await expect(first).toHaveAttribute('data-diagram-state', 'ready');
   assert.equal(await first.evaluate(node => getComputedStyle(node).getPropertyValue('--diagram-bg').trim()), '#faf9f6');
+  await checkDiagramTools(page, first, `${er}\n`, { webkit: webKit, screenshot: !webKit ? 'docs/evidence/reading-experience/diagram-code-light.png' : undefined });
   if (!webKit) await page.screenshot({ path: 'docs/evidence/diagrams-beautiful-light.png' });
   await checkDiagramMagnifier(page, first, webKit ? undefined : 'docs/evidence/magnifier-light.png');
   await page.getByRole('button', { name: 'Usar tema escuro', exact: true }).click();
   await page.reload(); await page.getByRole('button', { name: 'Diagramas.md', exact: true }).click();
   await expect(first).toHaveAttribute('data-diagram-engine', 'beautiful'); await expect(first).toHaveAttribute('data-diagram-state', 'ready', { timeout: 30_000 });
-  // The live CodeMirror widget shares the selected engine and can expose its exact source fence.
+  // Visual writing shares the selected engine and can expose its exact source fence.
   await page.getByRole('button', { name: 'Escrever', exact: true }).click();
-  const live = page.locator('.md-live-diagram figure[data-diagram-engine]').first();
+  const live = page.locator('[data-visual-editor] figure[data-diagram-engine]').first();
   await live.scrollIntoViewIfNeeded(); await expect(live).toHaveAttribute('data-diagram-engine', 'beautiful'); await expect(live).toHaveAttribute('data-diagram-state', 'ready', { timeout: 30_000 });
   await choose(live, 'pele');
   await checkDiagramMagnifier(page, live, webKit ? undefined : 'docs/evidence/magnifier-live.png');
@@ -133,6 +139,7 @@ try {
       const magnifier = await first.getByRole('button', { name: 'Ativar lupa do diagrama', exact: true }).boundingBox();
       assert.ok(magnifier && magnifier.height >= 44 && magnifier.width >= 44 && magnifier.x + magnifier.width <= bounds.x + bounds.width + 1);
     }
+    if (size.width === 390) await checkDiagramTools(page, first, `${er}\n`, { webkit: webKit, screenshot: !webKit ? 'docs/evidence/reading-experience/diagram-code-mobile.png' : undefined });
     if (!webKit) await page.screenshot({ path: `docs/evidence/diagrams-${size.width}x${size.height}.png` });
   }
   if (!webKit) {
@@ -167,7 +174,7 @@ try {
   assert.deepEqual(outsideRequests, [], 'engines and drawing assets stay on this origin');
   assert.deepEqual(errors, [], 'no uncaught browser errors'); assert.deepEqual(reactErrors, [], 'no React mount lifecycle errors');
   if (!webKit) await fs.writeFile('docs/evidence/diagrams-observed-times.json', JSON.stringify({ scope: 'First observed engine execution, not a comparative benchmark; imports inside the engine may still be lazy', measurements }, null, 2) + '\n');
-  console.log(`PASS (${webKit ? 'WebKit' : 'Chromium'}): three real renderers, magnifier hover/keyboard/vector scaling/ID isolation${webKit ? '' : '/real touch drag'}, ER/flowchart, per-block persistence, error recovery, reading/live/source, unchanged export, themes, 320px phone/tablet orientations, no remote assets.`);
+  console.log(`PASS (${webKit ? 'WebKit' : 'Chromium'}): three real renderers, wheel/button/keyboard zoom without rerender, highlighted Mermaid/copy, full SVG + transparent PNG in all engines, sequence alt/opt, light/dark/mobile code panels, magnifier${webKit ? '' : '/real touch drag'}, per-block persistence, error recovery, reading/visual/source, unchanged Markdown, 320px phone/tablet orientations, no remote assets.`);
 } catch (error) {
   await page?.screenshot({path:'docs/evidence/diagrams-failure.png'}).catch(() => {});
   throw error;

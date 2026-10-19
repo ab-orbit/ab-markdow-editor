@@ -102,12 +102,13 @@ export const MagnifiableDiagram = memo(function MagnifiableDiagram({ svg, enable
       onPointerEnter={pointer} onPointerMove={pointer} onPointerLeave={hide}
       onPointerDown={event => {
         if (!enabled) return;
+        event.preventDefault(); event.stopPropagation(); window.getSelection()?.removeAllRanges();
         if (event.pointerType === 'touch') { touchId.current = event.pointerId; event.currentTarget.setPointerCapture(event.pointerId); }
         pointer(event);
       }}
       onPointerUp={event => { if (event.pointerType === 'touch') { touchId.current = null; hide(); } }}
       onPointerCancel={() => { touchId.current = null; hide(); }}
-      onDoubleClick={event => { if (enabled) { event.preventDefault(); event.stopPropagation(); } }}
+      onDoubleClick={event => { if (enabled) { event.preventDefault(); event.stopPropagation(); window.getSelection()?.removeAllRanges(); } }}
       dangerouslySetInnerHTML={originalMarkup}/>
     {enabled && <>
       <span id={`${id}-help`} className={styles.hiddenHint}>Passe o mouse ou arraste o dedo para ampliar 2 vezes. No teclado, use as setas; Esc desativa a lupa.</span>

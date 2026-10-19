@@ -932,6 +932,14 @@
 }
 
 /* Standalone reading palette: soft charcoal, warm paper and restrained blue accents. */
+:root, [data-theme="dark"], [data-theme="light"] {
+  /* Native Avenir is available on iOS/macOS; other platforms keep a local fallback. */
+  --font-reading: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --reading-size: 15px;
+  --reading-leading: 1.75;
+  --reading-cell-max: 44ch;
+  --diagram-code-token-string-expression: var(--diagram-code-token-string);
+}
 :root, [data-theme="dark"] {
   --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --bg-base: #1e1f20; --bg-surface: #1e1f20; --bg-input: #252729;
@@ -940,6 +948,8 @@
   --text-primary: #cbd9df; --text-secondary: #dedfdf; --text-muted: #a9aeb1;
   --text-dim: #a9aeb1; --text-label: #a9aeb1;
   --lime: #78c0df; --cyan: #78c0df; --lime-dim: #426c7e; --lime-trace: #26383f;
+  --reading-bg: var(--bg-surface); --reading-text: var(--text-secondary); --reading-heading: var(--text-primary);
+  --reading-table-header: var(--bg-elevated); --reading-table-stripe: var(--bg-input); --reading-table-border: var(--border-panel);
 }
 [data-theme="light"] {
   --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -949,4 +959,25 @@
   --text-primary: #283842; --text-secondary: #30383b; --text-muted: #5c666b;
   --text-dim: #5c666b; --text-label: #5c666b;
   --lime: #17627e; --cyan: #17627e; --lime-dim: #718e9a; --lime-trace: #e1edf0;
+  --reading-bg: #ffffff; --reading-text: #545454; --reading-heading: #494949;
+  --reading-table-header: #f3f4f6; --reading-table-stripe: #f3f4f6; --reading-table-border: #d8dadd;
+}
+@media (max-width: 899px) {
+  :root, [data-theme="dark"], [data-theme="light"] { --reading-size: 14px; }
+}
+
+/* Self-contained syntax colors: all code-panel themes change at the token root. */
+:root, [data-theme="dark"] {
+  --diagram-code-background: #2a2c33; --diagram-code-foreground: #e3e5ee;
+  --diagram-code-token-comment: #acb2bf; --diagram-code-token-keyword: #c5a3ff;
+  --diagram-code-token-string: #a3d4a2; --diagram-code-token-constant: #f3bb8a;
+  --diagram-code-token-function: #89cceb; --diagram-code-token-parameter: #e3e5ee;
+  --diagram-code-token-link: #89cceb; --diagram-code-token-punctuation: #cbd9df;
+}
+[data-theme="light"] {
+  --diagram-code-background: #f0f1f5; --diagram-code-foreground: #30383b;
+  --diagram-code-token-comment: #58636b; --diagram-code-token-keyword: #7141a8;
+  --diagram-code-token-string: #24643f; --diagram-code-token-constant: #a44219;
+  --diagram-code-token-function: #17627e; --diagram-code-token-parameter: #30383b;
+  --diagram-code-token-link: #17627e; --diagram-code-token-punctuation: #494949;
 }

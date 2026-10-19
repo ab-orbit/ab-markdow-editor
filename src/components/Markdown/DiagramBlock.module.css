@@ -40,3 +40,36 @@
   .canvas { padding: 68px 10px 14px; }
 }
 @media print { .controls, .magnifier { display: none; } .canvas { padding-top: 16px; } }
+
+.zoomViewport { width: 100%; min-width: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; border-radius: var(--radius-sm); }
+.zoomViewport:not([data-diagram-zoom="1.000"]) { max-height: min(70dvh, 720px); }
+.zoomViewport:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.zoomViewport[data-diagram-zoom]:not([data-diagram-zoom="1.000"]) { cursor: grab; }
+.zoomViewport:active { cursor: grabbing; }
+.zoomBounds { position: relative; min-width: 100%; }
+.zoomSurface { position: relative; transform-origin: top left; }
+.diagramFooter { display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 0 8px 8px; font: 12px/1.4 var(--font-ui); }
+.diagramFooter button, .diagramFooter summary, .codePanel footer button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 8px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); font: inherit; cursor: pointer; }
+.diagramFooter button:hover, .diagramFooter summary:hover, .codePanel footer button:hover { background: var(--bg-hover); color: var(--text-primary); }
+.diagramFooter button:disabled, .diagramFooter summary[aria-disabled="true"] { opacity: .45; cursor: default; }
+.diagramFooter :focus-visible, .codePanel :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.diagramFooter .codeToggle { padding-inline: 10px; background: var(--bg-subtle); border-radius: var(--radius-full); }
+.codeToggle[aria-expanded="true"] { color: var(--cyan); border-color: var(--border-strong); }
+.zoomTools { display: flex; align-items: center; font-variant-numeric: tabular-nums; }
+.exportMenu { position: relative; flex: 0 0 44px; width: 44px; }
+.exportMenu summary { list-style: none; }
+.exportMenu summary svg { margin: 0; color: inherit; }
+.exportMenu summary::-webkit-details-marker { display: none; }
+.exportMenu > div { position: absolute; z-index: 4; right: 0; bottom: calc(100% + 4px); width: 180px; padding: 4px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--bg-overlay); box-shadow: var(--shadow-panel); }
+.exportMenu > div > button { display: flex; justify-content: flex-start; width: 100%; white-space: nowrap; }
+.codePanel { margin: 4px 8px 8px; min-width: 0; overflow: hidden; border: 1px solid var(--border-panel); border-radius: var(--radius-md); background: var(--diagram-code-background); color: var(--diagram-code-foreground); }
+.codePanel > header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px 4px; font: 12px/1.4 var(--font-ui); font-weight: 600; }
+.codePanel > header > span:last-child { color: var(--diagram-code-token-comment); font-weight: 400; }
+.highlight { min-width: 0; max-height: 440px; overflow: auto; }
+.codePanel .highlight pre { max-width: none; margin: 0; padding: 14px 16px 18px; border: 0; border-radius: 0; background: var(--diagram-code-background); color: var(--diagram-code-foreground); font: 13px/1.7 var(--font-mono); white-space: pre; overflow: visible; }
+.codePanel .highlight code { padding: 0; background: transparent; color: inherit; font: inherit; }
+.codePanel > footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 44px; padding: 2px 8px 2px 16px; border-top: 1px solid var(--border-panel); background: var(--bg-subtle); font: 12px/1.4 var(--font-ui); }
+.codePanel > footer > span { color: var(--text-muted); }
+.exportError { padding: 0 16px 12px; color: var(--red); font: 13px/1.6 var(--font-ui); }
+@media (max-width: 360px) { .codeToggle > span { display: none; } }
+@media print { .diagramFooter, .codePanel, .exportError { display: none; } .zoomViewport { max-height: none; height: auto !important; overflow: visible; } .zoomBounds { width: 100% !important; height: auto !important; } .zoomSurface { width: 100% !important; transform: none !important; } }

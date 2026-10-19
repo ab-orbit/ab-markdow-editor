@@ -68,10 +68,14 @@ Cancelar a revisão mantém a conexão anterior. Um clone solicitado na revisão
 
 ## Edição por bloco e abertura em leitura
 
+**Editar nota** no celular e **Escrever** no desktop permitem editar diretamente o texto formatado: títulos, parágrafos, listas, negrito e células de tabelas. **Concluir edição** volta à leitura. As ferramentas de formatação atuam sobre a seleção visual; desfazer/refazer, imagens e o salvamento habitual continuam disponíveis. Diagramas mantêm o desenho e seu lápis abre o código daquele bloco. **Fonte** continua mostrando o Markdown completo.
+
+A edição visual carrega sob demanda. O arquivo salvo continua sendo Markdown: trechos não alterados preservam o texto original, referências, comentários, cercas de código e convenção de quebras de linha. Abrir e concluir a edição sem digitar não modifica o documento.
+
 Arquivos abrem em **Ler**, incluindo notas do repositório, arquivos importados e documentos do Finder. **Nova nota** começa em **Escrever**.
 
 - Dê **dois cliques** num título ou parágrafo para revelar e selecionar o Markdown daquele bloco. Os demais blocos mantêm sua formatação.
-- Em **Escrever**, um clique dentro de negrito, itálico, código inline ou tachado revela apenas os marcadores desse trecho. O duplo clique revela todos os marcadores do bloco, inclusive quando o parágrafo ocupa várias linhas.
+- No editor de bloco, um clique dentro de negrito, itálico, código inline ou tachado revela apenas os marcadores desse trecho. O duplo clique revela todos os marcadores do bloco, inclusive quando o parágrafo ocupa várias linhas. Na edição visual, o duplo clique seleciona palavras normalmente.
 - **Esc** conclui a edição do bloco. Se entrou a partir de Ler, volta à leitura. Clicar em outro bloco encerra a exibição completa dos marcadores anteriores.
 - Pelo teclado, use **Enter** em um bloco focado na leitura ou **⌘/Ctrl+Enter** no editor. A barra de formatação também oferece **Editar bloco como Markdown** / **Concluir edição do bloco**.
 - **Editar blocos com duplo clique**, nas configurações, vem ativado e pode ser desligado. As alternativas de teclado continuam disponíveis. **Fonte** mantém o documento completo em Markdown e a seleção normal de palavras.
@@ -94,7 +98,9 @@ Depois de configurar o repositório, a tela mostra somente o editor. A engrenage
 
 Mantém os modos **Escrever**, **Fonte**, **Visão** e **Ler**, formatação, desfazer/refazer, tabelas editáveis, tarefas, referências, imagens por seleção/colagem/arrastar, importação de Markdown/ZIP/Bear e exportação `.md`/ZIP. Imagens inseridas são gravadas na pasta `assets/` ao lado do documento; imagens remotas não são buscadas automaticamente. Os temas claro e escuro usam uma cópia dos tokens do app original.
 
-O rodapé mostra palavras e caracteres totais. Ao selecionar texto, acrescenta **N selecionados**, incluindo espaços e quebras de linha. Em Ler, conta o texto exibido; em Escrever/Fonte, conta o Markdown selecionado. A contagem desaparece ao desfazer a seleção. No celular em leitura, a barra aparece durante a seleção. Veja a [validação com capturas](docs/evidence/SELECTION-STATISTICS.md).
+O rodapé mostra palavras e caracteres totais. Ao selecionar texto, acrescenta **N selecionados**, incluindo espaços e quebras de linha. Na leitura e edição visual, conta o texto exibido; em Fonte e no editor de bloco, conta o Markdown selecionado. A contagem desaparece ao desfazer a seleção. No celular em leitura, a barra aparece durante a seleção. Veja a [validação com capturas](docs/evidence/SELECTION-STATISTICS.md).
+
+A leitura usa Avenir Next quando disponível, com alternativas locais do sistema, texto de 14 px no celular/tablet estreito e 15 px no desktop, entrelinha de 1,75 e parágrafos justificados. Títulos, listas e células mantêm seus próprios alinhamentos. As tabelas preservam a largura útil das colunas e rolam horizontalmente por toque ou teclado, com a barra de rolagem oculta e linhas alternadas discretas nos dois temas. Campos e a edição visual no celular usam pelo menos 16 px.
 
 Limites: 5 MB de texto, 10 MB por imagem, 40 MB de imagens e 50 imagens por documento. O editor não executa HTML incorporado. Não aceita caminhos que escapem do repositório, links simbólicos ou alterações em `.git`. O commit recusa operar quando já há arquivos no stage para evitar misturar trabalho de outras ferramentas. Hooks Git continuam sendo respeitados.
 
@@ -105,6 +111,8 @@ Blocos de código `mermaid` viram diagramas em **Ler**, **Visão** e na prévia 
 Mermaid é o padrão. Beautiful Mermaid tem cobertura menor e avisa quando o tipo não é suportado, mantendo o seletor disponível. Os três funcionam offline depois que a PWA conclui seu cache. Veja [exemplos](examples/diagramas.md), [detalhes](docs/DIAGRAMS.md) e [capturas/testes](docs/evidence/DIAGRAMS.md).
 
 O botão **Lupa** amplia em **2×** a região sob o mouse sem redesenhar o diagrama. No toque, arraste o dedo; no teclado, use Tab e as setas. **Esc** ou o mesmo botão desativa a lupa. Funciona nos três motores, em Ler, Visão e Escrever.
+
+A **roda do mouse** amplia o desenho de 100% a 600%, mantendo o ponto sob o ponteiro. Arraste para navegar; **−**, **+** e o percentual oferecem os mesmos controles por toque/teclado. Clique no percentual para ajustar à largura. O zoom reutiliza o SVG existente. **Ver código** abre um painel com destaque de sintaxe Mermaid, fundo distinto e **Copiar**. O botão **Baixar diagrama** oferece **SVG vetorial** ou **PNG transparente**: exporta o desenho inteiro, com o estilo do renderizador escolhido, independentemente do zoom. Essas ações não alteram nem salvam a nota. Veja as [capturas e a validação](docs/evidence/reading-experience/README.md).
 
 
 ## Desenvolvimento e testes
@@ -118,7 +126,7 @@ npx playwright install chromium # somente para os testes de navegador
 npm run test:e2e
 ```
 
-O servidor de produção usa apenas módulos nativos do Node. A interface usa React, Vite, CodeMirror, react-markdown, remark-gfm, lucide e fflate. Nenhuma importação aponta para o monorepo.
+O servidor de produção usa apenas módulos nativos do Node. A interface usa React, Vite, CodeMirror, Tiptap/ProseMirror, react-markdown, remark-gfm, lucide e fflate. Nenhuma importação aponta para o monorepo.
 
 Configurações e logs: `~/Library/Application Support/AB Markdown/` (`settings.json`, `runtime.json`, `server.log`). O caminho do repositório é lembrado entre sessões. O token da API é temporário, muda a cada processo e não é salvo no repositório. O editor precisa do processo local para ler e gravar arquivos; publicar apenas a pasta `dist` num site não dá acesso ao Git do usuário.
 
@@ -154,7 +162,7 @@ A lista contém até 100 notas recentes **além das fixadas**. A ordem de fixaç
 
 Na primeira abertura de cada repositório, o editor inclui e fixa **AB-Markdown-Guia.md**, com apresentação, funcionalidades e roadmap. A criação tenta commit/push automaticamente; se não conseguir, o arquivo local permanece e o editor informa a falha. Arquivos já existentes nunca são substituídos: outro nome é escolhido. A nota pode ser editada e desafixada como qualquer outra. O [conteúdo do guia](server/guide.md) também está neste repositório.
 
-O roadmap prevê Google Drive e novas opções de temas, sem datas anunciadas. A troca entre claro e escuro já está disponível em **Configurações → Aparência**. A leitura usa fonte de sistema sem serifa e cores suaves; código e modo Fonte continuam monoespaçados.
+O roadmap prevê Google Drive e novas opções de temas, sem datas anunciadas. A troca entre claro e escuro está disponível no botão de tema da barra de ferramentas. A leitura usa fonte de sistema sem serifa e cores suaves; código e modo Fonte continuam monoespaçados.
 
 O guia inicial inclui uma ilustração de boas-vindas salva em `assets/escriba-welcome-v1.jpg`. Ela aparece no documento e como miniatura na lista. Outras notas também exibem a primeira imagem local encontrada nos primeiros 8 KB de Markdown. As miniaturas carregam quando entram na área visível, pela API local autenticada; imagens externas e SVG não são buscados/executados. Ao atualizar um guia já criado, o editor insere a imagem uma única vez, preserva o restante do conteúdo e sincroniza Markdown + JPG no Git.
 

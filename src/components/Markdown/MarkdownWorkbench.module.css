@@ -22,14 +22,14 @@
 .source:focus-within { outline: 1px solid var(--cyan); outline-offset: -1px; }
 .split { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: start; }
 .split .source { width: 100%; border-right: 1px solid var(--border-panel); }
-.reading { min-width: 0; width: 100%; max-width: 880px; margin: 0 auto; padding: 28px; font-size: calc(15px * var(--ui-font-scale, 1)); line-height: 1.9; overflow-wrap: anywhere; }
+.reading { min-width: 0; width: 100%; max-width: 880px; margin: 0 auto; padding: 28px; font-family: var(--font-reading); font-size: calc(var(--reading-size) * var(--ui-font-scale, 1)); line-height: var(--reading-leading); color: var(--reading-text); background: var(--reading-bg); overflow-wrap: break-word; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .reading > :first-child { margin-top: 0; }
-.reading h1, .reading h2, .reading h3, .reading h4, .reading h5, .reading h6 { font-weight: 700; line-height: 1.4; color: var(--text-primary); margin: 1.3em 0 .65em; }
+.reading h1, .reading h2, .reading h3, .reading h4, .reading h5, .reading h6 { font-weight: 700; line-height: 1.4; color: var(--reading-heading); margin: 1.3em 0 .65em; }
 .reading h1 { font-size: 1.8em; } .reading h2 { font-size: 1.4em; } .reading h3 { font-size: 1.15em; }
-.reading p { margin: .9em 0; } .reading ul { list-style: disc; padding-left: 1.5em; } .reading ol { list-style: decimal; padding-left: 1.5em; }
+.reading p { margin: .9em 0; text-align: justify; text-align-last: start; hyphens: auto; } .reading ul { list-style: disc; padding-left: 1.5em; } .reading ol { list-style: decimal; padding-left: 1.5em; }
 .reading a { color: var(--cyan); text-decoration: underline; text-underline-offset: 3px; }
 .reading blockquote { border-left: 2px solid var(--lime); padding-left: 18px; margin: 1em 0; color: var(--text-muted); }
-.reading strong { color: var(--text-primary); font-weight: 700; }
+.reading strong { color: inherit; font-weight: 700; }
 .reading code { background: var(--bg-elevated); color: var(--lime); padding: 2px 5px; font-size: .9em; }
 .reading pre { max-width: 100%; overflow: auto; padding: 16px; background: var(--bg-elevated); border: 1px solid var(--border-base); }
 .reading pre code { padding: 0; color: var(--text-secondary); }
@@ -40,9 +40,17 @@
 .reading :global([data-footnotes]) li { scroll-margin-block: 24px; }
 .reading :global([data-missing-footnote]) { color: var(--amber); font-size: .75em; margin-inline: 2px; border-bottom: 1px dotted var(--amber); cursor: help; }
 .table { max-width: 100%; overflow: auto; }
-.reading table { width: 100%; border-collapse: collapse; font-size: .9em; }
-.reading th, .reading td { padding: 10px 14px; border: 1px solid var(--border-panel); text-align: left; }
-.reading th { color: var(--text-primary); background: var(--bg-elevated); }
+.readingTable { min-width: 0; max-width: 100%; margin-block: 1em; }
+/* Preserve column widths inside this scroller, never in the document viewport. */
+.tableScroll { min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; border: 1px solid var(--reading-table-border); border-radius: var(--radius-md); }
+.tableScroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.tableScroll:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.reading table { width: max-content; min-width: 100%; max-width: none; border-collapse: separate; border-spacing: 0; font-size: 1em; table-layout: auto; }
+.reading th, .reading td { min-width: 10ch; max-width: var(--reading-cell-max); padding: 10px 14px; border: 0; border-right: 1px solid var(--reading-table-border); vertical-align: top; text-align: left; white-space: normal; word-break: normal; overflow-wrap: break-word; }
+.reading th:last-child, .reading td:last-child { border-right: 0; }
+.reading th p, .reading td p, .reading li p { text-align: inherit; hyphens: manual; }
+.reading th { color: var(--reading-heading); background: var(--reading-table-header); white-space: nowrap; font-weight: 700; }
+.reading tbody tr:nth-child(even) { background: var(--reading-table-stripe); }
 .image { display: inline-block; padding: 8px 12px; color: var(--text-muted); border: 1px dashed var(--border-strong); }
 .footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 14px 20px; border-top: 1px solid var(--border-panel); font-size: var(--text-base); color: var(--text-muted); }
 .statistics { min-width: 0; font-variant-numeric: tabular-nums; }
@@ -116,8 +124,9 @@
 }
 
 .compact { font-family: var(--font-ui); }
-.compact .reading { font-family: var(--font-ui); font-size: 16px; line-height: 1.75; }
-.compact[data-mode="live"] :global(.cm-content) { font-family: var(--font-ui); font-size: 16px; line-height: 1.75; }
+.compact .reading { font-family: var(--font-reading); font-size: calc(var(--reading-size) * var(--ui-font-scale, 1)); line-height: var(--reading-leading); }
+.compact[data-mode="read"] .pages { background: var(--reading-bg); }
+.compact[data-mode="live"] :global(.cm-content) { font-family: var(--font-reading); font-size: 16px; line-height: var(--reading-leading); }
 .compact .reading code, .compact .reading pre { font-family: var(--font-mono); }
 
 /* Split mode keeps both panes on screen even when one document is very long. */
@@ -157,15 +166,14 @@
  .compact[data-mode="read"] > .footer, .compact[data-mode="read"] > .editingToolbar { display: none; }
  .compact[data-mode="read"] > .footer:has(.selectionCount) { display: flex; }
  .compact .footer:has(.selectionCount) > span:not(.statistics) { display: none; }
- .compact[data-mode="read"] .reading { max-width: 740px; padding: 16px 25px 64px; font-family: var(--font-ui); font-size: 17px; line-height: 1.8; letter-spacing: .005em; }
- .compact[data-mode="read"] .reading h1 { font-size: 32px; line-height: 1.3; letter-spacing: -.015em; margin: 0 0 40px; }
- .compact[data-mode="read"] .reading h2 { font-size: 25px; line-height: 1.4; margin: 40px 0 24px; }
- .compact[data-mode="read"] .reading h3 { font-size: 21px; line-height: 1.4; margin: 32px 0 20px; }
- .compact[data-mode="read"] .reading p { margin: 0 0 26px; }
- .compact[data-mode="read"] .reading hr { margin: 38px 0; }
- .compact[data-mode="read"] .reading strong { color: var(--text-secondary); }
+ .compact[data-mode="read"] .reading { max-width: 740px; padding: 16px 28px 56px; letter-spacing: normal; }
+ .compact[data-mode="read"] .reading h1 { font-size: 28px; line-height: 1.3; letter-spacing: -.015em; margin: 0 0 28px; }
+ .compact[data-mode="read"] .reading h2 { font-size: 22px; line-height: 1.4; margin: 30px 0 14px; }
+ .compact[data-mode="read"] .reading h3 { font-size: 18px; line-height: 1.4; margin: 24px 0 12px; }
+ .compact[data-mode="read"] .reading p { margin: 0 0 20px; }
+ .compact[data-mode="read"] .reading hr { margin: 28px 0; }
 }
-@media (max-width: 359px) { .compact[data-mode="read"] .reading { padding-inline: 20px; } .compact[data-mode="read"] .reading h1 { font-size: 29px; } }
+@media (max-width: 359px) { .compact[data-mode="read"] .reading { padding-inline: 20px; } }
 
 /* Group export choices on narrow screens so adding reload does not create an orphan action row. */
 .exportMenu { display: none; }
@@ -187,4 +195,29 @@
 .editingToolbar button[aria-pressed="true"] { color: var(--cyan); border-color: var(--border-strong); background: var(--bg-elevated); }
 
 .compact[data-mode="live"] :global(.cm-content ::selection) { background: var(--bg-elevated); color: var(--text-primary); }
-@media (max-width: 899px) { .compact[data-mode="live"] :global(.cm-content) { font-size: 17px; line-height: 1.8; } }
+
+/* The visual editor shares the reader's typography and horizontal table scroller. */
+.richContent { outline: none; white-space: pre-wrap; overflow-wrap: break-word; min-height: 55dvh; }
+.richContent > :first-child { margin-top: 0; }
+.richContent :global([data-source-only]) { display: none; }
+.richContent :global(.tableWrapper) { margin-block: 1em; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; border: 1px solid var(--reading-table-border); border-radius: var(--radius-md); }
+.richContent :global(.tableWrapper)::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.richContent table { width: max-content !important; min-width: 100% !important; }
+.richContent th p, .richContent td p { margin: 0 !important; text-align: inherit; hyphens: manual; }
+.richContent :global(.selectedCell) { box-shadow: inset 0 0 0 2px var(--cyan); }
+.richContent :global(ul[data-type="taskList"]) { padding-left: 0; list-style: none; }
+.richContent :global(li[data-type="taskItem"]) { display: flex; gap: 10px; align-items: flex-start; }
+.richContent :global(li[data-type="taskItem"]) > label { display: flex; align-items: center; min-height: 28px; }
+.richContent :global(li[data-type="taskItem"]) > div { min-width: 0; flex: 1; }
+.richContent :global(li[data-type="taskItem"]) p { margin: 0; text-align: start; }
+.richDiagram { margin-block: 1em; white-space: normal; }
+.visualError { padding: 24px; color: var(--text-secondary); font: 16px/1.7 var(--font-ui); }
+.visualError > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.visualError button { min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-strong); background: var(--bg-elevated); color: var(--text-primary); border-radius: var(--radius-sm); font: inherit; }
+.visualError button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.richContent :global(.ProseMirror-selectednode) { outline: 2px solid var(--cyan); outline-offset: 3px; }
+@media (max-width: 899px) {
+ .compact[data-reading-editable="true"] .richReading { font-size: calc(16px * var(--ui-font-scale, 1)); }
+ .compact[data-reading-editable="true"][data-formatting-open="true"] > .editingToolbar { display: flex; }
+ .compact[data-reading-editable="true"] .mobileReadingBar { padding-inline: 16px; }
+}

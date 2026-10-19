@@ -198,6 +198,9 @@ export function diagramKey(source: string) {
   for (let index = 0; index < source.length; index++) { const char = source.charCodeAt(index); a = Math.imul(a ^ char, 16777619); b = Math.imul(b, 33) ^ char; }
   return `${source.length}-${(a >>> 0).toString(36)}-${(b >>> 0).toString(36)}`;
 }
+/** Content plus duplicate occurrence survives paragraph edits before a drawing. */
+export function diagramSourceKey(source: string) { return diagramKey(source.replace(/\r\n?/g, '\n').replace(/\n+$/, '')); }
+export function diagramIdentity(scope: string, source: string, occurrence = 0) { return `${scope}:mermaid:${diagramSourceKey(source)}:${occurrence}`; }
 function readPreferences() {
   if (!preferences) {
     try { preferences = JSON.parse(localStorage.getItem(PREFERENCE_KEY) || '{}'); } catch { preferences = {}; }
@@ -205,9 +208,15 @@ function readPreferences() {
   }
   return preferences;
 }
-export function selectedDiagramEngine(key: string): DiagramEngine {
-  const value = readPreferences()[key];
+export function selectedDiagramEngine(key: string, legacyKey?: string): DiagramEngine {
+  const values = readPreferences(), value = values[key] ?? (legacyKey ? values[legacyKey] : undefined);
   return diagramEngines.some(engine => engine.id === value) ? value : 'mermaid';
+}
+/** Adopt offset-based preferences from previous Scriba versions without changing a note. */
+export function migrateDiagramEngine(key: string, legacyKey?: string) {
+  const values = readPreferences();
+  if (!legacyKey || values[key] || !values[legacyKey]) return;
+  setDiagramEngine(key, selectedDiagramEngine(legacyKey));
 }
 export function setDiagramEngine(key: string, engine: DiagramEngine) {
   const values = readPreferences(); delete values[key]; values[key] = engine;

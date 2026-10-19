@@ -10,7 +10,7 @@ try {
  await page.evaluate(async()=>{const registration=await navigator.serviceWorker.ready;await new Promise(resolve=>{if(navigator.serviceWorker.controller)resolve();else navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true});});});
  // Exercise the real storage adapter through the visible editor and save action.
  await page.getByRole('button',{name:'Boas-vindas.md',exact:true}).click();await page.getByRole('status').filter({hasText:'Documento aberto.'}).waitFor();
- if(await page.getByRole('button',{name:'Editar nota',exact:true}).isVisible())await page.getByRole('button',{name:'Editar nota',exact:true}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();
+ if(await page.getByRole('button',{name:'Mais opções da nota',exact:true}).isVisible())await page.getByRole('button',{name:'Mais opções da nota',exact:true}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();
  const editor=page.locator('.cm-content[contenteditable=true]');await editor.fill('# Teste privado\n\nConteúdo exclusivo deste navegador.');
  await page.getByRole('button',{name:'Salvar nota',exact:true}).click();
  await page.getByRole('status').filter({hasText:'Nota salva neste navegador.'}).waitFor();
@@ -19,7 +19,7 @@ try {
  const other=await browser.newContext();const second=await other.newPage();await second.goto(origin);await second.getByRole('button',{name:'Boas-vindas.md',exact:true}).waitFor();assert.equal(await second.getByText('Teste privado',{exact:true}).count(),0);await other.close();
  await context.setOffline(true);await page.reload();await page.locator('button[aria-label="Voltar às notas"]:visible, button[aria-label="Mostrar notas recentes"]:visible').first().click();await page.getByRole('button',{name:'Boas-vindas.md',exact:true}).waitFor();
  await page.getByRole('button',{name:'Boas-vindas.md',exact:true}).click();await page.getByRole('status').filter({hasText:'Documento aberto.'}).waitFor();
- if(await page.getByRole('button',{name:'Editar nota',exact:true}).isVisible())await page.getByRole('button',{name:'Editar nota',exact:true}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();await editor.fill('# Offline privado');await page.getByRole('button',{name:'Salvar nota',exact:true}).click();await page.getByRole('status').filter({hasText:'Nota salva neste navegador.'}).waitFor();
+ if(await page.getByRole('button',{name:'Mais opções da nota',exact:true}).isVisible())await page.getByRole('button',{name:'Mais opções da nota',exact:true}).click();await page.getByRole('button',{name:'Fonte',exact:true}).click();await editor.fill('# Offline privado');await page.getByRole('button',{name:'Salvar nota',exact:true}).click();await page.getByRole('status').filter({hasText:'Nota salva neste navegador.'}).waitFor();
  assert.deepEqual(errors,[]);assert.deepEqual(api,[]);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.screenshot({path:'docs/evidence/scriba-production-mobile.png',fullPage:true});

@@ -3,6 +3,8 @@ import { Children, cloneElement, createContext, createElement, isValidElement, u
 import remarkGfm from 'remark-gfm';
 import { remarkMissingFootnotes } from './remarkMissingFootnotes';
 import { remarkHeadingIds } from './remarkHeadingIds';
+import { remarkDiagramIds } from './remarkDiagramIds';
+import { diagramIdentity } from '@/lib/markdown/diagrams';
 import styles from './MarkdownWorkbench.module.css';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 import type { SourceRange } from './editorCommands';
@@ -62,7 +64,8 @@ const components: Components = {
     if (code?.type === 'element' && Array.isArray(classes) && classes.some(name => String(name).toLowerCase() === 'language-mermaid')) {
       const source = code.children.map(child => child.type === 'text' ? child.value : '').join('');
       const from = node?.position?.start.offset, to = node?.position?.end.offset;
-      return <div {...blockProps(node, settings)}><DiagramBlock source={source} identity={`${settings.diagramScope}:${from}`} onEdit={settings.onEditBlock && from !== undefined && to !== undefined ? () => settings.onEditBlock!({ from, to }) : undefined}/></div>;
+      const occurrence = Number(code.properties['data-diagram-ordinal'] ?? code.properties.dataDiagramOrdinal ?? 0);
+      return <div {...blockProps(node, settings)}><DiagramBlock source={source} identity={diagramIdentity(settings.diagramScope || 'document', source, occurrence)} legacyIdentity={`${settings.diagramScope}:${from}`} onEdit={settings.onEditBlock && from !== undefined && to !== undefined ? () => settings.onEditBlock!({ from, to }) : undefined}/></div>;
     }
     return <pre {...props} {...blockProps(node, settings)}/>;
   },
@@ -86,13 +89,13 @@ const components: Components = {
   },
   table: function ReadingTable({ children, node }) {
     const settings = useContext(context);
-    return <div className={styles.table} {...blockProps(node, settings)}>{settings.onEditTable && node?.position?.start.offset !== undefined && node?.position?.end.offset !== undefined && <button className={styles.editTable} type="button" onClick={() => settings.onEditTable!({ from: node.position!.start.offset!, to: node.position!.end.offset! })}>Editar tabela</button>}<table>{children}</table></div>;
+    return <div className={styles.readingTable} {...blockProps(node, settings)}>{settings.onEditTable && node?.position?.start.offset !== undefined && node?.position?.end.offset !== undefined && <button className={styles.editTable} type="button" onClick={() => settings.onEditTable!({ from: node.position!.start.offset!, to: node.position!.end.offset! })}>Editar tabela</button>}<div className={styles.tableScroll} role="region" aria-label="Tabela com rolagem horizontal" tabIndex={0} onKeyDown={event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); event.currentTarget.scrollBy({ left: event.key === 'ArrowLeft' ? -100 : 100 }); } }}><table>{children}</table></div></div>;
   },
 };
 
 /** Render GFM with stable source-backed blocks and isolated diagram components. */
 export function MarkdownReadingView({ value, assets = [], diagramScope = 'document', ...settings }: MarkdownReadingViewProps) {
-  return <context.Provider value={{ ...settings, assets, diagramScope }}><article className={styles.reading} aria-label="Prévia Markdown">
-    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMissingFootnotes, remarkHeadingIds]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={components}>{value}</ReactMarkdown>
+  return <context.Provider value={{ ...settings, assets, diagramScope }}><article className={styles.reading} aria-label="Prévia Markdown" lang="pt-BR">
+    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMissingFootnotes, remarkHeadingIds, remarkDiagramIds]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={components}>{value}</ReactMarkdown>
   </article></context.Provider>;
 }

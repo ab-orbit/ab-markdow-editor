@@ -1,5 +1,5 @@
-import { useEffect, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
-import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, X } from 'lucide-react';
+import { lazy, Suspense, useEffect, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
+import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -13,6 +13,10 @@ import { SelectionStatistics, type SelectionStatisticsHandle } from './Selection
 import type { MarkdownAsset } from '@/lib/markdown/assets';
 import type { MarkdownCommand, SourceRange } from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
+import type { RichMarkdownEditorHandle } from './RichMarkdownEditor';
+import { VisualEditorBoundary } from './VisualEditorBoundary';
+
+const RichMarkdownEditor = lazy(() => import('./RichMarkdownEditor'));
 
 export type MarkdownMode = 'live' | 'source' | 'split' | 'read';
 export interface MarkdownWorkbenchHandle {
@@ -69,6 +73,8 @@ const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], [
 /** File operations and presentation around the reusable controlled editor. */
 export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
   const [mode, setMode] = useState<MarkdownMode>(initialMode);
+  const [readingEditable, setReadingEditable] = useState(false);
+  const visualEditor = useRef<RichMarkdownEditorHandle>(null);
   useEffect(() => { onModeChange?.(mode); }, [mode,onModeChange]);
   const workbench = useRef<HTMLElement>(null);
   const pages = useRef<HTMLDivElement>(null);
@@ -126,6 +132,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       onChange(source); onFileNameChange(name); setBaseline(source); setDocumentId(id => id + 1);
       await onImport?.(source, name, reloadOriginal);
       blockFromReading.current=false;
+      setReadingEditable(false);
       if (!reloadOriginal) {setMode('read');setReadingActionsOpen(false);}
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Não foi possível abrir o arquivo.');
@@ -134,6 +141,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
 
   function command(action: MarkdownCommand) {
     if (readOnly || busy) return;
+    if (readingEditable) { visualEditor.current?.command(action); return; }
     if (mode === 'read') setMode('live');
     editor.current?.command(action);
   }
@@ -144,6 +152,10 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     try {
       const prepared = await prepareImages(files, assets);
       appendAssets(prepared);
+      if (readingEditable && visualEditor.current) {
+        visualEditor.current.insertMarkdown(prepared.map(asset => `![${asset.file.name.replace(/\.[^.]+$/, '').replace(/[\[\]\\\r\n]/g, ' ')}](${asset.path})`).join('\n\n'));
+        return;
+      }
       const before = value.slice(0, range.from).match(/\n*$/)![0].length;
       const after = value.slice(range.to).match(/^\n*/)![0].length;
       const prefix = range.from === 0 ? '' : '\n'.repeat(Math.max(0, 2 - before));
@@ -166,6 +178,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
 
   function editBlock(range:SourceRange) {
     if(readOnly||busy)return;
+    setReadingEditable(false);
     // mdast offsets refer to the original string; CodeMirror normalizes CRLF/CR to LF.
     const sourceRange={from:value.slice(0,range.from).replace(/\r\n?/g,'\n').length,to:value.slice(0,range.to).replace(/\r\n?/g,'\n').length};
     blockFromReading.current=mode==='read';
@@ -182,7 +195,12 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     else if(mode==='live')editor.current?.editBlock();
     else {pendingBlock.current=editor.current?.selection()||{from:0,to:0};blockFromReading.current=mode==='read';setMode('live');}
   }
-  function changeMode(next:MarkdownMode) {blockFromReading.current=false;setMode(next);}
+  function changeMode(next:MarkdownMode) {blockFromReading.current=false;setReadingEditable(false);setMode(next);}
+  function startVisualEditing() {
+    if (readOnly || busy) return;
+    blockFromReading.current = false;
+    setMode('read'); setReadingEditable(true); setReadingActionsOpen(false);
+  }
   useEffect(()=>{
     if(!activeBlock)return;
     const finish=(event:KeyboardEvent)=>{
@@ -204,13 +222,15 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const [formattingOpen, setFormattingOpen] = useState(false);
   const [readingActionsOpen, setReadingActionsOpen] = useState(false);
   const [noteInfoOpen, setNoteInfoOpen] = useState(false);
-  return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label="Bancada Markdown" aria-busy={busy}>
-    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" aria-label="Editar nota" onClick={() => changeMode('live')}><Pencil size={20}/></button><button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
+  return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} data-reading-editable={readingEditable} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label="Bancada Markdown" aria-busy={busy}>
+    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" disabled={readOnly || busy} aria-label={readingEditable ? 'Concluir edição' : 'Editar nota'} aria-pressed={readingEditable} onClick={() => readingEditable ? setReadingEditable(false) : startVisualEditing()}>{readingEditable ? <Check size={20}/> : <Pencil size={20}/>}</button>{readingEditable && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} aria-expanded={formattingOpen} onClick={() => setFormattingOpen(!formattingOpen)}><Type size={20}/></button>}<button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
     {noteInfoOpen && <EditorDialog title="Informações da nota" onClose={() => setNoteInfoOpen(false)}><p>{fileName}</p><p>{words} palavras · {value.length} caracteres</p><p>Leitura estimada: {Math.max(1, Math.ceil(words / 200))} min</p><p>Markdown · UTF-8</p></EditorDialog>}
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}{onClose && <button type="button" disabled={readOnly || busy} aria-label="Fechar nota" aria-keyshortcuts="Meta+W Control+W" title="Fechar nota (⌘W / Ctrl+W, quando disponível no navegador)" onClick={onClose}><X size={16} aria-hidden="true"/></button>}</div>
       <div className={styles.modes} role="group" aria-label="Modo de edição">
-        {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={mode === key} onClick={() => changeMode(key)}>{label}</button>)}
+        {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={key === 'live' ? readingEditable : mode === key && !readingEditable} onClick={() => key === 'live' ? startVisualEditing() : changeMode(key)}>{label}</button>)}
+        <button type="button" aria-label="Editar blocos Markdown" title="Editar blocos Markdown" aria-pressed={mode === 'live'} onClick={() => changeMode('live')}><SquareCode size={16}/></button>
+        {readingEditable && <button type="button" onClick={() => setReadingEditable(false)} aria-label="Concluir edição" title="Concluir edição"><Check size={16}/></button>}
       </div>
       <div className={styles.actions}>
         <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={() => chooseFile()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
@@ -227,15 +247,15 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>
     </header>
     {sourceStatus}
-    {(!compact || formattingOpen) && <EditingToolbar onEditBlock={toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
+    {(!compact || formattingOpen) && <EditingToolbar onEditBlock={readingEditable ? undefined : toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(readingEditable ? visualEditor.current?.selectedText() || '' : value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
-    <div className={styles.modeHint}>{mode === 'live' ? 'Os marcadores aparecem na linha selecionada. Clique no texto para editar.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Volte a Escrever para editar.'}</div>
+    <div className={styles.modeHint}>{readingEditable ? 'Edite diretamente no texto. A formatação permanece visível; Concluir volta à leitura.' : mode === 'live' ? 'Markdown do bloco em edição. Escape volta à leitura.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Use Editar para escrever diretamente no texto.'}</div>
     <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
       <div className={styles.source} hidden={mode === 'read'}>
         <MarkdownEditor key={documentId} ref={editor} diagramScope={diagramScope} value={value} onChange={onChange} onSelectionChange={characters => statistics.current?.setEditorSelection(characters)} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
       </div>
-      {(mode === 'split' || mode === 'read') && <MarkdownReadingView diagramScope={diagramScope} value={value} assets={assets} doubleClickToEdit={doubleClickToEdit} onEditBlock={!readOnly && !busy ? editBlock : undefined} onEditTable={!readOnly && !busy ? editTable : undefined} onToggleTask={!readOnly && !busy ? range => {
+      {readingEditable ? <VisualEditorBoundary onRead={() => changeMode('read')} onSource={() => changeMode('source')}><Suspense fallback={<p role="status" className={styles.reading}>Preparando edição…</p>}><RichMarkdownEditor key={documentId} ref={visualEditor} value={value} onChange={onChange} assets={assets} diagramScope={diagramScope} disabled={readOnly || busy} onEditDiagram={editBlock} onImageFiles={files => { void insertImages(files, { from: value.length, to: value.length }); }}/></Suspense></VisualEditorBoundary> : (mode === 'split' || mode === 'read') && <MarkdownReadingView diagramScope={diagramScope} value={value} assets={assets} doubleClickToEdit={doubleClickToEdit} onEditBlock={!readOnly && !busy ? editBlock : undefined} onEditTable={!readOnly && !busy ? editTable : undefined} onToggleTask={!readOnly && !busy ? range => {
         const source = value.slice(range.from, range.to);
         const marker = source.match(/^(\s*(?:[-*+]|\d+[.)])\s+\[)([ xX])\]/);
         if (marker) editor.current?.replace(marker[2] === ' ' ? 'x' : ' ', { from: range.from + marker[1].length, to: range.from + marker[1].length + 1 });
@@ -251,8 +271,9 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
           if (!['http:', 'https:', 'mailto:'].includes(url.protocol)) throw new Error('invalid');
           const text = (linkText || linkUrl).replace(/[\[\]\\\r\n]/g, ' ');
           const target = linkUrl.replace(/[\s<>]/g, char => encodeURIComponent(char));
-          if (mode === 'read') setMode('live');
-          editor.current?.replace(`[${text}](<${target}>)`, linkRange); setLinkRange(null);
+          if (readingEditable) visualEditor.current?.insertLink(text, target);
+          else { if (mode === 'read') setMode('live'); editor.current?.replace(`[${text}](<${target}>)`, linkRange); }
+          setLinkRange(null);
         } catch { setLinkError('Use um link HTTP, HTTPS, e-mail ou âncora do documento.'); }
       }}><label>Texto do link<input value={linkText} onChange={event => setLinkText(event.target.value)}/></label><label>Endereço<input required value={linkUrl} onChange={event => setLinkUrl(event.target.value)}/></label><footer><button type="button" onClick={() => setLinkRange(null)}>Cancelar</button><button type="submit">Inserir link</button></footer></form>
     </EditorDialog>}

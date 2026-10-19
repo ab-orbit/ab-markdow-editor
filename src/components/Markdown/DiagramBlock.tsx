@@ -1,14 +1,18 @@
 import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { ChevronDown, Pencil, ZoomIn, ZoomOut } from 'lucide-react';
-import { diagramEngines, diagramKey, renderDiagram, scopeDiagramSvg, selectedDiagramEngine, setDiagramEngine, subscribeDiagramEngine, type DiagramAppearance, type DiagramEngine, type DiagramResult } from '@/lib/markdown/diagrams';
+import { ChevronDown, Pencil, ZoomIn, ZoomOut, Minus, Plus, Code2, Download } from 'lucide-react';
+import { diagramEngines, diagramKey, migrateDiagramEngine, renderDiagram, scopeDiagramSvg, selectedDiagramEngine, setDiagramEngine, subscribeDiagramEngine, type DiagramAppearance, type DiagramEngine, type DiagramResult } from '@/lib/markdown/diagrams';
 import styles from './DiagramBlock.module.css';
-import { MagnifiableDiagram } from './MagnifiableDiagram';
+import { ZoomableDiagram, type DiagramZoomHandle } from './ZoomableDiagram';
+import { DiagramSource } from './DiagramSource';
+import { downloadDiagram } from '@/lib/markdown/diagramExport';
 
 interface DiagramBlockProps {
   /** The parser-provided source inside one Mermaid fence. */
   source: string;
   /** Stable document/block identity keeps duplicate diagrams independently selectable. */
   identity?: string;
+  /** Previous offset identity, retained only to migrate presentation preferences. */
+  legacyIdentity?: string;
   /** Reveal the original fence without serializing the generated drawing. */
   onEdit?: () => void;
   /** Notify CodeMirror when an asynchronous widget changes its height. */
@@ -26,7 +30,7 @@ function appearanceAt(element: Element): DiagramAppearance {
 }
 
 /** One source-backed diagram, with presentation controls above the drawing. */
-export const DiagramBlock = memo(function DiagramBlock({ source: originalSource, identity, onEdit, onLayout }: DiagramBlockProps) {
+export const DiagramBlock = memo(function DiagramBlock({ source: originalSource, identity, legacyIdentity, onEdit, onLayout }: DiagramBlockProps) {
   // Normalize only the drawing input, never the source stored by the workbench.
   const source = originalSource.replace(/\r\n?/g, '\n').replace(/\n+$/, '');
   const frame = useRef<HTMLElement>(null);
@@ -39,8 +43,14 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
   const [drawing, setDrawing] = useState<(DiagramResult & { key: string }) | null>(null);
   const [failure, setFailure] = useState<{ key: string; message: string } | null>(null);
   const [magnifying, setMagnifying] = useState(false);
+  const [codeOpen, setCodeOpen] = useState(false), [zoom, setZoom] = useState(1);
+  const zoomer = useRef<DiagramZoomHandle>(null);
+  const exportMenu = useRef<HTMLDetailsElement>(null);
+  const [exporting, setExporting] = useState(false), [exportError, setExportError] = useState('');
   const key = diagramKey(identity || source);
-  const engine = useSyncExternalStore<DiagramEngine>(subscribeDiagramEngine, () => selectedDiagramEngine(key), () => 'mermaid');
+  const legacyKey = legacyIdentity ? diagramKey(legacyIdentity) : undefined;
+  const engine = useSyncExternalStore<DiagramEngine>(subscribeDiagramEngine, () => selectedDiagramEngine(key, legacyKey), () => 'mermaid');
+  useEffect(() => { migrateDiagramEngine(key, legacyKey); }, [key, legacyKey]);
   const definition = diagramEngines.find(item => item.id === engine)!;
   const roundedWidth = Math.max(200, Math.round(width / 8) * 8);
   // CSS-driven renderers keep their SVG across color-theme changes.
@@ -89,7 +99,7 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
   useEffect(() => {
     const measured = requestAnimationFrame(() => { if (frame.current?.isConnected) layout.current?.(); });
     return () => cancelAnimationFrame(measured);
-  }, [current?.svg, error]);
+  }, [current?.svg, error, codeOpen, exportError]);
 
   useEffect(() => {
     if (!magnifying) return;
@@ -100,6 +110,15 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
     window.addEventListener('keydown', dismiss, true);
     return () => window.removeEventListener('keydown', dismiss, true);
   }, [magnifying]);
+
+  async function exportDrawing(format: 'svg' | 'png') {
+    const element = canvas.current?.querySelector<SVGSVGElement>('[data-diagram-drawing] > svg');
+    if (!element || exporting) return;
+    setExporting(true); setExportError(''); if (exportMenu.current) exportMenu.current.open = false;
+    try { await downloadDiagram(element, format, `diagrama-${engine}`); }
+    catch (cause) { setExportError(cause instanceof Error ? cause.message : 'Não foi possível exportar. Tente novamente ou escolha SVG.'); }
+    finally { setExporting(false); }
+  }
 
   return <figure ref={frame} className={styles.diagram} data-diagram-engine={engine} data-diagram-state={error ? 'error' : current ? 'ready' : 'loading'} data-diagram-magnifying={magnifying} aria-label="Diagrama Mermaid">
     <div className={styles.controls} onDoubleClick={event => event.stopPropagation()}>
@@ -114,9 +133,19 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
       {onEdit && <button className={styles.edit} type="button" aria-label="Editar código do diagrama" title="Editar código do diagrama" onClick={onEdit}><Pencil size={15} aria-hidden="true"/></button>}
     </div>
     <div ref={canvas} className={styles.canvas} aria-busy={!current && !error}>
-      {current ? <MagnifiableDiagram svg={current.svg} enabled={magnifying} id={`${instance}-drawing`}/>
+      {current ? <ZoomableDiagram ref={zoomer} svg={current.svg} magnifying={magnifying} id={`${instance}-drawing`} onZoom={setZoom} onLayout={() => layout.current?.()}/>
         : error ? <div className={styles.failure} role="alert"><strong>{definition.label}</strong><span>{error}</span><span className={styles.help}>Troque o renderizador acima ou edite o código.</span></div>
         : <div className={styles.loading} role="status">Preparando {definition.label}…</div>}
     </div>
+    <div className={styles.diagramFooter} onDoubleClick={event => event.stopPropagation()}>
+      <button className={styles.codeToggle} type="button" aria-label={codeOpen ? 'Ocultar código do diagrama' : 'Ver código do diagrama'} title={codeOpen ? 'Ocultar código' : 'Ver código'} aria-expanded={codeOpen} aria-controls={`${instance}-code`} onClick={() => setCodeOpen(open => !open)}><Code2 size={16}/><span>Código</span></button>
+      <div className={styles.zoomTools} role="group" aria-label="Ampliar diagrama"><button type="button" aria-label="Diminuir zoom do diagrama" title="Diminuir zoom" disabled={!current || zoom <= 1} onClick={() => zoomer.current?.zoomBy(1 / 1.25)}><Minus size={16}/></button><button type="button" aria-label="Ajustar diagrama à largura" title="Voltar a 100%" disabled={!current} onClick={() => zoomer.current?.reset()}>{Math.round(zoom * 100)}%</button><button type="button" aria-label="Aumentar zoom do diagrama" title="Ampliar (também pela roda do mouse)" disabled={!current || zoom >= 6} onClick={() => zoomer.current?.zoomBy(1.25)}><Plus size={16}/></button></div>
+      <details ref={exportMenu} className={styles.exportMenu} onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); event.currentTarget.open = false; event.currentTarget.querySelector('summary')?.focus(); } }}>
+        <summary aria-label="Baixar diagrama" title="Baixar diagrama" aria-disabled={!current || exporting} onClick={event => { if (!current || exporting) event.preventDefault(); }}><Download size={17}/></summary>
+        <div role="group" aria-label="Formato do diagrama"><button type="button" disabled={!current || exporting} onClick={() => void exportDrawing('svg')}>SVG vetorial</button><button type="button" disabled={!current || exporting} onClick={() => void exportDrawing('png')}>PNG transparente</button></div>
+      </details>
+    </div>
+    {exportError && <p className={styles.exportError} role="alert">{exportError}</p>}
+    {codeOpen && <DiagramSource source={originalSource} id={`${instance}-code`} onLayout={() => layout.current?.()}/>}
   </figure>;
 });

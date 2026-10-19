@@ -5,6 +5,7 @@ import { createServer } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkDiagramMagnifier } from './helpers/diagram-magnifier.mjs';
+import { checkDiagramTools } from './helpers/diagram-tools.mjs';
 
 // This test uses an isolated browser profile, never a user's local notes or Git.
 const dist = path.resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -65,18 +66,33 @@ try {
   }
   for (const engine of ['mermaid', 'pele', 'beautiful']) {
     await choose(diagrams.first(), engine); await expect(diagrams.first()).toContainText('NOTEBOOK');
+    await checkDiagramTools(page, diagrams.first(), `${er}\n`, { screenshot: `docs/evidence/reading-experience/diagram-code-${engine}.png` });
     await checkDiagramMagnifier(page, diagrams.first());
     await choose(diagrams.nth(1), engine); await expect(diagrams.nth(1)).toContainText('Escrever');
   }
+  // Neither the visual editor nor syntax highlighter was loaded before going offline.
+  await page.getByRole('button', { name: 'Escrever', exact: true }).click();
+  const visual = page.getByRole('textbox', { name: 'Texto da nota', exact: true }); await expect(visual).toBeVisible();
+  const paragraph = visual.locator('p').filter({ hasText: 'Os três motores carregados' });
+  await paragraph.evaluate(element => { element.closest('[contenteditable=true]').focus(); const range = document.createRange(); range.selectNodeContents(element); range.collapse(false); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); });
+  await page.keyboard.insertText(' Editado visualmente sem rede.');
+  await page.keyboard.press('ControlOrMeta+s'); await page.getByRole('status').filter({ hasText: 'Nota salva neste navegador.' }).waitFor();
+  await page.getByRole('button', { name: 'Concluir edição', exact: true }).filter({ visible: true }).click();
+  await expect(page.locator('article')).toContainText('Editado visualmente sem rede.');
   await page.getByRole('button', { name: 'Salvar nota', exact: true }).click();
   await page.getByRole('status').filter({ hasText: 'Nota salva neste navegador.' }).waitFor();
   await page.reload();
   await expect(diagrams).toHaveCount(2);
+  await expect(page.locator('article')).toContainText('Editado visualmente sem rede.');
   await expect(diagrams.first()).toHaveAttribute('data-diagram-engine', 'beautiful');
   await expect(diagrams.first()).toHaveAttribute('data-diagram-state', 'ready', { timeout: 30_000 });
+  await page.getByRole('button', { name: 'Usar tema claro', exact: true }).click();
+  await checkDiagramTools(page, diagrams.first(), `${er}\n`, { screenshot: 'docs/evidence/reading-experience/diagram-code-light.png' });
+  await page.getByRole('button', { name: 'Usar tema escuro', exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   if (await page.getByRole('button', { name: 'Fechar lista de notas', exact: true }).isVisible()) await page.getByRole('button', { name: 'Fechar lista de notas', exact: true }).click();
   await choose(diagrams.first(), 'pele');
+  await checkDiagramTools(page, diagrams.first(), `${er}\n`, { screenshot: 'docs/evidence/reading-experience/diagram-code-mobile.png' });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   await page.screenshot({ path: 'docs/evidence/diagrams-offline-mobile.png' });
   await context.setOffline(false);
@@ -85,7 +101,7 @@ try {
   await expect(empty.getByText('Diagramas offline', { exact: true })).toHaveCount(0);
   await other.close();
   assert.deepEqual(errors, []); assert.deepEqual(api, []); assert.deepEqual(remote, []);
-  console.log(`PASS (${origin}): three engines first imported offline, ER/flowchart/tilde/CRLF, save/reload, per-block choice, browser isolation, mobile layout, no local API or off-origin drawing assets.`);
+  console.log(`PASS (${origin}): first offline imports of all three engines, syntax highlighter and visual editor; wheel zoom, clipboard, full SVG/transparent PNG, visual save/reload, per-block choice, browser isolation, mobile layout, no local API or off-origin drawing assets.`);
   if (infrastructure.length) console.log('Existing deployment analytics (separate from diagram assets):', [...new Set(infrastructure)]);
 } finally {
   await browser?.close();

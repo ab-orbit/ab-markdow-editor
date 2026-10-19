@@ -97,7 +97,9 @@ try {
   if (!safari && !process.env.SCRIBA_URL) await page.screenshot({ path: 'docs/evidence/selection-source-desktop.png' });
   await page.keyboard.press('ArrowRight'); await expectCount(0);
   await page.getByRole('button', { name: 'Escrever', exact: true }).click();
-  await editor.click(); await page.keyboard.press('ControlOrMeta+a'); await expectCount(source.length);
+  const visual = page.getByRole('textbox', { name: 'Texto da nota', exact: true });
+  await expect(visual).toBeVisible();
+  await selectNative(visual.locator('p').filter({ hasText: 'A seleção tem negrito' })); await expectCount('A seleção tem negrito e espaços.'.length);
   await page.getByRole('button', { name: 'Visão', exact: true }).click(); await expectCount(0);
   await selectNative(formatted.locator('strong')); await expectCount(7);
   await editor.click(); await page.keyboard.press('ControlOrMeta+Home'); await page.keyboard.press('Shift+ArrowRight'); await expectCount(1);

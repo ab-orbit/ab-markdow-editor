@@ -16,6 +16,8 @@ A lente amplia uma cópia vetorial do SVG já produzido, com IDs isolados. O mov
 
 ## Desempenho e apresentação
 
+**Zoom e exportação.** A roda do mouse e os botões −/+ ampliam o SVG existente de 100% a 600%; o ponto sob o mouse fica como referência. Arraste para navegar, ou use o toque na área ampliada. Clique no percentual para ajustar à largura; no teclado da área de zoom, use +, − e 0. Não há chamada ao motor durante o zoom. **Ver código** abre um painel de fundo distinto com gramática Mermaid do Shiki, carregada sob demanda e colorida pelos tokens dos dois temas. **Copiar** copia o conteúdo Mermaid. **Baixar diagrama** permite escolher SVG ou PNG transparente. A exportação incorpora os estilos resolvidos do motor atual e usa o desenho completo, sem recortar o zoom; o PNG usa até 2× a resolução vetorial, limitado a 8192 px por lado e 16 milhões de pixels para caber na memória do celular. Tudo é gerado no próprio dispositivo.
+
 - Cada motor é carregado somente quando necessário. A PWA inclui os chunks emitidos no cache estático para uso offline após a instalação do cache.
 - Há uma pausa de 120 ms para agrupar alterações do bloco, deduplicação de trabalho e cache LRU limitado a 24 desenhos/12 MB. Resultados de versões antigas do bloco são descartados pela interface.
 - O indicador em milissegundos registra o tempo observado de desenho. Exclui a importação do módulo principal e a espera inicial por fontes; pode incluir imports internos do próprio motor. O tooltip identifica resultados reutilizados do cache. Isso não representa um benchmark controlado entre bibliotecas.
