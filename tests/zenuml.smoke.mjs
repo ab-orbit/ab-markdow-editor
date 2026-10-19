@@ -67,7 +67,7 @@ try {
   await ready(figures.nth(count));await ready(figures.nth(count+1));
   await figures.nth(count+2).scrollIntoViewIfNeeded();await expect(figures.nth(count+2)).toHaveAttribute('data-diagram-state','error');await expect(figures.nth(count+2)).toContainText('linha');
   await figures.nth(count+2).getByRole('button',{name:'Ver código do diagrama',exact:true}).click();await expect(figures.nth(count+2).getByRole('region',{name:'Código do diagrama',exact:true})).toContainText('if (@');
-  await ready(figures.nth(count+3));await expect(figures.nth(count+3).getByRole('combobox')).toHaveValue('mermaid');
+  await ready(figures.nth(count+3));await expect(figures.nth(count+3).getByRole('combobox')).toHaveValue('pele');
   const repeated=await ready(figures.nth(count+4));assert.equal(await repeated.locator('.participant-icon').count(),4);
   assert.deepEqual(await repeated.evaluate(element=>{const ids=[...element.querySelectorAll('[id]')].map(node=>node.id);return ids.filter((id,index)=>ids.indexOf(id)!==index);}),[]);
   const inspected=figures.nth(2);await ready(inspected);

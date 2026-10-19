@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ChevronDown, Pencil, ZoomIn, ZoomOut, Minus, Plus, Code2, Download } from 'lucide-react';
-import { diagramEngines, diagramKey, migrateDiagramEngine, renderDiagram, scopeDiagramSvg, selectedDiagramEngine, setDiagramEngine, subscribeDiagramEngine, usesZenUml, type DiagramLanguage, type DiagramAppearance, type DiagramEngine, type DiagramResult } from '@/lib/markdown/diagrams';
+import { DEFAULT_DIAGRAM_ENGINE, diagramEngines, diagramKey, migrateDiagramEngine, renderDiagram, scopeDiagramSvg, selectedDiagramEngine, setDiagramEngine, subscribeDiagramEngine, usesZenUml, type DiagramLanguage, type DiagramAppearance, type DiagramEngine, type DiagramResult } from '@/lib/markdown/diagrams';
 import styles from './DiagramBlock.module.css';
 import { ZoomableDiagram, type DiagramZoomHandle } from './ZoomableDiagram';
 import { DiagramSource } from './DiagramSource';
@@ -51,10 +51,10 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
   const [exporting, setExporting] = useState(false), [exportError, setExportError] = useState('');
   const key = diagramKey(identity || source);
   const legacyKey = legacyIdentity ? diagramKey(legacyIdentity) : undefined;
-  const preference = useSyncExternalStore<DiagramEngine>(subscribeDiagramEngine, () => selectedDiagramEngine(key, legacyKey), () => 'mermaid');
+  const preference = useSyncExternalStore<DiagramEngine>(subscribeDiagramEngine, () => selectedDiagramEngine(key, legacyKey), () => DEFAULT_DIAGRAM_ENGINE);
   useEffect(() => { migrateDiagramEngine(key, legacyKey); }, [key, legacyKey]);
   const zenuml = usesZenUml(source, language);
-  const engine: DiagramEngine = zenuml ? 'zenuml' : preference === 'zenuml' ? 'mermaid' : preference;
+  const engine: DiagramEngine = zenuml ? 'zenuml' : preference === 'zenuml' ? DEFAULT_DIAGRAM_ENGINE : preference;
   const definition = diagramEngines.find(item => item.id === engine)!;
   const roundedWidth = Math.max(200, Math.round(width / 8) * 8);
   // CSS-driven renderers keep their SVG across color-theme changes.

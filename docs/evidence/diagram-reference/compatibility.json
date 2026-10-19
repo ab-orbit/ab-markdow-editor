@@ -1,6 +1,7 @@
 {
   "version": "1.0.0",
-  "testedAt": "2026-10-19T06:32:21.833Z",
+  "testedAt": "2026-10-19T14:34:19.159Z",
+  "defaultEngine": "pele",
   "engines": {
     "mermaid": "12.2.0",
     "pele": "1.6.0",
@@ -14,18 +15,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 169.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 204.6 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 7.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.5 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 74.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 58.1 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -36,18 +37,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 44.8 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 45.5 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 10.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 10.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 8.4 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -58,18 +59,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 92.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 47.6 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.0 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.8 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 11.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 8.4 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -80,18 +81,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 30.8 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 33.2 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.0 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 4.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 4.3 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -102,18 +103,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 29.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 36.1 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.5 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 4.0 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 3.7 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -124,18 +125,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 47.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 61.5 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.7 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 14.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 11.4 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -146,18 +147,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 30.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 46.4 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.2 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 4.6 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -168,13 +169,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 50.6 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 49.3 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 3.0 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -189,13 +190,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 66.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 82.1 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 3.0 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -210,13 +211,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 21.9 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 17.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 2.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -231,18 +232,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 27.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 41.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.1 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
           "timing": "Tempo de desenho: 1.4 milissegundos",
-          "svg": 4
+          "svg": 8
         }
       }
     },
@@ -253,18 +254,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 17.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 18.3 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 2.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.7 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -275,18 +276,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 16.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 22.5 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.7 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
           "timing": "Tempo de desenho: 0.3 milissegundos",
-          "svg": 4
+          "svg": 8
         }
       }
     },
@@ -297,18 +298,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 11.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 14.2 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.1 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -319,18 +320,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 50.2 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 153.7 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 4.1 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 7.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 8.5 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -341,18 +342,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 49.1 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 60.7 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.2 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 5.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 6.9 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -363,18 +364,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 45.5 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 69.4 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.8 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 9.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 5.9 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -385,18 +386,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 51.7 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 59.0 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 7.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 7.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 6.2 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -407,18 +408,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 33.0 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 30.7 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.6 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 2.9 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -429,18 +430,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 59.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 69.4 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 4.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 4.2 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -451,18 +452,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 50.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 58.0 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 3.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 6.0 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -473,13 +474,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 33.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 43.1 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 3.2 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -494,13 +495,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 84.5 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 74.3 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -515,13 +516,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 45.0 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 58.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.5 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -536,13 +537,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 21.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 22.9 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 2.2 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -557,13 +558,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 21.3 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 18.5 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.6 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -578,13 +579,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 21.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 74.0 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.7 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -599,13 +600,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 15.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 18.7 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -620,13 +621,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 23.3 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 36.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.3 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -641,13 +642,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 40.2 milissegundos",
-          "svg": 8
+          "timing": "Tempo de desenho: 60.4 milissegundos",
+          "svg": 12
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.0 milissegundos",
-          "svg": 8
+          "timing": "Tempo de desenho: 8.6 milissegundos, em cache",
+          "svg": 12
         },
         "beautiful": {
           "state": "error",
@@ -662,13 +663,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 23.2 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 30.5 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.2 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 2.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -683,13 +684,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 15.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 31.3 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.3 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -704,13 +705,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 11.5 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 18.4 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -725,13 +726,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 11.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 16.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.5 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -746,13 +747,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 13.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 24.7 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.5 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -767,13 +768,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 19.3 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 12.9 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.0 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.1 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -788,13 +789,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 45.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 42.5 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 3.1 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -809,13 +810,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 35.7 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 31.9 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -830,13 +831,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 8.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 9.1 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 7.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -851,13 +852,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 19.5 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 19.9 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 4.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.2 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -872,13 +873,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 43.7 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 27.5 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -893,13 +894,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 22.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 31.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.5 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -914,13 +915,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 12.6 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 15.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -935,13 +936,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 15.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 22.7 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.5 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -956,13 +957,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 16.1 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 24.6 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.3 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -977,18 +978,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 16.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 18.9 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 6.8 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.4 milissegundos",
+          "svg": 8
         }
       }
     },
@@ -999,18 +1000,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 8.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 11.0 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
           "timing": "Tempo de desenho: 0.5 milissegundos",
-          "svg": 4
+          "svg": 8
         }
       }
     },
@@ -1021,18 +1022,18 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 8.0 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 9.3 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.4 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.3 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "ready",
           "timing": "Tempo de desenho: 0.6 milissegundos",
-          "svg": 4
+          "svg": 8
         }
       }
     },
@@ -1043,13 +1044,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 16.3 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 24.3 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.2 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1064,13 +1065,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 16.2 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 16.9 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.6 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.1 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1085,13 +1086,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 34.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 37.4 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 13.3 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 1.6 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1106,13 +1107,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 21.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 17.3 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 5.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 2.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1127,13 +1128,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 86.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 24.2 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 5.2 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1148,13 +1149,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 10.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 8.8 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.4 milissegundos",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1169,13 +1170,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 18.0 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 20.7 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 1.1 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.9 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1190,13 +1191,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 21.7 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 20.0 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 3.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 2.0 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1211,13 +1212,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 51.0 milissegundos, em cache",
-          "svg": 4
+          "timing": "Tempo de desenho: 21.1 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 2.8 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 6.8 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",
@@ -1232,13 +1233,13 @@
       "results": {
         "mermaid": {
           "state": "ready",
-          "timing": "Tempo de desenho: 14.9 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 13.2 milissegundos",
+          "svg": 8
         },
         "pele": {
           "state": "ready",
-          "timing": "Tempo de desenho: 0.5 milissegundos",
-          "svg": 4
+          "timing": "Tempo de desenho: 0.4 milissegundos, em cache",
+          "svg": 8
         },
         "beautiful": {
           "state": "error",

@@ -1,5 +1,9 @@
 # Diagramas no Scriba
 
+**Pele é o padrão** para blocos sem escolha salva. Mermaid e Beautiful Mermaid continuam no mesmo seletor; escolhas explícitas e preferências antigas são preservadas. ZenUML mantém seu motor próprio.
+
+Os cinco tipos C4 acompanham os dois temas. A opção Mermaid recebe tipografia local, caixas neutras com bordas de destaque, conexões legíveis, rótulos sem sobreposição aos nós e enquadramento pelo conteúdo real. Estilos explícitos e deslocamentos de rótulo do autor continuam valendo. No celular, a área do diagrama permite navegação horizontal sem reduzir suas letras até ficarem ilegíveis. Veja [validação e capturas](evidence/c4-diagrams/README.md).
+
 Blocos Markdown identificados como `mermaid` são desenhados nos modos Ler, Visão e na prévia de Escrever. Fonte preserva o código literal. O seletor no canto superior do desenho permite comparar **Mermaid 12.2.0**, **Pele 1.6.0** e **Beautiful Mermaid 1.1.3**. A escolha é privada neste navegador, independente por documento/bloco e compartilhada entre os modos de visualização.
 
 Abra [examples/diagramas.md](../examples/diagramas.md) para experimentar ER, fluxograma, sequência e cronograma. O botão de lápis revela o bloco original. Trocar o renderizador não altera o texto, o estado de edição ou o histórico Git.

@@ -1,0 +1,2363 @@
+{
+  "testedAt": "2026-10-19T14:41:12.919Z",
+  "mode": "native",
+  "measurements": [
+    {
+      "theme": "dark",
+      "engine": "pele",
+      "id": "c4-context",
+      "width": 484,
+      "height": 355,
+      "viewBox": [
+        0,
+        0,
+        484,
+        355
+      ],
+      "minimumContrast": 5.747024561309688,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Contexto do Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 199,
+          "height": 17.6875
+        },
+        {
+          "text": "«person»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 50.9375,
+          "height": 12.96875
+        },
+        {
+          "text": "Analista",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 59.625,
+          "height": 17.6875
+        },
+        {
+          "text": "Investiga uma pergunta",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 133,
+          "height": 14.140625
+        },
+        {
+          "text": "«system»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 52.4375,
+          "height": 12.96875
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 105.78125,
+          "height": 17.6875
+        },
+        {
+          "text": "Organiza evidências e sínteses",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 174.84375,
+          "height": 14.140625
+        },
+        {
+          "text": "«external system»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 97.90625,
+          "height": 12.96875
+        },
+        {
+          "text": "Fontes primárias",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 123.03125,
+          "height": 17.6875
+        },
+        {
+          "text": "Publicam documentosverificáveis",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 125.375,
+          "height": 32.140625
+        },
+        {
+          "text": "Consulta eorganiza",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 60.234375,
+          "height": 32.140625
+        },
+        {
+          "text": "Referencia",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 60.640625,
+          "height": 14.140625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "pele",
+      "id": "c4-container",
+      "width": 508,
+      "height": 598,
+      "viewBox": [
+        0,
+        0,
+        508,
+        598
+      ],
+      "minimumContrast": 5.747024561309688,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Containers do Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 211.90625,
+          "height": 17.6875
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 105.796875,
+          "height": 17.6875
+        },
+        {
+          "text": "[SYSTEM]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 57.578125,
+          "height": 14.140625
+        },
+        {
+          "text": "«person»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 50.9375,
+          "height": 12.96875
+        },
+        {
+          "text": "Analista",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 59.625,
+          "height": 17.6875
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "Consulta web",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 99.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[Navegador]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 71.03125,
+          "height": 14.140625
+        },
+        {
+          "text": "Apresenta dossiês",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 104.46875,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "API de consulta",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 113.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[HTTP]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 40.90625,
+          "height": 14.140625
+        },
+        {
+          "text": "Resolve consultas",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 102.25,
+          "height": 14.140625
+        },
+        {
+          "text": "«container db»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 80.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Acervo",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 51.96875,
+          "height": 17.6875
+        },
+        {
+          "text": "[Armazenamento]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 101.59375,
+          "height": 14.140625
+        },
+        {
+          "text": "Mantém referências",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 112.78125,
+          "height": 14.140625
+        },
+        {
+          "text": "Consulta",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 50,
+          "height": 14.140625
+        },
+        {
+          "text": "Solicitareferências",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 63.640625,
+          "height": 32.140625
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 48.34375,
+          "height": 14.140625
+        },
+        {
+          "text": "Lê metadados",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 80.078125,
+          "height": 14.15625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "pele",
+      "id": "c4-component",
+      "width": 508,
+      "height": 436,
+      "viewBox": [
+        0,
+        0,
+        508,
+        436
+      ],
+      "minimumContrast": 5.747024561309688,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Componentes de consulta",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 190.9375,
+          "height": 17.6875
+        },
+        {
+          "text": "API de consulta",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 113.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[CONTAINER]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 78.71875,
+          "height": 14.140625
+        },
+        {
+          "text": "«component»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 73.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Entrada HTTP",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 101.625,
+          "height": 17.6875
+        },
+        {
+          "text": "[Handler]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 53.53125,
+          "height": 14.140625
+        },
+        {
+          "text": "Recebe consultas",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 100.28125,
+          "height": 14.140625
+        },
+        {
+          "text": "«component»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 73.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Validação",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 71.875,
+          "height": 17.6875
+        },
+        {
+          "text": "[Contrato]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 58.875,
+          "height": 14.140625
+        },
+        {
+          "text": "Verifica parâmetros",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 111.25,
+          "height": 14.140625
+        },
+        {
+          "text": "«component»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 73.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Busca",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 44.8125,
+          "height": 17.6875
+        },
+        {
+          "text": "[Serviço]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 51.53125,
+          "height": 14.140625
+        },
+        {
+          "text": "Localiza referências",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 113.34375,
+          "height": 14.140625
+        },
+        {
+          "text": "Valida",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 34.71875,
+          "height": 14.140625
+        },
+        {
+          "text": "Encaminhaconsulta válida",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 84.625,
+          "height": 32.140625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "pele",
+      "id": "c4-dynamic",
+      "width": 484,
+      "height": 311,
+      "viewBox": [
+        0,
+        0,
+        484,
+        311
+      ],
+      "minimumContrast": 5.747024561309688,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Abrir um dossiê no sistema hipotético",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 276.1875,
+          "height": 17.6875
+        },
+        {
+          "text": "«person»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 50.9375,
+          "height": 12.96875
+        },
+        {
+          "text": "Analista",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 59.625,
+          "height": 17.6875
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "Consulta web",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 99.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[Navegador]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 71.03125,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "API",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 25.1875,
+          "height": 17.6875
+        },
+        {
+          "text": "[HTTP]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 40.90625,
+          "height": 14.140625
+        },
+        {
+          "text": "1: Abre dossiê",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 79.609375,
+          "height": 14.140625
+        },
+        {
+          "text": "2: Solicitametadados",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 63.03125,
+          "height": 32.140625
+        },
+        {
+          "text": "3: Entregareferências",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 63.65625,
+          "height": 32.140625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "pele",
+      "id": "c4-deployment",
+      "width": 608,
+      "height": 260,
+      "viewBox": [
+        0,
+        0,
+        608,
+        260
+      ],
+      "minimumContrast": 5.747024561309688,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Implantação hipotética do Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 299.625,
+          "height": 17.6875
+        },
+        {
+          "text": "Dispositivo da analista",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 164.671875,
+          "height": 17.6875
+        },
+        {
+          "text": "[Computador]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 79.625,
+          "height": 14.140625
+        },
+        {
+          "text": "Ambiente de consulta",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 159.375,
+          "height": 17.6875
+        },
+        {
+          "text": "[Serviço remoto]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 95.296875,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "Consulta web",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 99.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[Navegador]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 71.03125,
+          "height": 14.140625
+        },
+        {
+          "text": "Apresenta o dossiê",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 108.65625,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "API",
+          "font": "15px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 25.1875,
+          "height": 17.6875
+        },
+        {
+          "text": "[HTTP]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 40.90625,
+          "height": 14.140625
+        },
+        {
+          "text": "Responde consultas públicas",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 165.09375,
+          "height": 14.140625
+        },
+        {
+          "text": "Consultametadados",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 63.03125,
+          "height": 32.140625
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "12px",
+          "fill": "rgb(169, 174, 177)",
+          "width": 48.34375,
+          "height": 14.140625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "mermaid",
+      "id": "c4-context",
+      "width": 670,
+      "height": 240.75,
+      "viewBox": [
+        52,
+        55.078125,
+        728,
+        261.6042175292969
+      ],
+      "minimumContrast": 8.90588895228461,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Analista",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 58.7255859375,
+          "height": 17.341583251953125
+        },
+        {
+          "text": "[Person]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 45.20892333984375,
+          "height": 13.027740478515625
+        },
+        {
+          "text": "Investiga uma pergunta",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 133.81494140625,
+          "height": 14.235626220703125
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 104.1358642578125,
+          "height": 17.341583251953125
+        },
+        {
+          "text": "[Software System]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 98.0389404296875,
+          "height": 13.02777099609375
+        },
+        {
+          "text": "Organiza evidências esínteses",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 125.3310546875,
+          "height": 27.522216796875
+        },
+        {
+          "text": "Fontes primárias",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 121.103515625,
+          "height": 17.341583251953125
+        },
+        {
+          "text": "[Software System]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 98.03887939453125,
+          "height": 13.02777099609375
+        },
+        {
+          "text": "Publicam documentosverificáveis",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 126.13629150390625,
+          "height": 27.522216796875
+        },
+        {
+          "text": "Consulta e organiza",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 119.33489990234375,
+          "height": 15.1846923828125
+        },
+        {
+          "text": "Referencia",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 64.47735595703125,
+          "height": 15.199066162109375
+        },
+        {
+          "text": "Contexto do Acervo Aurora",
+          "font": "18px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 212.3841552734375,
+          "height": 19.527252197265625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "mermaid",
+      "id": "c4-container",
+      "width": 670,
+      "height": 497,
+      "viewBox": [
+        32,
+        36.09375,
+        800,
+        593.436279296875
+      ],
+      "minimumContrast": 8.90588895228461,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Analista",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 54.17547607421875,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Person]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 41.613037109375,
+          "height": 11.85577392578125
+        },
+        {
+          "text": "Consulta web",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 90.42327880859375,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Container: Navegador]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 113.89935302734375,
+          "height": 11.85577392578125
+        },
+        {
+          "text": "Apresenta dossiês",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 96.7568359375,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "API de consulta",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 103.2998046875,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Container: HTTP]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 88.093994140625,
+          "height": 11.85577392578125
+        },
+        {
+          "text": "Resolve consultas",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 94.7154541015625,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Acervo",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 47.10906982421875,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Container:Armazenamento]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 82.83355712890625,
+          "height": 22.9002685546875
+        },
+        {
+          "text": "Mantém referências",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 104.4251708984375,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 95.945556640625,
+          "height": 15.794647216796875
+        },
+        {
+          "text": "[SYSTEM]",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 56.4000244140625,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Consulta",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 48.98040771484375,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Solicita referências",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 106.28338623046875,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 47.34466552734375,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Lê metadados",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 78.4366455078125,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Containers do Acervo Aurora",
+          "font": "18px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 208.4053955078125,
+          "height": 17.757522583007812
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "mermaid",
+      "id": "c4-component",
+      "width": 670,
+      "height": 224.34375,
+      "viewBox": [
+        32,
+        70.59375,
+        800,
+        267.875
+      ],
+      "minimumContrast": 8.90588895228461,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Entrada HTTP",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 92.1243896484375,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[Component: Handler]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 107.984375,
+          "height": 11.855804443359375
+        },
+        {
+          "text": "Recebe consultas",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 92.83099365234375,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Validação",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 65.1937255859375,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[Component: Contrato]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 112.538330078125,
+          "height": 11.855804443359375
+        },
+        {
+          "text": "Verifica parâmetros",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 103.09033203125,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Busca",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 40.5660400390625,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[Component: Serviço]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 106.28326416015625,
+          "height": 11.855804443359375
+        },
+        {
+          "text": "Localiza referências",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 105.07940673828125,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "API de consulta",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 103.2996826171875,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[CONTAINER]",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 77.101806640625,
+          "height": 13.83172607421875
+        },
+        {
+          "text": "Valida",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 34.023193359375,
+          "height": 13.831756591796875
+        },
+        {
+          "text": "Encaminha consulta válida",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 146.56146240234375,
+          "height": 13.83172607421875
+        },
+        {
+          "text": "Componentes de consulta",
+          "font": "18px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 188.095947265625,
+          "height": 17.75750732421875
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "mermaid",
+      "id": "c4-dynamic",
+      "width": 670,
+      "height": 223.75,
+      "viewBox": [
+        52,
+        55.078125,
+        728,
+        243.13546752929688
+      ],
+      "minimumContrast": 8.90588895228461,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Analista",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 58.72467041015625,
+          "height": 17.34136962890625
+        },
+        {
+          "text": "[Person]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 45.20819091796875,
+          "height": 13.02752685546875
+        },
+        {
+          "text": "Consulta web",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 98.1524658203125,
+          "height": 17.34130859375
+        },
+        {
+          "text": "[Container: Navegador]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 123.7186279296875,
+          "height": 13.027587890625
+        },
+        {
+          "text": "API",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 24.7896728515625,
+          "height": 17.34130859375
+        },
+        {
+          "text": "[Container: HTTP]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 95.7078857421875,
+          "height": 13.027587890625
+        },
+        {
+          "text": "1: Abre dossiê",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 84.60723876953125,
+          "height": 15.1844482421875
+        },
+        {
+          "text": "2: Solicita metadados",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 129.64288330078125,
+          "height": 15.1988525390625
+        },
+        {
+          "text": "3: Entrega referências",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 133.2088623046875,
+          "height": 15.19879150390625
+        },
+        {
+          "text": "Abrir um dossiê no sistema hipotético",
+          "font": "18px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 294.1409912109375,
+          "height": 19.5125732421875
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "engine": "mermaid",
+      "id": "c4-deployment",
+      "width": 560,
+      "height": 282.3125,
+      "viewBox": [
+        32,
+        70.59375,
+        560,
+        282.3125
+      ],
+      "minimumContrast": 8.90588895228461,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Consulta web",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 105.625,
+          "height": 18.84375
+        },
+        {
+          "text": "[Container: Navegador]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 133.03125,
+          "height": 14.15625
+        },
+        {
+          "text": "Apresenta o dossiê",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 117.28125,
+          "height": 15.46875
+        },
+        {
+          "text": "Dispositivo da analista",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 174.21875,
+          "height": 18.84375
+        },
+        {
+          "text": "[Computador]",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 91.09375,
+          "height": 16.515625
+        },
+        {
+          "text": "API",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 26.65625,
+          "height": 18.84375
+        },
+        {
+          "text": "[Container: HTTP]",
+          "font": "12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 102.90625,
+          "height": 14.15625
+        },
+        {
+          "text": "Responde consultaspúblicas",
+          "font": "13.12px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 123.5625,
+          "height": 29.90625
+        },
+        {
+          "text": "Ambiente de consulta",
+          "font": "16px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 168.75,
+          "height": 18.84375
+        },
+        {
+          "text": "[Serviço remoto]",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 108.78125,
+          "height": 16.515625
+        },
+        {
+          "text": "Consulta metadados",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 133.0625,
+          "height": 16.515625
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "14px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 55.34375,
+          "height": 16.515625
+        },
+        {
+          "text": "Implantação hipotética do Acervo Aurora",
+          "font": "18px",
+          "fill": "rgb(203, 217, 223)",
+          "width": 343.6875,
+          "height": 21.203125
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "pele",
+      "id": "c4-context",
+      "width": 484,
+      "height": 355,
+      "viewBox": [
+        0,
+        0,
+        484,
+        355
+      ],
+      "minimumContrast": 4.772573742946556,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Contexto do Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 199,
+          "height": 17.6875
+        },
+        {
+          "text": "«person»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 50.9375,
+          "height": 12.96875
+        },
+        {
+          "text": "Analista",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 59.625,
+          "height": 17.6875
+        },
+        {
+          "text": "Investiga uma pergunta",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 133,
+          "height": 14.140625
+        },
+        {
+          "text": "«system»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 52.4375,
+          "height": 12.96875
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 105.78125,
+          "height": 17.6875
+        },
+        {
+          "text": "Organiza evidências e sínteses",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 174.84375,
+          "height": 14.140625
+        },
+        {
+          "text": "«external system»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 97.90625,
+          "height": 12.96875
+        },
+        {
+          "text": "Fontes primárias",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 123.03125,
+          "height": 17.6875
+        },
+        {
+          "text": "Publicam documentosverificáveis",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 125.375,
+          "height": 32.140625
+        },
+        {
+          "text": "Consulta eorganiza",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 60.234375,
+          "height": 32.140625
+        },
+        {
+          "text": "Referencia",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 60.640625,
+          "height": 14.140625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "pele",
+      "id": "c4-container",
+      "width": 508,
+      "height": 598,
+      "viewBox": [
+        0,
+        0,
+        508,
+        598
+      ],
+      "minimumContrast": 4.772573742946556,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Containers do Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 211.90625,
+          "height": 17.6875
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 105.796875,
+          "height": 17.6875
+        },
+        {
+          "text": "[SYSTEM]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 57.578125,
+          "height": 14.140625
+        },
+        {
+          "text": "«person»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 50.9375,
+          "height": 12.96875
+        },
+        {
+          "text": "Analista",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 59.625,
+          "height": 17.6875
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "Consulta web",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 99.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[Navegador]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 71.03125,
+          "height": 14.140625
+        },
+        {
+          "text": "Apresenta dossiês",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 104.46875,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "API de consulta",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 113.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[HTTP]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 40.90625,
+          "height": 14.140625
+        },
+        {
+          "text": "Resolve consultas",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 102.25,
+          "height": 14.140625
+        },
+        {
+          "text": "«container db»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 80.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Acervo",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 51.96875,
+          "height": 17.6875
+        },
+        {
+          "text": "[Armazenamento]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 101.59375,
+          "height": 14.140625
+        },
+        {
+          "text": "Mantém referências",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 112.78125,
+          "height": 14.140625
+        },
+        {
+          "text": "Consulta",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 50,
+          "height": 14.140625
+        },
+        {
+          "text": "Solicitareferências",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 63.640625,
+          "height": 32.140625
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 48.34375,
+          "height": 14.140625
+        },
+        {
+          "text": "Lê metadados",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 80.078125,
+          "height": 14.15625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "pele",
+      "id": "c4-component",
+      "width": 508,
+      "height": 436,
+      "viewBox": [
+        0,
+        0,
+        508,
+        436
+      ],
+      "minimumContrast": 4.772573742946556,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Componentes de consulta",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 190.9375,
+          "height": 17.6875
+        },
+        {
+          "text": "API de consulta",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 113.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[CONTAINER]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 78.71875,
+          "height": 14.140625
+        },
+        {
+          "text": "«component»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 73.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Entrada HTTP",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 101.625,
+          "height": 17.6875
+        },
+        {
+          "text": "[Handler]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 53.53125,
+          "height": 14.140625
+        },
+        {
+          "text": "Recebe consultas",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 100.28125,
+          "height": 14.140625
+        },
+        {
+          "text": "«component»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 73.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Validação",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 71.875,
+          "height": 17.6875
+        },
+        {
+          "text": "[Contrato]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 58.875,
+          "height": 14.140625
+        },
+        {
+          "text": "Verifica parâmetros",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 111.25,
+          "height": 14.140625
+        },
+        {
+          "text": "«component»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 73.84375,
+          "height": 12.96875
+        },
+        {
+          "text": "Busca",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 44.8125,
+          "height": 17.6875
+        },
+        {
+          "text": "[Serviço]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 51.53125,
+          "height": 14.140625
+        },
+        {
+          "text": "Localiza referências",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 113.34375,
+          "height": 14.140625
+        },
+        {
+          "text": "Valida",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 34.71875,
+          "height": 14.140625
+        },
+        {
+          "text": "Encaminhaconsulta válida",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 84.625,
+          "height": 32.140625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "pele",
+      "id": "c4-dynamic",
+      "width": 484,
+      "height": 311,
+      "viewBox": [
+        0,
+        0,
+        484,
+        311
+      ],
+      "minimumContrast": 4.772573742946556,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Abrir um dossiê no sistema hipotético",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 276.1875,
+          "height": 17.6875
+        },
+        {
+          "text": "«person»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 50.9375,
+          "height": 12.96875
+        },
+        {
+          "text": "Analista",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 59.625,
+          "height": 17.6875
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "Consulta web",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 99.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[Navegador]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 71.03125,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "API",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 25.1875,
+          "height": 17.6875
+        },
+        {
+          "text": "[HTTP]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 40.90625,
+          "height": 14.140625
+        },
+        {
+          "text": "1: Abre dossiê",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 79.609375,
+          "height": 14.140625
+        },
+        {
+          "text": "2: Solicitametadados",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 63.03125,
+          "height": 32.140625
+        },
+        {
+          "text": "3: Entregareferências",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 63.65625,
+          "height": 32.140625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "pele",
+      "id": "c4-deployment",
+      "width": 608,
+      "height": 260,
+      "viewBox": [
+        0,
+        0,
+        608,
+        260
+      ],
+      "minimumContrast": 4.772573742946556,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Implantação hipotética do Acervo Aurora",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 299.625,
+          "height": 17.6875
+        },
+        {
+          "text": "Dispositivo da analista",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 164.671875,
+          "height": 17.6875
+        },
+        {
+          "text": "[Computador]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 79.625,
+          "height": 14.140625
+        },
+        {
+          "text": "Ambiente de consulta",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 159.375,
+          "height": 17.6875
+        },
+        {
+          "text": "[Serviço remoto]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 95.296875,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "Consulta web",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 99.75,
+          "height": 17.6875
+        },
+        {
+          "text": "[Navegador]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 71.03125,
+          "height": 14.140625
+        },
+        {
+          "text": "Apresenta o dossiê",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 108.65625,
+          "height": 14.140625
+        },
+        {
+          "text": "«container»",
+          "font": "11px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 64.03125,
+          "height": 12.96875
+        },
+        {
+          "text": "API",
+          "font": "15px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 25.1875,
+          "height": 17.6875
+        },
+        {
+          "text": "[HTTP]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 40.90625,
+          "height": 14.140625
+        },
+        {
+          "text": "Responde consultas públicas",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 165.09375,
+          "height": 14.140625
+        },
+        {
+          "text": "Consultametadados",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 63.03125,
+          "height": 32.140625
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "12px",
+          "fill": "rgb(92, 102, 107)",
+          "width": 48.34375,
+          "height": 14.140625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "mermaid",
+      "id": "c4-context",
+      "width": 670,
+      "height": 240.75,
+      "viewBox": [
+        52,
+        55.078125,
+        728,
+        261.6042175292969
+      ],
+      "minimumContrast": 9.816974630133378,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Analista",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 58.7255859375,
+          "height": 17.341583251953125
+        },
+        {
+          "text": "[Person]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 45.20892333984375,
+          "height": 13.027740478515625
+        },
+        {
+          "text": "Investiga uma pergunta",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 133.81494140625,
+          "height": 14.235626220703125
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 104.1358642578125,
+          "height": 17.341583251953125
+        },
+        {
+          "text": "[Software System]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 98.0389404296875,
+          "height": 13.02777099609375
+        },
+        {
+          "text": "Organiza evidências esínteses",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 125.3310546875,
+          "height": 27.522216796875
+        },
+        {
+          "text": "Fontes primárias",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 121.103515625,
+          "height": 17.341583251953125
+        },
+        {
+          "text": "[Software System]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 98.03887939453125,
+          "height": 13.02777099609375
+        },
+        {
+          "text": "Publicam documentosverificáveis",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 126.13629150390625,
+          "height": 27.522216796875
+        },
+        {
+          "text": "Consulta e organiza",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 119.33489990234375,
+          "height": 15.1846923828125
+        },
+        {
+          "text": "Referencia",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 64.47735595703125,
+          "height": 15.199066162109375
+        },
+        {
+          "text": "Contexto do Acervo Aurora",
+          "font": "18px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 212.3841552734375,
+          "height": 19.527252197265625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "mermaid",
+      "id": "c4-container",
+      "width": 670,
+      "height": 497,
+      "viewBox": [
+        32,
+        36.09375,
+        800,
+        593.436279296875
+      ],
+      "minimumContrast": 9.816974630133378,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Analista",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 54.17547607421875,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Person]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 41.613037109375,
+          "height": 11.85577392578125
+        },
+        {
+          "text": "Consulta web",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 90.42327880859375,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Container: Navegador]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 113.89935302734375,
+          "height": 11.85577392578125
+        },
+        {
+          "text": "Apresenta dossiês",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 96.7568359375,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "API de consulta",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 103.2998046875,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Container: HTTP]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 88.093994140625,
+          "height": 11.85577392578125
+        },
+        {
+          "text": "Resolve consultas",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 94.7154541015625,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Acervo",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 47.10906982421875,
+          "height": 15.78155517578125
+        },
+        {
+          "text": "[Container:Armazenamento]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 82.83355712890625,
+          "height": 22.9002685546875
+        },
+        {
+          "text": "Mantém referências",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 104.4251708984375,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Acervo Aurora",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 95.945556640625,
+          "height": 15.794647216796875
+        },
+        {
+          "text": "[SYSTEM]",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 56.4000244140625,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Consulta",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 48.98040771484375,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Solicita referências",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 106.28338623046875,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 47.34466552734375,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Lê metadados",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 78.4366455078125,
+          "height": 13.81866455078125
+        },
+        {
+          "text": "Containers do Acervo Aurora",
+          "font": "18px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 208.4053955078125,
+          "height": 17.757522583007812
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "mermaid",
+      "id": "c4-component",
+      "width": 670,
+      "height": 224.34375,
+      "viewBox": [
+        32,
+        70.59375,
+        800,
+        267.875
+      ],
+      "minimumContrast": 9.816974630133378,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Entrada HTTP",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 92.1243896484375,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[Component: Handler]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 107.984375,
+          "height": 11.855804443359375
+        },
+        {
+          "text": "Recebe consultas",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 92.83099365234375,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Validação",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 65.1937255859375,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[Component: Contrato]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 112.538330078125,
+          "height": 11.855804443359375
+        },
+        {
+          "text": "Verifica parâmetros",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 103.09033203125,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "Busca",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 40.5660400390625,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[Component: Serviço]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 106.28326416015625,
+          "height": 11.855804443359375
+        },
+        {
+          "text": "Localiza referências",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 105.07940673828125,
+          "height": 12.95501708984375
+        },
+        {
+          "text": "API de consulta",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 103.2996826171875,
+          "height": 15.781524658203125
+        },
+        {
+          "text": "[CONTAINER]",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 77.101806640625,
+          "height": 13.83172607421875
+        },
+        {
+          "text": "Valida",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 34.023193359375,
+          "height": 13.831756591796875
+        },
+        {
+          "text": "Encaminha consulta válida",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 146.56146240234375,
+          "height": 13.83172607421875
+        },
+        {
+          "text": "Componentes de consulta",
+          "font": "18px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 188.095947265625,
+          "height": 17.75750732421875
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "mermaid",
+      "id": "c4-dynamic",
+      "width": 670,
+      "height": 223.75,
+      "viewBox": [
+        52,
+        55.078125,
+        728,
+        243.13546752929688
+      ],
+      "minimumContrast": 9.816974630133378,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Analista",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 58.72467041015625,
+          "height": 17.34136962890625
+        },
+        {
+          "text": "[Person]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 45.20819091796875,
+          "height": 13.02752685546875
+        },
+        {
+          "text": "Consulta web",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 98.1524658203125,
+          "height": 17.34130859375
+        },
+        {
+          "text": "[Container: Navegador]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 123.7186279296875,
+          "height": 13.027587890625
+        },
+        {
+          "text": "API",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 24.7896728515625,
+          "height": 17.34130859375
+        },
+        {
+          "text": "[Container: HTTP]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 95.7078857421875,
+          "height": 13.027587890625
+        },
+        {
+          "text": "1: Abre dossiê",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 84.60723876953125,
+          "height": 15.1844482421875
+        },
+        {
+          "text": "2: Solicita metadados",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 129.64288330078125,
+          "height": 15.1988525390625
+        },
+        {
+          "text": "3: Entrega referências",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 133.2088623046875,
+          "height": 15.19879150390625
+        },
+        {
+          "text": "Abrir um dossiê no sistema hipotético",
+          "font": "18px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 294.1409912109375,
+          "height": 19.5125732421875
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "engine": "mermaid",
+      "id": "c4-deployment",
+      "width": 560,
+      "height": 282.3125,
+      "viewBox": [
+        32,
+        70.59375,
+        560,
+        282.3125
+      ],
+      "minimumContrast": 9.816974630133378,
+      "overlaps": [],
+      "texts": [
+        {
+          "text": "Consulta web",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 105.625,
+          "height": 18.84375
+        },
+        {
+          "text": "[Container: Navegador]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 133.03125,
+          "height": 14.15625
+        },
+        {
+          "text": "Apresenta o dossiê",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 117.28125,
+          "height": 15.46875
+        },
+        {
+          "text": "Dispositivo da analista",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 174.21875,
+          "height": 18.84375
+        },
+        {
+          "text": "[Computador]",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 91.09375,
+          "height": 16.515625
+        },
+        {
+          "text": "API",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 26.65625,
+          "height": 18.84375
+        },
+        {
+          "text": "[Container: HTTP]",
+          "font": "12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 102.90625,
+          "height": 14.15625
+        },
+        {
+          "text": "Responde consultaspúblicas",
+          "font": "13.12px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 123.5625,
+          "height": 29.90625
+        },
+        {
+          "text": "Ambiente de consulta",
+          "font": "16px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 168.75,
+          "height": 18.84375
+        },
+        {
+          "text": "[Serviço remoto]",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 108.78125,
+          "height": 16.515625
+        },
+        {
+          "text": "Consulta metadados",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 133.0625,
+          "height": 16.515625
+        },
+        {
+          "text": "[HTTPS]",
+          "font": "14px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 55.34375,
+          "height": 16.515625
+        },
+        {
+          "text": "Implantação hipotética do Acervo Aurora",
+          "font": "18px",
+          "fill": "rgb(40, 56, 66)",
+          "width": 343.6875,
+          "height": 21.203125
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

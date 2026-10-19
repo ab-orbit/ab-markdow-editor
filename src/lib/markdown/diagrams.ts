@@ -1,8 +1,11 @@
 import createDOMPurify from 'dompurify';
+import { c4Configuration, isC4, presentC4, type C4ElementStyle, type C4RelationStyle } from './c4';
 
 /** Renderer choices affect presentation only; Markdown remains the saved source. */
 export type DiagramEngine = 'mermaid' | 'pele' | 'beautiful' | 'zenuml';
 export type DiagramLanguage = 'mermaid' | 'zenuml';
+/** New diagrams use Pele; explicit per-diagram choices remain authoritative. */
+export const DEFAULT_DIAGRAM_ENGINE: DiagramEngine = 'pele';
 export const diagramEngines = [
   { id: 'mermaid', label: 'Mermaid', version: '12.2.0' },
   { id: 'pele', label: 'Pele', version: '1.6.0' },
@@ -65,7 +68,7 @@ function svgPurifier() {
 }
 
 /** Sanitize renderer output separately from ordinary Markdown HTML. */
-function cleanSvg(svg: string) {
+function cleanSvg(svg: string, c4 = false, present?: (root: SVGSVGElement) => void) {
   if (svg.length > 4_000_000) throw new Error('O diagrama ficou muito grande. Divida-o em blocos menores.');
   const clean = svgPurifier().sanitize(svg, { USE_PROFILES: { svg: true, svgFilters: true }, FORBID_TAGS: ['foreignObject', 'image', 'a', 'script', 'animate', 'set'] });
   const template = document.createElement('template'); template.innerHTML = clean;
@@ -84,8 +87,14 @@ function cleanSvg(svg: string) {
     };
     scope(sheet.cssRules); style.textContent = [...sheet.cssRules].map(rule => rule.cssText).join('\n');
   });
+  // Measurement is allowed only after the SVG has passed the same sanitizer.
+  present?.(root);
   const naturalWidth = Number(root.getAttribute('viewBox')?.split(/[\s,]+/)[2]);
-  if (naturalWidth > 0 && Number.isFinite(naturalWidth)) root.style.maxWidth = `${naturalWidth}px`;
+  if (naturalWidth > 0 && Number.isFinite(naturalWidth)) {
+    root.style.maxWidth = `${naturalWidth}px`;
+    // C4 labels remain readable on phones; the existing viewport handles panning.
+    if (c4) root.style.minWidth = `${Math.min(naturalWidth, 640)}px`;
+  }
   return root.outerHTML;
 }
 
@@ -140,6 +149,7 @@ async function draw(engine: DiagramEngine, source: string, appearance: DiagramAp
       mermaid.initialize({
         startOnLoad: false, securityLevel: 'strict', theme: 'base', look: 'classic', htmlLabels: false,
         maxTextSize: 50_000, maxEdges: 1_000, fontFamily: appearance.font,
+        c4: c4Configuration(appearance),
         themeVariables: {
           darkMode: appearance.dark, background: appearance.background, fontFamily: appearance.font, fontSize: '15px',
           primaryColor: appearance.surface, primaryTextColor: appearance.foreground, primaryBorderColor: appearance.border,
@@ -156,7 +166,20 @@ async function draw(engine: DiagramEngine, source: string, appearance: DiagramAp
       staging.setAttribute('aria-hidden', 'true'); staging.dataset.diagramStaging = '';
       Object.assign(staging.style, { position: 'fixed', left: '-100000px', top: '0', width: `${width}px`, visibility: 'hidden', pointerEvents: 'none', fontFamily: appearance.font });
       document.body.append(staging);
-      try { svg = (await mermaid.render(id, source, staging)).svg; }
+      try {
+        let elements: C4ElementStyle[] = [];
+        let relations: C4RelationStyle[] = [];
+        const c4 = isC4(source);
+        if (c4) {
+          // Snapshot author styles before render() resets Mermaid's shared DB.
+          const diagram = await mermaid.mermaidAPI.getDiagramFromText(source);
+          const db = diagram.db as unknown as { getC4ShapeArray: () => C4ElementStyle[]; getRels: () => C4RelationStyle[] };
+          elements = db.getC4ShapeArray().map(({ alias, fontColor, bgColor }) => ({ alias, fontColor, bgColor }));
+          relations = db.getRels().map(({ offsetX, offsetY, textColor, lineColor }) => ({ offsetX, offsetY, textColor, lineColor }));
+        }
+        svg = (await mermaid.render(id, source, staging)).svg;
+        svg = cleanSvg(svg, c4, c4 ? root => presentC4(root, staging, appearance, elements, relations) : undefined);
+      }
       finally { staging.remove(); }
     } else if (engine === 'pele') {
       svg = (library as typeof import('pele')).render(source, {
@@ -174,7 +197,7 @@ async function draw(engine: DiagramEngine, source: string, appearance: DiagramAp
       });
     }
     const milliseconds = performance.now() - start;
-    return { svg: cleanSvg(svg), milliseconds };
+    return { svg: engine === 'mermaid' ? svg : cleanSvg(svg, isC4(source)), milliseconds };
   };
   if (engine !== 'mermaid') return execute();
   const result = mermaidQueue.then(execute);
@@ -225,7 +248,7 @@ function readPreferences() {
 }
 export function selectedDiagramEngine(key: string, legacyKey?: string): DiagramEngine {
   const values = readPreferences(), value = values[key] ?? (legacyKey ? values[legacyKey] : undefined);
-  return diagramEngines.some(engine => engine.id === value) ? value : 'mermaid';
+  return diagramEngines.some(engine => engine.id === value) ? value : DEFAULT_DIAGRAM_ENGINE;
 }
 /** Adopt offset-based preferences from previous Scriba versions without changing a note. */
 export function migrateDiagramEngine(key: string, legacyKey?: string) {

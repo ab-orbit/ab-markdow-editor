@@ -12,7 +12,7 @@ const source=await fs.readFile(new URL('../docs/Scriba-Diagramas.md',import.meta
 const examples=[...source.matchAll(/<!-- diagram-example: ([\w-]+) family=(\w+) -->[\s\S]*?```mermaid\n([\s\S]*?)```/g)].map(match=>({id:match[1],family:match[2],source:match[3]}));
 assert.equal(examples.length,58);
 const directory=await fs.mkdtemp(path.join(os.tmpdir(),'scriba-reference-'));
-const report={version:'1.0.0',testedAt:new Date().toISOString(),engines:{mermaid:'12.2.0',pele:'1.6.0',beautiful:'1.1.3'},examples:[]};
+const report={version:'1.0.0',testedAt:new Date().toISOString(),defaultEngine:'pele',engines:{mermaid:'12.2.0',pele:'1.6.0',beautiful:'1.1.3'},examples:[]};
 let server,browser;
 try {
   const checkout=path.join(directory,'notes'),state=path.join(directory,'state');await fs.mkdir(checkout);await fs.mkdir(state);const root=await fs.realpath(checkout);
@@ -32,6 +32,7 @@ try {
   try{await page.getByRole('button',{name:'Scriba-Diagramas.md',exact:true}).click({timeout:15000});}catch(error){console.log(await page.locator('body').innerText());console.log({errors,outside});throw error;}
   await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');
   const figures=page.locator('article figure[data-diagram-engine]:not([data-diagram-engine=zenuml])');await expect(figures).toHaveCount(examples.length);
+  assert.deepEqual(await figures.evaluateAll(nodes=>[...new Set(nodes.map(node=>node.dataset.diagramEngine))]),['pele'],'All 58 unchosen reference diagrams start on Pele.');
   await page.getByRole('link',{name:'Estruturas e contratos',exact:true}).click();
   assert.equal(decodeURIComponent(new URL(page.url()).hash),'#estruturas-e-contratos');
   await expect(page.locator('#estruturas-e-contratos')).toBeInViewport();
@@ -63,7 +64,7 @@ try {
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:new URL('reference-process-mobile.png',evidence).pathname});
   assert.deepEqual(errors,[]);assert.deepEqual(outside,[]);
-  const failed=report.examples.filter(example=>example.results.mermaid.state!=='ready').map(example=>example.id);
+  const failed=report.examples.filter(example=>example.results.pele.state!=='ready'||example.results.mermaid.state!=='ready').map(example=>example.id);
   console.log(JSON.stringify({tested:report.examples.length,defaultFailures:failed,report:String(reportPath)}));
-  assert.deepEqual(failed,[],'Every published example must render with the default Mermaid engine.');
+  assert.deepEqual(failed,[],'Every published example must render with default Pele and alternate Mermaid.');
 }finally{await browser?.close();server?.kill();if(server&&server.exitCode===null)await new Promise(resolve=>server.once('exit',resolve));await fs.rm(directory,{recursive:true,force:true});}
