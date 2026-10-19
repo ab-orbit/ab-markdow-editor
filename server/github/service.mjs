@@ -9,6 +9,7 @@ import {
 } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
+import { nativeAuthentication } from './native-auth.mjs';
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 const random = () => randomBytes(32).toString("hex");
 const safeEqual = (a, b) =>
@@ -56,6 +57,7 @@ export function createGitHubService({
       Buffer.concat([cipher.update(bytes.subarray(28)), cipher.final()]),
     );
   };
+  const nativeAuth = nativeAuthentication(db, { encrypt, decrypt, origin });
   const config = () => {
     const row = db.prepare("SELECT data FROM config WHERE id=?").get("app");
     return row ? decrypt(row.data) : null;
@@ -481,6 +483,7 @@ export function createGitHubService({
         .get(id, Date.now());
       const session = row ? decrypt(row.data) : {};
       const persist = () => {
+        nativeAuth.cleanup();
         db.prepare("INSERT OR REPLACE INTO sessions VALUES (?,?,?)").run(
           id,
           encrypt(session),
@@ -576,6 +579,19 @@ export function createGitHubService({
         persist();
         return redirect("/?github=ready");
       }
+      if (req.method === 'POST' && url.pathname === '/github/native/start') {
+        const flow = nativeAuth.start(id, body.challenge);
+        persist();
+        return send(200, flow);
+      }
+      if (req.method === 'POST' && url.pathname === '/github/native/complete') {
+        const account = nativeAuth.claim(id, body.state, body.verifier);
+        session.credentials = account.credentials;
+        session.user = account.user;
+        delete session.selection;
+        persist();
+        return send(200, { connected: true, user: session.user });
+      }
       if (url.pathname === "/github/login") {
         const app = config();
         if (!app)
@@ -583,6 +599,11 @@ export function createGitHubService({
             "A conexão GitHub está aguardando ativação do administrador.",
             503,
           );
+        if (url.searchParams.has('native')) {
+          const flow = url.searchParams.get('native');
+          nativeAuth.begin(flow);
+          session.nativeHandoff = flow;
+        } else delete session.nativeHandoff;
         session.oauthState = random();
         session.oauthExpires = Date.now() + 600000;
         session.verifier = random();
@@ -626,6 +647,14 @@ export function createGitHubService({
         session.user = { login: session.user.login, id: session.user.id };
         delete session.oauthState;
         delete session.verifier;
+        if (session.nativeHandoff) {
+          const target = nativeAuth.finish(session.nativeHandoff, { credentials: session.credentials, user: session.user });
+          delete session.nativeHandoff;
+          delete session.credentials;
+          delete session.user;
+          persist();
+          return redirect(target);
+        }
         persist();
         return redirect("/?github=connected");
       }
@@ -643,6 +672,7 @@ export function createGitHubService({
         return send(200, { connected: true, user: session.user });
       }
       if (req.method === "POST" && url.pathname === "/github/logout") {
+        nativeAuth.cancel(id);
         db.prepare("DELETE FROM sessions WHERE id=?").run(id);
         return send(200, { connected: false });
       }

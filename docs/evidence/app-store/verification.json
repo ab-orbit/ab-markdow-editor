@@ -1,0 +1,48 @@
+{
+  "version": "1.13.0",
+  "iosBuild": "1",
+  "verifiedOn": "2026-10-19",
+  "xcode": "27.0",
+  "simulatorOS": "18.6",
+  "native": {
+    "bundleId": "com.aeonbridge.scriba",
+    "releaseArchive": "COMPILED_UNSIGNED",
+    "hostedTests": {
+      "iPhone16ProMax": 4,
+      "iPadPro13M4": 4
+    },
+    "rotationUITests": {
+      "iPhone16ProMax": "PASS_PORTRAIT_AND_LANDSCAPE",
+      "iPadPro13M4": "PASS_PORTRAIT_AND_LANDSCAPE"
+    },
+    "screenshots": "docs/app-store/screenshots",
+    "privacyManifest": "PRESENT",
+    "bridgeLogging": "DISABLED"
+  },
+  "httpGitTests": {
+    "passed": 54,
+    "failed": 0,
+    "nativeOAuth": "PASS"
+  },
+  "offline": {
+    "Chrome": "PASS",
+    "WebKit": "PASS"
+  },
+  "web": {
+    "url": "https://scriba.aeonbridge.app/",
+    "release": "20261019T202549Z-public-1.13.0",
+    "serviceWorker": "ab-markdown-shell-c4b7aad71f5b73d4",
+    "manifestOrientation": "any"
+  },
+  "mac": {
+    "version": "1.13.0",
+    "bundleVerification": "PASS"
+  },
+  "distribution": {
+    "signed": false,
+    "uploaded": false,
+    "testersInvited": false,
+    "physicalDeviceValidation": "PENDING",
+    "storeReview": "NOT_SUBMITTED"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "ab-markdown-editor",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -12,9 +12,15 @@
     "test": "node --test tests/*.test.mjs",
     "test:e2e": "playwright test",
     "stop": "node scripts/stop.mjs",
-    "icons": "node scripts/build-icons.mjs"
+    "icons": "node scripts/build-icons.mjs",
+    "ios:sync": "tsc --noEmit && VITE_STORAGE_MODE=browser VITE_APP_PLATFORM=ios vite build --outDir dist-ios && node scripts/prepare-ios.mjs && cap sync ios",
+    "ios:open": "cap open ios",
+    "ios:archive": "node scripts/archive-ios.mjs",
+    "screenshots:store": "node scripts/build-store-screenshots.mjs"
   },
   "dependencies": {
+    "@capacitor/core": "8.5.3",
+    "@capacitor/ios": "8.5.3",
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-markdown": "^6.5.2",
     "@codemirror/language": "^6.13.1",
@@ -50,6 +56,7 @@
     "unified": "11.0.5"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.5.3",
     "@playwright/test": "^1.62.0",
     "@types/node": "^22",
     "@types/react": "^19",

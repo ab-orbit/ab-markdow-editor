@@ -2,6 +2,8 @@
 
 Powered by **Aeon Bridge Co.** — offered to community.
 
+Scriba também tem uma versão pública em [scriba.aeonbridge.app](https://scriba.aeonbridge.app/), com notas privadas por navegador. A [versão nativa para iPhone e iPad](docs/app-store/README.md) inclui o editor offline, seleção de pasta em Arquivos, compartilhamento do sistema e GitHub opcional; a distribuição pela App Store está em preparação.
+
 Editor Markdown extraído do Lab do AB-POLInSights, como aplicação web local independente para macOS (Apple Silicon e Intel). A pasta contém todo o código e pode ser distribuída sozinha em outro repositório. O Lab original não é alterado e não é necessário para instalar ou executar esta aplicação.
 
 ## Instalar no Mac

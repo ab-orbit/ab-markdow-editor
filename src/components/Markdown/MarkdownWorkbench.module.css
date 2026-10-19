@@ -39,6 +39,9 @@
 .reading pre code { padding: 0; color: var(--text-secondary); }
 .reading hr { margin: 2em 0; border: 0; border-top: 1px solid var(--border-panel); }
 .reading input { accent-color: var(--lime); }
+/* Rendered GFM checkboxes are text markers, not editable form controls. */
+.reading input[type="checkbox"]:disabled { width: 16px; height: 16px; min-width: 0; min-height: 0; padding: 0; margin-right: 6px; vertical-align: middle; }
+.reading :global(li.task-list-item) { list-style: none; }
 .reading :global([data-footnote-ref]), .reading :global([data-footnote-backref]) { scroll-margin-block: 24px; }
 .reading :global([data-footnotes]) { margin-top: 2em; padding-top: 1em; border-top: 1px solid var(--border-panel); font-size: .9em; }
 .reading :global([data-footnotes]) li { scroll-margin-block: 24px; }

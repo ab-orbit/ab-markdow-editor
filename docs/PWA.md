@@ -1,5 +1,7 @@
 # PWA e funcionamento offline
 
+O manifest declara orientação livre e inclui capturas reais do editor em desktop e celular. O registro do service worker começa por um script externo antes da inicialização do React. A [edição nativa iOS](app-store/README.md) usa o mesmo editor empacotado, com recursos locais, e funciona independentemente de instalação PWA e de service worker.
+
 O aplicativo usa manifest com identidade e escopo estáveis, janela standalone, ícones normais e maskable em 192/512 px, favicon, Apple Touch Icon e service worker. O launcher macOS utiliza sempre `http://127.0.0.1:43127`: mudar a porta criaria outra origem e isolaria os rascunhos e a instalação do navegador.
 
 Abra a engrenagem e use **Instalar aplicativo** quando o navegador oferecer a instalação. No Chrome/Edge, a instalação também aparece na barra de endereço/menu. No Safari do Mac, use **Arquivo → Adicionar ao Dock**. O ícone instalado por `install.sh` na Mesa inicia o serviço local; uma PWA instalada pelo navegador não consegue iniciar esse processo sozinha.

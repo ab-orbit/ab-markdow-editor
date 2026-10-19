@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import { isIosApp, iosBridge } from './lib/ios';
 import { FolderGit2, RefreshCw, CircleCheck } from "lucide-react";
 import {
   githubJson,
@@ -94,7 +95,7 @@ export function GitHubSettings({
       {status && !status.connected && (
         <>
           {status.configured ? (
-            <a className="settings-action" href="/github/login">
+            <a className="settings-action" href="/github/login" onClick={isIosApp ? event => {event.preventDefault();void run(async()=>{await iosBridge.githubLogin();await refresh();});} : undefined}>
               Conectar GitHub
             </a>
           ) : (

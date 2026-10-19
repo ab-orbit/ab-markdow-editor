@@ -18,6 +18,7 @@ export function downloadMarkdown(value: string, fileName: string): void {
 
 /** Trigger a browser download and release its URL after the download starts. */
 export function downloadBlob(blob: Blob, fileName: string): void {
+  if (isIosApp) { void shareNativeBlob(blob, fileName).catch(error => window.alert(error instanceof Error ? error.message : 'Não foi possível exportar o arquivo.')); return; }
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
@@ -27,3 +28,4 @@ export function downloadBlob(blob: Blob, fileName: string): void {
   anchor.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+import { isIosApp, shareNativeBlob } from '../ios';

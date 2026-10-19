@@ -1,4 +1,5 @@
 /** GitHub credentials stay in an HttpOnly server session, never in browser storage. */
+import { isIosApp, iosBridge } from './ios';
 export interface GitHubSelection {
   /** Canonical owner/repository identity authorized for this account. */
   fullName: string;
@@ -41,6 +42,10 @@ export async function githubRequest(
   route: string,
   body?: unknown,
 ): Promise<Response> {
+  if (isIosApp) {
+    const result = await iosBridge.githubRequest({ route, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+    return new Response(result.text, { status: result.status, headers: { 'Content-Type': 'application/json' } });
+  }
   return fetch(`/github/${route}`, {
     method: body === undefined ? "GET" : "POST",
     credentials: "same-origin",

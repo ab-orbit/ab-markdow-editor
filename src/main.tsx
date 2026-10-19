@@ -3,6 +3,7 @@ import {GitHubSettings} from './GitHubSettings';
 import {githubSelection,setGitHubSelection,libraryKey} from './lib/github';
 import {canChooseFolder, chooseDeviceFolder, folderLabel, disconnectFolder, authorizeDeviceFolder, saveToDeviceFolder} from './lib/deviceFolder';
 import {browserMode} from './lib/browserStore';
+import {isIosApp, iosBridge} from './lib/ios';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
@@ -139,6 +140,19 @@ function describeRepositoryChanges(status: string): string {
 function assetIdentity(items: {path:string;file:File}[]) {return JSON.stringify(items.map(({path,file})=>[path,file.name,file.size,file.type,file.lastModified]));}
 function App() {
   const pwa = usePwa();
+  useEffect(() => {
+    if(!isIosApp)return;
+    const externalLink = (event: MouseEvent) => {
+      const link = (event.target as Element)?.closest?.('a[href]');
+      if(!link)return;
+      const url = new URL(link.getAttribute('href')!, location.href);
+      if(url.protocol !== 'https:')return;
+      event.preventDefault();
+      void iosBridge.openExternal({url:url.href}).catch(error=>window.alert(error.message));
+    };
+    document.addEventListener('click',externalLink);
+    return()=>document.removeEventListener('click',externalLink);
+  },[]);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [deviceFolder, setDeviceFolder] = useState('');
   useEffect(() => {if(browserMode)void folderLabel().then(setDeviceFolder);}, []);
@@ -157,8 +171,10 @@ function App() {
   const [offline, setOffline] = useState(!navigator.onLine);
   const [draftReady, setDraftReady] = useState(false);
   const [draftId] = useState(() => {
-    const id = sessionStorage.getItem('ab-markdown-draft-id') || crypto.randomUUID();
-    sessionStorage.setItem('ab-markdown-draft-id', id); return id;
+    // The native app has one window; its draft identity must survive process termination.
+    const storage = isIosApp ? localStorage : sessionStorage;
+    const id = storage.getItem('ab-markdown-draft-id') || crypto.randomUUID();
+    storage.setItem('ab-markdown-draft-id', id); return id;
   });
   const latestDraft = useRef<DraftSnapshot | null>(null);
   const restoringAssets = useRef(false);
@@ -244,7 +260,10 @@ function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('ab-markdown-theme') || 'dark');
   const assetsDirty = assetIdentity(assets) !== baselineAssets;
   const dirty = value !== baseline || name !== loadedName || assetsDirty;
-  useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('ab-markdown-theme', theme); }, [theme]);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme; localStorage.setItem('ab-markdown-theme', theme);
+    if(isIosApp){const channels=getComputedStyle(document.body).backgroundColor.match(/\d+/g)?.map(Number)||[0,0,0];void iosBridge.appearance({dark:theme==='dark',red:channels[0],green:channels[1],blue:channels[2]}).catch(()=>{});}
+  }, [theme]);
   async function refreshLibrary() {
     const library = await api<NoteLibrary>('library/initialize', {});
     setRecentNotes(library.recent); setPinnedNotes(library.pinned);
@@ -475,7 +494,7 @@ function App() {
     setOffline(false); setName(targetName); setVersion(result.version); setBaseline(value); setLoadedName(targetName); setSaveRevision(revision => revision + 1);
     setBaselineAssets(assetIdentity(assets));setImportedVersion(null); setConflict(null); setPendingSync(!result.synced); setAutoSavePaused(false);setFinderSourceId(null);setOpenedScope(browserMode ? libraryKey() : repository.repository);
     await refresh();
-    if (result.synced) setNotice(browserMode ? (githubSelection() ? 'Nota e imagens salvas no GitHub em um commit.' : deviceFolder ? `Nota salva em ${deviceFolder}.` : 'Nota salva neste navegador.') : 'Arquivo salvo, commit criado e enviado ao remoto.');
+    if (result.synced) setNotice(browserMode ? (githubSelection() ? 'Nota e imagens salvas no GitHub em um commit.' : deviceFolder ? `Nota salva em ${deviceFolder}.` : isIosApp ? 'Nota salva neste aplicativo.' : 'Nota salva neste navegador.') : 'Arquivo salvo, commit criado e enviado ao remoto.');
     else if(browserMode) setError(`Nota preservada no navegador; ${githubSelection() ? 'envio ao GitHub' : 'cópia na pasta'} pendente. ${result.error}`);
     else setError(`Arquivo salvo localmente. ${result.stage === 'commit' ? 'Commit pendente' : 'Push pendente'}: ${result.error} Use Salvar novamente para tentar sincronizar.`);
     return result.synced;
@@ -545,7 +564,7 @@ function App() {
   });
   const statusMessages = <>{error && <div role="alert" className="error toast">{error}<button aria-label="Dispensar erro" onClick={() => setError('')}><X size={18}/></button></div>}{notice && <p role="status" className="notice toast">{notice}</p>}</>;
   return <main aria-busy={busy} className="editor-app">
-    {aboutOpen && <EditorDialog title="Sobre o Scriba" onClose={() => setAboutOpen(false)}><div className="about-scriba"><img src="/icons/profile-v3/scribe-180.png" width="96" height="96" alt="Escriba egípcio, símbolo do Scriba"/><h1>Scriba</h1><p className="about-subtitle">AB Markdown Editor</p><p>Scriba vem do latim e significa escriba: quem registra e preserva a palavra escrita. O escriba egípcio da nossa marca representa esse cuidado com suas ideias — agora em notas Markdown que continuam suas.</p><dl><div><dt>Versão</dt><dd>{__APP_VERSION__}</dd></div><div><dt>Compilação</dt><dd><time dateTime={__BUILD_DATE__}>{new Date(__BUILD_DATE__).toLocaleDateString('pt-BR')}</time></dd></div><div><dt>Edição</dt><dd>{browserMode ? 'Web / PWA' : 'Local para Mac'}</dd></div><div><dt>Desenvolvido por</dt><dd>Aeon Bridge Co.</dd></div></dl><p>Powered by Aeon Bridge Co. — offered to community.</p><a href="https://github.com/ab-orbit/ab-markdow-editor" target="_blank" rel="noopener noreferrer">Código-fonte e documentação</a></div></EditorDialog>}
+    {aboutOpen && <EditorDialog title="Sobre o Scriba" onClose={() => setAboutOpen(false)}><div className="about-scriba"><img src="/icons/profile-v3/scribe-180.png" width="96" height="96" alt="Escriba egípcio, símbolo do Scriba"/><h1>Scriba</h1><p className="about-subtitle">AB Markdown Editor</p><p>Scriba vem do latim e significa escriba: quem registra e preserva a palavra escrita. O escriba egípcio da nossa marca representa esse cuidado com suas ideias — agora em notas Markdown que continuam suas.</p><dl><div><dt>Versão</dt><dd>{__APP_VERSION__}</dd></div><div><dt>Compilação</dt><dd><time dateTime={__BUILD_DATE__}>{new Date(__BUILD_DATE__).toLocaleDateString('pt-BR')}</time></dd></div><div><dt>Edição</dt><dd>{isIosApp ? 'iPhone / iPad' : browserMode ? 'Web / PWA' : 'Local para Mac'}</dd></div><div><dt>Desenvolvido por</dt><dd>Aeon Bridge Co.</dd></div></dl><p>Powered by Aeon Bridge Co. — offered to community.</p><a href="https://github.com/ab-orbit/ab-markdow-editor" target="_blank" rel="noopener noreferrer">Código-fonte e documentação</a><p><a href="https://scriba.aeonbridge.app/privacy.html" target="_blank" rel="noopener noreferrer">Privacidade</a> · <a href="https://scriba.aeonbridge.app/support.html" target="_blank" rel="noopener noreferrer">Suporte</a></p></div></EditorDialog>}
     {settingsOpen && <section className="settings-page" id="settings-page" aria-labelledby="settings-title">
     <header className="settings-page-header"><div><button type="button" onClick={backToEditor} aria-label="Voltar ao editor"><ArrowLeft size={20}/><span>Editor</span></button><h1 id="settings-title" ref={settingsTitle} tabIndex={-1}>Configurações</h1></div></header>
     <div className="settings-content">
@@ -553,12 +572,12 @@ function App() {
       <div className="pwa-brand"><img src={brandIcon} width="64" height="64" alt="Escriba egípcio do AB Markdown"/><div><h3>Scriba · AB Markdown Editor</h3><p>{pwa.standalone ? 'Aplicativo instalado' : 'Aplicativo web instalável'} · {pwa.ready ? 'Disponível offline' : 'Preparando modo offline'}</p></div></div>
       {pwa.canInstall && <button type="button" onClick={() => void pwa.install()}><Download size={18}/>Instalar aplicativo</button>}
       {!pwa.canInstall && !pwa.standalone && <p>Use a opção de instalar aplicativo do navegador. No Safari do Mac, use Arquivo → Adicionar ao Dock.</p>}
-      <p>{browserMode ? 'Sem integração, notas e imagens ficam neste navegador. Ao conectar GitHub, as notas são enviadas ao repositório escolhido pelo serviço de sincronização. Limpar os dados do site remove as cópias locais; exporte ZIPs para backup. Google Drive está previsto.' : 'Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.'}</p>
+      <p>{isIosApp ? 'Notas e rascunhos ficam neste aplicativo. Você pode escolher uma pasta em Files ou conectar um repositório GitHub. Ao desinstalar o Scriba, as cópias privadas do aplicativo são removidas; os arquivos exportados para Files e GitHub continuam no destino escolhido.' : browserMode ? 'Sem integração, notas e imagens ficam neste navegador. Ao conectar GitHub, as notas são enviadas ao repositório escolhido pelo serviço de sincronização. Limpar os dados do site remove as cópias locais; exporte ZIPs para backup. Google Drive está previsto.' : 'Rascunhos e imagens ficam neste navegador. Para gravar na pasta e sincronizar o Git, o aplicativo local precisa estar em execução.'}</p>
       {pwa.updateAvailable && <p>Atualização pronta. Seus rascunhos estão preservados; feche as janelas do editor e abra novamente quando terminar.</p>}
     </section>
     {browserMode && <GitHubSettings canSwitch={discard} onChange={async () => {resetDocument();await refresh();setNotice('Destino atualizado. Suas notas anteriores continuam preservadas separadamente.');}}/>}
-    {browserMode && <section className="storage-settings" aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : 'Armazenamento privado neste navegador'}</p>{githubSelection() && <p>Repositório: <a href={`https://github.com/${githubSelection()!.fullName}`} target="_blank" rel="noopener noreferrer">{githubSelection()!.fullName}</a></p>}{canChooseFolder() ? <div className="settings-actions"><button disabled={busy} onClick={() => {if(!discard())return;void run(async () => {const label=await chooseDeviceFolder();setGitHubSelection(null);resetDocument();setDeviceFolder(label);const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`${count} notas carregadas. Pasta: ${label}.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`Pasta lida: ${count} notas disponíveis na lista.`);})}>Autorizar pasta e carregar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setGitHubSelection(null);resetDocument();await refresh();setDeviceFolder('');})}>Usar somente navegador</button></>}</div> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. GitHub está disponível na seção acima; Google Drive está previsto.</p></section>}
-    {browserMode && <section className="repository" aria-label="Sincronização com GitHub e Git"><h3><FolderGit2 size={20}/> GitHub / repositório Git</h3><p>Use um repositório local ou clone uma URL Git. Na versão local, cada salvamento grava o arquivo, cria um commit e faz push usando suas credenciais.</p><div className="settings-actions"><a className="settings-action" href="http://127.0.0.1:43127/" target="_blank" rel="noopener noreferrer">Abrir editor local com Git</a><a className="settings-action" href="https://github.com/ab-orbit/ab-markdow-editor#readme" target="_blank" rel="noopener noreferrer">Instalar no Mac</a></div><p>Abra o aplicativo Scriba no Mac antes de conectar. No editor local, abra Configurações para selecionar a pasta ou clonar o repositório. As notas deste site continuam separadas; use Baixar pacote e importe no editor local para transferi-las.</p><p>No celular e tablet, use a seção GitHub acima para conectar sua conta e selecionar um repositório. O armazenamento no navegador e a pasta do dispositivo continuam como alternativas.</p></section>}
+    {browserMode && <section className="storage-settings" aria-label="Pasta de notas"><h3>Onde guardar suas notas</h3><p>{deviceFolder ? `Pasta selecionada: ${deviceFolder}` : isIosApp ? 'Armazenamento privado neste aplicativo' : 'Armazenamento privado neste navegador'}</p>{githubSelection() && <p>Repositório: <a href={`https://github.com/${githubSelection()!.fullName}`} target="_blank" rel="noopener noreferrer">{githubSelection()!.fullName}</a></p>}{canChooseFolder() ? <div className="settings-actions"><button disabled={busy} onClick={() => {if(!discard())return;void run(async () => {const label=await chooseDeviceFolder();setGitHubSelection(null);resetDocument();setDeviceFolder(label);const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`${count} notas carregadas. Pasta: ${label}.`);});}}><FolderOpen size={18}/>Selecionar pasta em Files</button>{deviceFolder && <><button disabled={busy} onClick={() => void run(async () => {await authorizeDeviceFolder();const count=await importDeviceNotes();await syncDeviceNotes();setSettingsOpen(false);setNotesOpen(true);setNotice(`Pasta lida: ${count} notas disponíveis na lista.`);})}>Autorizar pasta e carregar notas</button><button onClick={() => void run(async () => {await disconnectFolder();setGitHubSelection(null);resetDocument();await refresh();setDeviceFolder('');})}>{isIosApp ? 'Usar somente aplicativo' : 'Usar somente navegador'}</button></>}</div> : <p>Este navegador não oferece acesso de gravação a pastas do Files. Suas notas ficam neste navegador; use Baixar pacote para salvar um ZIP em Files. No iPhone/iPad, o acesso contínuo a pastas exige um aplicativo nativo.</p>}<p>Escolha a pasta principal: o Scriba cria uma subpasta scriba e copia as notas salvas e imagens para ela. Rascunhos continuam protegidos no navegador. Arquivos alterados fora do editor não são sobrescritos. GitHub está disponível na seção acima; Google Drive está previsto.</p></section>}
+    {browserMode && !isIosApp && <section className="repository" aria-label="Sincronização com GitHub e Git"><h3><FolderGit2 size={20}/> GitHub / repositório Git</h3><p>Use um repositório local ou clone uma URL Git. Na versão local, cada salvamento grava o arquivo, cria um commit e faz push usando suas credenciais.</p><div className="settings-actions"><a className="settings-action" href="http://127.0.0.1:43127/" target="_blank" rel="noopener noreferrer">Abrir editor local com Git</a><a className="settings-action" href="https://github.com/ab-orbit/ab-markdow-editor#readme" target="_blank" rel="noopener noreferrer">Instalar no Mac</a></div><p>Abra o aplicativo Scriba no Mac antes de conectar. No editor local, abra Configurações para selecionar a pasta ou clonar o repositório. As notas deste site continuam separadas; use Baixar pacote e importe no editor local para transferi-las.</p><p>No celular e tablet, use a seção GitHub acima para conectar sua conta e selecionar um repositório. O armazenamento no navegador e a pasta do dispositivo continuam como alternativas.</p></section>}
     {!browserMode && <details className="repository" open={!repository.repository || undefined}>
       <summary className="repository-summary"><span className="repository-summary-content"><span className="repository-path"><FolderGit2 size={20}/><span>{repository.repository || 'Configurar repositório'}{repository.branch && ` · ${repository.branch}`}</span></span>{repository.repository && <span className="connection-status" data-state={repositoryConnected ? 'connected' : 'pending'}>{repositoryConnected ? <CircleCheck size={16} aria-hidden="true"/> : <CircleAlert size={16} aria-hidden="true"/>}{repositoryConnected ? 'Pasta conectada' : draftReady ? 'Conexão indisponível' : 'Verificando conexão…'}</span>}</span></summary>
       {repository.githubUrl && <p>Repositório: <a href={repository.githubUrl} target="_blank" rel="noopener noreferrer">{repository.githubUrl.replace('https://github.com/', '')}</a></p>}
