@@ -7,6 +7,8 @@ interface Options<T extends {version: string | null}> {
   enabled: boolean;
   /** Pause while another operation, modal or settings page owns the document. */
   blocked: boolean;
+  /** Read modal/editor locks at request and response time, including nested canvas drafts. */
+  isBlocked?: () => boolean;
   /** Edited text, attachments and pending offline writes must never be replaced automatically. */
   dirty: boolean;
   pending: boolean;
@@ -38,13 +40,13 @@ export function useDocumentReload<T extends {version: string | null}>(options: O
   useEffect(()=>()=>{sequence.current++;probing.current=null;loading.current=null;},[]);
   async function load(automatic: boolean, discard=false) {
     const snapshot=latest.current;
-    if(!snapshot.enabled||snapshot.blocked||loading.current)return;
+    if(!snapshot.enabled||snapshot.blocked||snapshot.isBlocked?.()||loading.current)return;
     if(!automatic&&!discard&&(snapshot.dirty||snapshot.pending)){setConfirmation(true);return;}
     const ticket=++sequence.current;
     loading.current=ticket;setReloading(true);setManualLock(!automatic);setConfirmation(false);
     try {
       const document=await snapshot.load();const current=latest.current;
-      if(ticket!==sequence.current||current.identity!==snapshot.identity||!current.enabled||current.blocked)return;
+      if(ticket!==sequence.current||current.identity!==snapshot.identity||!current.enabled||current.blocked||current.isBlocked?.())return;
       if(automatic&&(current.dirty||current.pending)){setChange({kind:'modified',version:document.version});return;}
       setChange(null);current.apply(document,automatic);
     }catch(error){if(ticket===sequence.current&&latest.current.identity===snapshot.identity)setChange({kind:'error',version:null,message:error instanceof Error?error.message:'Não foi possível recarregar. Seu texto continua no editor.'});}
@@ -55,11 +57,11 @@ export function useDocumentReload<T extends {version: string | null}>(options: O
     let active=true;
     const check=async()=>{
       const snapshot=latest.current;
-      if(!active||!snapshot.enabled||snapshot.blocked||document.visibilityState==='hidden'||probing.current||loading.current)return;
+      if(!active||!snapshot.enabled||snapshot.blocked||snapshot.isBlocked?.()||document.visibilityState==='hidden'||probing.current||loading.current)return;
       const ticket=sequence.current,probeTicket={};probing.current=probeTicket;
       try {
         const revision=await snapshot.probe(),current=latest.current;
-        if(!active||ticket!==sequence.current||current.identity!==snapshot.identity||current.blocked)return;
+        if(!active||ticket!==sequence.current||current.identity!==snapshot.identity||current.blocked||current.isBlocked?.())return;
         if(revision.version===current.version){setChange(null);return;}
         setChange({kind:revision.version===null?'deleted':'modified',version:revision.version});
         if(revision.version!==null&&!current.dirty&&!current.pending)await reload.current(true);
@@ -75,15 +77,15 @@ export function useDocumentReload<T extends {version: string | null}>(options: O
   async function allowAutoSave() {
     const snapshot=latest.current,ticket=sequence.current;
     if(!snapshot.enabled)return true;
-    if(snapshot.blocked||loading.current)return false;
+    if(snapshot.blocked||snapshot.isBlocked?.()||loading.current)return false;
     try {
       const revision=await snapshot.probe(),current=latest.current;
-      if(ticket!==sequence.current||current.identity!==snapshot.identity||current.blocked)return false;
+      if(ticket!==sequence.current||current.identity!==snapshot.identity||current.blocked||current.isBlocked?.())return false;
       if(revision.version!==current.version){setChange({kind:revision.version===null?'deleted':'modified',version:revision.version});return false;}
       return true;
     }catch{
       // Offline writes may still be queued locally; the storage backend retains revision checks.
-      return ticket===sequence.current&&latest.current.identity===snapshot.identity&&!latest.current.blocked;
+      return ticket===sequence.current&&latest.current.identity===snapshot.identity&&!latest.current.blocked&&!latest.current.isBlocked?.();
     }
   }
   return {allowAutoSave,change,confirmation,reloading,manualLock,request:()=>void load(false),confirm:()=>void load(false,true),cancel:()=>setConfirmation(false)};

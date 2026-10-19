@@ -1,6 +1,7 @@
 import { createCssVariablesTheme, createHighlighterCore } from 'shiki/core';
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 import mermaid from '@shikijs/langs/mermaid';
+import json from '@shikijs/langs/json';
 import type { DiagramLanguage } from './diagrams';
 import { isC4 } from './c4';
 
@@ -36,14 +37,14 @@ const zenuml = {
   ],
 };
 // Load only these grammars, without WASM or an external theme.
-const highlighter = createHighlighterCore({ themes: [createCssVariablesTheme({ name: 'scriba-code', variablePrefix: '--diagram-code-' })], langs: [mermaid, zenuml, c4], engine: createJavaScriptRegexEngine() });
+const highlighter = createHighlighterCore({ themes: [createCssVariablesTheme({ name: 'scriba-code', variablePrefix: '--diagram-code-' })], langs: [mermaid, zenuml, c4, json], engine: createJavaScriptRegexEngine() });
 const cache = new Map<string, string>();
 
 /** Shiki escapes source text before producing theme-token-backed syntax spans. */
 export async function highlightDiagram(source: string, language: DiagramLanguage = 'mermaid'): Promise<string> {
   const key = `${language}:${source}`, cached = cache.get(key);
   if (cached) return cached;
-  const html = (await highlighter).codeToHtml(source, { lang: language === 'mermaid' && isC4(source) ? 'scriba-c4' : language, theme: 'scriba-code' });
+  const html = (await highlighter).codeToHtml(source, { lang: language === 'excalidraw' ? 'json' : language === 'mermaid' && isC4(source) ? 'scriba-c4' : language, theme: 'scriba-code' });
   if (source.length < 50_000) {
     cache.set(key, html);
     while (cache.size > 16) cache.delete(cache.keys().next().value!);

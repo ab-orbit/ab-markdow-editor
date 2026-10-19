@@ -393,3 +393,18 @@ test('ZenUML upgrade never appends to a user replacement without the owned manua
   const file=path.join(temporary,'state','library.json'),state=JSON.parse(await fs.readFile(file,'utf8'));state[await fs.realpath(repo)]={pinned:[],welcomeImageVersion:1,diagramManualVersion:1,diagramManualName:name};await fs.writeFile(file,JSON.stringify(state));
   const head=await git(repo,'rev-parse','HEAD');await request('library/initialize',{});assert.equal(await fs.readFile(path.join(repo,name),'utf8'),value);assert.equal(await git(repo,'rev-parse','HEAD'),head);
 });
+
+test('Excalidraw extends an annotated manual once without restoring a deliberately removed ZenUML section', async () => {
+  const name = 'Scriba-Diagramas.md', value = '# Referência revisada\r\n\r\n<!-- scriba-reference:diagram-manual version=1 -->\r\n\r\nMinha anotação e organização permanecem.\r\n';
+  const { repo, upstream } = await referenceCheckout('excalidraw-upgrade', { [name]: value, 'User.md': '# Minha nota' }, ['User.md']);
+  const file = path.join(temporary, 'state', 'library.json'), state = JSON.parse(await fs.readFile(file, 'utf8'));
+  state[await fs.realpath(repo)] = { pinned: ['User.md'], welcomeImageVersion: 1, diagramManualVersion: 1, diagramManualName: name, diagramManualZenUmlVersion: 1 };
+  await fs.writeFile(file, JSON.stringify(state));
+  const result = await request('library/initialize', {}); assert.equal(result.status, 200); assert.deepEqual(result.body.pinned.map(item => item.name), ['User.md']);
+  const extended = await fs.readFile(path.join(repo, name), 'utf8'); assert.ok(extended.startsWith(value)); assert.equal(extended.replace(/\r\n/g, '').includes('\n'), false);
+  assert.equal((extended.match(/scriba-extension:excalidraw-v1:start/g) || []).length, 1); assert.equal((extended.match(/excalidraw-example:/g) || []).length, 29); assert.ok(!extended.includes('scriba-extension:zenuml-v1:start'));
+  assert.equal(await git(upstream, 'show', `main:${name}`), extended.replace(/\r\n/g, '\n').trimEnd());
+  const head = await git(repo, 'rev-parse', 'HEAD'); await request('library/initialize', {}); assert.equal(await git(repo, 'rev-parse', 'HEAD'), head);
+  await fs.writeFile(path.join(repo, name), value); await request('library/initialize', {}); assert.equal(await fs.readFile(path.join(repo, name), 'utf8'), value);
+  await fs.rm(path.join(repo, name)); await request('library/initialize', {}); await assert.rejects(fs.access(path.join(repo, name)));
+});

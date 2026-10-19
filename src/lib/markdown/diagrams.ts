@@ -3,7 +3,7 @@ import { c4Configuration, isC4, presentC4, type C4ElementStyle, type C4RelationS
 
 /** Renderer choices affect presentation only; Markdown remains the saved source. */
 export type DiagramEngine = 'mermaid' | 'pele' | 'beautiful' | 'zenuml';
-export type DiagramLanguage = 'mermaid' | 'zenuml';
+export type DiagramLanguage = 'mermaid' | 'zenuml' | 'excalidraw';
 /** New diagrams use Pele; explicit per-diagram choices remain authoritative. */
 export const DEFAULT_DIAGRAM_ENGINE: DiagramEngine = 'pele';
 export const diagramEngines = [
@@ -16,7 +16,7 @@ export const diagramEngines = [
 /** ZenUML is a separate sequence DSL, including Mermaid's `zenuml` directive. */
 export function diagramLanguage(info: string): DiagramLanguage | undefined {
   const language = info.trim().split(/\s+/)[0].toLowerCase();
-  return language === 'mermaid' || language === 'zenuml' ? language : undefined;
+  return language === 'mermaid' || language === 'zenuml' || language === 'excalidraw' ? language : undefined;
 }
 export function usesZenUml(source: string, language: DiagramLanguage = 'mermaid') {
   return language === 'zenuml' || /^\s*zenuml(?:\s*\r?\n|\s*$)/i.test(source);

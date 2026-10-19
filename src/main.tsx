@@ -439,6 +439,7 @@ function App() {
     identity: JSON.stringify([sourceScope,deviceFolder,loadedName,version,documentId,finderSourceId]),
     enabled: draftReady && !documentClosed && name === loadedName && !autoSavePaused && (!!finderSourceId || !!version && !!repository.repository && sourceScope === openedScope),
     blocked: busy || settingsOpen || commitNoteOpen || closeConfirmationOpen || !!conflict || aboutOpen,
+    isBlocked: () => !!document.querySelector('dialog[open]') || !!workbenchRef.current?.isBusy(),
     dirty, pending: pendingSync && !finderSourceId,
     version: finderSourceId ? importedVersion?.version || null : version,
     interval: browserMode && githubSelection() ? 60000 : 5000,

@@ -10,7 +10,7 @@ interface DiagramBlockProps {
   /** The parser-provided source inside one diagram fence. */
   source: string;
   /** Fence dialect; ZenUML remains distinct from Mermaid sequenceDiagram syntax. */
-  language?: DiagramLanguage;
+  language?: Exclude<DiagramLanguage, 'excalidraw'>;
   /** Stable document/block identity keeps duplicate diagrams independently selectable. */
   identity?: string;
   /** Previous offset identity, retained only to migrate presentation preferences. */

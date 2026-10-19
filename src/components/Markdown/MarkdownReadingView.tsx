@@ -8,7 +8,20 @@ import { diagramIdentity, diagramLanguage } from '@/lib/markdown/diagrams';
 import styles from './MarkdownWorkbench.module.css';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 import type { SourceRange } from './editorCommands';
-import { DiagramBlock } from './DiagramBlock';
+import { RenderedDiagram } from './RenderedDiagram';
+import type { Root, RootContent } from 'mdast';
+
+/** remark-parse skips a leading BOM in offsets; editing must address the original string. */
+function remarkOriginalOffsets() {
+  return (tree: Root, file: { value: unknown }) => {
+    if (!String(file.value).startsWith('\uFEFF')) return;
+    function visit(node: Root | RootContent) {
+      if (node.position) { if (node.position.start.offset !== undefined) node.position.start.offset++; if (node.position.end.offset !== undefined) node.position.end.offset++; }
+      if ('children' in node) node.children.forEach(child => visit(child as RootContent));
+    }
+    visit(tree);
+  };
+}
 
 interface MarkdownReadingViewProps {
   /** Scope diagram presentation preferences to the current document. */
@@ -23,6 +36,8 @@ interface MarkdownReadingViewProps {
   onToggleTask?: (range: SourceRange) => void;
   /** Reveal one source block; omit in read-only contexts. */
   onEditBlock?: (range: SourceRange) => void;
+  /** Commit a visual scene edit into exactly this original fenced block. */
+  onChangeDiagram?: (range: SourceRange, source: string) => void;
   /** Disable only the gesture, preserving the keyboard alternative. */
   doubleClickToEdit?: boolean;
 }
@@ -66,7 +81,7 @@ const components: Components = {
       const source = code.children.map(child => child.type === 'text' ? child.value : '').join('');
       const from = node?.position?.start.offset, to = node?.position?.end.offset;
       const occurrence = Number(code.properties['data-diagram-ordinal'] ?? code.properties.dataDiagramOrdinal ?? 0);
-      return <div {...blockProps(node, settings)}><DiagramBlock source={source} language={language} identity={diagramIdentity(settings.diagramScope || 'document', source, occurrence, language)} legacyIdentity={`${settings.diagramScope}:${from}`} onEdit={settings.onEditBlock && from !== undefined && to !== undefined ? () => settings.onEditBlock!({ from, to }) : undefined}/></div>;
+      return <div {...blockProps(node, settings)}><RenderedDiagram source={source} language={language} identity={diagramIdentity(settings.diagramScope || 'document', source, occurrence, language)} legacyIdentity={`${settings.diagramScope}:${from}`} onChange={settings.onChangeDiagram && from !== undefined && to !== undefined ? next => settings.onChangeDiagram!({ from, to }, next) : undefined} onEdit={settings.onEditBlock && from !== undefined && to !== undefined ? () => settings.onEditBlock!({ from, to }) : undefined}/></div>;
     }
     return <pre {...props} {...blockProps(node, settings)}/>;
   },
@@ -97,6 +112,6 @@ const components: Components = {
 /** Render GFM with stable source-backed blocks and isolated diagram components. */
 export function MarkdownReadingView({ value, assets = [], diagramScope = 'document', ...settings }: MarkdownReadingViewProps) {
   return <context.Provider value={{ ...settings, assets, diagramScope }}><article className={styles.reading} aria-label="Prévia Markdown" lang="pt-BR">
-    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMissingFootnotes, remarkHeadingIds, remarkDiagramIds]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={components}>{value}</ReactMarkdown>
+    <ReactMarkdown remarkPlugins={[remarkGfm, remarkOriginalOffsets, remarkMissingFootnotes, remarkHeadingIds, remarkDiagramIds]} remarkRehypeOptions={{ footnoteLabel: 'Referências', footnoteBackLabel: 'Voltar à referência' }} skipHtml components={components}>{value}</ReactMarkdown>
   </article></context.Provider>;
 }

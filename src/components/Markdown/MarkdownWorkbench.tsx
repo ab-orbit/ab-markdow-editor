@@ -17,6 +17,8 @@ import type { RichMarkdownEditorHandle } from './RichMarkdownEditor';
 import { VisualEditorBoundary } from './VisualEditorBoundary';
 import { DocumentOutline } from './DocumentOutline';
 import type { OutlineHeading } from '@/lib/markdown/outline';
+import { ExcalidrawEditor } from './ExcalidrawEditor';
+import { EMPTY_EXCALIDRAW, replaceExcalidrawFence } from '@/lib/markdown/excalidrawScene';
 
 const RichMarkdownEditor = lazy(() => import('./RichMarkdownEditor'));
 
@@ -93,6 +95,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const [linkUrl, setLinkUrl] = useState('https://');
   const [linkError, setLinkError] = useState('');
   const [tableEdit, setTableEdit] = useState<{ range: SourceRange; table: EditableTable } | null>(null);
+  const [newDrawing, setNewDrawing] = useState<SourceRange | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const reloadImport = useRef(false);
   const imageInput = useRef<HTMLInputElement>(null);
@@ -103,7 +106,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     if (readOnly || busy) return;
     reloadImport.current = reloadOriginal;setError('');input.current?.click();
   }
-  useImperativeHandle(ref, () => ({openFile: chooseFile, isBusy: () => busy}));
+  useImperativeHandle(ref, () => ({openFile: chooseFile, isBusy: () => busy || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]')}));
   const { assets, replace: replaceAssets, append: appendAssets } = useMarkdownAssets();
   useEffect(() => { if (initialAssets) replaceAssets(initialAssets); }, []);
   useEffect(() => { onAssetsChange?.(assets); }, [assets, onAssetsChange]);
@@ -203,6 +206,19 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     blockFromReading.current = false;
     setMode('read'); setReadingEditable(true); setReadingActionsOpen(false);
   }
+  function insertDrawing() {
+    if (readOnly || busy) return;
+    setNewDrawing(mode === 'read' ? { from: value.length, to: value.length } : editor.current?.selection() || { from: value.length, to: value.length });
+  }
+  function applyNewDrawing(source: string) {
+    if (!newDrawing) return;
+    const newline = value.includes('\r\n') ? '\r\n' : '\n';
+    const fence = '\n\n```excalidraw\n' + source + '\n```\n\n';
+    if (readingEditable) visualEditor.current?.insertMarkdown(fence);
+    else if (mode === 'read') onChange(value.slice(0, newDrawing.from) + fence.replace(/\n/g, newline) + value.slice(newDrawing.to));
+    else editor.current?.replace(fence, newDrawing);
+    setNewDrawing(null);
+  }
   useEffect(()=>{
     if(!activeBlock)return;
     const finish=(event:KeyboardEvent)=>{
@@ -286,7 +302,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>
     </header>
     {sourceStatus}
-    {(!compact || formattingOpen) && <EditingToolbar onEditBlock={readingEditable ? undefined : toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(readingEditable ? visualEditor.current?.selectedText() || '' : value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
+    {(!compact || formattingOpen) && <EditingToolbar onExcalidraw={insertDrawing} onEditBlock={readingEditable ? undefined : toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(readingEditable ? visualEditor.current?.selectedText() || '' : value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
     <div className={styles.modeHint}>{readingEditable ? 'Edite diretamente no texto. A formatação permanece visível; Concluir volta à leitura.' : mode === 'live' ? 'Markdown do bloco em edição. Escape volta à leitura.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Use Editar para escrever diretamente no texto.'}</div>
@@ -299,6 +315,8 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
         const source = value.slice(range.from, range.to);
         const marker = source.match(/^(\s*(?:[-*+]|\d+[.)])\s+\[)([ xX])\]/);
         if (marker) editor.current?.replace(marker[2] === ' ' ? 'x' : ' ', { from: range.from + marker[1].length, to: range.from + marker[1].length + 1 });
+      } : undefined} onChangeDiagram={!readOnly && !busy ? (range, source) => {
+        onChange(value.slice(0, range.from) + replaceExcalidrawFence(value.slice(range.from, range.to), source) + value.slice(range.to));
       } : undefined}/>}
     </div>
     {outlineOpen && <DocumentOutline id={outlineId} source={value} scrollContainer={pages} viewKey={`${mode}:${readingEditable}`} currentHeading={currentHeading} onNavigate={navigateHeading} onClose={closeOutline}/>}
@@ -320,5 +338,6 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       }}><label>Texto do link<input value={linkText} onChange={event => setLinkText(event.target.value)}/></label><label>Endereço<input required value={linkUrl} onChange={event => setLinkUrl(event.target.value)}/></label><footer><button type="button" onClick={() => setLinkRange(null)}>Cancelar</button><button type="submit">Inserir link</button></footer></form>
     </EditorDialog>}
     {tableEdit && <TableEditorDialog initial={tableEdit.table} onClose={() => setTableEdit(null)} onSave={source => { editor.current?.replace(source, tableEdit.range); setTableEdit(null); }}/>}
+    {newDrawing && <ExcalidrawEditor source={EMPTY_EXCALIDRAW} identity={`new:${diagramScope}`} isNew dark={document.documentElement.dataset.theme !== 'light'} onClose={() => setNewDrawing(null)} onApply={applyNewDrawing}/>}
   </section>;
 }

@@ -46,4 +46,7 @@ export function assignHeadingIds(tree: Root): OutlineHeading[] {
 
 const parser = unified().use(remarkParse).use(remarkGfm);
 /** Parse Markdown structure rather than matching hashes inside code or comments. */
-export function documentOutline(source: string) { return assignHeadingIds(parser.parse(source)); }
+export function documentOutline(source: string) {
+  const headings = assignHeadingIds(parser.parse(source));
+  return source.startsWith('\uFEFF') ? headings.map(heading => ({ ...heading, from: heading.from + 1 })) : headings;
+}

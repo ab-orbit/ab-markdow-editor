@@ -250,6 +250,7 @@ export class Repository {
         entry.diagramManualName = plan.folder ? `${plan.folder}/${reference.diagramManualName}` : reference.diagramManualName;
         entry.diagramManualVersion = reference.diagramManualVersion;
         entry.diagramManualZenUmlVersion = reference.diagramManualZenUmlVersion;
+        entry.diagramManualExcalidrawVersion = reference.diagramManualExcalidrawVersion;
       }
     }
     library[plan.target] = entry;
@@ -410,7 +411,7 @@ export class Repository {
       }
       if (!exists) {
         const value = await fs.readFile(new URL('../docs/Scriba-Diagramas.md', import.meta.url), 'utf8');
-        const document = {name, value, version:null, files:[], message:'Add Scriba diagram reference v1.1.0'};
+        const document = {name, value, version:null, files:[], message:'Add Scriba diagram reference v1.2.0'};
         // Respect a repository switch that was explicitly reviewed without publishing.
         if (entry.referenceAutoSync === false) await this.save(document);
         else rememberSync(await this.saveAndSync(document));
@@ -424,17 +425,19 @@ export class Repository {
     }
     // Extend an existing owned manual once, without replacing user annotations,
     // restoring a deleted note, or undoing a decision to unpin the reference.
-    if (entry.diagramManualName && !entry.diagramManualZenUmlVersion) {
+    if (entry.diagramManualName && (!entry.diagramManualZenUmlVersion || !entry.diagramManualExcalidrawVersion)) {
       try {
         const doc = await this.read(entry.diagramManualName);
         const bundled = await fs.readFile(new URL('../docs/Scriba-Diagramas.md', import.meta.url), 'utf8');
-        const value = extendDiagramManual(doc.value, bundled);
+        const extensions = [!entry.diagramManualZenUmlVersion && 'zenuml-v1', !entry.diagramManualExcalidrawVersion && 'excalidraw-v1'].filter(Boolean);
+        const value = extendDiagramManual(doc.value, bundled, extensions);
         if (value !== null) {
-          const document = { ...doc, name: entry.diagramManualName, value, message: 'Extend Scriba diagram manual with ZenUML' };
+          const document = { ...doc, name: entry.diagramManualName, value, message: 'Extend Scriba diagram manual reference sections' };
           if (entry.referenceAutoSync === false) await this.save(document);
           else rememberSync(await this.saveAndSync(document));
         }
         entry.diagramManualZenUmlVersion = 1;
+        entry.diagramManualExcalidrawVersion = 1;
         await this.persistLibrary(state);
       } catch (error) { if (error.code !== 'ENOENT') throw error; }
     }

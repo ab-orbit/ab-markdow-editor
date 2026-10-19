@@ -1,4 +1,4 @@
-import { Bold, Italic, Strikethrough, Code, Braces, Quote, List, ListOrdered, ListChecks, Minus, Table2, Link, ImagePlus, Undo2, Redo2, IndentIncrease, IndentDecrease, Superscript, SquareCode, Check } from 'lucide-react';
+import { Bold, Italic, Strikethrough, Code, Braces, Quote, List, ListOrdered, ListChecks, Minus, Table2, Link, ImagePlus, Undo2, Redo2, IndentIncrease, IndentDecrease, Superscript, SquareCode, Check, PenTool } from 'lucide-react';
 import type { MarkdownCommand } from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
 
@@ -10,7 +10,7 @@ const groups = [
   [{ command: 'code', label: 'Código inline', Icon: Code }, { command: 'codeblock', label: 'Bloco de código', Icon: Braces }, { command: 'rule', label: 'Separador', Icon: Minus }],
 ] as const;
 
-export function EditingToolbar({ disabled, onCommand, onLink, onImage, onEditBlock, blockEditing = false }: { onEditBlock?: () => void; blockEditing?: boolean; disabled: boolean; onCommand: (command: MarkdownCommand) => void; onLink: () => void; onImage: () => void }) {
+export function EditingToolbar({ disabled, onCommand, onLink, onImage, onExcalidraw, onEditBlock, blockEditing = false }: { onExcalidraw?: () => void; onEditBlock?: () => void; blockEditing?: boolean; disabled: boolean; onCommand: (command: MarkdownCommand) => void; onLink: () => void; onImage: () => void }) {
   return <div className={styles.editingToolbar} role="toolbar" aria-label="Ferramentas de edição">
     {onEditBlock && <button type="button" disabled={disabled} onMouseDown={event=>event.preventDefault()} onClick={onEditBlock} aria-pressed={blockEditing} aria-label={blockEditing?'Concluir edição do bloco':'Editar bloco como Markdown'} title={blockEditing?'Concluir edição do bloco (Esc)':'Editar bloco como Markdown (⌘/Ctrl+Enter)'}>{blockEditing?<Check size={16} aria-hidden="true"/>:<SquareCode size={16} aria-hidden="true"/>}</button>}
     <select disabled={disabled} aria-label="Estilo do parágrafo" value="" onChange={event => { onCommand(event.target.value as MarkdownCommand); }}>
@@ -23,6 +23,7 @@ export function EditingToolbar({ disabled, onCommand, onLink, onImage, onEditBlo
       <button type="button" disabled={disabled} onClick={onLink} title="Inserir link" aria-label="Inserir link"><Link size={16} aria-hidden="true"/></button>
       <button type="button" disabled={disabled} onClick={() => onCommand('footnote')} title="Inserir referência" aria-label="Inserir referência"><Superscript size={16} aria-hidden="true"/></button>
       <button type="button" disabled={disabled} onClick={() => onCommand('table')} title="Inserir tabela" aria-label="Inserir tabela"><Table2 size={16} aria-hidden="true"/></button>
+      {onExcalidraw && <button type="button" disabled={disabled} onClick={onExcalidraw} title="Inserir desenho Excalidraw" aria-label="Inserir desenho Excalidraw"><PenTool size={16} aria-hidden="true"/></button>}
       <button type="button" disabled={disabled} onClick={onImage} className={styles.imageTool}><ImagePlus size={16} aria-hidden="true"/>Imagem</button>
     </div>
   </div>;

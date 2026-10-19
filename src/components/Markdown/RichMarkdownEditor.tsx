@@ -8,12 +8,12 @@ import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Image from '@tiptap/extension-image';
 import CodeBlock from '@tiptap/extension-code-block';
-import { Plugin } from '@tiptap/pm/state';
+import { NodeSelection, Plugin } from '@tiptap/pm/state';
 import { Mapping } from '@tiptap/pm/transform';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 import { diagramIdentity, diagramSourceKey, diagramLanguage } from '@/lib/markdown/diagrams';
 import type { MarkdownCommand, SourceRange } from './editorCommands';
-import { DiagramBlock } from './DiagramBlock';
+import { RenderedDiagram } from './RenderedDiagram';
 import { ReadingSource } from './readingSource';
 import styles from './MarkdownWorkbench.module.css';
 
@@ -46,9 +46,21 @@ interface RichMarkdownEditorProps {
 }
 const context = createContext<{ assets: readonly MarkdownAsset[]; scope: string; editDiagram: (code: string, start: number | null) => void }>({ assets: [], scope: '', editDiagram: () => {} });
 
-function DiagramNode({ node }: NodeViewProps) {
+function DiagramNode({ node, editor, getPos }: NodeViewProps) {
   const settings = useContext(context);
-  return <NodeViewWrapper contentEditable={false} className={styles.richDiagram}><DiagramBlock source={node.attrs.code} language={node.attrs.language} identity={diagramIdentity(settings.scope, node.attrs.code, node.attrs.diagramOrdinal, node.attrs.language)} legacyIdentity={`${settings.scope}:${node.attrs.sourceStart}`} onEdit={() => settings.editDiagram(node.attrs.code, node.attrs.sourceStart)}/></NodeViewWrapper>;
+  function applyScene(code: string) {
+    const position = getPos();
+    if (typeof position !== 'number') throw new Error('O bloco mudou. Reabra o desenho para aplicar suas alterações.');
+    const current = editor.state.doc.nodeAt(position);
+    if (!current) throw new Error('O desenho não está mais nesta nota. O rascunho foi preservado.');
+    const scroller = editor.view.dom.closest<HTMLElement>('[data-document-scroll]'), top = scroller?.scrollTop;
+    const transaction = editor.state.tr.setNodeMarkup(position, undefined, { ...current.attrs, code });
+    // WebKit otherwise restores the editor's previous end-of-document selection
+    // when the canvas closes, moving the edited diagram out of the viewport.
+    transaction.setSelection(NodeSelection.create(transaction.doc, position)); editor.view.dispatch(transaction);
+    requestAnimationFrame(() => { if (scroller?.isConnected && top !== undefined) scroller.scrollTop = top; });
+  }
+  return <NodeViewWrapper contentEditable={false} className={styles.richDiagram}><RenderedDiagram source={node.attrs.code} language={node.attrs.language} identity={diagramIdentity(settings.scope, node.attrs.code, node.attrs.diagramOrdinal, node.attrs.language)} legacyIdentity={`${settings.scope}:${node.attrs.sourceStart}`} onChange={editor.isEditable ? applyScene : undefined} onEdit={editor.isEditable ? () => settings.editDiagram(node.attrs.code, node.attrs.sourceStart) : undefined}/></NodeViewWrapper>;
 }
 function ImageNode({ node }: NodeViewProps) {
   const { assets } = useContext(context), asset = resolveAsset(node.attrs.src || '', assets);
@@ -232,7 +244,7 @@ export default function RichMarkdownEditor({ ref, value, onChange, assets, diagr
 
   function editDiagram(code: string, preferredStart: number | null) {
     const source = editor ? ledger.current.serialize(editor) : value;
-    const fences = /(^|\n)([ \t]*)(`{3,}|~{3,})(?:mermaid|zenuml)[^\n]*\n([\s\S]*?)\n\2\3/gi;
+    const fences = /(^|\n)([ \t]*)(`{3,}|~{3,})(?:mermaid|zenuml|excalidraw)[^\n]*\n([\s\S]*?)\n\2\3/gi;
     let match: RegExpExecArray | null, closest: SourceRange | null = null, distance = Infinity;
     const normalize = (text: string) => text.replace(/\r\n?/g, '\n').replace(/\n+$/, '');
     while ((match = fences.exec(source))) {

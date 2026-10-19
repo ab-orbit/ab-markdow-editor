@@ -112,6 +112,10 @@ Veja [capturas e validação](docs/evidence/outline/README.md).
 
 ## Diagramas
 
+Blocos **`excalidraw`** mostram cenas do **Excalidraw 0.18.1** com edição visual dentro da nota. Use o lápis ou dois cliques para abrir a prancheta; **Aplicar à nota** atualiza somente o bloco. Para criar, abra **Formatação → Inserir desenho Excalidraw**. Importe e baixe arquivos `.excalidraw`, veja/copie o JSON destacado e exporte SVG com fontes incorporadas ou PNG transparente. Os desenhos mantêm zoom, pan e lupa na prévia; cenas largas preservam o tamanho dos rótulos com navegação horizontal. O seletor dos três motores Mermaid continua independente.
+
+A prancheta oferece formas, texto, setas vinculadas e cotoveladas, desenho livre, grupos, frames, alinhamento, camadas, grade, bibliotecas e imagens locais. Rascunhos e biblioteca ficam em IndexedDB neste navegador; uma recarga permite recuperar o desenho em andamento. O conteúdo aplicado segue o destino normal da nota, incluindo GitHub. SDK e fontes são locais e entram no cache offline. As [29 cenas contextualizadas](docs/Scriba-Diagramas.md#excalidraw-raciocinar-com-desenhos-editáveis) exploram essas ferramentas em processos, arquitetura, wireframes, análise e workshops. [Integração e limites](docs/research/excalidraw/README.md).
+
 Blocos de código `mermaid` viram diagramas em **Ler**, **Visão** e na prévia de **Escrever**. Sobre cada desenho, o seletor permite alternar entre **Mermaid**, **Pele** e **Beautiful Mermaid** para comparar a apresentação. A escolha é independente por bloco e fica neste navegador; o arquivo Markdown permanece intacto. O lápis revela o código original.
 
 Blocos **`zenuml`** e blocos **`mermaid` iniciados por `zenuml`** usam automaticamente **@zenuml/core 4.7.2**, com SVG nativo, numeração de mensagens, fonte local e ícones vetoriais cloud. As licenças distribuídas estão em `public/licenses/`. É uma linguagem própria de sequência. O motor compartilha zoom, lupa, código, cópia e exportação; não converte automaticamente `sequenceDiagram` para ZenUML. A [seção dedicada do manual](docs/Scriba-Diagramas.md#zenuml--interações-descritas-como-código) apresenta chamadas, eventos, retornos, grupos, criação, condições, laços, concorrência, regiões críticas e exceções. Veja a [validação no navegador](docs/evidence/zenuml/README.md).
@@ -200,7 +204,7 @@ The account login button requires one-time activation of the organization's GitH
 
 ## Contextual diagram reference
 
-[Scriba — Manual contextual de diagramas](docs/Scriba-Diagramas.md) is the canonical, versioned Portuguese reference: 58 original examples across 33 Mermaid families (including the `info` diagnostic), plus 25 ZenUML sequence examples and a catalog of 513 cloud/infrastructure annotation keys, with a question, interpretation, adaptation advice and measured compatibility for each example. The manual covers processes, state, data models, C4 architecture, planning, quantitative charts and analytical frameworks.
+[Scriba — Manual contextual de diagramas](docs/Scriba-Diagramas.md) is the canonical, versioned Portuguese reference: 58 original examples across 33 Mermaid families (including the `info` diagnostic), plus 25 ZenUML sequence examples, a catalog of 513 cloud/infrastructure annotation keys and 29 editable Excalidraw scenes, with a question, interpretation, adaptation advice and measured compatibility for each example. The manual covers processes, state, data models, C4 architecture, planning, quantitative charts and analytical frameworks.
 
 Version 1.8 adds an editable pinned copy beside the platform guide, including existing libraries. Browser storage, selected GitHub destinations and the Mac Git checkout each receive their own copy once. Existing unrelated filenames get a numbered alternative; copied references are adopted. Later edits, unpinning and deletion are respected. Local-only repository switches do not trigger an automatic commit or push. The macOS installer includes the canonical source so seeding works offline.
 
@@ -208,4 +212,4 @@ The reference's Unicode index links navigate inside the note. Compare engines, r
 
 Validation: `npm test`; local build followed by `node tests/diagram-reference.smoke.mjs`; public build followed by `node tests/diagram-reference-browser.smoke.mjs`. The browser checks use isolated storage and test repositories, never real user notes.
 
-ZenUML reference upgrades append the versioned section to an existing owned manual once, preserving previous bytes, annotations and unpinned state. Deleted manuals and user replacements are not restored or overwritten. Browser, device-folder and Git destinations keep their existing save/conflict behavior.
+ZenUML and Excalidraw reference upgrades append their versioned sections to an existing owned manual once, preserving previous bytes, annotations and unpinned state. Deleted manuals, user replacements and previously removed reference sections are not restored or overwritten. Browser, device-folder and Git destinations keep their existing save/conflict behavior.

@@ -20,7 +20,7 @@ const server = http.createServer(async (req, res) => {
     if (req.headers.host !== new URL(origin).host) return send(res, 403, { error: 'Host inválido.' });
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'");
     const url = new URL(req.url, origin);
     if (url.pathname === '/health') return send(res, 200, { app: 'ab-markdown-editor', pid: process.pid });
     if (url.pathname === '/api/session' && req.method === 'GET') {
