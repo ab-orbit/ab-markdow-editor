@@ -39,3 +39,5 @@ SCRIBA_URL=https://scriba.aeonbridge.app node tests/excalidraw.smoke.mjs
 ```
 
 Builds nativo e público foram congelados separadamente para evitar alterar os arquivos servidos durante a execução dos testes. Perfis e repositórios são isolados; nenhum arquivo pessoal é usado como fixture.
+
+Produção `https://scriba.aeonbridge.app/`: smoke completo aprovado na versão 1.12.0. [Verificação dos artefatos publicados](production-verification.json), com hashes do JavaScript, service worker e fonte local; o gateway GitHub respondeu HTTP 200. O aplicativo Mac instalado também foi verificado como 1.12.0, com assinatura válida.

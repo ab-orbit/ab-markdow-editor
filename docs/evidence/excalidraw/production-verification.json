@@ -1,0 +1,21 @@
+{
+  "public": {
+    "entry": "/assets/index-BLnIV__U.js",
+    "sha256": "11081e8c80312da32fd16e05dae43e69f7f4225638048d4670f8b56d5f3a8760",
+    "serviceWorkerMatches": true,
+    "localFontMatches": true
+  },
+  "native": {
+    "entry": "/assets/index-Bkvzf6lu.js",
+    "sha256": "41217477f24ba0c4a05c58411858f6300121d39ecf83985941c75083ade57ac7",
+    "serviceWorkerMatches": true,
+    "localFontMatches": true
+  },
+  "macVersion": "1.12.0",
+  "nativeHealth": {
+    "app": "ab-markdown-editor"
+  },
+  "githubGatewayStatus": "200",
+  "version": "1.12.0",
+  "productionSmoke": "Passed Chrome: 29 scenes, editing/recovery/import/export, phone/tablet orientations, private browser saves and no external drawing dependencies."
+}
