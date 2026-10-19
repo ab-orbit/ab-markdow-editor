@@ -9,18 +9,21 @@
     "releaseArchive": "SIGNED_AND_IPA_EXPORTED",
     "hostedTests": {
       "iPhone16ProMax": 4,
-      "iPadPro13M4": 4
+      "iPadPro13M4": 4,
+      "iPhone16Pro": 1
     },
     "rotationUITests": {
       "iPhone16ProMax": "PASS_PORTRAIT_AND_LANDSCAPE",
-      "iPadPro13M4": "PASS_PORTRAIT_AND_LANDSCAPE"
+      "iPadPro13M4": "PASS_PORTRAIT_AND_LANDSCAPE",
+      "iPhone16Pro": "PASS_PORTRAIT_AND_LANDSCAPE"
     },
     "screenshots": "docs/app-store/screenshots",
     "privacyManifest": "PRESENT",
     "bridgeLogging": "DISABLED",
     "ipaBytes": 26517862,
     "ipaSignatureVerification": "PASS",
-    "appStoreProvisioning": "PASS"
+    "appStoreProvisioning": "PASS",
+    "storeScreenshots": 6
   },
   "httpGitTests": {
     "passed": 54,
@@ -44,13 +47,62 @@
   "distribution": {
     "signed": true,
     "uploaded": true,
-    "testersInvited": false,
+    "testersInvited": true,
     "physicalDeviceValidation": "PENDING",
     "storeReview": "NOT_SUBMITTED",
     "appRegistered": true,
     "appStoreConnectId": "6824664840",
     "uploadVerifiedAt": "2026-10-19T21:04:20+00:00",
     "uploadEvidence": "Xcode Organizer: App upload complete; App 1.13.0 (1) uploaded",
-    "processingStatus": "NOT_YET_CHECKED_IN_APP_STORE_CONNECT"
+    "processingStatus": "READY_TO_TEST_INTERNAL_READY_TO_SUBMIT_EXTERNAL",
+    "authenticatedPortalAccess": true,
+    "buildLinkedToStoreVersion": true,
+    "storeListing": "PREPARE_FOR_SUBMISSION",
+    "storePrivacy": "PUBLISHED",
+    "ageRating": "4_PLUS_WITH_REGIONAL_EXCEPTIONS",
+    "price": "FREE",
+    "releaseType": "MANUAL",
+    "euDsa": "AWAITING_ACCOUNT_HOLDER_DECLARATION",
+    "internalTesting": {
+      "group": "Equipe Scriba",
+      "build": "1.13.0 (1)",
+      "status": "READY_TO_TEST",
+      "invitedTesters": 1
+    },
+    "externalTesting": {
+      "group": "Scriba Beta",
+      "registeredTesters": 1,
+      "invitationsSent": 0,
+      "buildAssigned": false,
+      "review": "NOT_SUBMITTED",
+      "pending": "REVIEW_CONTACT_PHONE"
+    },
+    "submissionValidation": {
+      "checkedAt": "2026-10-19T21:27:30.851874+00:00",
+      "result": "CONTACT_INFORMATION_REQUIRED",
+      "message": "You must complete the Contact Information section."
+    },
+    "screenshotsUploaded": {
+      "iPhone6_3": 2,
+      "iPhone6_9": 2,
+      "iPad13": 2
+    },
+    "compatibilityDistribution": {
+      "iPhone": true,
+      "iPad": true,
+      "iOSAppOnMac": false,
+      "iOSAppOnVisionPro": false
+    },
+    "privacyDeclarations": {
+      "purpose": "APP_FUNCTIONALITY",
+      "linkedToUser": true,
+      "tracking": false,
+      "types": [
+        "PHOTOS_OR_VIDEOS",
+        "OTHER_USER_CONTENT",
+        "USER_ID",
+        "OTHER_DIAGNOSTIC_DATA"
+      ]
+    }
   }
 }

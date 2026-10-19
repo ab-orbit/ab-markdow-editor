@@ -27,11 +27,11 @@ xcodebuild -project ios/App/App.xcodeproj -scheme Scriba \
 - GitHub authorization uses `ASWebAuthenticationSession`, an ephemeral browser session, S256 challenge/verifier binding and a ten-minute one-time server handoff. The native gateway cookie is device-bound in Keychain. OAuth access and refresh tokens never cross the JavaScript bridge. The optional manually entered personal token passes through the input/bridge once and is not persisted in web storage. Native bridge logging is disabled, including in debug builds. Gateway transport accepts only the dedicated HTTPS host and allowed API routes.
 - The system status/home-indicator areas are reserved in UIKit. Theme colors for native chrome come from the actual CSS tokens.
 
-Files import supports UTF-8 Markdown up to 5 MB, local PNG/JPEG/GIF/WebP images up to 10 MB each, 50 attachments/40 MB per note, 10 directory levels and up to 1000 candidate notes. Hidden metadata, traversal and symlink escapes are rejected. Read/write availability of third-party Files providers and security-scoped bookmarks must also be validated on physical devices before release.
+Files import supports UTF-8 Markdown up to 5 MB, local PNG/JPEG/GIF/WebP images up to 10 MB each, 50 attachments/40 MB per note, 10 directory levels and up to 1000 candidate notes. Hidden metadata, traversal and symlink escapes are rejected. Third-party Files providers and security-scoped bookmarks also need physical-device coverage during TestFlight validation; simulator checks do not establish provider-specific availability.
 
 ## App Store preparation
 
-- Bundle identifier candidate: `com.aeonbridge.scriba`; confirm availability in the selected Apple Developer team before registering the app.
+- Registered bundle identifier: `com.aeonbridge.scriba`, associated with App Store Connect record `6824664840` in the owner's authorized team.
 - Brand/copyright: **Aeon Bridge Co.** Review/support contact: **contact@aeonbridge.com**. Select the owner's authorized signing team locally; the brand is independent of the Apple Developer team name. Do not infer a Team ID from the company name or email.
 - Portuguese listing draft: [metadata.pt-BR.json](metadata.pt-BR.json). Review notes describe useful offline and native features, not a website-only wrapper. Release is manual.
 - Public support and privacy pages: `https://scriba.aeonbridge.app/support.html` and `https://scriba.aeonbridge.app/privacy.html`.
@@ -48,7 +48,7 @@ SCRIBA_APPLE_TEAM_ID=ABCDEFGHIJ npm run ios:archive
 
 This creates an archive and exports an IPA; it does not silently submit an incomplete app or accept new legal agreements. App Store distribution requires a valid distribution signature, an App Store Connect record and the required listing, review-contact, age/privacy and screenshot fields. Physical-device and TestFlight checks complement simulator verification, especially for third-party Files providers. An unsigned simulator build cannot be uploaded as an App Store binary.
 
-Release preparation includes a signed ARM64 archive and an exported App Store IPA, four normalized store screenshots, five native tests on each simulator family, 54 HTTP/Git tests and offline Chrome/WebKit checks. The App Store Connect record is `6824664840`. See [release evidence and remaining distribution steps](../evidence/app-store/README.md) for the current upload, invitation and review status; these are separate states.
+Release preparation includes a signed ARM64 archive and an exported App Store IPA, six normalized store screenshots, five native tests on each original simulator family, two additional iPhone 16 Pro checks, 54 HTTP/Git tests and offline Chrome/WebKit checks. The App Store Connect record is `6824664840`; Apple has processed build 1 and an internal TestFlight invitation has been sent. See [release evidence and remaining distribution steps](../evidence/app-store/README.md) for the current listing, invitation and review status; these are separate states.
 
 ## PWA Builder
 
