@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { checkDiagramMagnifier } from './helpers/diagram-magnifier.mjs';
 
 const exec = promisify(execFile);
 const git = async (cwd, ...args) => (await exec('git', ['-C', cwd, ...args])).stdout.trim();
@@ -59,6 +60,7 @@ try {
     await expect(first).toContainText('NOTEBOOK'); await expect(first).toContainText('NOTE');
     await expect(first.getByRole('combobox')).toBeEnabled();
     measurements.push({ engine, timing: await first.locator('output').getAttribute('aria-label') });
+    await checkDiagramMagnifier(page, first, webKit ? undefined : `docs/evidence/magnifier-${engine}-desktop.png`);
     if (!webKit) await page.screenshot({ path: `docs/evidence/diagrams-${engine}-desktop.png` });
   }
   assert.equal(await fs.readFile(path.join(root, 'Diagramas.md'), 'utf8'), source, 'comparing engines never writes Markdown');
@@ -85,6 +87,7 @@ try {
   await expect(first).toHaveAttribute('data-diagram-state', 'ready');
   assert.equal(await first.evaluate(node => getComputedStyle(node).getPropertyValue('--diagram-bg').trim()), '#faf9f6');
   if (!webKit) await page.screenshot({ path: 'docs/evidence/diagrams-beautiful-light.png' });
+  await checkDiagramMagnifier(page, first, webKit ? undefined : 'docs/evidence/magnifier-light.png');
   await page.getByRole('button', { name: 'Usar tema escuro', exact: true }).click();
   await page.reload(); await page.getByRole('button', { name: 'Diagramas.md', exact: true }).click();
   await expect(first).toHaveAttribute('data-diagram-engine', 'beautiful'); await expect(first).toHaveAttribute('data-diagram-state', 'ready', { timeout: 30_000 });
@@ -93,6 +96,7 @@ try {
   const live = page.locator('.md-live-diagram figure[data-diagram-engine]').first();
   await live.scrollIntoViewIfNeeded(); await expect(live).toHaveAttribute('data-diagram-engine', 'beautiful'); await expect(live).toHaveAttribute('data-diagram-state', 'ready', { timeout: 30_000 });
   await choose(live, 'pele');
+  await checkDiagramMagnifier(page, live, webKit ? undefined : 'docs/evidence/magnifier-live.png');
   await live.getByRole('button', { name: 'Editar código do diagrama', exact: true }).click();
   await expect(workbench).toHaveAttribute('data-block-editing', 'true');
   await expect(page.locator('.cm-content')).toContainText('erDiagram');
@@ -102,8 +106,11 @@ try {
   assert.equal(await fs.readFile(path.join(root, 'Diagramas.md'), 'utf8'), source);
   const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Baixar .md', exact: true }).click();
   assert.equal(await fs.readFile(await (await download).path(), 'utf8'), source, 'drawing never serializes SVG into Markdown');
+  await first.getByRole('button', { name: 'Ativar lupa do diagrama', exact: true }).click();
+  await expect(page.locator('[data-diagram-magnifier]')).toHaveCount(1);
   // Source mode keeps literal fences; invalid input is contained in the drawing, then recovers.
   await page.getByRole('button', { name: 'Fonte', exact: true }).click();
+  await expect(page.locator('[data-diagram-magnifier]')).toHaveCount(0);
   const editor = page.locator('.cm-content[contenteditable=true]');
   await expect(page.locator('.md-live-diagram')).toHaveCount(0);
   await editor.fill(`# Invalid fixture\n\n${fence}mermaid\nthis-is-not-a-diagram\n${fence}\n`);
@@ -123,13 +130,44 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `page overflow at ${size.width} / ${engine}`);
       const selector = await first.getByRole('combobox').boundingBox(); assert.ok(selector && selector.width > 50 && selector.height >= 44, JSON.stringify({size,engine,selector}));
       const bounds = await first.boundingBox(); assert.ok(selector.x >= bounds.x && selector.x + selector.width <= bounds.x + bounds.width + 1);
+      const magnifier = await first.getByRole('button', { name: 'Ativar lupa do diagrama', exact: true }).boundingBox();
+      assert.ok(magnifier && magnifier.height >= 44 && magnifier.width >= 44 && magnifier.x + magnifier.width <= bounds.x + bounds.width + 1);
     }
     if (!webKit) await page.screenshot({ path: `docs/evidence/diagrams-${size.width}x${size.height}.png` });
+  }
+  if (!webKit) {
+    // Chromium's real touch input exercises pointer capture and dragging, not a mocked event.
+    const touchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
+    const touchPage = await touchContext.newPage(); touchPage.on('pageerror', error => errors.push(error.message));
+    await touchPage.goto(origin);
+    await touchPage.locator('button[aria-label="Voltar às notas"]:visible, button[aria-label="Mostrar notas recentes"]:visible').first().tap();
+    await touchPage.getByRole('button', { name: 'Diagramas.md', exact: true }).tap();
+    const touchFigure = touchPage.locator('article figure[data-diagram-engine]').first();
+    await expect(touchFigure).toHaveAttribute('data-diagram-state', 'ready', { timeout: 30_000 });
+    await touchFigure.scrollIntoViewIfNeeded();
+    await touchFigure.getByRole('button', { name: 'Ativar lupa do diagrama', exact: true }).tap();
+    const touchDrawing = touchFigure.locator('[data-diagram-drawing]');
+    const touchId = await touchDrawing.getAttribute('id');
+    const touchLens = touchPage.locator(`[data-diagram-magnifier="${touchId}"]`);
+    const box = await touchDrawing.locator(':scope > svg').boundingBox();
+    const session = await touchContext.newCDPSession(touchPage);
+    const point = { x: box.x + box.width * 0.4, y: box.y + box.height * 0.6, id: 0 };
+    await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+    await expect(touchLens).toBeVisible();
+    const beforeTouch = await touchLens.locator(':scope > div').getAttribute('style');
+    await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ ...point, x: point.x + 30 }] });
+    await expect(touchLens.locator(':scope > div')).not.toHaveAttribute('style', beforeTouch);
+    await touchPage.screenshot({ path: 'docs/evidence/magnifier-touch-mobile.png' });
+    await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(touchLens).toBeHidden();
+    await touchFigure.getByRole('button', { name: 'Desativar lupa do diagrama', exact: true }).tap();
+    await expect(touchLens).toHaveCount(0);
+    await touchContext.close();
   }
   assert.deepEqual(outsideRequests, [], 'engines and drawing assets stay on this origin');
   assert.deepEqual(errors, [], 'no uncaught browser errors'); assert.deepEqual(reactErrors, [], 'no React mount lifecycle errors');
   if (!webKit) await fs.writeFile('docs/evidence/diagrams-observed-times.json', JSON.stringify({ scope: 'First observed engine execution, not a comparative benchmark; imports inside the engine may still be lazy', measurements }, null, 2) + '\n');
-  console.log(`PASS (${webKit ? 'WebKit' : 'Chromium'}): three real renderers, ER/flowchart, per-block persistence, independent duplicates/cache IDs, unsupported/error recovery, reading/live/source, exact Markdown export, themes, 320px phone/tablet orientations, no remote assets.`);
+  console.log(`PASS (${webKit ? 'WebKit' : 'Chromium'}): three real renderers, magnifier hover/keyboard/vector scaling/ID isolation${webKit ? '' : '/real touch drag'}, ER/flowchart, per-block persistence, error recovery, reading/live/source, unchanged export, themes, 320px phone/tablet orientations, no remote assets.`);
 } catch (error) {
   await page?.screenshot({path:'docs/evidence/diagrams-failure.png'}).catch(() => {});
   throw error;

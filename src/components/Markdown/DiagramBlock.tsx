@@ -1,7 +1,8 @@
 import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { ChevronDown, Pencil } from 'lucide-react';
+import { ChevronDown, Pencil, ZoomIn, ZoomOut } from 'lucide-react';
 import { diagramEngines, diagramKey, renderDiagram, scopeDiagramSvg, selectedDiagramEngine, setDiagramEngine, subscribeDiagramEngine, type DiagramAppearance, type DiagramEngine, type DiagramResult } from '@/lib/markdown/diagrams';
 import styles from './DiagramBlock.module.css';
+import { MagnifiableDiagram } from './MagnifiableDiagram';
 
 interface DiagramBlockProps {
   /** The parser-provided source inside one Mermaid fence. */
@@ -24,11 +25,6 @@ function appearanceAt(element: Element): DiagramAppearance {
   };
 }
 
-/** Host status updates must not replace an unchanged SVG subtree. */
-const Drawing = memo(function Drawing({ svg }: { svg: string }) {
-  return <div className={styles.drawing} dangerouslySetInnerHTML={{ __html: svg }}/>;
-});
-
 /** One source-backed diagram, with presentation controls above the drawing. */
 export const DiagramBlock = memo(function DiagramBlock({ source: originalSource, identity, onEdit, onLayout }: DiagramBlockProps) {
   // Normalize only the drawing input, never the source stored by the workbench.
@@ -42,6 +38,7 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
   const [appearance, setAppearance] = useState<DiagramAppearance | null>(null);
   const [drawing, setDrawing] = useState<(DiagramResult & { key: string }) | null>(null);
   const [failure, setFailure] = useState<{ key: string; message: string } | null>(null);
+  const [magnifying, setMagnifying] = useState(false);
   const key = diagramKey(identity || source);
   const engine = useSyncExternalStore<DiagramEngine>(subscribeDiagramEngine, () => selectedDiagramEngine(key), () => 'mermaid');
   const definition = diagramEngines.find(item => item.id === engine)!;
@@ -94,7 +91,17 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
     return () => cancelAnimationFrame(measured);
   }, [current?.svg, error]);
 
-  return <figure ref={frame} className={styles.diagram} data-diagram-engine={engine} data-diagram-state={error ? 'error' : current ? 'ready' : 'loading'} aria-label="Diagrama Mermaid">
+  useEffect(() => {
+    if (!magnifying) return;
+    const dismiss = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault(); event.stopPropagation(); setMagnifying(false);
+    };
+    window.addEventListener('keydown', dismiss, true);
+    return () => window.removeEventListener('keydown', dismiss, true);
+  }, [magnifying]);
+
+  return <figure ref={frame} className={styles.diagram} data-diagram-engine={engine} data-diagram-state={error ? 'error' : current ? 'ready' : 'loading'} data-diagram-magnifying={magnifying} aria-label="Diagrama Mermaid">
     <div className={styles.controls} onDoubleClick={event => event.stopPropagation()}>
       {current && <output className={styles.timing} title={`${definition.label} ${definition.version} · tempo de desenho; o primeiro uso pode carregar recursos internos${current.cached ? ' · resultado em cache' : ''}`} aria-label={`Tempo de desenho: ${current.milliseconds.toFixed(1)} milissegundos${current.cached ? ', em cache' : ''}`}>{current.milliseconds < 1 ? '<1' : Math.round(current.milliseconds)} ms</output>}
       <div className={styles.picker}>
@@ -103,10 +110,11 @@ export const DiagramBlock = memo(function DiagramBlock({ source: originalSource,
         </select>
         <ChevronDown size={14} aria-hidden="true"/>
       </div>
+      <button className={`${styles.edit} ${styles.magnifierButton}`} type="button" aria-label={magnifying ? 'Desativar lupa do diagrama' : 'Ativar lupa do diagrama'} title={magnifying ? 'Desativar lupa (Esc)' : 'Lupa 2× · mouse, toque ou teclado'} aria-pressed={magnifying} aria-controls={current ? `${instance}-drawing` : undefined} disabled={!current && !magnifying} onClick={() => setMagnifying(value => !value)}>{magnifying ? <ZoomOut size={16} aria-hidden="true"/> : <ZoomIn size={16} aria-hidden="true"/>}</button>
       {onEdit && <button className={styles.edit} type="button" aria-label="Editar código do diagrama" title="Editar código do diagrama" onClick={onEdit}><Pencil size={15} aria-hidden="true"/></button>}
     </div>
     <div ref={canvas} className={styles.canvas} aria-busy={!current && !error}>
-      {current ? <Drawing svg={current.svg}/>
+      {current ? <MagnifiableDiagram svg={current.svg} enabled={magnifying} id={`${instance}-drawing`}/>
         : error ? <div className={styles.failure} role="alert"><strong>{definition.label}</strong><span>{error}</span><span className={styles.help}>Troque o renderizador acima ou edite o código.</span></div>
         : <div className={styles.loading} role="status">Preparando {definition.label}…</div>}
     </div>

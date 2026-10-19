@@ -4,6 +4,7 @@ import { promises as fs } from 'node:fs';
 import { createServer } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { checkDiagramMagnifier } from './helpers/diagram-magnifier.mjs';
 
 // This test uses an isolated browser profile, never a user's local notes or Git.
 const dist = path.resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -64,6 +65,7 @@ try {
   }
   for (const engine of ['mermaid', 'pele', 'beautiful']) {
     await choose(diagrams.first(), engine); await expect(diagrams.first()).toContainText('NOTEBOOK');
+    await checkDiagramMagnifier(page, diagrams.first());
     await choose(diagrams.nth(1), engine); await expect(diagrams.nth(1)).toContainText('Escrever');
   }
   await page.getByRole('button', { name: 'Salvar nota', exact: true }).click();

@@ -102,6 +102,8 @@ Blocos de código `mermaid` viram diagramas em **Ler**, **Visão** e na prévia 
 
 Mermaid é o padrão. Beautiful Mermaid tem cobertura menor e avisa quando o tipo não é suportado, mantendo o seletor disponível. Os três funcionam offline depois que a PWA conclui seu cache. Veja [exemplos](examples/diagramas.md), [detalhes](docs/DIAGRAMS.md) e [capturas/testes](docs/evidence/DIAGRAMS.md).
 
+O botão **Lupa** amplia em **2×** a região sob o mouse sem redesenhar o diagrama. No toque, arraste o dedo; no teclado, use Tab e as setas. **Esc** ou o mesmo botão desativa a lupa. Funciona nos três motores, em Ler, Visão e Escrever.
+
 ## Desenvolvimento e testes
 
 ```bash

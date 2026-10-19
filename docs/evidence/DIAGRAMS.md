@@ -2,6 +2,8 @@
 
 Three actual rendering engines share one source-backed Markdown integration: Mermaid 12.2.0, Pele 1.6.0, and Beautiful Mermaid 1.1.3. Every drawing has an overlaid selector and a source-edit button. The default is Mermaid. Selections are private browser presentation preferences, never serialized into notes or committed to Git.
 
+Version 1.7.1 adds an optional [2× vector magnifier with mouse, touch, and keyboard controls](MAGNIFIER.md).
+
 ## Validation
 
 - Local and browser-mode production builds: strict TypeScript, Vite, and versioned offline cache.
