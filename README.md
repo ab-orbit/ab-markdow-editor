@@ -104,6 +104,12 @@ A leitura usa Avenir Next quando disponível, com alternativas locais do sistema
 
 Limites: 5 MB de texto, 10 MB por imagem, 40 MB de imagens e 50 imagens por documento. O editor não executa HTML incorporado. Não aceita caminhos que escapem do repositório, links simbólicos ou alterações em `.git`. O commit recusa operar quando já há arquivos no stage para evitar misturar trabalho de outras ferramentas. Hooks Git continuam sendo respeitados.
 
+## Índice da nota (outline)
+
+O ícone de estrutura na barra da nota abre o índice dos títulos de níveis **#**, **##** e **###**, com recuo por nível e destaque da seção atual. Clique em uma seção para navegar sem mudar o modo de edição. O índice acompanha alterações nos títulos e ignora marcadores dentro de código e comentários. No desktop ele ocupa uma faixa lateral recolhível; no celular e tablet estreito, abre sobre a leitura e fecha após a navegação. Escape fecha o índice quando ele está em foco.
+
+Veja [capturas e validação](docs/evidence/outline/README.md).
+
 ## Diagramas
 
 Blocos de código `mermaid` viram diagramas em **Ler**, **Visão** e na prévia de **Escrever**. Sobre cada desenho, o seletor permite alternar entre **Mermaid**, **Pele** e **Beautiful Mermaid** para comparar a apresentação. A escolha é independente por bloco e fica neste navegador; o arquivo Markdown permanece intacto. O lápis revela o código original.

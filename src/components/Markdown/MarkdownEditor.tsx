@@ -21,6 +21,10 @@ export interface MarkdownEditorHandle {
   finishBlock: () => void;
   /** Return syntax-tree table ranges in the current source. */
   tables: () => SourceRange[];
+  /** Navigate without changing the source or adding an undo entry. */
+  revealPosition: (position: number, focus?: boolean) => void;
+  /** One-based source line at the visible document edge, for the outline. */
+  visibleLine: (top: number) => number;
 }
 
 export interface MarkdownEditorProps {
@@ -73,6 +77,20 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
     editBlock: range => {if(editor.current)revealBlock(editor.current,range?.from);},
     finishBlock: () => {if(editor.current)finishBlock(editor.current);},
     tables: () => editor.current ? sourceTables(editor.current.state) : [],
+    revealPosition: (position, focus = true) => {
+      const view = editor.current;
+      if (!view) return;
+      const anchor = Math.max(0, Math.min(view.state.doc.length, position));
+      view.dispatch({ selection: { anchor }, effects: EditorView.scrollIntoView(anchor, { y: 'start', yMargin: 24 }) });
+      if (focus) view.focus();
+    },
+    visibleLine: top => {
+      const view = editor.current;
+      if (!view) return 1;
+      const bounds = view.contentDOM.getBoundingClientRect();
+      const position = view.posAtCoords({ x: bounds.left + 8, y: Math.max(top + 24, bounds.top + 1) }, false);
+      return view.state.doc.lineAt(position ?? view.state.selection.main.head).number;
+    },
   }), []);
 
   useEffect(() => { callback.current = onChange; }, [onChange]);

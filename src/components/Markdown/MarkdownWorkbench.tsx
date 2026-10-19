@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
-import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X } from 'lucide-react';
+import { lazy, Suspense, useEffect, useId, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
+import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X, ListTree } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -15,6 +15,8 @@ import type { MarkdownCommand, SourceRange } from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
 import type { RichMarkdownEditorHandle } from './RichMarkdownEditor';
 import { VisualEditorBoundary } from './VisualEditorBoundary';
+import { DocumentOutline } from './DocumentOutline';
+import type { OutlineHeading } from '@/lib/markdown/outline';
 
 const RichMarkdownEditor = lazy(() => import('./RichMarkdownEditor'));
 
@@ -222,8 +224,44 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const [formattingOpen, setFormattingOpen] = useState(false);
   const [readingActionsOpen, setReadingActionsOpen] = useState(false);
   const [noteInfoOpen, setNoteInfoOpen] = useState(false);
+  const [outlineOpen, setOutlineOpen] = useState(false);
+  const outlineId = useId(), outlineToggle = useRef<HTMLButtonElement | null>(null);
+  const toggleOutline = (button: HTMLButtonElement) => { outlineToggle.current = button; setOutlineOpen(open => !open); };
+  const closeOutline = () => {
+    setOutlineOpen(false);
+    requestAnimationFrame(() => {
+      // A rotation can replace the visible toolbar while the outline is open.
+      const previous = outlineToggle.current;
+      const visible = previous?.getClientRects().length ? previous : [...workbench.current?.querySelectorAll<HTMLButtonElement>('[data-outline-toggle]') || []].find(button => button.getClientRects().length);
+      visible?.focus({ preventScroll: true });
+    });
+  };
+  function headingElement(heading: OutlineHeading) {
+    return pages.current?.querySelector<HTMLElement>(`article [id="${CSS.escape(heading.id)}"]`) || pages.current?.querySelectorAll<HTMLElement>('article :is(h1,h2,h3,h4,h5,h6)')[heading.ordinal];
+  }
+  function navigateHeading(heading: OutlineHeading, dismiss: boolean) {
+    const navigate = () => {
+      if (readingEditable) visualEditor.current?.revealHeading(heading.ordinal);
+      else {
+        if (mode !== 'read') editor.current?.revealPosition(value.slice(0, heading.from).replace(/\r\n?/g, '\n').length, mode !== 'split');
+        if (mode === 'read' || mode === 'split') { const element = headingElement(heading); element?.scrollIntoView({ block: 'start', inline: 'nearest' }); element?.focus({ preventScroll: true }); }
+      }
+    };
+    if (dismiss) { setOutlineOpen(false); requestAnimationFrame(navigate); } else navigate();
+  }
+  function currentHeading(headings: OutlineHeading[]) {
+    const root = pages.current;
+    if (!root) return;
+    if (mode === 'source' || mode === 'live') {
+      const line = editor.current?.visibleLine(root.getBoundingClientRect().top) ?? 1;
+      return headings.filter(heading => heading.line <= line).at(-1)?.id;
+    }
+    const viewport = mode === 'split' ? root.querySelector('article') || root : root;
+    const top = viewport.getBoundingClientRect().top + 36;
+    return headings.filter(heading => { const element = headingElement(heading); return element && element.getBoundingClientRect().top <= top; }).at(-1)?.id;
+  }
   return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} data-reading-editable={readingEditable} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label="Bancada Markdown" aria-busy={busy}>
-    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" disabled={readOnly || busy} aria-label={readingEditable ? 'Concluir edição' : 'Editar nota'} aria-pressed={readingEditable} onClick={() => readingEditable ? setReadingEditable(false) : startVisualEditing()}>{readingEditable ? <Check size={20}/> : <Pencil size={20}/>}</button>{readingEditable && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} aria-expanded={formattingOpen} onClick={() => setFormattingOpen(!formattingOpen)}><Type size={20}/></button>}<button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
+    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label={outlineOpen ? "Ocultar outline" : "Mostrar outline"} data-outline-toggle title="Índice da nota" aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event => toggleOutline(event.currentTarget)}><ListTree size={19}/></button><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" disabled={readOnly || busy} aria-label={readingEditable ? 'Concluir edição' : 'Editar nota'} aria-pressed={readingEditable} onClick={() => readingEditable ? setReadingEditable(false) : startVisualEditing()}>{readingEditable ? <Check size={20}/> : <Pencil size={20}/>}</button>{readingEditable && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} aria-expanded={formattingOpen} onClick={() => setFormattingOpen(!formattingOpen)}><Type size={20}/></button>}<button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
     {noteInfoOpen && <EditorDialog title="Informações da nota" onClose={() => setNoteInfoOpen(false)}><p>{fileName}</p><p>{words} palavras · {value.length} caracteres</p><p>Leitura estimada: {Math.max(1, Math.ceil(words / 200))} min</p><p>Markdown · UTF-8</p></EditorDialog>}
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}{onClose && <button type="button" disabled={readOnly || busy} aria-label="Fechar nota" aria-keyshortcuts="Meta+W Control+W" title="Fechar nota (⌘W / Ctrl+W, quando disponível no navegador)" onClick={onClose}><X size={16} aria-hidden="true"/></button>}</div>
@@ -233,6 +271,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
         {readingEditable && <button type="button" onClick={() => setReadingEditable(false)} aria-label="Concluir edição" title="Concluir edição"><Check size={16}/></button>}
       </div>
       <div className={styles.actions}>
+        <button type="button" aria-label={outlineOpen ? "Ocultar outline" : "Mostrar outline"} data-outline-toggle title="Índice da nota" aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event => toggleOutline(event.currentTarget)}><ListTree size={19}/></button>
         <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={() => chooseFile()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
@@ -251,6 +290,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
     <div className={styles.modeHint}>{readingEditable ? 'Edite diretamente no texto. A formatação permanece visível; Concluir volta à leitura.' : mode === 'live' ? 'Markdown do bloco em edição. Escape volta à leitura.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Use Editar para escrever diretamente no texto.'}</div>
+    <div className={styles.documentArea}>
     <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
       <div className={styles.source} hidden={mode === 'read'}>
         <MarkdownEditor key={documentId} ref={editor} diagramScope={diagramScope} value={value} onChange={onChange} onSelectionChange={characters => statistics.current?.setEditorSelection(characters)} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
@@ -260,6 +300,8 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
         const marker = source.match(/^(\s*(?:[-*+]|\d+[.)])\s+\[)([ xX])\]/);
         if (marker) editor.current?.replace(marker[2] === ' ' ? 'x' : ' ', { from: range.from + marker[1].length, to: range.from + marker[1].length + 1 });
       } : undefined}/>}
+    </div>
+    {outlineOpen && <DocumentOutline id={outlineId} source={value} scrollContainer={pages} viewKey={`${mode}:${readingEditable}`} currentHeading={currentHeading} onNavigate={navigateHeading} onClose={closeOutline}/>}
     </div>
     <output className={styles.blockStatus} aria-live="polite">{activeBlock?'Markdown do bloco em edição. Escape conclui; clique em outro bloco para continuar.':''}</output>
     <footer className={styles.footer} aria-label="Estatísticas do documento"><SelectionStatistics ref={statistics} container={pages} resetKey={`${mode}:${documentId}`} words={words} characters={value.length}/><span>{readOnly ? 'Somente leitura' : dirty ? 'Alterações nesta sessão' : 'Documento carregado'}</span><span>UTF-8 · .md</span></footer>

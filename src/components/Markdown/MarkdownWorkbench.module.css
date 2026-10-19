@@ -17,6 +17,10 @@
 .toolbar .download { color: var(--lime); border-color: var(--lime-dim); background: var(--lime-trace); }
 .modeHint { padding: 10px 20px; color: var(--text-muted); font-size: var(--text-base); line-height: 1.7; border-bottom: 1px solid var(--border-base); }
 .pages { min-height: 480px; }
+.documentArea { display: flex; min-width: 0; min-height: 0; }
+.documentArea > .pages { flex: 1; width: 0; min-width: 0; }
+.compact .documentArea { flex: 1; overflow: hidden; }
+.reading :is(h1,h2,h3) { scroll-margin-block-start: 20px; }
 .source { min-width: 0; max-width: 880px; margin: 0 auto; }
 .source[hidden] { display: none; }
 .source:focus-within { outline: 1px solid var(--cyan); outline-offset: -1px; }
@@ -162,6 +166,7 @@
  .mobileReadingBar > div { display: flex; gap: 4px; }
  .mobileReadingBar button { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 8px; border: 1px solid var(--border-panel); border-radius: var(--radius-full); background: transparent; color: var(--text-secondary); }
  .mobileReadingBar button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+ .mobileReadingBar button[aria-expanded="true"] { color: var(--cyan); background: var(--lime-trace); border-color: var(--cyan); }
  .compact[data-mode="read"][data-reading-actions="false"] > .toolbar { display: none; }
  .compact[data-mode="read"] > .footer, .compact[data-mode="read"] > .editingToolbar { display: none; }
  .compact[data-mode="read"] > .footer:has(.selectionCount) { display: flex; }
@@ -174,6 +179,7 @@
  .compact[data-mode="read"] .reading hr { margin: 28px 0; }
 }
 @media (max-width: 359px) { .compact[data-mode="read"] .reading { padding-inline: 20px; } }
+@media (max-width: 359px) { .compact[data-mode="read"] .mobileReadingBar { padding-inline: 12px; gap: 4px; } .mobileReadingBar > div { gap: 2px; } }
 
 /* Group export choices on narrow screens so adding reload does not create an orphan action row. */
 .exportMenu { display: none; }

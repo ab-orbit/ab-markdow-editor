@@ -31,6 +31,8 @@ export interface RichMarkdownEditorHandle {
   insertMarkdown: (source: string) => void;
   insertLink: (text: string, href: string) => void;
   focus: () => void;
+  /** Navigate to the original heading order without serializing or editing it. */
+  revealHeading: (ordinal: number) => void;
 }
 interface RichMarkdownEditorProps {
   ref?: Ref<RichMarkdownEditorHandle>;
@@ -184,6 +186,15 @@ export default function RichMarkdownEditor({ ref, value, onChange, assets, diagr
   useEffect(() => { editor?.setEditable(!disabled); }, [editor, disabled]);
   useImperativeHandle(ref, () => ({
     focus: () => { editor?.commands.focus(); },
+    revealHeading: ordinal => {
+      if (!editor) return;
+      let index = 0, position: number | undefined;
+      editor.state.doc.descendants((node, offset) => { if (node.type.name === 'heading' && index++ === ordinal) position = offset; });
+      if (position === undefined) return;
+      editor.commands.setTextSelection(position + 1); editor.view.focus();
+      const element = editor.view.nodeDOM(position);
+      if (element instanceof HTMLElement) element.scrollIntoView({ block: 'start', inline: 'nearest' });
+    },
     selectedText: () => editor ? editor.state.doc.textBetween(editor.state.selection.from, editor.state.selection.to, '\n') : '',
     insertMarkdown: source => { if (editor) editor.chain().focus().insertContent(editor.markdown!.parse(source).content || []).run(); },
     insertLink: (text, href) => { editor?.chain().focus().insertContent({ type: 'text', text, marks: [{ type: 'link', attrs: { href, target: '_blank', rel: 'noopener noreferrer' } }] }).run(); },
