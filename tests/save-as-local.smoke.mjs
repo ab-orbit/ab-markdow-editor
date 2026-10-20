@@ -1,0 +1,53 @@
+import {chromium,webkit,expect} from '@playwright/test';
+import assert from 'node:assert/strict';
+import {promises as fs} from 'node:fs';
+import {randomUUID} from 'node:crypto';
+import {spawn,execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+import os from 'node:os';
+import path from 'node:path';
+
+const exec=promisify(execFile),temporary=await fs.mkdtemp(path.join(os.tmpdir(),'scriba-save-as-ui-'));
+let server,browser;
+try {
+  const root=path.join(temporary,'original repo'),outside=path.join(temporary,'other folder'),state=path.join(temporary,'state');
+  for(const directory of [root,outside,path.join(state,'finder-inbox')])await fs.mkdir(directory,{recursive:true});
+  await exec('git',['init','-b','main',root]);
+  const source='\uFEFF# Original\r\n\r\n![Pixel](assets/pixel.png)\r\n',png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=','base64');
+  await fs.mkdir(path.join(root,'assets'));await fs.writeFile(path.join(root,'Original.md'),source);await fs.writeFile(path.join(root,'assets/pixel.png'),png);
+  await fs.writeFile(path.join(state,'settings.json'),JSON.stringify({repository:root,preferences:{askCommitNote:true,autoSave:false,intervalMinutes:1}}));
+  await fs.writeFile(path.join(state,'library.json'),JSON.stringify({[root]:{pinned:['Original.md'],welcomeImageVersion:1,diagramManualVersion:1}}));
+  const runtime=path.join(temporary,'runtime.json');server=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'0',MARKDOWN_STATE_DIR:state,MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});
+  let origin;for(let n=0;n<100;n++){try{origin=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}assert.ok(origin);
+  const safari=process.env.MARKDOWN_BROWSER==='webkit';browser=safari?await webkit.launch({headless:true}):await chromium.launch({channel:'chrome',headless:true});
+  const page=await browser.newPage({viewport:{width:1440,height:900},serviceWorkers:'block'}),errors=[];page.setDefaultTimeout(12000);page.on('pageerror',error=>errors.push(error.message));
+  let cancel=true;
+  const filename=path.join(outside,'Cópia.md');
+  await page.route('**/api/pick-save-as',async route=>{
+    if(cancel)return route.fulfill({json:null});
+    const id=randomUUID();await fs.writeFile(path.join(state,'finder-inbox',`${id}.json`),JSON.stringify({filename,writable:true}));
+    await route.fulfill({json:{id,name:'Cópia.md',location:filename,version:null}});
+  });
+  await page.goto(origin);await page.getByRole('button',{name:'Original.md',exact:true}).click();
+  const workbench=page.getByLabel('Bancada Markdown'),input=page.getByLabel('Arquivo Markdown',{exact:true}),editor=page.locator('.cm-content');
+  await expect(workbench).toHaveAttribute('data-mode','read');await page.getByRole('button',{name:'Salvar como',exact:true}).click();await expect(input).toBeEnabled();
+  await expect(page.getByLabel('Destino do arquivo',{exact:true})).toHaveCount(0);assert.equal(await fs.stat(filename).then(()=>true,()=>false),false);
+  cancel=false;await page.keyboard.press('Meta+Shift+s');await expect(page.getByLabel('Destino do arquivo',{exact:true})).toContainText(filename);
+  assert.equal(await fs.readFile(filename,'utf8'),source);assert.deepEqual(await fs.readFile(path.join(outside,'assets/pixel.png')),png);
+  await page.getByRole('button',{name:'Fonte',exact:true}).click();await editor.fill('# Cópia editada');await page.keyboard.press('Meta+s');
+  await expect.poll(()=>fs.readFile(filename,'utf8')).toBe('# Cópia editada');await expect(page.getByRole('dialog',{name:'Nota do commit',exact:true})).toHaveCount(0);
+  assert.equal(await fs.readFile(path.join(root,'Original.md'),'utf8'),source);
+  assert.equal(JSON.parse(await fs.readFile(path.join(state,'settings.json'),'utf8')).repository,await fs.realpath(root));
+  await page.reload();await expect(page.getByLabel('Destino do arquivo',{exact:true})).toContainText(filename);
+  await fs.writeFile(filename,'# Atualização externa\n');
+  await page.getByRole('button',{name:'Recarregar do disco',exact:true}).click();await expect(page.getByRole('heading',{name:'Atualização externa',exact:true})).toBeVisible();await expect(page.getByLabel('Destino do arquivo',{exact:true})).toContainText(filename);
+  await page.getByRole('button',{name:'Fonte',exact:true}).click();await editor.fill('# Edição local protegida');await fs.writeFile(filename,'# Outra atualização\n');await page.keyboard.press('Control+s');
+  const conflict=page.getByRole('dialog',{name:'Resolver versões do arquivo',exact:true});await expect(conflict).toBeVisible();assert.equal(await fs.readFile(filename,'utf8'),'# Outra atualização\n');
+  await conflict.getByRole('button',{name:'Substituir arquivo existente',exact:true}).click();await expect.poll(()=>fs.readFile(filename,'utf8')).toBe('# Edição local protegida');await expect(conflict).toHaveCount(0);
+  const backups=await fs.readdir(path.join(state,'conflict-backups'));assert.equal(backups.length,1);assert.equal(await fs.readFile(path.join(state,'conflict-backups',backups[0]),'utf8'),'# Outra atualização\n');
+  await editor.fill('# Salva antes da nova nota');await page.keyboard.press('Meta+Shift+Enter');
+  await page.getByRole('dialog',{name:'Salvar antes de criar uma nova nota?',exact:true}).getByRole('button',{name:'Salvar e criar',exact:true}).click();
+  await expect(editor).toHaveText('');await expect(page.getByLabel('Destino do arquivo',{exact:true})).toHaveCount(0);assert.equal(await fs.readFile(filename,'utf8'),'# Salva antes da nova nota');
+  assert.equal(await fs.readFile(path.join(root,'Original.md'),'utf8'),source);assert.deepEqual(errors,[]);
+  console.log(`PASS (${safari?'WebKit':'Chromium'} local): native-selection capability, cancellation, exact BOM/CRLF plus assets, subsequent saves, original/checkout preservation, restore/reload, external conflict backup and save-before-new without a Git commit.`);
+}finally{await browser?.close();server?.kill();if(server)await new Promise(resolve=>server.once('exit',resolve));await fs.rm(temporary,{recursive:true,force:true});}

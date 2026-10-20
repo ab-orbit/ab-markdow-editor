@@ -13,5 +13,15 @@
     "WebKit"
   ],
   "pdfFirstLoadOffline": true,
-  "production": null
+  "production": {
+    "checkedAt": "2026-10-20T02:43:20.353Z",
+    "url": "https://scriba.aeonbridge.app/",
+    "version": "1.15.0",
+    "commit": "e1f362b5cbf89d242eb83c3060b284920a43bfc7",
+    "release": "/var/www/scriba/releases/20261020T024301Z-public-1.15.0",
+    "previous": "/var/www/scriba/releases/20261020T015237Z-public-1.14.0",
+    "status": 200,
+    "expectedHtml": true,
+    "sha256": "67821bb3ffea04fb2ac5be10048b453bd1d7babaa9d197509af412df31ca1900"
+  }
 }

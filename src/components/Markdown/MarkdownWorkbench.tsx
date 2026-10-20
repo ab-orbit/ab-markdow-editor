@@ -1,5 +1,8 @@
 import { lazy, Suspense, useEffect, useId, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
-import { Download, FileUp, FileText, FileDown, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X, ListTree, PenTool, Plus, Save } from 'lucide-react';
+import { Download, FileUp, FileText, FileDown, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X, ListTree, PenTool, Plus, Save, SaveAll } from 'lucide-react';
+import {authorizedFetch} from '@/lib/session';
+import type {SavedFileTarget} from '@/lib/savedFile';
+import {isIosApp, shareNativeBlob} from '@/lib/ios';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -33,6 +36,8 @@ export interface MarkdownWorkbenchHandle {
   isBusy: () => boolean;
   /** Commit active canvas text before the host decides whether a new note needs confirmation. */
   flushInput: () => Promise<boolean>;
+  /** Select a new file destination, retaining the current file on cancellation or failure. */
+  saveAs: () => void;
   /** Place the caret in a newly created source note without changing its content. */
   focus: () => void;
 }
@@ -79,12 +84,18 @@ export interface MarkdownWorkbenchProps {
   onClose?: () => void;
   /** The canvas commits active text input before invoking the host's save action. */
   onSave?: () => void;
+  /** Adopt a successfully written file as the active save/reload destination. */
+  onSaveAs?: (target:SavedFileTarget,source:string,assets:MarkdownAsset[]) => void;
+  /** Private capability used only to suggest the current native directory. */
+  sourceId?: string | null;
+  /** Explicit destination of a file saved outside the note library. */
+  savedFileLocation?: string | null;
 }
 
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, onSave, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, onSave, onSaveAs, sourceId, savedFileLocation, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
   const whiteboardSource = useRef(new WhiteboardSource());
   const [initialBoards] = useState(() => whiteboardSource.current.read(value));
   const whiteboard = useRef<WhiteboardEditorHandle>(null);
@@ -111,6 +122,9 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const blockFromReading = useRef(false);
   const [baseline, setBaseline] = useState(value);
   const [busy, setBusy] = useState(false);
+  const saveAsOperation = useRef(false);
+  const [saveCopyName,setSaveCopyName] = useState<string|null>(null);
+  const [copyNotice,setCopyNotice] = useState('');
   const [error, setError] = useState('');
   const [documentId, setDocumentId] = useState(0);
   const documentContext = useRef({ id: documentId, scope: diagramScope });
@@ -131,18 +145,19 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const editor = useRef<MarkdownEditorHandle>(null);
   const statistics = useRef<SelectionStatisticsHandle>(null);
   function chooseFile(reloadOriginal = false) {
-    if (readOnly || busy) return;
+    if (readOnly || busy || saveAsOperation.current) return;
     reloadImport.current = reloadOriginal;setError('');input.current?.click();
   }
   useImperativeHandle(ref, () => ({
     openFile: chooseFile,
-    isBusy: () => busy || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]'),
+    isBusy: () => busy || saveAsOperation.current || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]'),
     flushInput: async () => {
       if (readOnly || busy || document.querySelector('dialog[open]')) return false;
       if (mode === 'whiteboard') return whiteboard.current ? whiteboard.current.flush() : false;
       return true;
     },
     focus: () => editor.current?.revealPosition(0, true),
+    saveAs: () => {void saveAs();},
   }));
   const { assets, replace: replaceAssets, append: appendAssets } = useMarkdownAssets();
   const pdfOperation = useRef<AbortController | null>(null);
@@ -243,6 +258,45 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       if (pdfOperation.current === operation) pdfOperation.current = null;
       if (mounted.current && ownsBusy) { setBusy(false); setPdfProgress(''); }
     }
+  }
+
+  async function fileRequest<T>(route:string,body:unknown):Promise<T> {
+    const response=await authorizedFetch(route,body),result=await response.json();
+    if(!response.ok)throw new Error(result.error||'Não foi possível salvar o arquivo.');
+    return result;
+  }
+  async function saveAs() {
+    if(!onSaveAs||readOnly||busy||saveAsOperation.current||document.querySelector('dialog[open]'))return;
+    const original=documentContext.current;saveAsOperation.current=true;setBusy(true);setError('');setCopyNotice('');
+    try {
+      // Reach the browser picker synchronously inside the click/keyboard gesture, before processing bytes.
+      const target=await fileRequest<SavedFileTarget|null|{unsupported:true}>('pick-save-as',{name:fileName,hasAssets:assets.length>0,id:sourceId});
+      if(!target||!sameDocument(original))return;
+      if('unsupported' in target){setSaveCopyName(fileName.split(/[\\/]/).at(-1)!);return;}
+      if(mode==='whiteboard'&&!await whiteboard.current?.flush())return;
+      await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
+      if(!sameDocument(original))return;
+      const snapshot=exportInput.current;
+      const files=await Promise.all(snapshot.assets.map(async asset=>{const bytes=new Uint8Array(await asset.file.arrayBuffer());let binary='';for(let index=0;index<bytes.length;index+=8192)binary+=String.fromCharCode(...bytes.subarray(index,index+8192));return {path:asset.path,data:btoa(binary),mime:asset.file.type};}));
+      const result=await fileRequest<{version:string}>('finder-save',{id:target.id,value:snapshot.value,version:target.version,files});
+      if(sameDocument(original))onSaveAs({...target,version:result.version},snapshot.value,snapshot.assets);
+    }catch(cause){if(mounted.current)setError(cause instanceof Error?cause.message:'Não foi possível salvar como.');}
+    finally{saveAsOperation.current=false;if(mounted.current)setBusy(false);}
+  }
+  async function exportCopy() {
+    if(!saveCopyName||busy)return;
+    const selectedName=saveCopyName.replace(/[\\/]/g,'-').trim();if(!selectedName)return;
+    setSaveCopyName(null);setBusy(true);setError('');
+    try {
+      if(mode==='whiteboard'&&!await whiteboard.current?.flush())return;
+      await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
+      const snapshot=exportInput.current,packaged=snapshot.assets.length>0;
+      const name=selectedName.replace(/\.(md|markdown|mdown|zip)$/i,'')+(packaged?'.zip':'.md');
+      const blob=packaged?new Blob([Uint8Array.from(await createMarkdownPackage(snapshot.value,snapshot.assets))],{type:'application/zip'}):new Blob([snapshot.value],{type:'text/markdown;charset=utf-8'});
+      if(isIosApp)await shareNativeBlob(blob,name);else downloadBlob(blob,name);
+      setCopyNotice('Cópia preparada. O destino de salvamento da nota aberta continua o mesmo.');
+    }catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível preparar a cópia.');}
+    finally{if(mounted.current)setBusy(false);}
   }
 
   function editBlock(range:SourceRange) {
@@ -379,6 +433,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
         <button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button>
       </div>
     </div>}
+    {saveCopyName !== null && <EditorDialog title="Salvar uma cópia" onClose={() => setSaveCopyName(null)}><p>Este navegador não permite manter acesso direto a um arquivo escolhido. Baixe ou compartilhe uma cópia e escolha onde guardá-la. A nota aberta continua no destino atual.</p>{assets.length > 0 && <p>O arquivo ZIP leva o Markdown e suas imagens juntos.</p>}<form onSubmit={event => {event.preventDefault();event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();void exportCopy();}}><label>Nome da cópia<input autoFocus required value={saveCopyName} onChange={event => setSaveCopyName(event.target.value)}/></label><footer><button type="button" onClick={() => setSaveCopyName(null)}>Cancelar</button><button type="submit">{isIosApp ? 'Compartilhar cópia' : 'Baixar cópia'}</button></footer></form></EditorDialog>}
     {noteInfoOpen && <EditorDialog title="Informações da nota" onClose={() => setNoteInfoOpen(false)}><p>{fileName}</p><p>{words} palavras · {value.length} caracteres</p><p>Leitura estimada: {Math.max(1, Math.ceil(words / 200))} min</p><p>Markdown · UTF-8</p></EditorDialog>}
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}{onClose && <button type="button" disabled={readOnly || busy} aria-label="Fechar nota" aria-keyshortcuts="Meta+W Control+W" title="Fechar nota (⌘W / Ctrl+W, quando disponível no navegador)" onClick={onClose}><X size={16} aria-hidden="true"/></button>}</div>
@@ -391,6 +446,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       <div className={styles.actions}>
         {mode !== 'whiteboard' && <button type="button" aria-label={outlineOpen ? "Ocultar outline" : "Mostrar outline"} data-outline-toggle title="Índice da nota" aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event => toggleOutline(event.currentTarget)}><ListTree size={19}/></button>}
         <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={() => chooseFile()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
+        {onSaveAs && <button type="button" disabled={readOnly || busy} aria-label="Salvar como" aria-keyshortcuts="Meta+Shift+S Control+Shift+S" title="Salvar como… (⌘⇧S / Ctrl+Shift+S)" onClick={() => void saveAs()}><SaveAll size={17} aria-hidden="true"/><span className={styles.actionLabel}>Salvar como…</span></button>}
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Exportar PDF" title="Exportar PDF" onClick={() => void exportPdf()}><FileDown size={15} aria-hidden="true"/><span className={styles.actionLabel}>Exportar PDF</span></button>
@@ -404,7 +460,9 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       <input ref={input} type="file" hidden aria-label="Arquivo Markdown" disabled={readOnly || busy} accept=".md,.markdown,.mdown,.zip,.bear,text/markdown,application/zip" onChange={event => { void open(event.target.files?.[0]); event.target.value = ''; }}/>
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>
     </header>
+    {savedFileLocation && <p className={styles.savedDestination} aria-label="Destino do arquivo"><Save size={14} aria-hidden="true"/><span>Arquivo local · <strong>{savedFileLocation}</strong></span><span>⌘S salva aqui</span></p>}
     {sourceStatus}
+    {copyNotice && <p role="status" className={styles.assetHint}>{copyNotice}</p>}
     {mode !== 'whiteboard' && (!compact || formattingOpen) && <EditingToolbar onExcalidraw={insertDrawing} onEditBlock={readingEditable ? undefined : toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(readingEditable ? visualEditor.current?.selectedText() || '' : value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {pdfProgress && <div className={styles.pdfProgress} role="status"><span>{pdfProgress}</span><button type="button" onClick={() => pdfOperation.current?.abort()}>Cancelar exportação</button></div>}

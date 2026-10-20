@@ -17,6 +17,7 @@ import { authorizedFetch } from './lib/session';
 import { loadDraft, persistDraft, type DraftSnapshot } from './lib/drafts';
 import { EditorDialog } from './components/Markdown/EditorDialog';
 import type { MarkdownAsset } from './lib/markdown/assets';
+import type {SavedFileTarget} from './lib/savedFile';
 import './tokens.css';
 import './style.css';
 
@@ -242,6 +243,7 @@ function App() {
   const currentMode = useRef<MarkdownMode>('live');
   const reportMode = useCallback((mode: MarkdownMode) => {currentMode.current=mode;}, []);
   const [finderSourceId, setFinderSourceId] = useState<string | null>(null);
+  const [savedFileLocation,setSavedFileLocation] = useState<string|null>(null);
   const [openedScope, setOpenedScope] = useState<string | null>(null);
   const [preferences, setPreferences] = useState<SavePreferences>(defaultPreferences);
   const [preferenceDraft, setPreferenceDraft] = useState<SavePreferences>(defaultPreferences);
@@ -303,7 +305,7 @@ function App() {
         setDocumentClosed(!!restored.documentClosed);
         setRepository(restored.repository); setName(restored.name); setLoadedName(restored.loadedName);
         setValue(restored.value); setBaseline(restored.baseline); setVersion(restored.version);
-        setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync); setAutoSavePaused(!!restored.autoSavePaused); setFinderSourceId(restored.finderSourceId || null);
+        setImportedVersion(restored.importedVersion); setPendingSync(restored.pendingSync); setAutoSavePaused(!!restored.autoSavePaused); setFinderSourceId(restored.finderSourceId || null);setSavedFileLocation(restored.savedFileLocation || null);
         setPreferences({...defaultPreferences,...restored.preferences}); setPreferenceDraft({...defaultPreferences,...restored.preferences});
         restoringAssets.current = restored.assets.length > 0;
         setAssets(restored.assets.map(asset => ({ ...asset, url: '' })));
@@ -313,14 +315,14 @@ function App() {
       try {
         const [info, saved] = await Promise.all([api<RepositoryInfo>('repository'), api<SavePreferences>('preferences')]);
         if (!active) return;
-        if (restored?.repository.repository && restored.repository.repository !== info.repository) {
+        if (restored?.repository.repository && restored.repository.repository !== info.repository && !restored.savedFileLocation) {
           setError('O rascunho pertence a outro repositório. Reconecte a pasta nas configurações antes de salvar.');
           setSettingsOpen(true);
         } else {
           setOpenedScope(browserMode ? libraryKey() : info.repository);
           setRepository(info); setRepositoryConnected(!!info.repository); setFiles(info.repository ? await api<string[]>('files') : []);
           if (info.repository) await refreshLibrary(); else { setRecentNotes([]); setPinnedNotes([]); }
-          if (!info.repository) {setSettingsOpen(true);setSwitchRepositoryOpen(true);}
+          if (!info.repository && !restored?.savedFileLocation) {setSettingsOpen(true);setSwitchRepositoryOpen(true);}
         }
         if (!active) return;
         setPreferences(saved); setPreferenceDraft(saved); setOffline(false);
@@ -351,10 +353,10 @@ function App() {
   }, [draftId]);
   useEffect(() => {
     if (!draftReady) return;
-    const snapshot: DraftSnapshot = {id: draftId, documentClosed, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, finderSourceId, assetsDirty, assets: assets.map(({path,file}) => ({path,file})), preferences, updatedAt: Date.now()};
+    const snapshot: DraftSnapshot = {id: draftId, documentClosed, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, finderSourceId, savedFileLocation, assetsDirty, assets: assets.map(({path,file}) => ({path,file})), preferences, updatedAt: Date.now()};
     latestDraft.current = snapshot;
     void persistDraft(snapshot).catch(() => setError('Não foi possível guardar o rascunho no navegador. Baixe o Markdown ou pacote para preservar suas alterações.'));
-  }, [draftReady, draftId, documentClosed, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, finderSourceId, assetsDirty, assets, preferences]);
+  }, [draftReady, draftId, documentClosed, repository, name, loadedName, value, baseline, version, importedVersion, pendingSync, autoSavePaused, finderSourceId, savedFileLocation, assetsDirty, assets, preferences]);
   useEffect(() => {
     const flush = () => { if (latestDraft.current) void persistDraft(latestDraft.current).catch(() => {}); };
     const online = () => setOffline(false), disconnected = () => setOffline(true);
@@ -388,11 +390,13 @@ function App() {
     });
   }
   async function completeRepositorySwitch(result: RepositorySwitchResult) {
+    if (!savedFileLocation) {
     setAutoSavePaused(!result.carriedFiles);
     if (result.carriedFiles) {
       setOpenedScope(browserMode ? libraryKey() : result.info.repository);setFinderSourceId(null);
       if (result.folder) {setName(current => `${result.folder}/${current}`); setLoadedName(current => current ? `${result.folder}/${current}` : current);setImportedVersion(current => current ? {...current,name:`${result.folder}/${current.name}`} : null);}
     } else {setVersion(null); setImportedVersion(null); setLoadedName('');}
+    }
     setRepository(result.info); setRepositoryConnected(!!result.info.repository); setSwitchRepositoryOpen(false);
     setRepositorySyncFeedback(result.synchronization ? {message:result.synchronization.synced ? 'Repositório sincronizado com o remoto.' : `Arquivos preservados localmente. Envio pendente: ${result.synchronization.error}`, state:result.synchronization.synced ? 'success' : 'error'} : null);
     await refresh();
@@ -400,6 +404,7 @@ function App() {
   }
   const discard = () => !dirty || window.confirm('Há alterações não salvas. Deseja substituí-las?');
   function resetDocument(text = '', fileName = 'documento.md', hash: string | null = null, attached: {path: string; file: File}[] = []) {
+    setSavedFileLocation(null);
     setDocumentClosed(false);
     reloadScrollTop.current=0;setReloadMode(null);setFinderSourceId(null);setOpenedScope(browserMode ? libraryKey() : repository.repository);
     setValue(text); setBaseline(text);setBaselineAssets(assetIdentity(attached)); setName(fileName); setLoadedName(fileName); setVersion(hash);
@@ -470,17 +475,18 @@ function App() {
     isBlocked: () => !!document.querySelector('dialog[open]') || !!workbenchRef.current?.isBusy(),
     dirty, pending: pendingSync && !finderSourceId,
     version: finderSourceId ? importedVersion?.version || null : version,
-    interval: browserMode && githubSelection() ? 60000 : 5000,
+    interval: !savedFileLocation && browserMode && githubSelection() ? 60000 : 5000,
     probe: () => api(finderSourceId ? `finder-document-version?id=${encodeURIComponent(finderSourceId)}` : `document-version?${sourceQuery}`),
     load: () => api(finderSourceId ? `finder-document?id=${encodeURIComponent(finderSourceId)}&fresh=1` : `document?${sourceQuery}&fresh=1`),
     apply: (doc,automatic) => {
       const mode = currentMode.current;
       const scrollTop=document.querySelector('[data-document-scroll]')?.scrollTop || 0;
       const sourceId = finderSourceId;
+      const location = savedFileLocation;
       const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data),character=>character.charCodeAt(0))],file.path.split('/').at(-1)!,{type:file.mime})}));
       resetDocument(doc.value,loadedName,sourceId ? null : doc.version,attached);
       reloadScrollTop.current=scrollTop;setReloadMode(mode);setPendingSync(!!doc.pendingSync);
-      if(sourceId){setFinderSourceId(sourceId);setImportedVersion({name:loadedName,version:doc.version!});}
+      if(sourceId){setFinderSourceId(sourceId);setSavedFileLocation(location);setImportedVersion({name:loadedName,version:doc.version!});}
       setNotice(automatic ? 'Nota atualizada a partir da origem.' : 'Nota recarregada.');
       void api<NoteLibrary>('library').then(library=>{setRecentNotes(library.recent);setPinnedNotes(library.pinned);}).catch(()=>{});
     },
@@ -504,13 +510,18 @@ function App() {
     await run(async () => {
       const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
       const originalVersion = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('');
-      setDocumentClosed(false);setSettingsOpen(false);setFinderSourceId(null);setImportedVersion({ name: fileName, version: originalVersion });
+      setDocumentClosed(false);setSettingsOpen(false);setFinderSourceId(null);setSavedFileLocation(null);setImportedVersion({ name: fileName, version: originalVersion });
       setBaseline(source); setLoadedName(fileName); setVersion(null); setPendingSync(true); setConflict(null);
       if (reloaded) setNotice('Arquivo relido do disco.');
     });
   }
   async function save(note: string, target?: {name: string; version: string | null; backupBeforeReplace?: boolean}) {
     lastSaveNote.current = note;
+    if(savedFileLocation && finderSourceId) {
+      const result=await api<SaveResult>('finder-save',{id:finderSourceId,value,version:target?target.version:importedVersion?.version??null,backupBeforeReplace:target?.backupBeforeReplace,files:await Promise.all(assets.map(encodeAsset))});
+      setBaseline(value);setBaselineAssets(assetIdentity(assets));setLoadedName(name);setImportedVersion({name,version:result.version!});setSaveRevision(revision=>revision+1);setConflict(null);setPendingSync(false);setAutoSavePaused(false);setNotice(`Arquivo salvo em ${savedFileLocation}.`);
+      return true;
+    }
     const targetName = target?.name ?? name;
     const expected = target ? target.version : name === loadedName ? version : null;
     const baseVersion = !target && importedVersion?.name === name ? importedVersion.version : undefined;
@@ -540,9 +551,9 @@ function App() {
     } else void run(() => syncRepository('Synchronize local notes'));
   }
   function requestSave(automatic = false, afterSave: DocumentAction | null = null) {
-    if (!draftReady || documentClosed || operationLock.current || busy || workbenchRef.current?.isBusy() || sourceReload.reloading || sourceReload.confirmation || commitNoteOpen || conflict || !repository.repository) return;
+    if (!draftReady || documentClosed || operationLock.current || busy || workbenchRef.current?.isBusy() || sourceReload.reloading || sourceReload.confirmation || commitNoteOpen || conflict || !repository.repository && !savedFileLocation) return;
     setDocumentConfirmation(null);
-    if (preferences.askCommitNote) {
+    if (preferences.askCommitNote && !savedFileLocation) {
       setAfterCommitAction(afterSave);setCommitTarget('document'); setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
     } else void saveDocument(`${automatic ? 'Auto-save' : 'Update'} ${name}`, afterSave);
   }
@@ -553,7 +564,12 @@ function App() {
       if (synced && afterSave) await finishDocument(afterSave);
     });
   }
-  const canAutoSave = draftReady && !documentClosed && !documentConfirmation && !autoSavePaused && !sourceReload.change && !sourceReload.confirmation && !sourceReload.reloading && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict;
+  function adoptSavedFile(target:SavedFileTarget,source:string,attached:MarkdownAsset[]) {
+    const mode=currentMode.current;
+    resetDocument(source,target.name,null,attached);
+    setReloadMode(mode);setFinderSourceId(target.id);setSavedFileLocation(target.location);setImportedVersion({name:target.name,version:target.version!});setSelected('');setNotice(`Salvo como ${target.location}. Os próximos salvamentos usarão este arquivo local.`);setError('');
+  }
+  const canAutoSave = draftReady && !documentClosed && !documentConfirmation && !autoSavePaused && !sourceReload.change && !sourceReload.confirmation && !sourceReload.reloading && (!offline || browserMode || !!savedFileLocation) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict;
   autoSaveCommit.current = () => {
     if (canAutoSave) requestSave(true);
   };
@@ -581,6 +597,14 @@ function App() {
     };
     window.addEventListener('keydown', newShortcut, true);
     return () => window.removeEventListener('keydown', newShortcut, true);
+  });
+  useEffect(() => {
+    const saveAsShortcut = (event:KeyboardEvent) => {
+      if(event.isComposing || event.altKey || !event.shiftKey || !(event.metaKey || event.ctrlKey) || event.key.toLowerCase()!=='s')return;
+      event.preventDefault();event.stopPropagation();
+      if(!event.repeat && draftReady && !documentClosed && !busy && !settingsOpen && !operationLock.current && !document.querySelector('dialog[open]'))workbenchRef.current?.saveAs();
+    };
+    window.addEventListener('keydown',saveAsShortcut,true);return()=>window.removeEventListener('keydown',saveAsShortcut,true);
   });
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
@@ -640,18 +664,18 @@ function App() {
     {conflict && <EditorDialog title="Resolver versões do arquivo" onClose={() => setConflict(null)}>
       <p><strong>{conflict.name}</strong></p>
       <p>{conflict.kind === 'exists' ? 'Já existe um arquivo com esse nome na pasta.' : conflict.kind === 'deleted' ? 'O arquivo foi removido do disco desde a abertura.' : 'A nota mudou desde a abertura.'} Seu texto continua intacto no editor.</p>
-      <p>{browserMode ? 'Salve uma cópia para manter as duas versões ou confirme a substituição da nota neste navegador.' : 'Salve uma cópia para manter os dois arquivos ou confirme a substituição. Antes de substituir, a versão do disco será guardada em Application Support/AB Markdown/conflict-backups.'}</p>
-      <form onSubmit={event => { event.preventDefault(); void run(() => save(lastSaveNote.current, {name: copyName, version: null})); }}>
+      <p>{savedFileLocation ? 'Use Salvar como para manter as duas versões em locais diferentes. A substituição explícita guarda uma cópia de recuperação privada antes de gravar.' : browserMode ? 'Salve uma cópia para manter as duas versões ou confirme a substituição da nota neste navegador.' : 'Salve uma cópia para manter os dois arquivos ou confirme a substituição. Antes de substituir, a versão do disco será guardada em Application Support/AB Markdown/conflict-backups.'}</p>
+      {savedFileLocation ? <footer><button type="button" onClick={() => setConflict(null)}>Continuar editando</button><button type="button" onClick={event => {event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();setConflict(null);workbenchRef.current?.saveAs();}}>Salvar como…</button></footer> : <form onSubmit={event => { event.preventDefault(); void run(() => save(lastSaveNote.current, {name: copyName, version: null})); }}>
         <label>Nome da cópia<input required value={copyName} onChange={event => setCopyName(event.target.value)}/></label>
         <footer><button type="button" onClick={() => setConflict(null)}>Continuar editando</button><button type="submit" disabled={busy}>Salvar uma cópia</button></footer>
-      </form>
+      </form>}
       <button type="button" disabled={busy} onClick={() => void run(() => save(lastSaveNote.current, {name: conflict.name, version: conflict.currentVersion, backupBeforeReplace: true}))}>Substituir arquivo existente</button>
     </EditorDialog>}
     {documentConfirmation && <EditorDialog title={documentConfirmation === 'new' ? 'Salvar antes de criar uma nova nota?' : 'Salvar antes de fechar?'} className="close-document-dialog" onClose={() => setDocumentConfirmation(null)}>
       <p><strong>{name}</strong> tem {dirty ? 'alterações não salvas' : 'uma sincronização pendente'}.</p>
-      <p>{documentConfirmation === 'new' ? 'Salvar e criar' : 'Salvar e fechar'} conclui o salvamento no destino configurado{!browserMode || githubSelection() ? ', incluindo commit e envio ao repositório' : ''}. {documentConfirmation === 'new' ? 'Descartar e criar' : 'Fechar sem salvar'} descarta o rascunho desta aba; o arquivo já salvo é preservado.</p>
-      {!repository.repository && <p>Conecte um destino nas configurações para salvar. Você também pode cancelar e baixar a nota pela barra de ferramentas.</p>}
-      <footer><button type="button" autoFocus onClick={() => setDocumentConfirmation(null)}>Cancelar</button><button type="button" onClick={() => void finishDocument(documentConfirmation)}>{documentConfirmation === 'new' ? 'Descartar e criar' : 'Fechar sem salvar'}</button><button type="button" className="primary" disabled={!repository.repository} onClick={() => requestSave(false, documentConfirmation)}><Save size={16} aria-hidden="true"/>{documentConfirmation === 'new' ? 'Salvar e criar' : 'Salvar e fechar'}</button></footer>
+      <p>{documentConfirmation === 'new' ? 'Salvar e criar' : 'Salvar e fechar'} conclui o salvamento no destino configurado{!savedFileLocation && (!browserMode || githubSelection()) ? ', incluindo commit e envio ao repositório' : ''}. {documentConfirmation === 'new' ? 'Descartar e criar' : 'Fechar sem salvar'} descarta o rascunho desta aba; o arquivo já salvo é preservado.</p>
+      {!repository.repository && !savedFileLocation && <p>Conecte um destino nas configurações para salvar. Você também pode cancelar e baixar a nota pela barra de ferramentas.</p>}
+      <footer><button type="button" autoFocus onClick={() => setDocumentConfirmation(null)}>Cancelar</button><button type="button" onClick={() => void finishDocument(documentConfirmation)}>{documentConfirmation === 'new' ? 'Descartar e criar' : 'Fechar sem salvar'}</button><button type="button" className="primary" disabled={!repository.repository && !savedFileLocation} onClick={() => requestSave(false, documentConfirmation)}><Save size={16} aria-hidden="true"/>{documentConfirmation === 'new' ? 'Salvar e criar' : 'Salvar e fechar'}</button></footer>
     </EditorDialog>}
     {commitNoteOpen && <EditorDialog title="Nota do commit" onClose={() => {setCommitNoteOpen(false);setAfterCommitAction(null);}}>
       <form onSubmit={event => { event.preventDefault(); if (!commitNote.trim()) return; setCommitNoteOpen(false); setAfterCommitAction(null); if(commitTarget === 'repository')void run(() => syncRepository(commitNote.trim()));else void saveDocument(commitNote.trim(), afterCommitAction); }}>
@@ -683,11 +707,11 @@ function App() {
       <div className="empty-document-toolbar"><button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button><button type="button" aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} title="Alternar tema" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button><button type="button" aria-label="Configurações" title="Configurações" onClick={() => setSettingsOpen(true)}><Settings size={18}/></button></div>
       <div className="empty-document-content"><img src={brandIcon} width="64" height="64" alt=""/><h1 ref={emptyTitle} tabIndex={-1}>Nenhuma nota aberta</h1><p>Escolha uma nota na lista, abra um arquivo ou comece uma nova.</p><div><button type="button" className="primary" aria-keyshortcuts="Meta+O Control+O" onClick={requestOpen}><FolderOpen size={18}/>Abrir arquivo <kbd>⌘O</kbd></button><button type="button" aria-keyshortcuts="Meta+Shift+Enter Control+Shift+Enter" title="Nova nota (⌘⇧Enter / Ctrl+Shift+Enter)" onClick={() => void requestNewNote()}><FilePlus2 size={18}/>Nova nota <kbd>⌘⇧Enter</kbd></button></div></div>
     </section>}
-    <div className="workbench-container" hidden={documentClosed}><MarkdownWorkbench ref={workbenchRef} diagramScope={`${repository.repository || "browser"}:${finderSourceId || name}`} warnBeforeUnload={false} onClose={requestClose} onSave={() => requestSave()} compact initialScrollTop={reloadScrollTop.current} initialMode={reloadMode || (version || importedVersion || finderSourceId ? 'read' : 'live')} doubleClickToEdit={preferences.doubleClickToEdit} onModeChange={reportMode} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setDocumentClosed(false);setFinderSourceId(null);setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy || sourceReload.manualLock} sourceStatus={sourceReload.change && <div className="source-change" role="status"><CircleAlert size={18} aria-hidden="true"/><span>{sourceReload.change.kind === 'deleted' ? 'O arquivo foi removido da origem. Seu texto continua no editor.' : sourceReload.change.kind === 'error' ? `Não foi possível recarregar: ${sourceReload.change.message}` : dirty || pendingSync ? 'A nota mudou fora do Scriba. Suas edições foram mantidas.' : sourceReload.reloading ? 'Carregando atualização da origem…' : 'Há uma versão mais recente na origem.'}</span>{sourceReload.change.kind !== 'deleted' && <button type="button" disabled={sourceReload.reloading} onClick={sourceReload.request}>{reloadLabel}</button>}</div>} actions={<>
+    <div className="workbench-container" hidden={documentClosed}><MarkdownWorkbench ref={workbenchRef} diagramScope={`${repository.repository || "browser"}:${finderSourceId || name}`} warnBeforeUnload={false} onClose={requestClose} onSave={() => requestSave()} onSaveAs={adoptSavedFile} sourceId={finderSourceId} savedFileLocation={savedFileLocation} compact initialScrollTop={reloadScrollTop.current} initialMode={reloadMode || (version || importedVersion || finderSourceId ? 'read' : 'live')} doubleClickToEdit={preferences.doubleClickToEdit} onModeChange={reportMode} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setDocumentClosed(false);setFinderSourceId(null);setSavedFileLocation(null);setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy || sourceReload.manualLock} sourceStatus={sourceReload.change && <div className="source-change" role="status"><CircleAlert size={18} aria-hidden="true"/><span>{sourceReload.change.kind === 'deleted' ? 'O arquivo foi removido da origem. Seu texto continua no editor.' : sourceReload.change.kind === 'error' ? `Não foi possível recarregar: ${sourceReload.change.message}` : dirty || pendingSync ? 'A nota mudou fora do Scriba. Suas edições foram mantidas.' : sourceReload.reloading ? 'Carregando atualização da origem…' : 'Há uma versão mais recente na origem.'}</span>{sourceReload.change.kind !== 'deleted' && <button type="button" disabled={sourceReload.reloading} onClick={sourceReload.request}>{reloadLabel}</button>}</div>} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>
       {offline && <span className="offline-indicator" aria-label="Modo offline"><CloudOff size={16}/><span>Offline</span></span>}
       <button type="button" aria-label={reloadLabel} title={`${reloadTitle}${sourceReload.change ? ' — alteração externa detectada' : ''}`} className={sourceReload.change ? 'source-reload-pending' : undefined} disabled={busy || sourceReload.reloading || name !== loadedName || !canReloadSource && !reloadFromPicker} aria-busy={sourceReload.reloading} onClick={() => reloadFromPicker ? workbenchRef.current?.openFile(true) : sourceReload.request()}><RotateCw size={18}/></button>
-      {repository.repository && <button type="button" disabled={busy} aria-keyshortcuts="Meta+S Control+S" aria-label={browserMode ? "Salvar nota" : "Salvar no repositório"} title={browserMode ? "Salvar nota (⌘S)" : "Salvar no repositório (⌘S)"} onClick={() => requestSave()}><Save size={18}/></button>}
+      {(repository.repository || savedFileLocation) && <button type="button" disabled={busy} aria-keyshortcuts="Meta+S Control+S" aria-label={savedFileLocation ? "Salvar arquivo local" : browserMode ? "Salvar nota" : "Salvar no repositório"} title={savedFileLocation ? `Salvar em ${savedFileLocation} (⌘S)` : browserMode ? "Salvar nota (⌘S)" : "Salvar no repositório (⌘S)"} onClick={() => requestSave()}><Save size={18}/></button>}
       <button type="button" aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} title={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button>
       <button type="button" aria-label="Configurações" title="Configurações" aria-controls="settings-page" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}><Settings size={18}/></button>
     </>}/></div></fieldset>

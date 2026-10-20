@@ -2,10 +2,10 @@ import http from 'node:http';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { randomBytes, timingSafeEqual } from 'node:crypto';
+import { randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { Repository } from './repository.mjs';
-import { pickFolder } from './folder-picker.mjs';
+import { pickFolder, pickSaveFile } from './folder-picker.mjs';
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 const stateDir = process.env.MARKDOWN_STATE_DIR || path.join(os.homedir(), 'Library', 'Application Support', 'AB Markdown');
@@ -14,6 +14,14 @@ await repository.initialize();
 const token = randomBytes(32).toString('hex');
 let origin;
 const send = (res, status, data) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(data)); };
+/** Private native capabilities cannot be supplied as arbitrary filesystem paths by the webview. */
+async function selectedFile(id) {
+  if (!/^[a-f0-9-]{36}$/.test(id || '')) throw new Error('Documento inválido.');
+  const document = JSON.parse(await fs.readFile(path.join(stateDir, 'finder-inbox', `${id}.json`), 'utf8'));
+  if (typeof document.filename !== 'string' || !path.isAbsolute(document.filename)) throw new Error('Documento inválido.');
+  const source = new Repository(stateDir); source.root = path.dirname(document.filename);
+  return {document,source,name:path.basename(document.filename)};
+}
 
 const server = http.createServer(async (req, res) => {
   try {
@@ -35,16 +43,15 @@ const server = http.createServer(async (req, res) => {
         if (['/api/finder-document', '/api/finder-document-version'].includes(url.pathname)) {
           const id = url.searchParams.get('id');
           if (!/^[a-f0-9-]{36}$/.test(id || '')) return send(res, 400, {error:'Documento inválido.'});
-          const document = JSON.parse(await fs.readFile(path.join(stateDir, 'finder-inbox', `${id}.json`), 'utf8'));
-          if (url.pathname === '/api/finder-document-version' || url.searchParams.get('fresh') === '1') {
-            const source = new Repository(stateDir);source.root = path.dirname(document.filename);
+          const {document,source} = await selectedFile(id);
+          if (document.writable || url.pathname === '/api/finder-document-version' || url.searchParams.get('fresh') === '1') {
             if (url.pathname === '/api/finder-document-version') return send(res, 200, await source.documentVersion(path.basename(document.filename)));
             Object.assign(document, await source.read(path.basename(document.filename)));
           }
           const relative = repository.root ? path.relative(repository.root, document.filename) : '';
-          const inRepository = !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+          const inRepository = !document.writable && !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
           const {filename, ...content} = document;
-          return send(res, 200, {...content, name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository, repository:repository.root});
+          return send(res, 200, {...content, ...(document.writable ? {location:filename} : {}), name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository, repository:repository.root});
         }
         if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());
@@ -65,6 +72,22 @@ const server = http.createServer(async (req, res) => {
         '/api/library/initialize': () => repository.initializeLibrary(),
         '/api/pin': () => repository.pin(body),
         '/api/pick-folder': () => pickFolder(),
+        '/api/pick-save-as': async () => {
+          const previous = body.id ? await selectedFile(body.id) : null;
+          const selected = await pickSaveFile(path.basename(body.name || 'documento.md'), previous ? path.dirname(previous.document.filename) : repository.root);
+          if (!selected.filename) return null;
+          const id = randomUUID(), source = new Repository(stateDir);source.root=path.dirname(selected.filename);
+          const {version} = await source.documentVersion(path.basename(selected.filename));
+          await fs.mkdir(path.join(stateDir,'finder-inbox'),{recursive:true,mode:0o700});
+          await fs.writeFile(path.join(stateDir,'finder-inbox',`${id}.json`),JSON.stringify({filename:selected.filename,writable:true}),{mode:0o600,flag:'wx'});
+          return {id,name:path.basename(selected.filename),location:selected.filename,version};
+        },
+        '/api/finder-save': async () => {
+          const {document,source,name} = await selectedFile(body.id);
+          if (document.writable !== true) throw new Error('Use Salvar como para autorizar um arquivo de destino.');
+          const result = await source.save({name,value:body.value,version:body.version,files:body.files,backupBeforeReplace:body.backupBeforeReplace});
+          return {...result,synced:true};
+        },
         '/api/connect': () => repository.connect(body.directory),
         '/api/disconnect': () => repository.disconnect(body),
         '/api/repository/prepare-switch': () => repository.prepareSwitch(body),

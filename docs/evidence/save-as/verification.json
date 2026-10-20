@@ -1,0 +1,17 @@
+{
+  "version": "1.16.0",
+  "checkedAt": "2026-10-20T02:56:11.886493+00:00",
+  "publicHtmlSha256": "dcf7eed04aa6c943b9425763e45264ba238f5c6badfca1a64bbc42b1cf5cb6cb",
+  "httpGitPassed": 62,
+  "nativePickerConfirmed": true,
+  "browserEngines": [
+    "Chromium",
+    "WebKit"
+  ],
+  "localEngines": [
+    "Chromium",
+    "WebKit"
+  ],
+  "pdfFirstUseOffline": true,
+  "production": null
+}

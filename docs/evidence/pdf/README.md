@@ -13,3 +13,5 @@ Todas as páginas incluem a logo pequena, **scriba markdown editor - powered by 
 A interface nativa iOS reaproveita o compartilhamento de arquivos já existente; o novo binário iOS não foi compilado ou enviado nesta publicação. WebKit automatizado não equivale a um teste físico no iPhone.
 
 Fontes primárias: [pdfmake 0.3](https://pdfmake.github.io/docs/0.3/), [API de Blob](https://pdfmake.github.io/docs/0.3/getting-started/client-side/methods/). Dependência fixada em 0.3.12; licenças de pdfmake e Roboto distribuídas com o aplicativo.
+
+Produção web **1.15.0** verificada após a publicação com os mesmos fluxos em [Chromium](production-chromium.txt) e [WebKit](production-webkit.txt). Aplicativo Mac atualizado para 1.15.0, com assinatura e serviço local conferidos.

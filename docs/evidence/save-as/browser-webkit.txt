@@ -1,0 +1,1 @@
+PASS (WebKit): honest copy fallback with exact Markdown bytes and unchanged active destination. Desktop/mobile controls and no remote writes verified.

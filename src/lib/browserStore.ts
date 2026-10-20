@@ -1,5 +1,6 @@
 import {githubSelection, githubRequest, libraryKey} from './github';
 import {isIosApp} from './ios';
+import {savedFileRequest} from './savedFile';
 import {saveToDeviceFolder, readDeviceNotes, folderLabel, deviceDocumentVersion, readDeviceDocument, textVersion} from './deviceFolder';
 import diagramManual from '../../docs/Scriba-Diagramas.md?raw';
 import {extendDiagramManual} from '../../server/diagram-manual.mjs';
@@ -97,6 +98,7 @@ async function prepareDiagramManual(database:IDBDatabase,key:string,remote:any,h
 }
 /** Transactions serialize cross-tab edits and reject stale document revisions. */
 export async function browserFetch(route:string, body?:any):Promise<Response> {
+  if(['pick-save-as','finder-save','finder-document','finder-document-version'].includes(route.split('?')[0]))return savedFileRequest(route,body);
   try {
     const database=await db();
     const url=new URL(route,'https://browser.invalid/');

@@ -25,6 +25,8 @@ export interface DraftSnapshot {
   autoSavePaused?: boolean;
   /** Private native Finder handle for reloading an external original without writing to it. */
   finderSourceId?: string | null;
+  /** Explicit Save As binding; normal Finder imports retain their read-only original. */
+  savedFileLocation?: string | null;
   /** Attachment changes require the same reload confirmation as unsaved text. */
   assetsDirty?: boolean;
   /** Durable image bytes; temporary object URLs are deliberately omitted. */

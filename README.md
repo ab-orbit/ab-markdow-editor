@@ -90,7 +90,8 @@ Revelar marcadores altera só a apresentação. O texto continua sob o mesmo his
 
 - **⌘⇧Enter** cria uma nova nota com foco no texto. Com alterações ou sincronização pendente, oferece **Salvar e criar**, **Descartar e criar** e **Cancelar**. O botão **Nova nota** usa o mesmo fluxo. No Windows/Linux, use **Ctrl+Shift+Enter**.
 - **⌘O** abre o seletor de Markdown/ZIP do sistema. O arquivo abre em **Ler**.
-- **⌘S** salva no destino ativo e mantém o fluxo de commit/push e a preferência de mensagem de commit.
+- **⌘S** salva no destino ativo. Notas do repositório mantêm commit/push e a preferência de mensagem; arquivos locais escolhidos por Salvar como são gravados diretamente.
+- **⌘⇧S / Ctrl+Shift+S** abre **Salvar como…** para escolher outro arquivo. No Mac, usa o seletor nativo; em navegadores compatíveis, usa o seletor do navegador. A cópia passa a ser o destino ativo, sem alterar o repositório configurado. O caminho aparece abaixo da barra. Imagens acompanham o Markdown no Mac; no navegador, notas com imagens usam ZIP. Cancelar ou falhar mantém a nota e o destino anteriores. Sem acesso direto a arquivos, oferece uma cópia para baixar/compartilhar e informa que o destino ativo permanece o mesmo. [Evidências](docs/evidence/save-as/README.md).
 - **⌘W**, quando o navegador entrega esse atalho ao Scriba, fecha a nota atual. Com alterações ou sincronização pendente, oferece **Salvar e fechar**, **Fechar sem salvar** e **Cancelar**. O **× ao lado do nome do arquivo** executa a mesma ação e está sempre disponível na barra da nota. No celular, expanda **Mais opções da nota** para exibir a barra.
 
 Salvar e fechar aguarda a gravação e a sincronização completas. Cancelar a mensagem de commit, encontrar um conflito ou falhar no envio mantém a nota aberta. Fechar uma nota não remove o arquivo salvo. O estado sem nota aberta também é preservado ao reabrir a página. No Windows/Linux, use **Ctrl** em vez de ⌘.

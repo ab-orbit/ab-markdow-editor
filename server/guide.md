@@ -11,6 +11,8 @@ Um espaço local para escrever, organizar e versionar notas Markdown no seu pró
 3. Salve pelo botão de disquete ou por ⌘S. O editor grava o Markdown e as imagens, cria um commit e faz push com as credenciais do seu Mac.
 4. Use ⌘⇧Enter para uma nova nota. Havendo alterações pendentes, escolha salvar, descartar ou cancelar. No Windows/Linux, use Ctrl+Shift+Enter.
 
+5. Use **Salvar como…** (⌘⇧S / Ctrl+Shift+S) para guardar em outro local. A cópia vira o arquivo ativo e os próximos salvamentos usam esse caminho, mostrado abaixo da barra. O original é preservado; o repositório configurado continua disponível para outras notas.
+
 ## Funcionalidades disponíveis
 
 - Editor Markdown com modos Escrever, Fonte, Visão e Ler.

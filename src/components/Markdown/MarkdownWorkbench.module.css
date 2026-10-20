@@ -252,3 +252,8 @@
  .compact[data-reading-editable="true"][data-formatting-open="true"] > .editingToolbar { display: flex; }
  .compact[data-reading-editable="true"] .mobileReadingBar { padding-inline: 16px; }
 }
+
+.savedDestination { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; padding: 6px 16px; margin: 0; color: var(--text-secondary); background: var(--bg-surface); border-bottom: 1px solid var(--border-panel); font: 12px/1.5 var(--font-ui); }
+.savedDestination > span:first-of-type { min-width: 0; overflow-wrap: anywhere; }
+.savedDestination > span:last-child { margin-left: auto; color: var(--text-muted); white-space: nowrap; }
+.savedDestination strong { font-weight: 500; color: var(--text-primary); }

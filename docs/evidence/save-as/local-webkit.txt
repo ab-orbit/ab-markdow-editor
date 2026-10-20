@@ -1,0 +1,1 @@
+PASS (WebKit local): native-selection capability, cancellation, exact BOM/CRLF plus assets, subsequent saves, original/checkout preservation, restore/reload, external conflict backup and save-before-new without a Git commit.
