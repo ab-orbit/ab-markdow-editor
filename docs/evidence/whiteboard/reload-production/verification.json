@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-10-20T01:53:13.640Z",
+  "url": "https://scriba.aeonbridge.app/",
+  "version": "1.14.0",
+  "fakeClock": false,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 1440,
+      "height": 900,
+      "cancelPreservedDraft": true,
+      "confirmedReload": true,
+      "originalPreservedByReload": true,
+      "savedAfterReload": true
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 844,
+      "cancelPreservedDraft": true,
+      "confirmedReload": true,
+      "originalPreservedByReload": true,
+      "savedAfterReload": true
+    },
+    {
+      "engine": "webkit",
+      "width": 1440,
+      "height": 900,
+      "cancelPreservedDraft": true,
+      "confirmedReload": true,
+      "originalPreservedByReload": true,
+      "savedAfterReload": true
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 844,
+      "cancelPreservedDraft": true,
+      "confirmedReload": true,
+      "originalPreservedByReload": true,
+      "savedAfterReload": true
+    }
+  ]
+}

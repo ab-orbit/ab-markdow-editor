@@ -2,7 +2,7 @@
 
 Production: https://scriba.aeonbridge.app/
 
-The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves `dist/` and proxies `/github/` to the isolated synchronization gateway. No local filesystem API or server Git checkout is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups; no cross-device synchronization is implemented.
+The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves `dist/` and proxies `/github/` to the isolated synchronization gateway. No local filesystem API or server Git checkout is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups or configure the optional GitHub destination for file synchronization between devices.
 
 The default local build (`npm run build`, `./install.sh`) retains the local Git backend. The public/mobile app offers a separate GitHub gateway; see [GitHub operations](GITHUB.md). Google Drive remains planned.
 
@@ -15,6 +15,8 @@ Deploy only built static files. Do not copy application state, notes, credential
 ## Verification
 
 `node tests/public-production.smoke.mjs` exercises the HTTPS origin in Chrome: editing, save/reload, private browser-context isolation, offline save, no API requests, and mobile overflow. Override `SCRIBA_URL` to test another origin.
+
+The 1.14.0 release adds the whole-workspace **Nota | Whiteboard** presentation and retains the 1.13.1 confirmed-reload fix. [Release evidence](evidence/whiteboard/README.md) records the public build hash, activated release, browser journeys, local Git checks and Mac installation verification.
 
 ## Optional device folder
 

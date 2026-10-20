@@ -4,6 +4,14 @@ O seletor **Nota | Whiteboard** abre um canvas infinito na própria área de tra
 
 Os desenhos usam o salvamento, os rascunhos e o destino já configurados. A barra do whiteboard importa `.excalidraw` e exporta SVG, PNG transparente ou uma cena editável. Trocar de formato, navegar ou mover o canvas não reescreve a nota. Arquivos apenas com quadros abrem diretamente como whiteboard.
 
+## Produção
+
+Publicado em https://scriba.aeonbridge.app/ como **1.14.0**, commit `00d4f0b`. O HTML público corresponde byte a byte ao build validado. Release: `/var/www/scriba/releases/20261020T015237Z-public-1.14.0`.
+
+Jornadas completas do whiteboard passaram no site público em [Chrome](whiteboard-production-chromium.txt) e [WebKit](whiteboard-production-webkit.txt). A confirmação de recarga passou em [quatro jornadas de produção](reload-production/verification.json), cobrindo cancelar, confirmar, preservar a origem e salvar novamente.
+
+O aplicativo `/Applications/Scriba.app` também está na versão **1.14.0**, com backup prévio, assinatura verificada e build local confirmado pelo serviço em execução.
+
 ## Validação
 
 - [Chrome](whiteboard-chromium.txt) e [WebKit](whiteboard-webkit.txt): desenho, texto por teclado/toque, salvamento com texto ativo, dois quadros, recarga, exportação e importação tardia após abrir outro arquivo. Ambos os temas, desktop, celular e tablet nas duas orientações.

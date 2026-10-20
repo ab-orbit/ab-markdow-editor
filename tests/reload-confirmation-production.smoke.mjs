@@ -4,7 +4,7 @@ import { promises as fs } from 'node:fs';
 
 // Synthetic notes live only in fresh browser contexts. No account, user checkout or OS picker is used.
 const url = process.env.SCRIBA_URL || 'https://scriba.aeonbridge.app/';
-const evidence = new URL('../docs/evidence/reload-confirmation/', import.meta.url);
+const evidence = new URL(process.env.SCRIBA_EVIDENCE_DIR || '../docs/evidence/reload-confirmation/', import.meta.url);
 const results = [];
 await fs.mkdir(evidence, { recursive: true });
 for (const engine of ['chromium', 'webkit']) {

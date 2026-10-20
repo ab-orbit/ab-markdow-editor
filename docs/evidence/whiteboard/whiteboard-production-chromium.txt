@@ -1,0 +1,1 @@
+PASS (Chromium): workspace canvas, drawing/text input, active-text keyboard/button saves, multiple boards, exact source preservation, format switching, pan without writes, reload and phone/tablet/desktop in both themes/orientations.

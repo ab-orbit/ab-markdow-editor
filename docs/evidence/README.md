@@ -2,6 +2,10 @@
 
 As jornadas usam repositórios Git e remotos temporários. Nenhum documento do Lab é alterado.
 
+## Nota e Whiteboard — 1.14.0
+
+Veja as [capturas e verificações do canvas infinito](whiteboard/README.md), incluindo ambos os temas, toque, celular/tablet nas duas orientações, Git real e confirmação de recarga em produção.
+
 ## Desktop — 1440 × 900
 
 Documento salvo no repositório, reaberto com imagem e exibido no modo Ler, após commit e push.

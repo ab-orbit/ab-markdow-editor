@@ -1,6 +1,6 @@
 {
   "version": "1.14.0",
-  "checkedAt": "2026-10-20T01:52:09.235Z",
+  "checkedAt": "2026-10-20T01:53:58.074Z",
   "publicHtmlSha256": "7fb9536e82f705d8716795635c9d0cec71b457b448a1c24d297a7da209c817c2",
   "publicServiceWorker": "ab-markdown-shell-540a71194ca89f4f",
   "publicAssets": 479,
@@ -66,5 +66,38 @@
   ],
   "touchInput": true,
   "physicalIosDevice": false,
-  "production": null
+  "production": {
+    "checkedAt": "2026-10-20T01:52:52.718Z",
+    "url": "https://scriba.aeonbridge.app/",
+    "version": "1.14.0",
+    "commit": "00d4f0b",
+    "release": "/var/www/scriba/releases/20261020T015237Z-public-1.14.0",
+    "previous": "/var/www/scriba/releases/20261020T012238Z-public-1.13.1",
+    "status": 200,
+    "expectedHtml": true,
+    "sha256": "7fb9536e82f705d8716795635c9d0cec71b457b448a1c24d297a7da209c817c2",
+    "browserChecks": [
+      {
+        "name": "whiteboard-production-chromium",
+        "passed": true
+      },
+      {
+        "name": "whiteboard-production-webkit",
+        "passed": true
+      },
+      {
+        "name": "reload-production",
+        "passed": true
+      }
+    ],
+    "confirmedReloadJourneys": 4
+  },
+  "mac": {
+    "version": "1.14.0",
+    "app": "/Applications/Scriba.app",
+    "health": true,
+    "signature": true,
+    "expectedBuild": true,
+    "backupCreated": true
+  }
 }
