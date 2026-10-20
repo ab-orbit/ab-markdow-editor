@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useId, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
-import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X, ListTree, PenTool, Plus, Save } from 'lucide-react';
+import { Download, FileUp, FileText, FileDown, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X, ListTree, PenTool, Plus, Save } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -31,6 +31,10 @@ export interface MarkdownWorkbenchHandle {
   openFile: (reloadOriginal?: boolean) => void;
   /** File/package operations must finish before the host saves or closes the note. */
   isBusy: () => boolean;
+  /** Commit active canvas text before the host decides whether a new note needs confirmation. */
+  flushInput: () => Promise<boolean>;
+  /** Place the caret in a newly created source note without changing its content. */
+  focus: () => void;
 }
 export interface MarkdownWorkbenchProps {
   /** Storage destination and filename namespace diagram presentation preferences. */
@@ -130,8 +134,22 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     if (readOnly || busy) return;
     reloadImport.current = reloadOriginal;setError('');input.current?.click();
   }
-  useImperativeHandle(ref, () => ({openFile: chooseFile, isBusy: () => busy || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]')}));
+  useImperativeHandle(ref, () => ({
+    openFile: chooseFile,
+    isBusy: () => busy || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]'),
+    flushInput: async () => {
+      if (readOnly || busy || document.querySelector('dialog[open]')) return false;
+      if (mode === 'whiteboard') return whiteboard.current ? whiteboard.current.flush() : false;
+      return true;
+    },
+    focus: () => editor.current?.revealPosition(0, true),
+  }));
   const { assets, replace: replaceAssets, append: appendAssets } = useMarkdownAssets();
+  const pdfOperation = useRef<AbortController | null>(null);
+  const [pdfProgress, setPdfProgress] = useState('');
+  const exportInput = useRef({ value, assets, fileName, diagramScope, busy, readOnly });
+  exportInput.current = { value, assets, fileName, diagramScope, busy, readOnly };
+  useEffect(() => () => pdfOperation.current?.abort(), []);
   useEffect(() => { if (initialAssets) replaceAssets(initialAssets); }, []);
   useEffect(() => { onAssetsChange?.(assets); }, [assets, onAssetsChange]);
   useEffect(() => { if (saveRevision) setBaseline(value); }, [saveRevision]);
@@ -203,6 +221,28 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       downloadBlob(new Blob([Uint8Array.from(bytes)], { type: 'application/zip' }), `${fileName.replace(/\.[^.]+$/, '') || 'documento'}.zip`);
     } catch { setError('Não foi possível preparar o pacote.'); }
     finally { setBusy(false); }
+  }
+
+  async function exportPdf() {
+    if (busy || pdfOperation.current) return;
+    const operation = new AbortController(), original = documentContext.current;
+    pdfOperation.current = operation;
+    let ownsBusy = false;
+    try {
+      if (mode === 'whiteboard' && !await whiteboard.current?.flush()) return;
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+      if (!sameDocument(original) || exportInput.current.busy || operation.signal.aborted) return;
+      const snapshot = exportInput.current;
+      ownsBusy = true; setBusy(true); setError(''); setPdfProgress('Preparando PDF…');
+      const { createMarkdownPdf } = await import('@/lib/markdown/pdf');
+      const blob = await createMarkdownPdf({ ...snapshot, signal: operation.signal, onProgress: setPdfProgress });
+      if (!operation.signal.aborted && sameDocument(original)) downloadBlob(blob, `${snapshot.fileName.split(/[\\/]/).at(-1)?.replace(/\.[^.]+$/, '') || 'documento'}.pdf`);
+    } catch (cause) {
+      if (mounted.current && !operation.signal.aborted) setError(cause instanceof Error ? cause.message : 'Não foi possível exportar o PDF.');
+    } finally {
+      if (pdfOperation.current === operation) pdfOperation.current = null;
+      if (mounted.current && ownsBusy) { setBusy(false); setPdfProgress(''); }
+    }
   }
 
   function editBlock(range:SourceRange) {
@@ -353,9 +393,10 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
         <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={() => chooseFile()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
+        <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Exportar PDF" title="Exportar PDF" onClick={() => void exportPdf()}><FileDown size={15} aria-hidden="true"/><span className={styles.actionLabel}>Exportar PDF</span></button>
         {compact && <details className={styles.exportMenu} onKeyDown={event => {if(event.key==='Escape'&&event.currentTarget.open){event.preventDefault();event.stopPropagation();event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>
           <summary aria-label="Exportar nota" title="Exportar nota"><Download size={18} aria-hidden="true"/></summary>
-          <div role="group" aria-label="Exportar nota"><button type="button" onClick={event => {downloadMarkdown(value,fileName);event.currentTarget.closest('details')?.removeAttribute('open');}}><Download size={16} aria-hidden="true"/>Baixar .md</button><button type="button" disabled={busy} onClick={event => {void downloadPackage();event.currentTarget.closest('details')?.removeAttribute('open');}}><Package size={16} aria-hidden="true"/>Baixar pacote</button></div>
+          <div role="group" aria-label="Exportar nota"><button type="button" onClick={event => {downloadMarkdown(value,fileName);event.currentTarget.closest('details')?.removeAttribute('open');}}><Download size={16} aria-hidden="true"/>Baixar .md</button><button type="button" disabled={busy} onClick={event => {void downloadPackage();event.currentTarget.closest('details')?.removeAttribute('open');}}><Package size={16} aria-hidden="true"/>Baixar pacote</button><button type="button" disabled={busy} onClick={event => {void exportPdf();event.currentTarget.closest('details')?.removeAttribute('open');}}><FileDown size={16} aria-hidden="true"/>Exportar PDF</button></div>
         </details>}
         {compact && mode !== 'whiteboard' && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} title="Formatação" aria-expanded={formattingOpen} onClick={() => setFormattingOpen(open => !open)}><Type size={18}/></button>}
         {actions}
@@ -366,6 +407,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     {sourceStatus}
     {mode !== 'whiteboard' && (!compact || formattingOpen) && <EditingToolbar onExcalidraw={insertDrawing} onEditBlock={readingEditable ? undefined : toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(readingEditable ? visualEditor.current?.selectedText() || '' : value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
+    {pdfProgress && <div className={styles.pdfProgress} role="status"><span>{pdfProgress}</span><button type="button" onClick={() => pdfOperation.current?.abort()}>Cancelar exportação</button></div>}
     {mode !== 'whiteboard' && assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
     {mode !== 'whiteboard' && <div className={styles.modeHint}>{readingEditable ? 'Edite diretamente no texto. A formatação permanece visível; Concluir volta à leitura.' : mode === 'live' ? 'Markdown do bloco em edição. Escape volta à leitura.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Use Editar para escrever diretamente no texto.'}</div>}
     <div className={styles.documentArea}>

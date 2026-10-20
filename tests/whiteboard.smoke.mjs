@@ -116,6 +116,7 @@ try {
   assert.equal(await downloadNote(), '# Outra nota\n\nImportação anterior não pode alterar este arquivo.');
   if (!await page.getByRole('button', { name: 'Nova nota', exact: true }).isVisible()) await page.getByRole('button', { name: 'Mostrar notas recentes', exact: true }).click();
   await page.getByRole('button', { name: 'Nova nota', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Salvar antes de criar uma nova nota?', exact: true }).getByRole('button', { name: 'Descartar e criar', exact: true }).click();
   await formats.getByRole('button', { name: 'Whiteboard', exact: true }).click(); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready');
   await page.getByRole('button', { name: 'Salvar nota', exact: true }).click(); await expect(page.getByLabel('Documento alterado')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'documento.md', exact: true })).toContainText('Whiteboard · quadro editável');

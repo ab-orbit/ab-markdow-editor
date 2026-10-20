@@ -88,6 +88,7 @@ Revelar marcadores altera só a apresentação. O texto continua sob o mesmo his
 
 ## Atalhos para arquivos
 
+- **⌘⇧Enter** cria uma nova nota com foco no texto. Com alterações ou sincronização pendente, oferece **Salvar e criar**, **Descartar e criar** e **Cancelar**. O botão **Nova nota** usa o mesmo fluxo. No Windows/Linux, use **Ctrl+Shift+Enter**.
 - **⌘O** abre o seletor de Markdown/ZIP do sistema. O arquivo abre em **Ler**.
 - **⌘S** salva no destino ativo e mantém o fluxo de commit/push e a preferência de mensagem de commit.
 - **⌘W**, quando o navegador entrega esse atalho ao Scriba, fecha a nota atual. Com alterações ou sincronização pendente, oferece **Salvar e fechar**, **Fechar sem salvar** e **Cancelar**. O **× ao lado do nome do arquivo** executa a mesma ação e está sempre disponível na barra da nota. No celular, expanda **Mais opções da nota** para exibir a barra.
@@ -101,6 +102,8 @@ Salvar e fechar aguarda a gravação e a sincronização completas. Cancelar a m
 Depois de configurar o repositório, a tela mostra somente o editor. A engrenagem abre uma página de configurações com o destino e as preferências de salvamento. O botão de salvar na barra e o atalho **⌘S** gravam o documento sem abrir as configurações. O botão Editor volta ao documento preservando o texto e o histórico de edição.
 
 Mantém os modos **Escrever**, **Fonte**, **Visão** e **Ler**, formatação, desfazer/refazer, tabelas editáveis, tarefas, referências, imagens por seleção/colagem/arrastar, importação de Markdown/ZIP/Bear e exportação `.md`/ZIP. Imagens inseridas são gravadas na pasta `assets/` ao lado do documento; imagens remotas não são buscadas automaticamente. Os temas claro e escuro usam uma cópia dos tokens do app original.
+
+**Exportar PDF** gera um arquivo A4 no próprio dispositivo, com texto selecionável, títulos, listas, referências, tabelas zebradas, imagens anexadas e diagramas em alta resolução. O rodapé de cada página inclui a logo e **scriba markdown editor - powered by Aeon Bridge Co.**, com a numeração à direita. A exportação usa papel claro independentemente do tema da tela; não salva nem sincroniza a nota. No celular, abra **Mais opções da nota → Exportar nota → Exportar PDF**. A preparação mostra o progresso e pode ser cancelada. O processamento das páginas fica em um worker carregado somente ao exportar; os recursos entram no cache offline da PWA. [Evidências](docs/evidence/pdf/README.md).
 
 O rodapé mostra palavras e caracteres totais. Ao selecionar texto, acrescenta **N selecionados**, incluindo espaços e quebras de linha. Na leitura e edição visual, conta o texto exibido; em Fonte e no editor de bloco, conta o Markdown selecionado. A contagem desaparece ao desfazer a seleção. No celular em leitura, a barra aparece durante a seleção. Veja a [validação com capturas](docs/evidence/SELECTION-STATISTICS.md).
 

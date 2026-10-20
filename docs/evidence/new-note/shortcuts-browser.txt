@@ -1,0 +1,1 @@
+PASS (Chromium public bundle): Meta+O/S and renderer-delivered Meta+W, private save-and-close/reopen, discard preserves saved file, closed state survives reload, autosave pauses during confirmation and resumes after cancel.

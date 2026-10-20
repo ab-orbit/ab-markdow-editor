@@ -53,6 +53,7 @@ interface RepositoryInfo {
   /** Last local checkout remains available after disconnecting, without automatic writes. */
   previousRepository?: string | null;
 }
+type DocumentAction = 'close' | 'new';
 interface SavePreferences {
   /** Ask for a commit note before each manual or scheduled save. */
   askCommitNote: boolean;
@@ -216,9 +217,10 @@ function App() {
   const [selected, setSelected] = useState('');
   const workbenchRef = useRef<MarkdownWorkbenchHandle>(null);
   const [documentClosed, setDocumentClosed] = useState(false);
-  const [closeConfirmationOpen, setCloseConfirmationOpen] = useState(false);
-  const [closeAfterCommit, setCloseAfterCommit] = useState(false);
+  const [documentConfirmation, setDocumentConfirmation] = useState<DocumentAction | null>(null);
+  const [afterCommitAction, setAfterCommitAction] = useState<DocumentAction | null>(null);
   const closingDocument = useRef(false);
+  const preparingNewNote = useRef(false), focusNewNote = useRef(false);
   const emptyTitle = useRef<HTMLHeadingElement>(null);
   useEffect(() => { if (documentClosed) emptyTitle.current?.focus(); }, [documentClosed]);
   const [name, setName] = useState('documento.md');
@@ -257,6 +259,11 @@ function App() {
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (!focusNewNote.current || !draftReady || busy || documentClosed || settingsOpen) return;
+    const frame = requestAnimationFrame(() => { workbenchRef.current?.focus(); focusNewNote.current = false; });
+    return () => cancelAnimationFrame(frame);
+  }, [documentId, draftReady, busy, documentClosed, settingsOpen]);
   const [theme, setTheme] = useState(() => localStorage.getItem('ab-markdown-theme') || 'dark');
   const assetsDirty = assetIdentity(assets) !== baselineAssets;
   const dirty = value !== baseline || name !== loadedName || assetsDirty;
@@ -398,23 +405,25 @@ function App() {
     setValue(text); setBaseline(text);setBaselineAssets(assetIdentity(attached)); setName(fileName); setLoadedName(fileName); setVersion(hash);
     setImportedVersion(null); setConflict(null); setPendingSync(false); setAutoSavePaused(false); restoringAssets.current = attached.length > 0; setAssets(attached.map(asset => ({...asset,url:''}))); setInitialAssets(attached); setDocumentId(id => id + 1); setSaveRevision(0);
   }
-  async function closeDocument() {
+  async function finishDocument(action: DocumentAction) {
     if (closingDocument.current) return;
     closingDocument.current = true;
     const ownsLock = !operationLock.current;
     if (ownsLock) {operationLock.current = true;setBusy(true);}
     const previous = latestDraft.current;
-    // Commit the closed state before exposing it, so an immediate reload cannot resurrect a discarded note.
-    const snapshot: DraftSnapshot = {id:draftId,documentClosed:true,repository,name:'documento.md',loadedName:'documento.md',value:'',baseline:'',version:null,importedVersion:null,pendingSync:false,assets:[],preferences,updatedAt:Date.now()};
+    // Persist the replacement before exposing it, so an immediate reload cannot resurrect a discarded note.
+    const snapshot: DraftSnapshot = {id:draftId,documentClosed:action === 'close',repository,name:'documento.md',loadedName:'documento.md',value:'',baseline:'',version:null,importedVersion:null,pendingSync:false,assets:[],preferences,updatedAt:Date.now()};
     latestDraft.current = snapshot;
     try {
       await persistDraft(snapshot);
       // Closing a note never deletes its saved file. Only this tab's working copy is reset.
-      resetDocument(); setDocumentClosed(true); setSelected(''); setCloseConfirmationOpen(false);
-      setCloseAfterCommit(false); setNotice('Nota fechada.');
+      focusNewNote.current = action === 'new';
+      resetDocument(); setDocumentClosed(action === 'close'); setSelected(''); setDocumentConfirmation(null);
+      if (action === 'new' && window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false);
+      setAfterCommitAction(null); setNotice(action === 'close' ? 'Nota fechada.' : 'Nova nota criada.');
     } catch {
       latestDraft.current = previous;
-      setCloseConfirmationOpen(false);setError('Não foi possível registrar o fechamento no navegador. A nota continua aberta; tente novamente.');
+      setDocumentConfirmation(null);setError('Não foi possível registrar a troca de nota no navegador. A nota atual continua aberta; tente novamente.');
     } finally {
       closingDocument.current = false;
       if (ownsLock) {operationLock.current = false;setBusy(false);}
@@ -423,7 +432,7 @@ function App() {
   function requestClose() {
     if (!draftReady || documentClosed || operationLock.current || busy || workbenchRef.current?.isBusy() || sourceReload.reloading || document.querySelector('dialog[open]')) return;
     setSettingsOpen(false);
-    if (dirty || pendingSync) setCloseConfirmationOpen(true); else void closeDocument();
+    if (dirty || pendingSync) setDocumentConfirmation('close'); else void finishDocument('close');
   }
   function requestOpen() {
     if (!draftReady || operationLock.current || busy || sourceReload.reloading || document.querySelector('dialog[open]')) return;
@@ -457,7 +466,7 @@ function App() {
   const sourceReload = useDocumentReload<LoadedDocument>({
     identity: JSON.stringify([sourceScope,deviceFolder,loadedName,version,documentId,finderSourceId]),
     enabled: draftReady && !documentClosed && name === loadedName && !autoSavePaused && (!!finderSourceId || !!version && !!repository.repository && sourceScope === openedScope),
-    blocked: busy || settingsOpen || commitNoteOpen || closeConfirmationOpen || !!conflict || aboutOpen,
+    blocked: busy || settingsOpen || commitNoteOpen || !!documentConfirmation || !!conflict || aboutOpen,
     isBlocked: () => !!document.querySelector('dialog[open]') || !!workbenchRef.current?.isBusy(),
     dirty, pending: pendingSync && !finderSourceId,
     version: finderSourceId ? importedVersion?.version || null : version,
@@ -476,6 +485,21 @@ function App() {
       void api<NoteLibrary>('library').then(library=>{setRecentNotes(library.recent);setPinnedNotes(library.pinned);}).catch(()=>{});
     },
   });
+  const newNoteState = useRef({ id: documentId, name, scope: sourceScope, needsSave: dirty || pendingSync, blocked: true });
+  newNoteState.current = { id: documentId, name, scope: sourceScope, needsSave: !documentClosed && (dirty || pendingSync), blocked: !draftReady || busy || settingsOpen || commitNoteOpen || !!documentConfirmation || !!conflict || aboutOpen || sourceReload.reloading || sourceReload.manualLock || sourceReload.confirmation };
+  async function requestNewNote() {
+    const original = newNoteState.current;
+    if (original.blocked || operationLock.current || preparingNewNote.current || document.querySelector('dialog[open]')) return;
+    preparingNewNote.current = true;
+    try {
+      if (!documentClosed && !await workbenchRef.current?.flushInput()) return;
+      // Canvas text can publish a new source while blurring. Read the committed host state next frame.
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+      const current = newNoteState.current;
+      if (current.id !== original.id || current.name !== original.name || current.scope !== original.scope || current.blocked || operationLock.current || workbenchRef.current?.isBusy() || document.querySelector('dialog[open]')) return;
+      if (current.needsSave) setDocumentConfirmation('new'); else await finishDocument('new');
+    } finally { preparingNewNote.current = false; }
+  }
   async function registerImport(source: string, fileName: string, reloaded = false) {
     await run(async () => {
       const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
@@ -515,21 +539,21 @@ function App() {
       setCommitTarget('repository'); setCommitNote(''); setCommitNoteOpen(true);
     } else void run(() => syncRepository('Synchronize local notes'));
   }
-  function requestSave(automatic = false, closeAfterSave = false) {
+  function requestSave(automatic = false, afterSave: DocumentAction | null = null) {
     if (!draftReady || documentClosed || operationLock.current || busy || workbenchRef.current?.isBusy() || sourceReload.reloading || sourceReload.confirmation || commitNoteOpen || conflict || !repository.repository) return;
-    setCloseConfirmationOpen(false);
+    setDocumentConfirmation(null);
     if (preferences.askCommitNote) {
-      setCloseAfterCommit(closeAfterSave);setCommitTarget('document'); setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
-    } else void saveDocument(`${automatic ? 'Auto-save' : 'Update'} ${name}`, closeAfterSave);
+      setAfterCommitAction(afterSave);setCommitTarget('document'); setCommitNote(''); setSettingsOpen(false); setCommitNoteOpen(true);
+    } else void saveDocument(`${automatic ? 'Auto-save' : 'Update'} ${name}`, afterSave);
   }
-  async function saveDocument(message: string, closeAfterSave = false) {
+  async function saveDocument(message: string, afterSave: DocumentAction | null = null) {
     await run(async () => {
       const synced = await save(message);
       // Failed writes, conflicts and pending pushes keep the document open for recovery.
-      if (synced && closeAfterSave) await closeDocument();
+      if (synced && afterSave) await finishDocument(afterSave);
     });
   }
-  const canAutoSave = draftReady && !documentClosed && !closeConfirmationOpen && !autoSavePaused && !sourceReload.change && !sourceReload.confirmation && !sourceReload.reloading && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict;
+  const canAutoSave = draftReady && !documentClosed && !documentConfirmation && !autoSavePaused && !sourceReload.change && !sourceReload.confirmation && !sourceReload.reloading && (!offline || browserMode) && (dirty || pendingSync) && !busy && !settingsOpen && !commitNoteOpen && !conflict;
   autoSaveCommit.current = () => {
     if (canAutoSave) requestSave(true);
   };
@@ -548,6 +572,16 @@ function App() {
     const timeout = window.setTimeout(() => setNotice(''), 4500);
     return () => window.clearTimeout(timeout);
   }, [notice]);
+  useEffect(() => {
+    const newShortcut = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.isComposing || event.altKey || !event.shiftKey || !(event.metaKey || event.ctrlKey) || event.key !== 'Enter') return;
+      // Capture before CodeMirror, natural editing or Excalidraw consumes the Enter combination.
+      event.preventDefault(); event.stopPropagation();
+      if (!event.repeat && !settingsOpen && !document.querySelector('dialog[open]')) void requestNewNote();
+    };
+    window.addEventListener('keydown', newShortcut, true);
+    return () => window.removeEventListener('keydown', newShortcut, true);
+  });
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing || event.altKey || event.shiftKey || !(event.metaKey || event.ctrlKey)) return;
@@ -613,16 +647,16 @@ function App() {
       </form>
       <button type="button" disabled={busy} onClick={() => void run(() => save(lastSaveNote.current, {name: conflict.name, version: conflict.currentVersion, backupBeforeReplace: true}))}>Substituir arquivo existente</button>
     </EditorDialog>}
-    {closeConfirmationOpen && <EditorDialog title="Salvar antes de fechar?" className="close-document-dialog" onClose={() => setCloseConfirmationOpen(false)}>
+    {documentConfirmation && <EditorDialog title={documentConfirmation === 'new' ? 'Salvar antes de criar uma nova nota?' : 'Salvar antes de fechar?'} className="close-document-dialog" onClose={() => setDocumentConfirmation(null)}>
       <p><strong>{name}</strong> tem {dirty ? 'alterações não salvas' : 'uma sincronização pendente'}.</p>
-      <p>Salvar e fechar conclui o salvamento no destino configurado{!browserMode || githubSelection() ? ', incluindo commit e envio ao repositório' : ''}. Fechar sem salvar descarta o rascunho desta aba; o arquivo já salvo é preservado.</p>
+      <p>{documentConfirmation === 'new' ? 'Salvar e criar' : 'Salvar e fechar'} conclui o salvamento no destino configurado{!browserMode || githubSelection() ? ', incluindo commit e envio ao repositório' : ''}. {documentConfirmation === 'new' ? 'Descartar e criar' : 'Fechar sem salvar'} descarta o rascunho desta aba; o arquivo já salvo é preservado.</p>
       {!repository.repository && <p>Conecte um destino nas configurações para salvar. Você também pode cancelar e baixar a nota pela barra de ferramentas.</p>}
-      <footer><button type="button" autoFocus onClick={() => setCloseConfirmationOpen(false)}>Cancelar</button><button type="button" onClick={closeDocument}>Fechar sem salvar</button><button type="button" className="primary" disabled={!repository.repository} onClick={() => requestSave(false, true)}><Save size={16} aria-hidden="true"/>Salvar e fechar</button></footer>
+      <footer><button type="button" autoFocus onClick={() => setDocumentConfirmation(null)}>Cancelar</button><button type="button" onClick={() => void finishDocument(documentConfirmation)}>{documentConfirmation === 'new' ? 'Descartar e criar' : 'Fechar sem salvar'}</button><button type="button" className="primary" disabled={!repository.repository} onClick={() => requestSave(false, documentConfirmation)}><Save size={16} aria-hidden="true"/>{documentConfirmation === 'new' ? 'Salvar e criar' : 'Salvar e fechar'}</button></footer>
     </EditorDialog>}
-    {commitNoteOpen && <EditorDialog title="Nota do commit" onClose={() => {setCommitNoteOpen(false);setCloseAfterCommit(false);}}>
-      <form onSubmit={event => { event.preventDefault(); if (!commitNote.trim()) return; setCommitNoteOpen(false); setCloseAfterCommit(false); if(commitTarget === 'repository')void run(() => syncRepository(commitNote.trim()));else void saveDocument(commitNote.trim(), closeAfterCommit); }}>
+    {commitNoteOpen && <EditorDialog title="Nota do commit" onClose={() => {setCommitNoteOpen(false);setAfterCommitAction(null);}}>
+      <form onSubmit={event => { event.preventDefault(); if (!commitNote.trim()) return; setCommitNoteOpen(false); setAfterCommitAction(null); if(commitTarget === 'repository')void run(() => syncRepository(commitNote.trim()));else void saveDocument(commitNote.trim(), afterCommitAction); }}>
         <label>Nota do commit<textarea autoFocus required maxLength={1000} value={commitNote} onChange={event => setCommitNote(event.target.value)} placeholder="Descreva o que mudou"/></label>
-        <footer><button type="button" onClick={() => {setCommitNoteOpen(false);setCloseAfterCommit(false);}}>Cancelar</button><button type="submit" disabled={!commitNote.trim()}>{commitTarget === 'repository' ? 'Commit e push' : closeAfterCommit ? 'Salvar, sincronizar e fechar' : 'Salvar, commit e push'}</button></footer>
+        <footer><button type="button" onClick={() => {setCommitNoteOpen(false);setAfterCommitAction(null);}}>Cancelar</button><button type="submit" disabled={!commitNote.trim()}>{commitTarget === 'repository' ? 'Commit e push' : afterCommitAction === 'new' ? 'Salvar, sincronizar e criar' : afterCommitAction === 'close' ? 'Salvar, sincronizar e fechar' : 'Salvar, commit e push'}</button></footer>
       </form>
     </EditorDialog>}
     {sourceReload.confirmation && <EditorDialog title={reloadLabel} onClose={sourceReload.cancel}><p>Há edições ou uma sincronização pendente. Recarregar substitui a versão mantida neste editor pela versão da origem.</p><footer className="reload-confirmation"><button type="button" onClick={sourceReload.cancel}>Continuar editando</button><button type="button" onClick={event => {
@@ -636,7 +670,7 @@ function App() {
       <div className="notes-heading"><button type="button" className="about-trigger" aria-label="Sobre o Scriba" title="Sobre o Scriba" onClick={() => setAboutOpen(true)}><img className="notes-logo" src={brandIcon} width="24" height="24" alt=""/></button><div><h2>Notas recentes</h2><p>{query ? `${visibleNotes.length + visiblePinned.length} resultados` : `${recentNotes.length + pinnedNotes.length} notas`}</p></div><button type="button" className="close-notes" aria-label="Fechar lista de notas" onClick={() => setNotesOpen(false)}><X size={18}/></button><button type="button" aria-label="Atualizar notas recentes" disabled={busy || !repository.repository || (offline && !browserMode)} onClick={() => void run(async () => { await refresh(); })}><RefreshCw size={18}/></button></div>
       <label className="notes-search"><Search size={16} aria-hidden="true"/><input type="search" aria-label="Buscar nas notas recentes" placeholder="Buscar notas…" value={noteSearch} onChange={event => setNoteSearch(event.target.value)}/></label>
       {query && !visibleNotes.length && !visiblePinned.length && <p className="notes-empty">Nenhuma nota encontrada.</p>}
-      <button className="new-note" type="button" disabled={busy || !draftReady} onClick={() => { if (discard()) { resetDocument(); if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false); } }}><FilePlus2 size={18}/>Nova nota</button>
+      <button className="new-note" type="button" disabled={busy || !draftReady} aria-keyshortcuts="Meta+Shift+Enter Control+Shift+Enter" title="Nova nota (⌘⇧Enter / Ctrl+Shift+Enter)" onClick={() => void requestNewNote()}><FilePlus2 size={18}/>Nova nota</button>
       {!repository.repository && <p className="notes-empty">Conecte um repositório nas configurações para listar suas notas.</p>}
       {repository.repository && !recentNotes.length && !pinnedNotes.length && <p className="notes-empty">{offline ? 'Abra o aplicativo local para carregar a lista.' : 'Nenhuma nota Markdown encontrada.'}</p>}
       <nav aria-label="100 notas mais recentes">{noteGroups.map(group => <section className="note-group" key={group.label} aria-label={group.label}><h3>{group.label}</h3><ol>{group.notes.map(note => <li className="note-row" key={note.name} data-note={note.name}>
@@ -647,7 +681,7 @@ function App() {
     <fieldset disabled={!draftReady || busy || sourceReload.manualLock} className="editor-container">
     {documentClosed && <section className="empty-document" aria-label="Nenhuma nota aberta">
       <div className="empty-document-toolbar"><button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button><button type="button" aria-label={theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'} title="Alternar tema" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button><button type="button" aria-label="Configurações" title="Configurações" onClick={() => setSettingsOpen(true)}><Settings size={18}/></button></div>
-      <div className="empty-document-content"><img src={brandIcon} width="64" height="64" alt=""/><h1 ref={emptyTitle} tabIndex={-1}>Nenhuma nota aberta</h1><p>Escolha uma nota na lista, abra um arquivo ou comece uma nova.</p><div><button type="button" className="primary" aria-keyshortcuts="Meta+O Control+O" onClick={requestOpen}><FolderOpen size={18}/>Abrir arquivo <kbd>⌘O</kbd></button><button type="button" onClick={() => resetDocument()}><FilePlus2 size={18}/>Nova nota</button></div></div>
+      <div className="empty-document-content"><img src={brandIcon} width="64" height="64" alt=""/><h1 ref={emptyTitle} tabIndex={-1}>Nenhuma nota aberta</h1><p>Escolha uma nota na lista, abra um arquivo ou comece uma nova.</p><div><button type="button" className="primary" aria-keyshortcuts="Meta+O Control+O" onClick={requestOpen}><FolderOpen size={18}/>Abrir arquivo <kbd>⌘O</kbd></button><button type="button" aria-keyshortcuts="Meta+Shift+Enter Control+Shift+Enter" title="Nova nota (⌘⇧Enter / Ctrl+Shift+Enter)" onClick={() => void requestNewNote()}><FilePlus2 size={18}/>Nova nota <kbd>⌘⇧Enter</kbd></button></div></div>
     </section>}
     <div className="workbench-container" hidden={documentClosed}><MarkdownWorkbench ref={workbenchRef} diagramScope={`${repository.repository || "browser"}:${finderSourceId || name}`} warnBeforeUnload={false} onClose={requestClose} onSave={() => requestSave()} compact initialScrollTop={reloadScrollTop.current} initialMode={reloadMode || (version || importedVersion || finderSourceId ? 'read' : 'live')} doubleClickToEdit={preferences.doubleClickToEdit} onModeChange={reportMode} key={documentId} value={value} onChange={setValue} fileName={name} onFileNameChange={newName => { setDocumentClosed(false);setFinderSourceId(null);setName(newName); setVersion(null); setLoadedName(''); setImportedVersion(null); }} onImport={registerImport} initialAssets={initialAssets} onAssetsChange={handleAssets} saveRevision={saveRevision} readOnly={!draftReady || busy || sourceReload.manualLock} sourceStatus={sourceReload.change && <div className="source-change" role="status"><CircleAlert size={18} aria-hidden="true"/><span>{sourceReload.change.kind === 'deleted' ? 'O arquivo foi removido da origem. Seu texto continua no editor.' : sourceReload.change.kind === 'error' ? `Não foi possível recarregar: ${sourceReload.change.message}` : dirty || pendingSync ? 'A nota mudou fora do Scriba. Suas edições foram mantidas.' : sourceReload.reloading ? 'Carregando atualização da origem…' : 'Há uma versão mais recente na origem.'}</span>{sourceReload.change.kind !== 'deleted' && <button type="button" disabled={sourceReload.reloading} onClick={sourceReload.request}>{reloadLabel}</button>}</div>} actions={<>
       <button type="button" aria-controls="recent-notes" aria-expanded={notesOpen} aria-label={notesOpen ? 'Ocultar notas recentes' : 'Mostrar notas recentes'} title="Notas recentes" onClick={() => setNotesOpen(open => !open)}><PanelLeft size={18}/></button>

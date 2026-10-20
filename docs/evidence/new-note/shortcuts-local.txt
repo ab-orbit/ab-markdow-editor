@@ -1,0 +1,12 @@
+Checking open/import/save shortcuts.
+Save request sent.
+Checking empty workspace restoration.
+Checking close confirmation and browser navigation guard.
+Save request sent.
+Save request sent.
+Save request sent.
+Save request sent.
+Save request sent.
+Save request sent.
+Save request sent.
+PASS (Chromium): native file chooser via Meta+O; save/commit/push via Meta+S; renderer-delivered Meta+W and toolbar close; cancel/discard/save; commit-note cancellation and intent reset; failed-push recovery; no duplicate writes; conflict protection; closed workspace restoration; phone/tablet layouts. Physical browser-reserved shortcuts are outside the renderer test.

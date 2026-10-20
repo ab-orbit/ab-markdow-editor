@@ -169,6 +169,8 @@
 .toolbar .formats button[aria-pressed="true"] { color: var(--cyan); border-color: var(--border-strong); background: var(--bg-elevated); }
 .documentArea > .pages[hidden] { display: none; }
 .whiteboardLoading { flex: 1; min-width: 0; padding: 24px; color: var(--text-muted); font: 14px/1.6 var(--font-ui); }
+.pdfProgress { display: flex; flex: 0 0 auto; justify-content: space-between; align-items: center; gap: 12px; padding: 6px 12px; border-bottom: 1px solid var(--border-panel); color: var(--text-secondary); background: var(--bg-surface); font: 13px/1.5 var(--font-ui); }
+.pdfProgress button { min-height: 44px; padding: 6px 10px; color: var(--text-primary); background: var(--bg-elevated); font: inherit; }
 .boardPicker { display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; font: inherit; }
 .boardPicker select { min-width: 54px; max-width: 220px; min-height: 36px; padding: 4px 8px; border: 1px solid var(--border-panel); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-primary); font: inherit; }
 .boardPicker select:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }

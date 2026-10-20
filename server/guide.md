@@ -9,17 +9,18 @@ Um espaço local para escrever, organizar e versionar notas Markdown no seu pró
 1. Abra as configurações pela engrenagem e selecione a pasta de um repositório Git, ou clone um repositório com suas credenciais locais.
 2. Escolha uma nota na lateral ou crie uma nova. Use a busca para filtrar as notas por título, trecho e caminho.
 3. Salve pelo botão de disquete ou por ⌘S. O editor grava o Markdown e as imagens, cria um commit e faz push com as credenciais do seu Mac.
+4. Use ⌘⇧Enter para uma nova nota. Havendo alterações pendentes, escolha salvar, descartar ou cancelar. No Windows/Linux, use Ctrl+Shift+Enter.
 
 ## Funcionalidades disponíveis
 
 - Editor Markdown com modos Escrever, Fonte, Visão e Ler.
 - Formatação pelo botão T, atalhos, tabelas, listas, links, imagens e referências.
-- Importação de Markdown, ZIP e pacotes Bear; exportação de Markdown ou ZIP com imagens.
+- Importação de Markdown, ZIP e pacotes Bear; exportação de Markdown, ZIP com imagens ou PDF com o conteúdo formatado e a marca discreta do Scriba no rodapé.
 - Até 100 notas recentes agrupadas por período, datas curtas e busca sem diferenciação de acentos.
 - Notas fixadas no topo. Use o alfinete de cada nota para fixar ou desafixar; esta é a primeira nota fixada por padrão.
 - Salvamento com commit/push automático, nota de commit opcional e salvamento periódico configurável (intervalo padrão de 1 minuto).
 - Rascunhos e imagens preservados no navegador e disponíveis offline após o primeiro carregamento.
-- Temas claro e escuro, alteráveis em Configurações → Aparência.
+- Temas claro e escuro, alteráveis pelo ícone de tema na barra de ferramentas.
 - Resolução de conflitos com cópia de recuperação e backup antes de substituir versões externas.
 
 ## Onde seus dados ficam

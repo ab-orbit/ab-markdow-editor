@@ -3,7 +3,7 @@ import { downloadBlob } from './files';
 const vectorStyles = ['fill', 'fill-opacity', 'fill-rule', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stop-color', 'stop-opacity', 'color', 'opacity', 'font-family', 'font-size', 'font-weight', 'font-style', 'font-variant', 'letter-spacing', 'text-anchor', 'dominant-baseline', 'alignment-baseline', 'text-decoration', 'text-transform', 'white-space', 'paint-order', 'visibility', 'display', 'marker-start', 'marker-mid', 'marker-end', 'clip-path', 'mask', 'filter'];
 
 /** Freeze the selected renderer's resolved styles so exported SVG works outside Scriba. */
-function portableSvg(original: SVGSVGElement, fontFaceCss = ''): { source: string; width: number; height: number } {
+export function portableSvg(original: SVGSVGElement, fontFaceCss = ''): { source: string; width: number; height: number } {
   const clone = original.cloneNode(true) as SVGSVGElement;
   const before = [original, ...original.querySelectorAll<SVGElement>('*')], after = [clone, ...clone.querySelectorAll<SVGElement>('*')];
   before.forEach((element, index) => {

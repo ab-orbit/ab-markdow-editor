@@ -1,0 +1,1 @@
+PASS: save/commit/push before new note, failed push retains the document, pending-sync retry, commit-message cancel/reset/success, focused blank note and external-file conflict protection.

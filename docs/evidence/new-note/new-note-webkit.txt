@@ -1,0 +1,1 @@
+PASS (WebKit): Meta/Control+Shift+Enter, cancellation, discard, successful private save before creating, focused blank note, natural/source/canvas input, settings guard and shared button confirmation.
