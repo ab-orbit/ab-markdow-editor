@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-20T01:09:26.354Z",
+  "version": "1.13.0",
+  "productCodeChanged": false,
+  "httpGitTests": {
+    "command": "npm test",
+    "passed": 60,
+    "failed": 0
+  },
+  "productionReading": {
+    "chromium": "passed",
+    "webkit": "passed"
+  },
+  "publishedAssets": {
+    "shortcuts": "passed",
+    "reload": "failed at dirty reload confirmation"
+  },
+  "confirmedIssue": {
+    "id": "reload-confirmation-self-block",
+    "priority": "high",
+    "draftPreserved": true,
+    "observedWithoutFakeClock": true
+  },
+  "physicalIosFilesTested": false
+}

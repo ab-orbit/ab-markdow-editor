@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-20T01:05:29.911Z",
+  "results": [
+    {
+      "label": "reading-production-chromium",
+      "exitCode": 0
+    },
+    {
+      "label": "reading-production-webkit",
+      "exitCode": 0
+    },
+    {
+      "label": "browser-refresh",
+      "exitCode": 1
+    },
+    {
+      "label": "browser-shortcuts",
+      "exitCode": 1
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-20T01:06:56.709Z",
+  "url": "https://scriba.aeonbridge.app/",
+  "usesFakeClock": false,
+  "usesFolderPickerMock": false,
+  "confirmationStillOpen": true,
+  "textAfterConfirmation": "# Rascunho não salvo\n\n\nTexto que deveria ser substituído após confirmação.",
+  "reloaded": false,
+  "draftPreserved": true
+}

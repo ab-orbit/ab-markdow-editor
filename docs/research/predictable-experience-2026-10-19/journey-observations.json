@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-10-20T01:06:15.903Z",
+  "url": "https://scriba.aeonbridge.app/",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "open": {
+    "mode": "read",
+    "visualEditing": "false",
+    "footer": "65 palavras · 377 caracteres\nDocumento carregado\nUTF-8 · .md",
+    "missingImagePlaceholder": true,
+    "libraryBeforeAutosave": null,
+    "autosaveAfterReadWithoutEdit": {
+      "exists": true,
+      "value": "# Avaliação de previsibilidade\n\nArquivo de teste isolado para observar leitura e salvamento.\n\n- [ ] Conferir o documento sem entrar em edição\n\n| Item | Situação | Observação |\n| --- | --- | --- |\n| Texto | Disponível | Parágrafo preservado no arquivo original. |\n| Imagem | Ausente | Referência relativa ao lado do Markdown. |\n\n![Imagem ao lado do arquivo](assets/ausente.png)\n",
+      "pending": false
+    }
+  },
+  "readingMutation": {
+    "mode": "read",
+    "checked": true,
+    "footer": "64 palavras · 377 caracteres\nAlterações nesta sessão\nUTF-8 · .md",
+    "raw": "# Avaliação de previsibilidadeArquivo de teste isolado para observar leitura e salvamento.- [x] Conferir o documento sem entrar em edição| Item | Situação | Observação || --- | --- | --- || Texto | Disponível | Parágrafo preservado no arquivo original. || Imagem | Ausente | Referência relativa ao lado do Markdown. |![Imagem ao lado do arquivo](assets/ausente.png)"
+  },
+  "save": {
+    "immediateNotice": true,
+    "library": {
+      "exists": true,
+      "value": "# Avaliação de previsibilidade\n\nArquivo de teste isolado para observar leitura e salvamento.\n\n- [x] Conferir o documento sem entrar em edição\n\n| Item | Situação | Observação |\n| --- | --- | --- |\n| Texto | Disponível | Parágrafo preservado no arquivo original. |\n| Imagem | Ausente | Referência relativa ao lado do Markdown. |\n\n![Imagem ao lado do arquivo](assets/ausente.png)\n",
+      "pending": false
+    },
+    "noticeAfterFiveSeconds": 0,
+    "footerAfterFiveSeconds": "64 palavras · 377 caracteres\nDocumento carregado\nUTF-8 · .md"
+  },
+  "doubleClick": {
+    "mode": "live",
+    "blockEditing": "false"
+  },
+  "mobileTable": {
+    "scrollWidth": 480,
+    "clientWidth": 332,
+    "scrollbarWidth": "none",
+    "bodyWidth": 390,
+    "viewport": 390,
+    "editor": {
+      "label": "Editar tabela",
+      "cellInputCount": 9,
+      "fitsViewport": true
+    }
+  },
+  "errors": []
+}

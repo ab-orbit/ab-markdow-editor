@@ -1,0 +1,12 @@
+[
+  {
+    "label": "browser-refresh-production",
+    "exitCode": 1,
+    "assetSource": "https://scriba.aeonbridge.app/"
+  },
+  {
+    "label": "browser-shortcuts-production",
+    "exitCode": 0,
+    "assetSource": "https://scriba.aeonbridge.app/"
+  }
+]
