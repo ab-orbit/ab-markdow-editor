@@ -625,7 +625,11 @@ function App() {
         <footer><button type="button" onClick={() => {setCommitNoteOpen(false);setCloseAfterCommit(false);}}>Cancelar</button><button type="submit" disabled={!commitNote.trim()}>{commitTarget === 'repository' ? 'Commit e push' : closeAfterCommit ? 'Salvar, sincronizar e fechar' : 'Salvar, commit e push'}</button></footer>
       </form>
     </EditorDialog>}
-    {sourceReload.confirmation && <EditorDialog title={reloadLabel} onClose={sourceReload.cancel}><p>Há edições ou uma sincronização pendente. Recarregar substitui a versão mantida neste editor pela versão da origem.</p><footer className="reload-confirmation"><button type="button" onClick={sourceReload.cancel}>Continuar editando</button><button type="button" onClick={sourceReload.confirm}>Recarregar e descartar rascunho</button></footer></EditorDialog>}
+    {sourceReload.confirmation && <EditorDialog title={reloadLabel} onClose={sourceReload.cancel}><p>Há edições ou uma sincronização pendente. Recarregar substitui a versão mantida neste editor pela versão da origem.</p><footer className="reload-confirmation"><button type="button" onClick={sourceReload.cancel}>Continuar editando</button><button type="button" onClick={event => {
+      // Release only this confirmation before the reload checks for other open dialogs.
+      event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();
+      sourceReload.confirm();
+    }}>Recarregar e descartar rascunho</button></footer></EditorDialog>}
     {!settingsOpen && statusMessages}
     <div className="editor-layout" hidden={settingsOpen} inert={settingsOpen || undefined}>
     {notesOpen && <aside id="recent-notes" className="notes-sidebar" aria-label="Notas recentes">
