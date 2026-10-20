@@ -1,9 +1,9 @@
 {
   "version": "1.16.1",
-  "checkedAt": "2026-10-20T03:07:14.116712+00:00",
+  "checkedAt": "2026-10-20T03:08:43.400997+00:00",
   "publicHtmlSha256": "53e53c44270f79d84e3397a5304c8e63179e6f72e0ddbb75a7f83fecaee9ef49",
   "publicServiceWorker": "ab-markdown-shell-c1721641b300c595",
-  "httpGitPassed": 61,
+  "httpGitPassed": 62,
   "newNoteEngines": [
     "Chromium",
     "WebKit"
@@ -13,7 +13,17 @@
     "WebKit"
   ],
   "pdfFirstLoadOffline": true,
-  "production": null,
+  "production": {
+    "checkedAt": "2026-10-20T03:07:42.399Z",
+    "url": "https://scriba.aeonbridge.app/",
+    "version": "1.16.1",
+    "commit": "5ba2feb1c15d672946b70e013f90b87a29fdf9f2",
+    "release": "/var/www/scriba/releases/20261020T030730Z-public-1.16.1",
+    "previous": "/var/www/scriba/releases/20261020T025730Z-public-1.16.0",
+    "status": 200,
+    "expectedHtml": true,
+    "sha256": "53e53c44270f79d84e3397a5304c8e63179e6f72e0ddbb75a7f83fecaee9ef49"
+  },
   "introducedIn": "1.15.0",
   "nativeCspPassed": true,
   "nestedBlobWorkers": false,
@@ -27,5 +37,11 @@
     "status": 200,
     "expectedHtml": true,
     "sha256": "67821bb3ffea04fb2ac5be10048b453bd1d7babaa9d197509af412df31ca1900"
+  },
+  "mac": {
+    "version": "1.16.1",
+    "health": true,
+    "signature": true,
+    "expectedBuild": true
   }
 }

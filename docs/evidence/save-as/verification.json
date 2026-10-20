@@ -1,6 +1,6 @@
 {
-  "version": "1.16.0",
-  "checkedAt": "2026-10-20T02:56:11.886493+00:00",
+  "version": "1.16.1",
+  "checkedAt": "2026-10-20T03:08:43.401466+00:00",
   "publicHtmlSha256": "dcf7eed04aa6c943b9425763e45264ba238f5c6badfca1a64bbc42b1cf5cb6cb",
   "httpGitPassed": 62,
   "nativePickerConfirmed": true,
@@ -14,14 +14,20 @@
   ],
   "pdfFirstUseOffline": true,
   "production": {
-    "checkedAt": "2026-10-20T02:57:49.828Z",
+    "checkedAt": "2026-10-20T03:07:42.399Z",
     "url": "https://scriba.aeonbridge.app/",
-    "version": "1.16.0",
-    "commit": "b21c693fa7880b9b46ee45100e33dfd7bbd2e6db",
-    "release": "/var/www/scriba/releases/20261020T025730Z-public-1.16.0",
-    "previous": "/var/www/scriba/releases/20261020T024301Z-public-1.15.0",
+    "version": "1.16.1",
+    "commit": "5ba2feb1c15d672946b70e013f90b87a29fdf9f2",
+    "release": "/var/www/scriba/releases/20261020T030730Z-public-1.16.1",
+    "previous": "/var/www/scriba/releases/20261020T025730Z-public-1.16.0",
     "status": 200,
     "expectedHtml": true,
-    "sha256": "dcf7eed04aa6c943b9425763e45264ba238f5c6badfca1a64bbc42b1cf5cb6cb"
+    "sha256": "53e53c44270f79d84e3397a5304c8e63179e6f72e0ddbb75a7f83fecaee9ef49"
+  },
+  "mac": {
+    "version": "1.16.1",
+    "health": true,
+    "signature": true,
+    "expectedBuild": true
   }
 }

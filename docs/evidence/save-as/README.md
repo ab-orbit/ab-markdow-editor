@@ -18,3 +18,5 @@ Na web com File System Access, o seletor é chamado dentro do gesto do usuário.
 [Desktop Chromium](save-as-desktop-chrome.png) · [Celular Chromium](save-as-mobile-chrome.png) · [Desktop WebKit](save-as-desktop-webkit.png) · [Celular WebKit](save-as-mobile-webkit.png).
 
 Referência primária: [File System Access — Chrome](https://developer.chrome.com/docs/capabilities/web-apis/file-system-access).
+
+Produção **1.16.0** verificada em [Chromium](production-chromium.txt) e [WebKit](production-webkit.txt). O [fluxo completo em produção 1.16.1](production-1.16.1.txt) também passou após o ajuste do PDF. App Mac **1.16.1** atualizado e assinatura/serviço local conferidos.

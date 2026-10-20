@@ -21,3 +21,5 @@ Produção web **1.15.0** verificada após a publicação com os mesmos fluxos e
 A verificação com a CSP real do servidor local revelou que o decoder PNG de pdfmake/fflate tentava abrir workers Blob adicionais. A política do aplicativo os bloqueava e a geração aguardava indefinidamente. O adaptador de build agora usa o decoder síncrono dentro do worker de PDF já existente; o trabalho continua fora da interface. A CSP permanece igual.
 
 [Servidor local com CSP](pdf-local.txt), [WebKit](pdf-webkit-1.16.1.txt) e [primeiro uso offline](pdf-offline-1.16.1.txt) passaram. O smoke também verifica que o build gera PDFs sem criar workers Blob adicionais. `tests/pdf-local.smoke.mjs` usa diretório e estado temporários, sem acessar notas pessoais. O adaptador confere a estrutura do bundle fixado em pdfmake 0.3.12 e exige revisão quando a dependência muda.
+
+Produção **1.16.1** confirmada com HTML idêntico ao build validado e os fluxos de PDF em [Chromium](production-1.16.1-chromium.txt) e [WebKit](production-1.16.1-webkit.txt). App Mac **1.16.1** atualizado, com assinatura e serviço local verificados.
