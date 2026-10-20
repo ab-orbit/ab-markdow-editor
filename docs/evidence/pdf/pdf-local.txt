@@ -1,0 +1,2 @@
+Checking PDF with the unchanged native server policy and isolated test files.
+PASS (Chromium): downloadable A4 PDF (5 pages), selectable Portuguese text, tables, image/diagram conversion, logo and branded footer on every page, unchanged source, no writes/external requests and mobile export menu.

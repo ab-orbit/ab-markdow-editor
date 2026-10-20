@@ -13,7 +13,8 @@ const offline = process.env.SCRIBA_OFFLINE === '1';
 const browser = await (safari ? webkit.launch({ headless: true }) : chromium.launch({ channel: 'chrome', headless: true }));
 const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'scriba-pdf-'));
 try {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: offline ? 'allow' : 'block', acceptDownloads: true }), page = await context.newPage(), errors = [], external = [], writes = [];
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: offline ? 'allow' : 'block', acceptDownloads: true }), page = await context.newPage(), errors = [], external = [], writes = [], workers = [];
+  page.on('worker',worker=>workers.push(worker.url()));
   page.on('pageerror', error => errors.push(error.message)); page.on('request', request => { const url = new URL(request.url()); if (url.origin !== new URL(origin).origin && !['blob:', 'data:'].includes(url.protocol) && url.hostname !== 'static.cloudflareinsights.com') external.push(url.href); if (request.method() !== 'GET') writes.push(url.pathname); });
   await page.goto(origin); await expect(page.getByLabel('Arquivo Markdown', { exact: true })).toBeEnabled();
   if (offline) { await page.evaluate(async () => { await navigator.serviceWorker.ready; if (!navigator.serviceWorker.controller) await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true })); }); await context.setOffline(true); await page.reload(); await expect(page.getByLabel('Arquivo Markdown', { exact: true })).toBeEnabled(); }
@@ -55,6 +56,8 @@ try {
   if (!safari) { await fs.copyFile(pdf, new URL('export-example.pdf', evidence)); for (const file of await fs.readdir(directory)) if (/^page-\d+\.png$/.test(file)) await fs.copyFile(path.join(directory, file), new URL(file, evidence)); }
   await page.setViewportSize({ width: 390, height: 844 }); const close = page.getByRole('button', { name: 'Fechar lista de notas', exact: true }); if (await close.isVisible()) await close.click(); await page.getByRole('button', { name: 'Mais opções da nota', exact: true }).click();
   await page.locator('summary[aria-label="Exportar nota"]').click(); await expect(page.getByRole('button', { name: 'Exportar PDF', exact: true }).last()).toBeVisible(); await page.screenshot({ path: new URL(`pdf-export-menu-mobile-${safari ? 'webkit' : 'chrome'}.png`, evidence).pathname });
-  assert.deepEqual(errors, []); assert.deepEqual(external, []);
+  assert.deepEqual(errors, []); assert.deepEqual(external, []); assert.ok(workers.length > 0);
+  // The PNG adapter targets the shipped bundle; Vite development uses dependency prebundles.
+  if(workers.some(url=>/\/assets\/pdf\.worker-/.test(url)))assert.ok(workers.every(url=>new URL(url).origin===new URL(origin).origin && !url.startsWith('blob:')), 'Built PDF processing uses only the self-hosted worker, with no nested Blob workers.');
   console.log(`PASS (${safari ? 'WebKit' : 'Chromium'}${offline ? ', first PDF load offline' : ''}): downloadable A4 PDF (${pages} pages), selectable Portuguese text, tables, image/diagram conversion, logo and branded footer on every page, unchanged source, no writes/external requests and mobile export menu.`);
 } finally { await browser.close(); await fs.rm(directory, { recursive: true, force: true }); }

@@ -1,8 +1,8 @@
 {
-  "version": "1.15.0",
-  "checkedAt": "2026-10-20T02:42:22.829Z",
-  "publicHtmlSha256": "67821bb3ffea04fb2ac5be10048b453bd1d7babaa9d197509af412df31ca1900",
-  "publicServiceWorker": "ab-markdown-shell-b544bd2c44a5b893",
+  "version": "1.16.1",
+  "checkedAt": "2026-10-20T03:07:14.116712+00:00",
+  "publicHtmlSha256": "53e53c44270f79d84e3397a5304c8e63179e6f72e0ddbb75a7f83fecaee9ef49",
+  "publicServiceWorker": "ab-markdown-shell-c1721641b300c595",
   "httpGitPassed": 61,
   "newNoteEngines": [
     "Chromium",
@@ -13,7 +13,11 @@
     "WebKit"
   ],
   "pdfFirstLoadOffline": true,
-  "production": {
+  "production": null,
+  "introducedIn": "1.15.0",
+  "nativeCspPassed": true,
+  "nestedBlobWorkers": false,
+  "previousProduction": {
     "checkedAt": "2026-10-20T02:43:20.353Z",
     "url": "https://scriba.aeonbridge.app/",
     "version": "1.15.0",

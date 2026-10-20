@@ -1,0 +1,1 @@
+PASS (Chromium): Save As active file, user activation, cancellation, subsequent Cmd/Ctrl+S, draft restoration, external conflicts, failed writes, conflict Save As and complete image ZIP. Desktop/mobile controls and no remote writes verified.

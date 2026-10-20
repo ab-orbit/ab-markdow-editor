@@ -2,6 +2,33 @@ import { createReadStream, existsSync, readFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { defineConfig, type Plugin } from 'vite';
 import { fileURLToPath } from 'node:url';
+/** PDF layout already runs off-thread. Decode PNGs there instead of spawning CSP-blocked Blob workers. */
+function pdfWorkerPngDecoder(): Plugin {
+  return {
+    name: 'scriba-pdf-worker-png-decoder', enforce: 'pre',
+    transform(code, id) {
+      if (!id.endsWith('/pdfmake/build/pdfmake.js')) return;
+      const start = code.indexOf('function unzlib(data, opts, cb) {');
+      const end = code.indexOf('function unzlibSync(data, opts) {', start);
+      // This adapter is specific to the pinned pdfmake/fflate bundle; upgrades must review its callback contract.
+      if (start < 0 || end < start || code.indexOf('function unzlib(data, opts, cb) {', start + 1) !== -1) throw new Error('Review the pdfmake PNG decoder adapter after upgrading dependencies.');
+      const replacement = `function unzlib(data, opts, cb) {
+        if (typeof opts === 'function') { cb = opts; opts = {}; }
+        if (typeof cb !== 'function') throw new Error('PNG decoder requires a callback.');
+        let cancelled = false;
+        queueMicrotask(function () {
+          if (cancelled) return;
+          let result, failure = null;
+          try { result = unzlibSync(data, opts); } catch (error) { failure = error; }
+          cb(failure, result);
+        });
+        return function () { cancelled = true; };
+      }
+      `;
+      return {code:code.slice(0,start)+replacement+code.slice(end),map:null};
+    },
+  };
+}
 /** Use the public SVG API without injecting ZenUML's unrelated HTML editor stylesheet. */
 function zenumlSvgOnly(): Plugin {
   return {
@@ -63,6 +90,7 @@ function excalidrawFonts(): Plugin {
 
 export default defineConfig({
   plugins: [zenumlSvgOnly(), excalidrawFonts()],
+  worker: {plugins: () => [pdfWorkerPngDecoder()]},
   define: { __APP_VERSION__: JSON.stringify(JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version), __BUILD_DATE__: JSON.stringify(new Date().toISOString()) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // The SDK is excluded so its font policy runs in development too. Its CJS
