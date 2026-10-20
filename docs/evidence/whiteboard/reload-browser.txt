@@ -1,0 +1,1 @@
+PASS: public browser cross-tab refresh and draft protection; device folder fresh reads, dirty confirmation, receipt/version reuse on next save, and deleted source remains in memory.

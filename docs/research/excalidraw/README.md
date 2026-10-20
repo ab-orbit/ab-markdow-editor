@@ -6,7 +6,17 @@ The official React SDK **0.18.1** is pinned, with React 19 peer support. Primary
 
 An `excalidraw` fence contains ordinary scene JSON (`type`, `version`, `elements`, portable `appState`, embedded raster `files`). A separate dialect leaves the Mermaid/Pele/Beautiful picker and its saved preferences unchanged. Reading, split view, CodeMirror live widgets and natural editing share the same visual canvas. Opening, zooming, exporting or applying an untouched canvas preserves the original Markdown bytes. Applying a changed scene replaces its fence body; other blocks, comments, BOM and CRLF remain intact in reading/natural editing. CodeMirror retains its existing LF normalization for source edits.
 
-The canvas is a full-screen native dialog, with explicit apply/cancel, pending-change confirmation and origin-local IndexedDB recovery drafts. Drafts are keyed by document, content and occurrence, never submitted to Excalidraw services. Libraries persist separately in this origin. An active canvas blocks automatic source reload at both request and response time, including a file check already in flight. A failed apply retains the recovery draft.
+The block editor is a full-screen native dialog, with explicit apply/cancel, pending-change confirmation and origin-local IndexedDB recovery drafts. Drafts are keyed by document, content and occurrence, never submitted to Excalidraw services. Libraries persist separately in this origin. An active block editor blocks automatic source reload at both request and response time, including a file check already in flight. A failed apply retains the recovery draft.
+
+## Whole-document whiteboard (1.14.0)
+
+The **Nota | Whiteboard** control opens the same SDK as an inline workspace filling the document area. On phones, a native format selector stays in the top bar. There is no apply dialog in this presentation: authored scene changes update the selected Markdown fence and use the host's existing drafts, save, autosave, Git/GitHub and device-folder paths. Keyboard save commits an active SDK text box before invoking the host action. Invalid unpublished changes block host saves rather than reporting success for older scene data.
+
+Existing prose, comments, reference definitions, other scenes, BOM and line endings remain intact. `WhiteboardSource` parses offsets once and updates its ledger after each replacement, avoiding reparsing a long manual on every drawing change. Pointer, selection, pan and zoom do not serialize the note. New blank drawings retain the initial viewport rather than fitting the first pointer stroke.
+
+The scene picker navigates existing top-level closed Excalidraw fences; **+** appends another without replacing existing content. Import replaces the selected scene. Export offers SVG, transparent PNG and editable Excalidraw. A drawing-only Markdown file opens as a whiteboard across devices; local format and selected-scene preferences remember an explicit Note presentation too. An empty scene has a quiet placeholder in the note preview. The library describes a leading drawing as a whiteboard rather than exposing its JSON.
+
+The SDK stays lazy: the whole-document editor loads when the whiteboard is opened and unmounts when returning to the note. The existing block editor and Mermaid renderer selector remain available.
 
 ## Rendering, performance and fonts
 

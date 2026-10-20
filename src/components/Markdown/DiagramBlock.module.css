@@ -33,6 +33,10 @@
 .failure { flex-direction: column; align-items: flex-start; justify-content: flex-start; padding: 8px 0; overflow-wrap: anywhere; }
 .failure strong { color: var(--text-primary); font-weight: 600; }
 .help { color: var(--text-muted); font-size: 13px; }
+.empty { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; min-height: 180px; padding: 24px; color: var(--text-muted); font: 14px/1.6 var(--font-ui); }
+.empty button { min-height: 44px; padding: 8px 12px; color: var(--cyan); background: var(--bg-elevated); border: 1px solid var(--border-panel); border-radius: var(--radius-md); cursor: pointer; font: inherit; }
+.empty button:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.empty button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 @media (max-width: 1024px), (pointer: coarse) {
   .picker select { min-height: 44px; font-size: 16px; max-width: 215px; }
   .edit { min-width: 44px; min-height: 44px; }

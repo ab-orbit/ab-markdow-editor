@@ -164,6 +164,25 @@
 
 /* Mobile reading follows a quiet document layout, with controls outside the text. */
 .mobileReadingBar { display: none; }
+.formats { display: flex; flex: 0 0 auto; align-items: center; padding: 2px; border: 1px solid var(--border-panel); border-radius: var(--radius-md); }
+.toolbar .formats button { gap: 6px; border-radius: var(--radius-sm); }
+.toolbar .formats button[aria-pressed="true"] { color: var(--cyan); border-color: var(--border-strong); background: var(--bg-elevated); }
+.documentArea > .pages[hidden] { display: none; }
+.whiteboardLoading { flex: 1; min-width: 0; padding: 24px; color: var(--text-muted); font: 14px/1.6 var(--font-ui); }
+.boardPicker { display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; font: inherit; }
+.boardPicker select { min-width: 54px; max-width: 220px; min-height: 36px; padding: 4px 8px; border: 1px solid var(--border-panel); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-primary); font: inherit; }
+.boardPicker select:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+@media (max-width: 899px) {
+ .compact .formats { display: none; }
+ .compact[data-mode="whiteboard"] .mobileReadingBar { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; padding: 8px 12px; gap: 6px; }
+ .compact[data-mode="read"] .mobileReadingBar { padding-inline: 12px; gap: 6px; }
+ .mobileReadingBar > button, .mobileReadingBar > div { flex-shrink: 0; }
+ .mobileFormat { flex: 1 1 auto; min-width: 64px; max-width: 130px; min-height: 44px; padding: 4px 6px; border: 1px solid var(--border-panel); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-primary); font: 16px/1.4 var(--font-ui); }
+ .mobileFormat:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+ .compact[data-mode="whiteboard"][data-reading-actions="false"] > .toolbar { display: none; }
+ .boardPicker select { min-height: 44px; max-width: 130px; font-size: 16px; }
+ .boardPicker > span { display: none; }
+}
 @media (max-width: 899px) {
  .compact[data-mode="read"] .mobileReadingBar { display: flex; flex: 0 0 auto; justify-content: space-between; align-items: center; padding: 12px 20px 8px; gap: 12px; }
  .mobileReadingBar > div { display: flex; gap: 4px; }
@@ -183,6 +202,7 @@
 }
 @media (max-width: 359px) { .compact[data-mode="read"] .reading { padding-inline: 20px; } }
 @media (max-width: 359px) { .compact[data-mode="read"] .mobileReadingBar { padding-inline: 12px; gap: 4px; } .mobileReadingBar > div { gap: 2px; } }
+@media (max-width: 359px) { .compact[data-mode="read"] .mobileReadingBar, .compact[data-mode="whiteboard"] .mobileReadingBar { padding-inline: 8px; gap: 4px; } .mobileFormat { max-width: 80px; } }
 
 /* Group export choices on narrow screens so adding reload does not create an orphan action row. */
 .exportMenu { display: none; }

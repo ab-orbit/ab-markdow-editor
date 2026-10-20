@@ -1,0 +1,1 @@
+PASS (Chrome): first SDK/font/canvas load offline, local image, editing, private save/reload, self-contained SVG export and mobile preview. No local filesystem API or external drawing resources.

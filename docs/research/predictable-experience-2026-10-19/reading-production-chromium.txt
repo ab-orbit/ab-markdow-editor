@@ -1,0 +1,1 @@
+PASS (Chrome): desktop/phone/tablet both orientations, both themes, justified typography, readable zebra tables, keyboard/touch scrolling, visual paragraph/table editing, Enter, bold, undo/redo, exact untouched Markdown + BOM/CRLF, Cmd+S.

@@ -79,6 +79,10 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>LSUIElement</key><true/>
 </dict></plist>
 PLIST
+# Keep Finder's application version aligned with the package used to build this bundle.
+APP_VERSION="$("$NODE_BIN" -p "require('./package.json').version")"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $APP_VERSION" "$APP_DIR/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $APP_VERSION" "$APP_DIR/Contents/Info.plist"
 "$NODE_BIN" scripts/create-icon.mjs "$WORK_DIR/icon.png"
 mkdir "$WORK_DIR/AppIcon.iconset"
 for SIZE in 16 32 128 256 512; do

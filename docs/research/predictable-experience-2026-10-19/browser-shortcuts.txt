@@ -1,0 +1,79 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(locator).toBeVisible() failed
+
+Locator: getByRole('status').filter({ hasText: 'Nota salva neste navegador.' })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" getByRole('status').filter({ hasText: 'Nota salva neste navegador.' }) with timeout 5000ms
+  - waiting for getByRole('status').filter({ hasText: 'Nota salva neste navegador.' })
+
+    at captureRawStack (<scriba-workspace>/node_modules/playwright/node_modules/playwright-core/lib/coreBundle.js:9282:17)
+    at callMatcherAsStep (<scriba-workspace>/node_modules/playwright/lib/matchers/expect.js:13316:57)
+    at Object.toBeVisible (<scriba-workspace>/node_modules/playwright/lib/matchers/expect.js:13308:23)
+    at <scriba-workspace>/tests/shortcuts-browser.smoke.mjs:41:90 {
+  matcherResult: {
+    message: 'expect(locator).toBeVisible() failed\n' +
+      '\n' +
+      "Locator: getByRole('status').filter({ hasText: 'Nota salva neste navegador.' })\n" +
+      'Expected: visible\n' +
+      'Timeout: 5000ms\n' +
+      'Error: element(s) not found\n' +
+      '\n' +
+      'Call log:\n' +
+      `  - Expect "toBeVisible" getByRole('status').filter({ hasText: 'Nota salva neste navegador.' }) with timeout 5000ms\n` +
+      "  - waiting for getByRole('status').filter({ hasText: 'Nota salva neste navegador.' })\n",
+    pass: false,
+    actual: undefined,
+    name: 'toBeVisible',
+    expected: 'visible',
+    log: [
+      `  - Expect "toBeVisible" getByRole('status').filter({ hasText: 'Nota salva neste navegador.' }) with timeout 5000ms`,
+      "  - waiting for getByRole('status').filter({ hasText: 'Nota salva neste navegador.' })"
+    ],
+    timeout: 5000,
+    ariaSnapshot: '- main:\n' +
+      '  - complementary "Notas recentes":\n' +
+      '    - button "Sobre o Scriba"\n' +
+      '    - heading "Notas recentes" [level=2]\n' +
+      '    - paragraph: 0 notas\n' +
+      '    - button "Atualizar notas recentes" [disabled]\n' +
+      '    - searchbox "Buscar nas notas recentes"\n' +
+      '    - button "Nova nota"\n' +
+      '    - paragraph: Conecte um repositório nas configurações para listar suas notas.\n' +
+      '    - navigation "100 notas mais recentes"\n' +
+      '  - group:\n' +
+      '    - region "Bancada Markdown":\n' +
+      '      - text: Atalhos.md\n' +
+      '      - button "Fechar nota"\n' +
+      '      - group "Modo de edição":\n' +
+      '        - button "Escrever"\n' +
+      '        - button "Fonte"\n' +
+      '        - button "Visão"\n' +
+      '        - button "Ler" [pressed]\n' +
+      '        - button "Editar blocos Markdown"\n' +
+      '      - button "Mostrar outline"\n' +
+      '      - button "Abrir .md / ZIP"\n' +
+      '      - button "Baixar .md"\n' +
+      '      - button "Baixar pacote"\n' +
+      '      - button "Mostrar formatação"\n' +
+      '      - button "Ocultar notas recentes" [expanded]\n' +
+      '      - text: Offline\n' +
+      '      - button "Recarregar do disco"\n' +
+      '      - button "Usar tema claro"\n' +
+      '      - button "Configurações"\n' +
+      '      - text: Prévia de leitura. Use Editar para escrever diretamente no texto.\n' +
+      '      - article "Prévia Markdown":\n' +
+      '        - heading "Atalhos" [level=1]\n' +
+      '        - paragraph: Nota privada do navegador.\n' +
+      '      - status\n' +
+      '      - text: 6 palavras · 37 caracteres Documento carregado UTF-8 · .md'
+  }
+}
+
+Node.js v22.17.0

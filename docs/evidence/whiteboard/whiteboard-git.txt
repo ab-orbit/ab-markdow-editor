@@ -1,0 +1,1 @@
+PASS: full-workspace drawing, active-text Cmd+S, actual Git commit/push, Cmd+W confirmation/cancel/save, exact prose preservation and clean synchronized history.

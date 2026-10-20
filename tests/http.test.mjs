@@ -43,6 +43,19 @@ test('connects a real checkout and lists Markdown over HTTP', async () => {
   const result = await request('connect', { directory: checkout }); assert.equal(result.status, 200); assert.equal(result.body.repository, await fs.realpath(checkout));
   assert.deepEqual((await request('files')).body, ['README.md']);
 });
+test('recent Markdown files describe whiteboards without exposing scene JSON', async () => {
+  const file = path.join(checkout, 'whiteboard-preview.md');
+  const source = '\uFEFF<!-- Keep this comment. -->\n\n```excalidraw\n{"type":"excalidraw","elements":[],"files":{}}\n```\n';
+  await fs.writeFile(file, source);
+  try {
+    const recent = await request('recent'); assert.equal(recent.status, 200);
+    const note = recent.body.find(item => item.name === 'whiteboard-preview.md');
+    assert.equal(note.preview, 'Whiteboard · quadro editável');
+    const opened = await request('document?name=whiteboard-preview.md');
+    assert.equal(opened.status, 200); assert.equal(opened.body.value, source, 'Opening a local whiteboard preserves its leading BOM.');
+    assert.equal(await fs.readFile(file, 'utf8'), source, 'Generating a library preview never rewrites the document.');
+  } finally { await fs.rm(file, { force: true }); }
+});
 test('saves and reopens nested Markdown and raster assets', async () => {
   const png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=';
   const result = await request('save', { name: 'notes/test.md', value: '# Saved\n\n![pixel](assets/pixel.png)\n', version: null, files: [{ path: 'assets/pixel.png', data: png }] });

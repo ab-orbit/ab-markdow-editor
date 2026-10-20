@@ -4,6 +4,7 @@ import {saveToDeviceFolder, readDeviceNotes, folderLabel, deviceDocumentVersion,
 import diagramManual from '../../docs/Scriba-Diagramas.md?raw';
 import {extendDiagramManual} from '../../server/diagram-manual.mjs';
 import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
+import {whiteboardPreview} from '../../server/markdown-summary.mjs';
 /** Public builds keep all user content in this origin's IndexedDB, never on the VPS. */
 export const browserMode = import.meta.env.VITE_STORAGE_MODE === 'browser';
 interface Note { name: string; value: string; version: string | null; title?: string; cached?: boolean; pending?: boolean; modifiedAt: string; files: {path:string;data:string;mime:string}[] }
@@ -25,7 +26,7 @@ function db() {
   return database ||= new Promise((resolve,reject)=>{const request=indexedDB.open('scriba-private-notes',1);request.onupgradeneeded=()=>request.result.createObjectStore('library');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
 }
 function library(state:State) {
-  const summary=(note:Note)=>({name:note.name,modifiedAt:note.modifiedAt,title:note.value.match(/^#\s+(.+)$/m)?.[1]||note.title||note.name,preview:note.value.replace(/<!--[\s\S]*?-->/g,'').replace(/!\[[^\]]*\]\([^)]*\)/g,'').replace(/[#*`>\[\]]/g,'').replace(/\s+/g,' ').slice(0,160),hasImage:note.files.length>0});
+  const summary=(note:Note)=>({name:note.name,modifiedAt:note.modifiedAt,title:note.value.match(/^#\s+(.+)$/m)?.[1]||note.title||note.name,preview:whiteboardPreview(note.value)??note.value.replace(/<!--[\s\S]*?-->/g,'').replace(/!\[[^\]]*\]\([^)]*\)/g,'').replace(/[#*`>\[\]]/g,'').replace(/\s+/g,' ').slice(0,160),hasImage:note.files.length>0});
   return {pinned:state.pins.filter(name=>state.notes[name]).map(name=>summary(state.notes[name])),recent:Object.values(state.notes).filter(note=>!state.pins.includes(note.name)).sort((a,b)=>b.modifiedAt.localeCompare(a.modifiedAt)).slice(0,100).map(summary)};
 }
 /** Read outside a write transaction: GitHub requests must never keep IndexedDB locked. */

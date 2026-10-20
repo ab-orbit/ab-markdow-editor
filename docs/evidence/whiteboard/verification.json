@@ -1,0 +1,70 @@
+{
+  "version": "1.14.0",
+  "checkedAt": "2026-10-20T01:52:09.235Z",
+  "publicHtmlSha256": "7fb9536e82f705d8716795635c9d0cec71b457b448a1c24d297a7da209c817c2",
+  "publicServiceWorker": "ab-markdown-shell-540a71194ca89f4f",
+  "publicAssets": 479,
+  "httpGit": {
+    "passed": 61,
+    "failed": 0
+  },
+  "browserChecks": [
+    {
+      "name": "whiteboard-chromium",
+      "passed": true
+    },
+    {
+      "name": "whiteboard-webkit",
+      "passed": true
+    },
+    {
+      "name": "whiteboard-git",
+      "passed": true
+    },
+    {
+      "name": "excalidraw-offline",
+      "passed": true
+    },
+    {
+      "name": "excalidraw-local",
+      "passed": true
+    },
+    {
+      "name": "reload-local",
+      "passed": true
+    },
+    {
+      "name": "reload-browser",
+      "passed": true
+    }
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "viewports": [
+    [
+      1440,
+      900
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      844,
+      390
+    ],
+    [
+      820,
+      1180
+    ],
+    [
+      1180,
+      820
+    ]
+  ],
+  "touchInput": true,
+  "physicalIosDevice": false,
+  "production": null
+}

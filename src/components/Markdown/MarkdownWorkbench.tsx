@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useId, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
-import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X, ListTree } from 'lucide-react';
+import { Download, FileUp, FileText, Package, Type, ArrowLeft, Info, MoreVertical, Pencil, Check, SquareCode, X, ListTree, PenTool, Plus, Save } from 'lucide-react';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -19,10 +19,13 @@ import { DocumentOutline } from './DocumentOutline';
 import type { OutlineHeading } from '@/lib/markdown/outline';
 import { ExcalidrawEditor } from './ExcalidrawEditor';
 import { EMPTY_EXCALIDRAW, replaceExcalidrawFence } from '@/lib/markdown/excalidrawScene';
+import { WhiteboardSource } from '@/lib/markdown/whiteboard';
+import type { WhiteboardEditorHandle } from './WhiteboardEditor';
 
 const RichMarkdownEditor = lazy(() => import('./RichMarkdownEditor'));
+const WhiteboardEditor = lazy(() => import('./WhiteboardEditor'));
 
-export type MarkdownMode = 'live' | 'source' | 'split' | 'read';
+export type MarkdownMode = 'live' | 'source' | 'split' | 'read' | 'whiteboard';
 export interface MarkdownWorkbenchHandle {
   /** Reuse the native chooser; reload requires the original filename and preserves the view mode. */
   openFile: (reloadOriginal?: boolean) => void;
@@ -70,16 +73,32 @@ export interface MarkdownWorkbenchProps {
   warnBeforeUnload?: boolean;
   /** Optional document-close command, separate from closing a browser tab. */
   onClose?: () => void;
+  /** The canvas commits active text input before invoking the host's save action. */
+  onSave?: () => void;
 }
 
 const modes = [['live', 'Escrever'], ['source', 'Fonte'], ['split', 'Visão'], ['read', 'Ler']] as const;
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
-  const [mode, setMode] = useState<MarkdownMode>(initialMode);
+export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, onSave, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
+  const whiteboardSource = useRef(new WhiteboardSource());
+  const [initialBoards] = useState(() => whiteboardSource.current.read(value));
+  const whiteboard = useRef<WhiteboardEditorHandle>(null);
+  const [selectedBoard, setSelectedBoard] = useState(() => {
+    try { const index = Number(localStorage.getItem(`scriba-whiteboard-scene:${diagramScope}`)); return Number.isInteger(index) && index >= 0 && index < initialBoards.length ? index : 0; } catch { return 0; }
+  }), [boardCount, setBoardCount] = useState(0);
+  const [mode, setMode] = useState<MarkdownMode>(() => {
+    let preferred: string | null = null;
+    try { preferred = localStorage.getItem(`scriba-document-format:${diagramScope}`); } catch { /* Source remains usable if presentation preferences are unavailable. */ }
+    return initialMode === 'whiteboard' || preferred === 'whiteboard' && initialBoards.length > 0 || preferred === null && whiteboardSource.current.standalone ? 'whiteboard' : initialMode;
+  });
+  // Ordinary note typing does not invoke another full-document Markdown parser.
+  const boards = mode === 'whiteboard' ? whiteboardSource.current.read(value) : initialBoards;
   const [readingEditable, setReadingEditable] = useState(false);
   const visualEditor = useRef<RichMarkdownEditorHandle>(null);
   useEffect(() => { onModeChange?.(mode); }, [mode,onModeChange]);
+  useEffect(() => { if (!readOnly) try { localStorage.setItem(`scriba-document-format:${diagramScope}`, mode === 'whiteboard' ? 'whiteboard' : 'note'); } catch { /* A layout preference never prevents editing. */ } }, [mode,diagramScope,readOnly]);
+  useEffect(() => { if (!readOnly && mode === 'whiteboard') try { localStorage.setItem(`scriba-whiteboard-scene:${diagramScope}`, String(selectedBoard)); } catch { /* Scene navigation remains available without persistent preferences. */ } }, [selectedBoard,mode,diagramScope,readOnly]);
   const workbench = useRef<HTMLElement>(null);
   const pages = useRef<HTMLDivElement>(null);
   useEffect(() => {const frame=requestAnimationFrame(()=>{if(pages.current)pages.current.scrollTop=initialScrollTop;});return()=>cancelAnimationFrame(frame);}, []);
@@ -90,6 +109,11 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [documentId, setDocumentId] = useState(0);
+  const documentContext = useRef({ id: documentId, scope: diagramScope });
+  documentContext.current = { id: documentId, scope: diagramScope };
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const sameDocument = (snapshot: typeof documentContext.current) => mounted.current && snapshot.id === documentContext.current.id && snapshot.scope === documentContext.current.scope;
   const [linkRange, setLinkRange] = useState<SourceRange | null>(null);
   const [linkText, setLinkText] = useState('');
   const [linkUrl, setLinkUrl] = useState('https://');
@@ -106,7 +130,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     if (readOnly || busy) return;
     reloadImport.current = reloadOriginal;setError('');input.current?.click();
   }
-  useImperativeHandle(ref, () => ({openFile: chooseFile, isBusy: () => busy || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]')}));
+  useImperativeHandle(ref, () => ({openFile: chooseFile, isBusy: () => busy || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]')}));
   const { assets, replace: replaceAssets, append: appendAssets } = useMarkdownAssets();
   useEffect(() => { if (initialAssets) replaceAssets(initialAssets); }, []);
   useEffect(() => { onAssetsChange?.(assets); }, [assets, onAssetsChange]);
@@ -138,7 +162,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
       await onImport?.(source, name, reloadOriginal);
       blockFromReading.current=false;
       setReadingEditable(false);
-      if (!reloadOriginal) {setMode('read');setReadingActionsOpen(false);}
+      if (!reloadOriginal) {whiteboardSource.current.read(source);setSelectedBoard(0);setMode(whiteboardSource.current.standalone ? 'whiteboard' : 'read');setReadingActionsOpen(false);}
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Não foi possível abrir o arquivo.');
     } finally { setBusy(false); }
@@ -205,6 +229,35 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     if (readOnly || busy) return;
     blockFromReading.current = false;
     setMode('read'); setReadingEditable(true); setReadingActionsOpen(false);
+  }
+  function updateWhiteboard(source: string) {
+    const next = whiteboardSource.current.replace(selectedBoard, source);
+    if (next !== value) onChange(next);
+  }
+  async function selectFormat(format: 'note' | 'whiteboard') {
+    if (busy || readOnly) return;
+    const snapshot = documentContext.current;
+    const applied = mode !== 'whiteboard' || format !== 'note' || !whiteboard.current || await whiteboard.current.flush();
+    if (!sameDocument(snapshot)) return;
+    if (!applied && !window.confirm('Há alterações no quadro que não puderam ser aplicadas. Voltar à nota e descartar essas alterações do quadro?')) return;
+    if (format === 'whiteboard') {
+      const current = whiteboardSource.current.read(value);
+      if (!current.length) { onChange(whiteboardSource.current.append()); setSelectedBoard(0); }
+      else setSelectedBoard(index => Math.min(index, current.length - 1));
+    }
+    blockFromReading.current = false; setReadingEditable(false); setOutlineOpen(false); setReadingActionsOpen(false);
+    setMode(format === 'whiteboard' ? 'whiteboard' : 'read');
+  }
+  async function selectWhiteboard(index: number) {
+    const snapshot = documentContext.current;
+    if (readOnly || busy || !await whiteboard.current?.flush() || !sameDocument(snapshot)) return;
+    setSelectedBoard(index); setBoardCount(0);
+  }
+  async function newWhiteboard() {
+    const snapshot = documentContext.current;
+    if (readOnly || busy || !await whiteboard.current?.flush() || !sameDocument(snapshot)) return;
+    const index = boards.length;
+    onChange(whiteboardSource.current.append()); setSelectedBoard(index); setBoardCount(0);
   }
   function insertDrawing() {
     if (readOnly || busy) return;
@@ -277,17 +330,26 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     return headings.filter(heading => { const element = headingElement(heading); return element && element.getBoundingClientRect().top <= top; }).at(-1)?.id;
   }
   return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ''}`} data-mode={mode} data-reading-editable={readingEditable} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label="Bancada Markdown" aria-busy={busy}>
-    {compact && <div className={styles.mobileReadingBar}><button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><div><button type="button" aria-label={outlineOpen ? "Ocultar outline" : "Mostrar outline"} data-outline-toggle title="Índice da nota" aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event => toggleOutline(event.currentTarget)}><ListTree size={19}/></button><button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button><button type="button" disabled={readOnly || busy} aria-label={readingEditable ? 'Concluir edição' : 'Editar nota'} aria-pressed={readingEditable} onClick={() => readingEditable ? setReadingEditable(false) : startVisualEditing()}>{readingEditable ? <Check size={20}/> : <Pencil size={20}/>}</button>{readingEditable && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} aria-expanded={formattingOpen} onClick={() => setFormattingOpen(!formattingOpen)}><Type size={20}/></button>}<button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}
+    {compact && <div className={styles.mobileReadingBar}>
+      <button type="button" aria-label="Voltar às notas" onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button>
+      <select className={styles.mobileFormat} aria-label="Formato do documento" value={mode === 'whiteboard' ? 'whiteboard' : 'note'} disabled={readOnly || busy} onChange={event => { void selectFormat(event.target.value as 'note' | 'whiteboard'); }}><option value="note">Nota</option><option value="whiteboard">Whiteboard</option></select>
+      <div>
+        {mode !== 'whiteboard' && <><button type="button" aria-label={outlineOpen ? "Ocultar outline" : "Mostrar outline"} data-outline-toggle title="Índice da nota" aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event => toggleOutline(event.currentTarget)}><ListTree size={19}/></button>{!readingEditable && <button type="button" aria-label="Informações da nota" onClick={() => setNoteInfoOpen(true)}><Info size={21}/></button>}<button type="button" disabled={readOnly || busy} aria-label={readingEditable ? 'Concluir edição' : 'Editar nota'} aria-pressed={readingEditable} onClick={() => readingEditable ? setReadingEditable(false) : startVisualEditing()}>{readingEditable ? <Check size={20}/> : <Pencil size={20}/>}</button>{readingEditable && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} aria-expanded={formattingOpen} onClick={() => setFormattingOpen(!formattingOpen)}><Type size={20}/></button>}</>}
+        {mode === 'whiteboard' && onSave && <button type="button" aria-label="Salvar whiteboard" title="Salvar nota e whiteboard" disabled={readOnly || busy} onClick={() => { void whiteboard.current?.flush().then(ok => { if (ok) onSave(); }); }}><Save size={20}/></button>}
+        <button type="button" aria-label="Mais opções da nota" aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button>
+      </div>
+    </div>}
     {noteInfoOpen && <EditorDialog title="Informações da nota" onClose={() => setNoteInfoOpen(false)}><p>{fileName}</p><p>{words} palavras · {value.length} caracteres</p><p>Leitura estimada: {Math.max(1, Math.ceil(words / 200))} min</p><p>Markdown · UTF-8</p></EditorDialog>}
     <header className={styles.toolbar}>
       <div className={styles.filename}><FileText size={16} aria-hidden="true"/><span title={fileName}>{fileName}</span>{dirty && <span className={styles.dot} aria-label="Documento alterado"/>}{onClose && <button type="button" disabled={readOnly || busy} aria-label="Fechar nota" aria-keyshortcuts="Meta+W Control+W" title="Fechar nota (⌘W / Ctrl+W, quando disponível no navegador)" onClick={onClose}><X size={16} aria-hidden="true"/></button>}</div>
-      <div className={styles.modes} role="group" aria-label="Modo de edição">
+      <div className={styles.formats} role="group" aria-label="Formato do documento"><button type="button" aria-pressed={mode !== 'whiteboard'} disabled={readOnly || busy} onClick={() => { void selectFormat('note'); }}><FileText size={15} aria-hidden="true"/>Nota</button><button type="button" aria-pressed={mode === 'whiteboard'} disabled={readOnly || busy} onClick={() => { void selectFormat('whiteboard'); }}><PenTool size={15} aria-hidden="true"/>Whiteboard</button></div>
+      {mode !== 'whiteboard' && <div className={styles.modes} role="group" aria-label="Modo de edição">
         {modes.map(([key, label]) => <button type="button" key={key} aria-pressed={key === 'live' ? readingEditable : mode === key && !readingEditable} onClick={() => key === 'live' ? startVisualEditing() : changeMode(key)}>{label}</button>)}
         <button type="button" aria-label="Editar blocos Markdown" title="Editar blocos Markdown" aria-pressed={mode === 'live'} onClick={() => changeMode('live')}><SquareCode size={16}/></button>
         {readingEditable && <button type="button" onClick={() => setReadingEditable(false)} aria-label="Concluir edição" title="Concluir edição"><Check size={16}/></button>}
-      </div>
+      </div>}
       <div className={styles.actions}>
-        <button type="button" aria-label={outlineOpen ? "Ocultar outline" : "Mostrar outline"} data-outline-toggle title="Índice da nota" aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event => toggleOutline(event.currentTarget)}><ListTree size={19}/></button>
+        {mode !== 'whiteboard' && <button type="button" aria-label={outlineOpen ? "Ocultar outline" : "Mostrar outline"} data-outline-toggle title="Índice da nota" aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event => toggleOutline(event.currentTarget)}><ListTree size={19}/></button>}
         <button type="button" disabled={readOnly || busy} aria-label="Abrir .md / ZIP" aria-keyshortcuts="Meta+O Control+O" title="Abrir .md / ZIP (⌘O / Ctrl+O)" onClick={() => chooseFile()}><FileUp size={15} aria-hidden="true"/><span className={styles.actionLabel}>Abrir .md / ZIP</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} aria-label="Baixar .md" title="Baixar .md" onClick={() => downloadMarkdown(value, fileName)}><Download size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar .md</span></button>
         <button type="button" className={`${styles.download} ${styles.desktopExport}`} disabled={busy} aria-label="Baixar pacote" title="Baixar pacote" onClick={() => void downloadPackage()}><Package size={15} aria-hidden="true"/><span className={styles.actionLabel}>Baixar pacote</span></button>
@@ -295,19 +357,19 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
           <summary aria-label="Exportar nota" title="Exportar nota"><Download size={18} aria-hidden="true"/></summary>
           <div role="group" aria-label="Exportar nota"><button type="button" onClick={event => {downloadMarkdown(value,fileName);event.currentTarget.closest('details')?.removeAttribute('open');}}><Download size={16} aria-hidden="true"/>Baixar .md</button><button type="button" disabled={busy} onClick={event => {void downloadPackage();event.currentTarget.closest('details')?.removeAttribute('open');}}><Package size={16} aria-hidden="true"/>Baixar pacote</button></div>
         </details>}
-        {compact && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} title="Formatação" aria-expanded={formattingOpen} onClick={() => setFormattingOpen(open => !open)}><Type size={18}/></button>}
+        {compact && mode !== 'whiteboard' && <button type="button" aria-label={formattingOpen ? 'Ocultar formatação' : 'Mostrar formatação'} title="Formatação" aria-expanded={formattingOpen} onClick={() => setFormattingOpen(open => !open)}><Type size={18}/></button>}
         {actions}
       </div>
       <input ref={input} type="file" hidden aria-label="Arquivo Markdown" disabled={readOnly || busy} accept=".md,.markdown,.mdown,.zip,.bear,text/markdown,application/zip" onChange={event => { void open(event.target.files?.[0]); event.target.value = ''; }}/>
       <input ref={imageInput} type="file" hidden multiple aria-label="Arquivos de imagem" disabled={readOnly || busy} accept="image/png,image/jpeg,image/gif,image/webp" onChange={event => { void insertImages(Array.from(event.target.files ?? []), imageRange.current); event.target.value = ''; }}/>
     </header>
     {sourceStatus}
-    {(!compact || formattingOpen) && <EditingToolbar onExcalidraw={insertDrawing} onEditBlock={readingEditable ? undefined : toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(readingEditable ? visualEditor.current?.selectedText() || '' : value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
+    {mode !== 'whiteboard' && (!compact || formattingOpen) && <EditingToolbar onExcalidraw={insertDrawing} onEditBlock={readingEditable ? undefined : toggleBlock} blockEditing={!!activeBlock} disabled={readOnly || busy} onCommand={command} onLink={() => { const range = editor.current?.selection() ?? { from: 0, to: 0 }; setLinkRange(range); setLinkText(readingEditable ? visualEditor.current?.selectedText() || '' : value.slice(range.from, range.to)); setLinkUrl('https://'); setLinkError(''); }} onImage={() => { imageRange.current = editor.current?.selection() ?? { from: value.length, to: value.length }; imageInput.current?.click(); }}/>}
     {error && <p role="alert" className={styles.error}>{error}</p>}
-    {assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
-    <div className={styles.modeHint}>{readingEditable ? 'Edite diretamente no texto. A formatação permanece visível; Concluir volta à leitura.' : mode === 'live' ? 'Markdown do bloco em edição. Escape volta à leitura.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Use Editar para escrever diretamente no texto.'}</div>
+    {mode !== 'whiteboard' && assets.length > 0 && <p className={styles.assetHint}>{assets.length} imagem(ns) anexada(s). Use <strong>Baixar pacote</strong> para levar o Markdown e as imagens juntos.</p>}
+    {mode !== 'whiteboard' && <div className={styles.modeHint}>{readingEditable ? 'Edite diretamente no texto. A formatação permanece visível; Concluir volta à leitura.' : mode === 'live' ? 'Markdown do bloco em edição. Escape volta à leitura.' : mode === 'source' ? 'Markdown original, com todos os marcadores visíveis.' : mode === 'split' ? 'Edite o Markdown e acompanhe a prévia de leitura.' : 'Prévia de leitura. Use Editar para escrever diretamente no texto.'}</div>}
     <div className={styles.documentArea}>
-    <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`}>
+    <div ref={pages} data-document-scroll className={`${styles.pages} ${mode === 'split' ? styles.split : ''}`} hidden={mode === 'whiteboard'}>
       <div className={styles.source} hidden={mode === 'read'}>
         <MarkdownEditor key={documentId} ref={editor} diagramScope={diagramScope} value={value} onChange={onChange} onSelectionChange={characters => statistics.current?.setEditorSelection(characters)} livePreview={mode === 'live'} doubleClickToEdit={doubleClickToEdit} onBlockEditChange={blockChanged} readOnly={readOnly || busy} assets={assets} onImageFiles={(files, range) => { void insertImages(files, range); }}/>
       </div>
@@ -319,10 +381,11 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
         onChange(value.slice(0, range.from) + replaceExcalidrawFence(value.slice(range.from, range.to), source) + value.slice(range.to));
       } : undefined}/>}
     </div>
-    {outlineOpen && <DocumentOutline id={outlineId} source={value} scrollContainer={pages} viewKey={`${mode}:${readingEditable}`} currentHeading={currentHeading} onNavigate={navigateHeading} onClose={closeOutline}/>}
+    {mode === 'whiteboard' && <Suspense fallback={<p role="status" className={styles.whiteboardLoading}>Carregando Whiteboard…</p>}><WhiteboardEditor key={`${diagramScope}:${documentId}:${selectedBoard}`} ref={whiteboard} source={boards[selectedBoard]?.source || EMPTY_EXCALIDRAW} disabled={readOnly || busy} onChange={updateWhiteboard} onCount={count => setBoardCount(current => current === count ? current : count)} onSave={onSave} onOpen={() => chooseFile()} onClose={onClose} navigation={<><label className={styles.boardPicker}><span>Quadro</span><select aria-label="Quadro da nota" value={selectedBoard} disabled={readOnly || busy} onChange={event => { void selectWhiteboard(Number(event.target.value)); }}>{boards.map((board, index) => <option key={index} value={index}>{index + 1}{board.title ? ` · ${board.title}` : ''}</option>)}</select></label><button type="button" aria-label="Novo quadro" title="Adicionar outro quadro à nota" disabled={readOnly || busy} onClick={() => { void newWhiteboard(); }}><Plus size={17} aria-hidden="true"/></button></>}/></Suspense>}
+    {mode !== 'whiteboard' && outlineOpen && <DocumentOutline id={outlineId} source={value} scrollContainer={pages} viewKey={`${mode}:${readingEditable}`} currentHeading={currentHeading} onNavigate={navigateHeading} onClose={closeOutline}/>}
     </div>
     <output className={styles.blockStatus} aria-live="polite">{activeBlock?'Markdown do bloco em edição. Escape conclui; clique em outro bloco para continuar.':''}</output>
-    <footer className={styles.footer} aria-label="Estatísticas do documento"><SelectionStatistics ref={statistics} container={pages} resetKey={`${mode}:${documentId}`} words={words} characters={value.length}/><span>{readOnly ? 'Somente leitura' : dirty ? 'Alterações nesta sessão' : 'Documento carregado'}</span><span>UTF-8 · .md</span></footer>
+    <footer className={styles.footer} aria-label="Estatísticas do documento">{mode === 'whiteboard' ? <span>{boardCount} {boardCount === 1 ? 'objeto' : 'objetos'} · Quadro {selectedBoard + 1} de {Math.max(1, boards.length)}</span> : <SelectionStatistics ref={statistics} container={pages} resetKey={`${mode}:${documentId}`} words={words} characters={value.length}/>}<span>{readOnly ? 'Somente leitura' : dirty ? 'Alterações nesta sessão' : 'Documento carregado'}</span><span>UTF-8 · .md</span></footer>
     {linkRange && <EditorDialog title="Inserir link" onClose={() => setLinkRange(null)}>
       {linkError && <p role="alert">{linkError}</p>}<form onSubmit={event => {
         event.preventDefault();

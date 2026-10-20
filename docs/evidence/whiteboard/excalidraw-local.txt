@@ -1,0 +1,1 @@
+PASS (Chrome, native): all 29 scenes, lazy preview, wheel zoom, JSON highlighting/copy, SVG fonts, transparent PNG, editable JSON, untouched source preservation, canvas editing/apply/cancel/save, natural editing/live preview and both themes across phone/tablet orientations. No external resources or CSP violations.

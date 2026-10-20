@@ -4,6 +4,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { extendDiagramManual } from './diagram-manual.mjs';
+import { whiteboardPreview } from './markdown-summary.mjs';
 import {transferFolder, transferSnapshot, checkoutStamp, inspectTransfer, copyTransfer} from './repository-transfer.mjs';
 
 const exec = promisify(execFile);
@@ -328,7 +329,7 @@ export class Repository {
           const heading = lines.find(line => /^#{1,6}\s+/.test(line));
           const plain = line => line.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[#*_`>~]/g, '').trim();
           const title = heading ? plain(heading).slice(0, 160) : name.split('/').at(-1);
-          const preview = lines.filter(line => line !== heading && line.trim()).map(plain).filter(Boolean).join(' ').slice(0, 180);
+          const preview = whiteboardPreview(text) ?? lines.filter(line => line !== heading && line.trim()).map(plain).filter(Boolean).join(' ').slice(0, 180);
           return { name, modifiedAt: stat.mtime.toISOString(), title, preview, hasImage: !!this.localImage(text) };
         } catch { return null; } // Deleted files and unsafe symlinks are not openable notes.
       }));
@@ -474,7 +475,8 @@ export class Repository {
     const stat = await fs.stat(filename);
     if (stat.size > MAX_TEXT) throw new Error('O Markdown excede 5 MB.');
     const bytes = await fs.readFile(filename);
-    const value = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    // Keep a leading BOM in the editable source, matching browser file imports and exact fence replacement.
+    const value = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
     const files = [];
     const warnings = [];
     let total = 0;

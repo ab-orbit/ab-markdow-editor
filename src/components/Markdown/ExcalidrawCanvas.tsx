@@ -11,12 +11,14 @@ import styles from './ExcalidrawEditor.module.css';
 interface Props {
   source: string;
   dark: boolean;
+  /** Host saves and malformed initial scenes can temporarily allow navigation only. */
+  readOnly?: boolean;
   onReady: (api: ExcalidrawImperativeAPI) => void;
   onChange: (elements: readonly ExcalidrawElement[], appState: AppState, files: BinaryFiles) => void;
   onError: (message: string) => void;
 }
 /** Mounted only while editing; the document itself uses a lightweight SVG preview. */
-export default function ExcalidrawCanvas({ source, dark, onReady, onChange, onError }: Props) {
+export default function ExcalidrawCanvas({ source, dark, readOnly, onReady, onChange, onError }: Props) {
   const [initial, setInitial] = useState<Awaited<ReturnType<typeof restoreExcalidraw>> & { libraryItems?: LibraryItems }>();
   const api = useRef<ExcalidrawImperativeAPI>(null), fitted = useRef(false);
   useEffect(() => {
@@ -34,9 +36,9 @@ export default function ExcalidrawCanvas({ source, dark, onReady, onChange, onEr
   }, []);
   if (!initial) return <p role="status" className={styles.loading}>Abrindo a prancheta…</p>;
   return <Excalidraw initialData={{ elements: initial.elements, files: initial.files, appState: { ...initial.appState, theme: dark ? 'dark' : 'light' }, libraryItems: initial.libraryItems, scrollToContent: true }} excalidrawAPI={instance => { api.current = instance; onReady(instance); }} onChange={(elements, appState, files) => {
-    if (!fitted.current && !appState.isLoading && elements.length && api.current) { fitted.current = true; requestAnimationFrame(() => api.current?.scrollToContent(undefined, { fitToContent: true, animate: false })); }
+    if (!fitted.current && !appState.isLoading && initial.elements.length && elements.length && api.current) { fitted.current = true; requestAnimationFrame(() => api.current?.scrollToContent(undefined, { fitToContent: true, animate: false })); }
     onChange(elements, appState, files);
-  }} langCode="pt-BR" theme={dark ? 'dark' : 'light'} name="Desenho Scriba" autoFocus handleKeyboardGlobally={false} aiEnabled={false} validateEmbeddable={false}
+  }} langCode="pt-BR" theme={dark ? 'dark' : 'light'} viewModeEnabled={readOnly} name="Desenho Scriba" autoFocus handleKeyboardGlobally={false} aiEnabled={false} validateEmbeddable={false}
     UIOptions={{ canvasActions: { loadScene: false, saveToActiveFile: false, export: false, saveAsImage: false, toggleTheme: false } }}
     onLibraryChange={items => { void writeCanvasState('library', items).catch(() => onError('Não foi possível guardar a biblioteca neste navegador. Exporte os símbolos antes de fechar.')); }}
     onLinkOpen={(element, event) => { if (element.link && !/^(?:https?:\/\/|mailto:|#)/i.test(element.link)) event.preventDefault(); }}

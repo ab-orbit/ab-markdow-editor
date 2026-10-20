@@ -67,10 +67,10 @@ Os testes usaram dados e contextos isolados. Nenhum repositório pessoal, conta 
 - [Resultados das primeiras execuções](checks.json)
 - [Resultados com os assets publicados](production-asset-checks.json)
 - [Observações estruturadas da jornada](journey-observations.json)
-- [Leitura e edição em Chromium](reading-production-chromium.log)
-- [Leitura e edição em WebKit](reading-production-webkit.log)
-- [Atalhos com os assets publicados](browser-shortcuts-production.log)
-- [Falha no teste de reload](browser-refresh-production.log)
+- [Leitura e edição em Chromium](reading-production-chromium.txt)
+- [Leitura e edição em WebKit](reading-production-webkit.txt)
+- [Atalhos com os assets publicados](browser-shortcuts-production.txt)
+- [Falha no teste de reload](browser-refresh-production.txt)
 
 | Captura | Evidência |
 |---|---|

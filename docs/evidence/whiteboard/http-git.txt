@@ -1,0 +1,384 @@
+
+> ab-markdown-editor@1.14.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# (node:58034) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: native OAuth HTTP: isolated browser login, verifier binding, expiry, encrypted credentials and one-time redemption
+ok 1 - native OAuth HTTP: isolated browser login, verifier binding, expiry, encrypted credentials and one-time redemption
+  ---
+  duration_ms: 64.775542
+  type: 'test'
+  ...
+# (node:58035) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits, revision conflicts and CSRF
+ok 2 - GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits, revision conflicts and CSRF
+  ---
+  duration_ms: 1571.083708
+  type: 'test'
+  ...
+# Subtest: GitHub App manifest and OAuth HTTP flow require state and PKCE, keep credentials off responses
+ok 3 - GitHub App manifest and OAuth HTTP flow require state and PKCE, keep credentials off responses
+  ---
+  duration_ms: 15.029459
+  type: 'test'
+  ...
+# Subtest: HTTP API rejects missing capability, foreign origin and DNS rebinding host
+ok 4 - HTTP API rejects missing capability, foreign origin and DNS rebinding host
+  ---
+  duration_ms: 275.677541
+  type: 'test'
+  ...
+# Subtest: connects a real checkout and lists Markdown over HTTP
+ok 5 - connects a real checkout and lists Markdown over HTTP
+  ---
+  duration_ms: 88.27975
+  type: 'test'
+  ...
+# Subtest: recent Markdown files describe whiteboards without exposing scene JSON
+ok 6 - recent Markdown files describe whiteboards without exposing scene JSON
+  ---
+  duration_ms: 22.61375
+  type: 'test'
+  ...
+# Subtest: saves and reopens nested Markdown and raster assets
+ok 7 - saves and reopens nested Markdown and raster assets
+  ---
+  duration_ms: 6.194583
+  type: 'test'
+  ...
+# Subtest: refuses overwrite when destination already exists or was changed externally
+ok 8 - refuses overwrite when destination already exists or was changed externally
+  ---
+  duration_ms: 4.729583
+  type: 'test'
+  ...
+# Subtest: rejects traversal, Git metadata, invalid images and symlinks
+ok 9 - rejects traversal, Git metadata, invalid images and symlinks
+  ---
+  duration_ms: 6.022416
+  type: 'test'
+  ...
+# Subtest: serializes concurrent saves and reports a conflict instead of losing an edit
+ok 10 - serializes concurrent saves and reports a conflict instead of losing an edit
+  ---
+  duration_ms: 1.959292
+  type: 'test'
+  ...
+# Subtest: commits only document and assets, pushes to real bare remote
+ok 11 - commits only document and assets, pushes to real bare remote
+  ---
+  duration_ms: 465.936917
+  type: 'test'
+  ...
+# Subtest: refuses a commit when unrelated changes are already staged
+ok 12 - refuses a commit when unrelated changes are already staged
+  ---
+  duration_ms: 54.218917
+  type: 'test'
+  ...
+# Subtest: rejects embedded HTTPS credentials before attempting a network clone
+ok 13 - rejects embedded HTTPS credentials before attempting a network clone
+  ---
+  duration_ms: 1.819667
+  type: 'test'
+  ...
+# Subtest: clones a repository through real HTTPS using existing local Git trust settings
+ok 14 - clones a repository through real HTTPS using existing local Git trust settings
+  ---
+  duration_ms: 219.74125
+  type: 'test'
+  ...
+# Subtest: save-sync saves, commits and pushes only the current document
+ok 15 - save-sync saves, commits and pushes only the current document
+  ---
+  duration_ms: 427.071042
+  type: 'test'
+  ...
+# Subtest: unchanged saves do not create empty commits
+ok 16 - unchanged saves do not create empty commits
+  ---
+  duration_ms: 190.206584
+  type: 'test'
+  ...
+# Subtest: a failed push preserves the saved version and retries without another commit
+ok 17 - a failed push preserves the saved version and retries without another commit
+  ---
+  duration_ms: 412.320292
+  type: 'test'
+  ...
+# Subtest: a failed commit releases its stage so saving can be retried
+ok 18 - a failed commit releases its stage so saving can be retried
+  ---
+  duration_ms: 811.539417
+  type: 'test'
+  ...
+# Subtest: first automatic push configures origin upstream for a new branch
+ok 19 - first automatic push configures origin upstream for a new branch
+  ---
+  duration_ms: 281.876792
+  type: 'test'
+  ...
+# Subtest: save preferences validate the interval, survive reconnect and a fresh server process
+ok 20 - save preferences validate the interval, survive reconnect and a fresh server process
+  ---
+  duration_ms: 163.371208
+  type: 'test'
+  ...
+# Subtest: an imported original hash binds edits to an existing file without a blind overwrite
+ok 21 - an imported original hash binds edits to an existing file without a blind overwrite
+  ---
+  duration_ms: 253.886042
+  type: 'test'
+  ...
+# Subtest: a repeated identical save is safe even if the browser lost the preceding response
+ok 22 - a repeated identical save is safe even if the browser lost the preceding response
+  ---
+  duration_ms: 176.537625
+  type: 'test'
+  ...
+# Subtest: explicit conflict replacement rechecks the revision and backs up the displaced file
+ok 23 - explicit conflict replacement rechecks the revision and backs up the displaced file
+  ---
+  duration_ms: 232.9255
+  type: 'test'
+  ...
+# Subtest: an existing untracked document can be opened and saved in a repository with no commits
+ok 24 - an existing untracked document can be opened and saved in a repository with no commits
+  ---
+  duration_ms: 304.759334
+  type: 'test'
+  ...
+# Subtest: offline shell reacquires a capability only through a same-origin custom-header request
+ok 25 - offline shell reacquires a capability only through a same-origin custom-header request
+  ---
+  duration_ms: 1.824291
+  type: 'test'
+  ...
+# Subtest: PWA assets have correct types and the offline shell contains no capability
+ok 26 - PWA assets have correct types and the offline shell contains no capability
+  ---
+  duration_ms: 2.851875
+  type: 'test'
+  ...
+# Subtest: an offline draft cannot save into a different configured checkout
+ok 27 - an offline draft cannot save into a different configured checkout
+  ---
+  duration_ms: 0.93125
+  type: 'test'
+  ...
+# Subtest: recent notes returns the latest 100 safe existing Markdown paths by file modification time
+ok 28 - recent notes returns the latest 100 safe existing Markdown paths by file modification time
+  ---
+  duration_ms: 76.542375
+  type: 'test'
+  ...
+# Subtest: guide is seeded once, committed and pushed; pins persist per checkout without changing Git
+ok 29 - guide is seeded once, committed and pushed; pins persist per checkout without changing Git
+  ---
+  duration_ms: 871.540834
+  type: 'test'
+  ...
+# Subtest: thumbnails never fetch remote images and reject traversal, SVG and symlinks
+ok 30 - thumbnails never fetch remote images and reject traversal, SVG and symlinks
+  ---
+  duration_ms: 44.584542
+  type: 'test'
+  ...
+# Subtest: existing guides gain the welcome image once while preserving user edits
+ok 31 - existing guides gain the welcome image once while preserving user edits
+  ---
+  duration_ms: 685.973166
+  type: 'test'
+  ...
+# Subtest: Finder handoff reads only native inbox IDs and distinguishes imports from checkout documents
+ok 32 - Finder handoff reads only native inbox IDs and distinguishes imports from checkout documents
+  ---
+  duration_ms: 23.812583
+  type: 'test'
+  ...
+# Subtest: document revision probes detect external edits/deletions without changing Git or the file
+ok 33 - document revision probes detect external edits/deletions without changing Git or the file
+  ---
+  duration_ms: 51.569792
+  type: 'test'
+  ...
+# Subtest: Finder snapshots remain readable after deletion; explicit reload reads only the original outside the checkout
+ok 34 - Finder snapshots remain readable after deletion; explicit reload reads only the original outside the checkout
+  ---
+  duration_ms: 3.471458
+  type: 'test'
+  ...
+# Subtest: diagram reference upgrades existing checkouts without overwriting collisions or later user decisions
+ok 35 - diagram reference upgrades existing checkouts without overwriting collisions or later user decisions
+  ---
+  duration_ms: 762.924084
+  type: 'test'
+  ...
+# Subtest: already copied diagram references retain annotations and receive the ZenUML extension once
+ok 36 - already copied diagram references retain annotations and receive the ZenUML extension once
+  ---
+  duration_ms: 478.153666
+  type: 'test'
+  ...
+# Subtest: failed reference synchronization preserves the full file and seed marker for explicit retry
+ok 37 - failed reference synchronization preserves the full file and seed marker for explicit retry
+  ---
+  duration_ms: 244.069625
+  type: 'test'
+  ...
+# Subtest: ZenUML upgrade preserves CRLF annotations and unpinned state and respects later section deletion
+ok 38 - ZenUML upgrade preserves CRLF annotations and unpinned state and respects later section deletion
+  ---
+  duration_ms: 504.735542
+  type: 'test'
+  ...
+# Subtest: ZenUML upgrade never appends to a user replacement without the owned manual marker
+ok 39 - ZenUML upgrade never appends to a user replacement without the owned manual marker
+  ---
+  duration_ms: 208.405458
+  type: 'test'
+  ...
+# Subtest: Excalidraw extends an annotated manual once without restoring a deliberately removed ZenUML section
+ok 40 - Excalidraw extends an annotated manual once without restoring a deliberately removed ZenUML section
+  ---
+  duration_ms: 475.421875
+  type: 'test'
+  ...
+# Subtest: sync downloads a remote-only update without creating a commit
+ok 41 - sync downloads a remote-only update without creating a commit
+  ---
+  duration_ms: 1043.247458
+  type: 'test'
+  ...
+# Subtest: conflicting note edits stop synchronization without changing either version or leaving a merge active
+ok 42 - conflicting note edits stop synchronization without changing either version or leaving a merge active
+  ---
+  duration_ms: 843.58325
+  type: 'test'
+  ...
+# Subtest: saving one note preserves unrelated uncommitted work when remote changes need integration
+ok 43 - saving one note preserves unrelated uncommitted work when remote changes need integration
+  ---
+  duration_ms: 747.474125
+  type: 'test'
+  ...
+# Subtest: sync leaves a user-started merge untouched even when its index is clean
+ok 44 - sync leaves a user-started merge untouched even when its index is clean
+  ---
+  duration_ms: 702.779709
+  type: 'test'
+  ...
+# Subtest: a remote advance during push is integrated once while retaining both commits
+ok 45 - a remote advance during push is integrated once while retaining both commits
+  ---
+  duration_ms: 1246.684125
+  type: 'test'
+  ...
+# Subtest: first synchronization can merge an existing remote before establishing its upstream
+ok 46 - first synchronization can merge an existing remote before establishing its upstream
+  ---
+  duration_ms: 777.531833
+  type: 'test'
+  ...
+# Subtest: disconnect preserves files, Git config, preferences and the remembered source across restart
+ok 47 - disconnect preserves files, Git config, preferences and the remembered source across restart
+  ---
+  duration_ms: 1040.496833
+  type: 'test'
+  ...
+# Subtest: previews conflicts without copying, then copies a complete subfolder and pushes while preserving both histories
+ok 48 - previews conflicts without copying, then copies a complete subfolder and pushes while preserving both histories
+  ---
+  duration_ms: 967.112541
+  type: 'test'
+  ...
+# Subtest: source changes and destination changes invalidate a review before any copy or connection change
+ok 49 - source changes and destination changes invalidate a review before any copy or connection change
+  ---
+  duration_ms: 425.771666
+  type: 'test'
+  ...
+# Subtest: rejects traversal, nested destinations and dirty destination checkouts
+ok 50 - rejects traversal, nested destinations and dirty destination checkouts
+  ---
+  duration_ms: 228.963667
+  type: 'test'
+  ...
+# Subtest: symlinks are excluded and an already identical file is not overwritten
+ok 51 - symlinks are excluded and an already identical file is not overwritten
+  ---
+  duration_ms: 476.956208
+  type: 'test'
+  ...
+# Subtest: a clone is reviewed without switching and all transferred paths are published even with destination ignore rules
+ok 52 - a clone is reviewed without switching and all transferred paths are published even with destination ignore rules
+  ---
+  duration_ms: 821.262708
+  type: 'test'
+  ...
+# Subtest: changing only the remote preserves the folder, sends the current structure to the new origin and keeps the old remote intact
+ok 53 - changing only the remote preserves the folder, sends the current structure to the new origin and keeps the old remote intact
+  ---
+  duration_ms: 551.302333
+  type: 'test'
+  ...
+# Subtest: an unrelated remote history is rejected without altering the origin
+ok 54 - an unrelated remote history is rejected without altering the origin
+  ---
+  duration_ms: 185.946875
+  type: 'test'
+  ...
+# Subtest: push failure retains the copied files and selected destination for a normal retry
+ok 55 - push failure retains the copied files and selected destination for a normal retry
+  ---
+  duration_ms: 847.154875
+  type: 'test'
+  ...
+# Subtest: syncs an untracked folder, modified and deleted files through HTTP, honoring ignore rules
+ok 56 - syncs an untracked folder, modified and deleted files through HTTP, honoring ignore rules
+  ---
+  duration_ms: 756.164958
+  type: 'test'
+  ...
+# Subtest: a retry without file changes pushes without creating an empty commit
+ok 57 - a retry without file changes pushes without creating an empty commit
+  ---
+  duration_ms: 295.062208
+  type: 'test'
+  ...
+# Subtest: failed push retains the commit and a clean checkout can retry it
+ok 58 - failed push retains the commit and a clean checkout can retry it
+  ---
+  duration_ms: 445.702083
+  type: 'test'
+  ...
+# Subtest: preserves files staged by another tool and rejects a different checkout
+ok 59 - preserves files staged by another tool and rejects a different checkout
+  ---
+  duration_ms: 105.291042
+  type: 'test'
+  ...
+# Subtest: failed commit releases only the newly prepared index and retains the files for retry
+ok 60 - failed commit releases only the newly prepared index and retains the files for retry
+  ---
+  duration_ms: 1153.566084
+  type: 'test'
+  ...
+# Subtest: a diverged remote merges independent changes and preserves both histories
+ok 61 - a diverged remote merges independent changes and preserves both histories
+  ---
+  duration_ms: 601.648
+  type: 'test'
+  ...
+1..61
+# tests 61
+# suites 0
+# pass 61
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8962.895292

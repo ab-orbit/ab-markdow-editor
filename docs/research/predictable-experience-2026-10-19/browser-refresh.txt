@@ -1,0 +1,16 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('button', { name: 'Salvar nota', exact: true })[22m
+
+    at <scriba-workspace>/tests/browser-reload.smoke.mjs:13:274 {
+  log: [
+    "  - waiting for getByRole('button', { name: 'Salvar nota', exact: true })"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v22.17.0

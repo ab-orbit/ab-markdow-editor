@@ -1,0 +1,1 @@
+PASS: actual browser and Git fixtures; clean auto-refresh, mode preservation, dirty warning/confirmation, auto-save pause, save after reload, deleted source, edits during delayed responses, stale replies, Finder originals, and phone/tablet in both orientations.
