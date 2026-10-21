@@ -1,0 +1,29 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false
+
+Call Log:
+- Timeout 90000ms exceeded while waiting on the predicate
+    at captureRawStack (/Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/node_modules/playwright/node_modules/playwright-core/lib/coreBundle.js:9282:17)
+    at callMatcherAsStep (/Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/node_modules/playwright/lib/matchers/expect.js:13316:57)
+    at Object.toBe (/Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/node_modules/playwright/lib/matchers/expect.js:13308:23)
+    at /Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/tests/public-production.smoke.mjs:20:97 {
+  matcherResult: {
+    pass: false,
+    message: 'expect(received).toBe(expected) // Object.is equality\n' +
+      '\n' +
+      'Expected: true\n' +
+      'Received: false\n' +
+      '\n' +
+      'Call Log:\n' +
+      '- Timeout 90000ms exceeded while waiting on the predicate',
+    name: 'toBe'
+  }
+}
+
+Node.js v24.22.0
