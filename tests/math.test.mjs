@@ -80,3 +80,10 @@ test('latex fences accept an outer display delimiter without passing nested deli
   assert.ok(json.includes('katex-display'),language+' '+open);assert.ok(!json.includes('katex-error'),language+' '+open);assert.ok(json.includes('propostas avaliadas'));
  }
 });
+
+test('unclosed legacy groups always make forward progress and remain plain editable text',()=>{
+ for(const source of ['x = {','text x = {unfinished','x = {a +','x = (','x = ['])assert.deepEqual(mathSpans(source),[],source);
+ assert.equal(mathSpans('\\Delta f = {').at(-1)?.to,10,'The unclosed group remains outside a valid math prefix');
+ const source='A paragraph with x = { and no closing brace.\n\nAnother paragraph.';
+ assert.equal(all(parse(source),'paragraph').length,2);
+});

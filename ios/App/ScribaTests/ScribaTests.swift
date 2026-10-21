@@ -40,6 +40,14 @@ final class ScribaTests: XCTestCase {
     private func native(_ method: String, args: [String: Any] = [:]) async throws -> Any? {
         try await js("return await window.Capacitor.nativePromise('ScribaNative',method,options)", args: ["method": method,"options":args])
     }
+    func testUpdateBridgeReportsInstalledMetadataAndRejectsUnknownChannels() async throws {
+        let info = try await native("updateInfo") as? [String: Any]
+        XCTAssertEqual(info?["version"] as? String, "1.16.1")
+        XCTAssertNotNil(info?["build"] as? String)
+        XCTAssertEqual(info?["channel"] as? String, "development")
+        let rejected = try await js("try { await window.Capacitor.nativePromise('ScribaNative','openUpdate',{channel:'untrusted'}); return false; } catch { return true; }")
+        XCTAssertEqual(rejected as? Bool, true)
+    }
     private func grantFixture() throws {
         let bookmark = try fixture.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
         UserDefaults.standard.set(bookmark, forKey: "scriba.files.bookmark")

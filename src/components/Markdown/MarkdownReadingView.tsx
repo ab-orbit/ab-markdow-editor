@@ -2,7 +2,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { remarkCompatibleMath, mathOptions } from '@/lib/markdown/math';
-import { t } from '../../i18n';
+import { t, useLanguage } from '../../i18n';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { remarkSections } from './remarkSections';
 import { InlineBlockEditor } from './InlineBlockEditor';
@@ -14,7 +14,7 @@ import rehypeSanitize from 'rehype-sanitize';
 import { documentHtmlSchema, rehypeDocumentStyles, rehypeRememberAnchors, rehypeRestoreAnchors } from './rehypeDocumentHtml';
 import { DocumentIcon } from './DocumentIcon';
 import ReactMarkdown, { type Components, type ExtraProps } from 'react-markdown';
-import { Children, cloneElement, createContext, createElement, isValidElement, useContext, useState, type RefObject, type HTMLAttributes, type InputHTMLAttributes, type MouseEvent, type KeyboardEvent } from 'react';
+import { Children, cloneElement, createContext, createElement, isValidElement, useContext, useState, useMemo, type RefObject, type HTMLAttributes, type InputHTMLAttributes, type MouseEvent, type KeyboardEvent } from 'react';
 import remarkGfm from 'remark-gfm';
 import { remarkMissingFootnotes } from './remarkMissingFootnotes';
 import { remarkHeadingIds } from './remarkHeadingIds';
@@ -182,7 +182,11 @@ const components: Components = {
 
 /** Render GFM with stable source-backed blocks and isolated diagram components. */
 export function MarkdownReadingView({ value, assets = [], diagramScope = 'document', ...settings }: MarkdownReadingViewProps) {
+  const language = useLanguage();
   const [active, setActive] = useState<(SourceRange & { cursor: number; preview: string }) | undefined>();
+  const source = active?.preview ?? value;
+  // Context updates still reach source-backed blocks without rerunning the Markdown pipeline.
+  const rendered = useMemo(() => (<ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkCompatibleMath, remarkOriginalOffsets, remarkMissingFootnotes, remarkHeadingIds, remarkDiagramIds, remarkSections]} remarkRehypeOptions={{ footnoteLabel: t("Referências"), footnoteBackLabel: t("Voltar à referência") }} rehypePlugins={[rehypeRememberAnchors, rehypeRaw, [rehypeSanitize, documentHtmlSchema], rehypeDocumentStyles, rehypeRestoreAnchors, [rehypeKatex, mathOptions]]} components={components}>{source}</ReactMarkdown>), [source, language]);
   return <context.Provider value={{ ...settings, assets, diagramScope, source: value, active,
     beginBlock: settings.onChangeBlock ? (range, cursor = 0) => setActive({ ...range, cursor, preview: value }) : undefined,
     finishBlock: () => setActive(undefined),
@@ -193,5 +197,5 @@ export function MarkdownReadingView({ value, assets = [], diagramScope = 'docume
       settings.onChangeBlock?.(active, source);
       setActive({ ...active, to: active.from + source.length });
     },
-  }}><article className={styles.reading} aria-label={t("Prévia Markdown")}><ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkCompatibleMath, remarkOriginalOffsets, remarkMissingFootnotes, remarkHeadingIds, remarkDiagramIds, remarkSections]} remarkRehypeOptions={{ footnoteLabel: t("Referências"), footnoteBackLabel: t("Voltar à referência") }} rehypePlugins={[rehypeRememberAnchors, rehypeRaw, [rehypeSanitize, documentHtmlSchema], rehypeDocumentStyles, rehypeRestoreAnchors, [rehypeKatex, mathOptions]]} components={components}>{active?.preview ?? value}</ReactMarkdown></article></context.Provider>;
+  }}><article className={styles.reading} data-large-document={value.length > 200000 || undefined} aria-label={t("Prévia Markdown")}>{rendered}</article></context.Provider>;
 }

@@ -231,3 +231,11 @@ The reference for the selected language is added to the private library or selec
 Validation: `node --test tests/reference-texts.test.mjs`; `node tests/reference-texts.smoke.mjs`; `MARKDOWN_BROWSER=webkit node tests/reference-texts.smoke.mjs`. [Evidence](docs/evidence/reference-texts/README.md).
 
 The [legacy Portuguese manual](docs/Scriba-Diagramas.md) remains archived for compatibility and its historical rendering evidence; updated clients use the independent localized texts.
+
+## Application update notices
+
+The editor displays a dismissible update notice for a newer public App Store version, an explicitly promoted TestFlight build, or an installed waiting web/PWA update. Store links follow the installation channel; web activation flushes and persists the current draft before reloading. Checks are silent offline and reject invalid, older and expired metadata. See [update behavior, release promotion and verification](docs/APP-UPDATES.md).
+
+## Large documents and opening feedback
+
+The Polis orange plume now accompanies file opening, library navigation and draft recovery. The document-loading fix also recovers explicit converter JSON exports into separate Markdown copies and prevents an incomplete math group from trapping the application in an infinite scan. [Investigation, measured results and source-preservation checks](docs/DOCUMENT-LOADING.md).

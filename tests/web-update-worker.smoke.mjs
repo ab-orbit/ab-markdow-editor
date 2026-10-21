@@ -1,0 +1,14 @@
+import {readFile} from 'node:fs/promises';
+import {runInNewContext} from 'node:vm';
+import assert from 'node:assert/strict';
+const source=await readFile(new URL('../dist/sw.js',import.meta.url),'utf8'),handlers={},removed=[];
+let windows=2,activated=0,claimed=0;
+runInNewContext(source,{URL,self:{location:{origin:'https://scriba.example'},addEventListener:(name,handler)=>handlers[name]=handler,skipWaiting:()=>{activated++;},clients:{matchAll:async()=>Array.from({length:windows},()=>({})),claim:async()=>{claimed++;}}},caches:{keys:async()=>['ab-markdown-shell-old','unrelated-cache'],delete:async key=>removed.push(key)}});
+handlers.message({data:{type:'unrelated'}});assert.equal(activated,0);
+handlers.message({data:{type:'SCRIBA_APPLY_UPDATE'}});assert.equal(activated,1);
+let completion;handlers.activate({waitUntil:promise=>completion=promise});await completion;
+assert.deepEqual(removed,[],'Other open windows retain their old application assets');assert.equal(claimed,1);
+windows=1;handlers.activate({waitUntil:promise=>completion=promise});await completion;
+assert.deepEqual(removed,['ab-markdown-shell-old']);
+let intercepted=false;handlers.fetch({request:{url:'https://scriba.example/api/document',method:'GET'},respondWith:()=>intercepted=true});assert.equal(intercepted,false);
+console.log('PASS: only explicit update messages activate the worker; other windows retain assets; private API requests bypass caching.');

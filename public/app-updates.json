@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "testflight": {
+    "version": "1.16.1",
+    "build": "13",
+    "status": "testing",
+    "expiresAt": "2027-01-19T12:01:15Z"
+  }
+}

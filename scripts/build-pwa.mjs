@@ -14,14 +14,16 @@ await fs.writeFile(path.join(dist,'sw.js'),`/* Generated, versioned application-
 const CACHE=${JSON.stringify(cache)};
 const ASSETS=${JSON.stringify(urls)};
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));});
-// Updates wait for the previous app windows to close; never reload an editing session.
-self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('ab-markdown-shell-')&&key!==CACHE)await caches.delete(key);await self.clients.claim();})());});
+// Updates wait for windows to close unless the user explicitly applies a prepared update.
+self.addEventListener('message',event=>{if(event.data?.type==='SCRIBA_APPLY_UPDATE')self.skipWaiting();});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});if(windows.length<=1)for(const key of await caches.keys())if(key.startsWith('ab-markdown-shell-')&&key!==CACHE)await caches.delete(key);await self.clients.claim();})());});
 self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url);
  if(url.origin!==self.location.origin||event.request.method!=='GET'||url.pathname.startsWith('/api/')||url.pathname.startsWith('/github/')||url.pathname==='/health')return;
  if(event.request.mode==='navigate'){
   event.respondWith(fetch(event.request).catch(()=>caches.open(CACHE).then(cache=>cache.match('/app-shell.html'))));return;
  }
+ if(!ASSETS.includes(url.pathname)&&url.pathname.startsWith('/assets/')){event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)));return;}
  if(ASSETS.includes(url.pathname))event.respondWith(caches.open(CACHE).then(async cache=>await cache.match(url.pathname)||fetch(event.request)));
 });
 `);

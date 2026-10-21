@@ -1,3 +1,4 @@
+import type { NativeUpdateInfo } from './appUpdates';
 import { Capacitor, registerPlugin } from '@capacitor/core';
 
 /** The native bridge is unavailable to ordinary web pages and never receives arbitrary URLs. */
@@ -15,6 +16,10 @@ export interface NativeNote {
   files: { path: string; data: string; mime: string }[];
 }
 interface IosBridge {
+  /** Fixed-origin update lookup; no notes, credentials or device identifiers are sent. */
+  updateInfo(): Promise<NativeUpdateInfo>;
+  /** Open only the known distribution channel, never a remotely supplied URL. */
+  openUpdate(options: {channel: 'app-store' | 'testflight'}): Promise<void>;
   /** Native system bars inherit the actual reading-theme tokens instead of a separate palette. */
   appearance(options: { dark: boolean; red: number; green: number; blue: number }): Promise<void>;
   /** Return a display name; security-scoped bookmarks remain exclusively in native storage. */

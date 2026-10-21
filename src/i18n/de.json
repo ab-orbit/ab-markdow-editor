@@ -774,5 +774,16 @@
   "Tempo de leitura": "Lesezeit",
   "Modificado": "Geändert",
   "Criado": "Erstellt",
-  "Não disponível": "Nicht verfügbar"
+  "Não disponível": "Nicht verfügbar",
+  "Atualização do Scriba": "Scriba-Update",
+  "Nova versão disponível": "Neue Version verfügbar",
+  "Scriba {0} está disponível para atualizar.": "Scriba {0} ist als Update verfügbar.",
+  "Uma atualização do Scriba está pronta.": "Ein Scriba-Update ist bereit.",
+  "Abrir TestFlight": "TestFlight öffnen",
+  "Abrir App Store": "App Store öffnen",
+  "Atualizar agora": "Jetzt aktualisieren",
+  "Lembrar depois": "Später erinnern",
+  "Não foi possível abrir a atualização. Tente novamente.": "Das Update konnte nicht geöffnet werden. Versuchen Sie es erneut.",
+  "Abrindo documento…": "Dokument wird geöffnet…",
+  "Conteúdo Markdown extraído do JSON. O arquivo original foi preservado; a cópia usa outro nome.": "Markdown-Inhalt aus JSON extrahiert. Die Originaldatei wurde beibehalten; die Kopie hat einen anderen Namen."
 }

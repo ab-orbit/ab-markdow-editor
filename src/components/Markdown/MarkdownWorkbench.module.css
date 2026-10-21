@@ -381,3 +381,5 @@
 .mobileMenu button:hover { color: var(--text-primary); }
 .mobileMenu [role="menuitem"], .mobileMenu [role="group"] button { justify-content: flex-start; }
 .noteInformation > header button { border: 0; background: transparent; }
+/* Let the browser defer offscreen book chapters while retaining searchable, navigable DOM. */
+.reading[data-large-document] > section { content-visibility: auto; contain-intrinsic-size: auto 800px; }

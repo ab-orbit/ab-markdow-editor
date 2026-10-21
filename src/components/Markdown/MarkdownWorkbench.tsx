@@ -1,3 +1,6 @@
+import { DocumentLoading } from '../Brand/DocumentLoading';
+import { afterPaint } from '@/lib/afterPaint';
+import { extractedConversionMarkdown, conversionCopyName } from '@/lib/markdown/conversionExport';
 import { MobileNoteInformation } from './MobileNoteInformation';
 import { t } from '../../i18n';
 import { lazy, Suspense, useEffect, useId, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
@@ -55,6 +58,8 @@ export interface MarkdownWorkbenchProps {
   value: string;
   /** Receives source edits and successful local file imports. */
   onChange: (value: string) => void;
+  /** Existing destinations keep extracted converter content separate from every saved original. */
+  existingFileNames?: readonly string[];
   /** Controlled download filename. */
   fileName: string;
   /** Receives the name of a successfully imported file. */
@@ -109,7 +114,7 @@ export interface MarkdownWorkbenchProps {
 
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, saveAction, onOpenSettings, createdAt, modifiedAt, appearanceActions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, onSave, onSaveAs, sourceId, savedFileLocation, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFileNames = [], onFileNameChange, onImport, initialMode = 'live', initialScrollTop = 0, actions, saveAction, onOpenSettings, createdAt, modifiedAt, appearanceActions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, onSave, onSaveAs, sourceId, savedFileLocation, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
   const modes = [['live', t("Escrever")], ['source', t("Fonte")], ['split', t("Visão")], ['read', t("Ler")]] as const;
   const whiteboardSource = useRef(new WhiteboardSource());
   const [initialBoards] = useState(() => whiteboardSource.current.read(value));
@@ -137,6 +142,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
   const blockFromReading = useRef(false);
   const [baseline, setBaseline] = useState(value);
   const [busy, setBusy] = useState(false);
+  const [openingFile, setOpeningFile] = useState(false);
   const saveAsOperation = useRef(false);
   const [saveCopyName,setSaveCopyName] = useState<string|null>(null);
   const [copyNotice,setCopyNotice] = useState("");
@@ -205,20 +211,26 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     const expectedName = fileName.split(/[\\/]/).at(-1);
     if (reloadOriginal && importedName !== expectedName) {setError(t("Selecione o arquivo original {0} para recarregar esta nota.", expectedName));return;}
     if (dirty && !window.confirm(reloadOriginal ? t("Recarregar substituirá as alterações não salvas desta nota. Continuar?") : t("Abrir outro arquivo substituirá as alterações desta sessão. Continuar?"))) return;
-    setError(""); setBusy(true);
+    setError(""); setBusy(true); setOpeningFile(true);
+    await afterPaint();
     try {
       const packaged = /\.(zip|bear)$/i.test(file.name) ? await readMarkdownPackage(file) : null;
-      const source = packaged?.value ?? await readMarkdownFile(file);
+      const original = packaged?.value ?? await readMarkdownFile(file);
+      const extracted = extractedConversionMarkdown(original);
+      const source = extracted ?? original;
       replaceAssets(packaged?.files ?? []);
-      const name = importedName;
+      const name = extracted !== null ? conversionCopyName(importedName, existingFileNames) : importedName;
+      blockFromReading.current=false;setReadingEditable(false);
+      if (!reloadOriginal) setMode('read');
       onChange(source); onFileNameChange(name); setBaseline(source); setDocumentId(id => id + 1);
       await onImport?.(source, name, reloadOriginal);
+      if (extracted !== null) setCopyNotice(t("Conteúdo Markdown extraído do JSON. O arquivo original foi preservado; a cópia usa outro nome."));
       blockFromReading.current=false;
       setReadingEditable(false);
       if (!reloadOriginal) {whiteboardSource.current.read(source);setSelectedBoard(0);setMode(whiteboardSource.current.standalone ? 'whiteboard' : 'read');setReadingActionsOpen(false);}
     } catch (cause) {
       setError(cause instanceof Error ? t(cause.message) : t("Não foi possível abrir o arquivo."));
-    } finally { setBusy(false); }
+    } finally { setBusy(false); setOpeningFile(false); }
   }
 
   function command(action: MarkdownCommand) {
@@ -460,7 +472,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, onFileNameCh
     const top = viewport.getBoundingClientRect().top + 36;
     return headings.filter(heading => { const element = headingElement(heading); return element && element.getClientRects().length > 0 && element.getBoundingClientRect().top <= top; }).at(-1)?.id;
   }
-  return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ""}`} data-mode={mode} data-reading-editable={readingEditable} data-mobile-formatting={mobileFormattingOpen} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label={t("Bancada Markdown")} aria-busy={busy}>{compact && <div className={styles.mobileReadingBar}><button type="button" aria-label={t("Voltar às notas")} onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><select className={styles.mobileFormat} aria-label={t("Formato do documento")} value={mode === 'whiteboard' ? 'whiteboard' : 'note'} disabled={readOnly || busy} onChange={event => { void selectFormat(event.target.value as 'note' | 'whiteboard'); }}><option value="note">{t("Nota")}</option><option value="whiteboard">{t("Whiteboard")}</option></select><div>{mode !== 'whiteboard' && <><button type="button" disabled={readOnly || busy} aria-label={readingEditable ? t("Concluir edição") : t("Editar nota")} onClick={()=>readingEditable ? setReadingEditable(false) : startVisualEditing()}>{readingEditable ? <Check size={20}/> : <Pencil size={20}/>}</button><button type="button" aria-label={t("Informações da nota")} aria-expanded={noteInfoOpen} onClick={() => setNoteInfoOpen(open=>!open)}><Info size={20}/></button></>}{mode === 'whiteboard' && onSave && <button type="button" aria-label={t("Salvar whiteboard")} title={t("Salvar nota e whiteboard")} disabled={readOnly || busy} onClick={() => { void whiteboard.current?.flush().then(ok => { if (ok) onSave(); }); }}><Save size={20}/></button>}<button type="button" aria-label={t("Mais opções da nota")} aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}{saveCopyName !== null && <EditorDialog title={t("Salvar uma cópia")} onClose={() => setSaveCopyName(null)}><p>{t("Este navegador não permite manter acesso direto a um arquivo escolhido. Baixe ou compartilhe uma cópia e escolha onde guardá-la. A nota aberta continua no destino atual.")}</p>{assets.length > 0 && <p>{t("O arquivo ZIP leva o Markdown e suas imagens juntos.")}</p>}<form onSubmit={event => {event.preventDefault();event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();void exportCopy();}}><label>{t("Nome da cópia")}<input autoFocus required value={saveCopyName} onChange={event => setSaveCopyName(event.target.value)}/></label><footer><button type="button" onClick={() => setSaveCopyName(null)}>{t("Cancelar")}</button><button type="submit">{isIosApp ? t("Compartilhar cópia") : t("Baixar cópia")}</button></footer></form></EditorDialog>}{readingActionsOpen && smallScreen && <EditorDialog title={t('Mais opções da nota')} className={styles.mobileMenu} dismissOnOutside onClose={()=>setReadingActionsOpen(false)}><div role="menu" aria-label={t('Mais opções da nota')}>
+  return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ""}`} data-mode={mode} data-reading-editable={readingEditable} data-mobile-formatting={mobileFormattingOpen} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label={t("Bancada Markdown")} aria-busy={busy}>{openingFile && <DocumentLoading label={t("Abrindo documento…")}/>}{compact && <div className={styles.mobileReadingBar}><button type="button" aria-label={t("Voltar às notas")} onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><select className={styles.mobileFormat} aria-label={t("Formato do documento")} value={mode === 'whiteboard' ? 'whiteboard' : 'note'} disabled={readOnly || busy} onChange={event => { void selectFormat(event.target.value as 'note' | 'whiteboard'); }}><option value="note">{t("Nota")}</option><option value="whiteboard">{t("Whiteboard")}</option></select><div>{mode !== 'whiteboard' && <><button type="button" disabled={readOnly || busy} aria-label={readingEditable ? t("Concluir edição") : t("Editar nota")} onClick={()=>readingEditable ? setReadingEditable(false) : startVisualEditing()}>{readingEditable ? <Check size={20}/> : <Pencil size={20}/>}</button><button type="button" aria-label={t("Informações da nota")} aria-expanded={noteInfoOpen} onClick={() => setNoteInfoOpen(open=>!open)}><Info size={20}/></button></>}{mode === 'whiteboard' && onSave && <button type="button" aria-label={t("Salvar whiteboard")} title={t("Salvar nota e whiteboard")} disabled={readOnly || busy} onClick={() => { void whiteboard.current?.flush().then(ok => { if (ok) onSave(); }); }}><Save size={20}/></button>}<button type="button" aria-label={t("Mais opções da nota")} aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}{saveCopyName !== null && <EditorDialog title={t("Salvar uma cópia")} onClose={() => setSaveCopyName(null)}><p>{t("Este navegador não permite manter acesso direto a um arquivo escolhido. Baixe ou compartilhe uma cópia e escolha onde guardá-la. A nota aberta continua no destino atual.")}</p>{assets.length > 0 && <p>{t("O arquivo ZIP leva o Markdown e suas imagens juntos.")}</p>}<form onSubmit={event => {event.preventDefault();event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();void exportCopy();}}><label>{t("Nome da cópia")}<input autoFocus required value={saveCopyName} onChange={event => setSaveCopyName(event.target.value)}/></label><footer><button type="button" onClick={() => setSaveCopyName(null)}>{t("Cancelar")}</button><button type="submit">{isIosApp ? t("Compartilhar cópia") : t("Baixar cópia")}</button></footer></form></EditorDialog>}{readingActionsOpen && smallScreen && <EditorDialog title={t('Mais opções da nota')} className={styles.mobileMenu} dismissOnOutside onClose={()=>setReadingActionsOpen(false)}><div role="menu" aria-label={t('Mais opções da nota')}>
       <button role="menuitem" type="button" disabled={readOnly||busy} onClick={()=>{setReadingActionsOpen(false);chooseFile();}}><FileUp size={18}/>{t('Importar')}</button>
       <button role="menuitem" type="button" disabled={busy} onClick={()=>{setReadingActionsOpen(false);setMobileExportOpen(true);}}><Download size={18}/>{t('Exportar')}</button>
       <button role="menuitem" type="button" disabled={!onOpenSettings} onClick={()=>{setReadingActionsOpen(false);onOpenSettings?.();}}><Settings size={18}/>{t('Configurações')}</button>

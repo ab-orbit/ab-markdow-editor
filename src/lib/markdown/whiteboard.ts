@@ -24,11 +24,18 @@ export class WhiteboardSource {
   /** Comments and whitespace do not turn a canvas document into a prose note. */
   private onlyBoards = true;
   private trailingHeading = '';
+  private needsHeading = false;
   /** A drawing-only Markdown document opens as a canvas on another device too. */
   standalone = false;
 
   read(value: string): readonly DocumentWhiteboard[] {
     if (value === this.value) return this.boards;
+    // Prose without an Excalidraw fence cannot contain a board; avoid parsing an entire book.
+    if (!/(?:^|\r?\n)[ \t]{0,3}(?:`{3,}|~{3,})[ \t]*excalidraw(?:[ \t]|\r?$)/im.test(value.replace(/^\uFEFF/, ''))) {
+      this.value = value; this.boards = []; this.onlyBoards = !value.replace(/<!--[\s\S]*?-->/g, '').trim(); this.standalone = false; this.trailingHeading = ''; this.needsHeading = true;
+      return this.boards;
+    }
+    this.needsHeading = false;
     const bom = value.startsWith('\uFEFF') ? 1 : 0;
     const tree = parser.parse(value.slice(bom));
     this.boards = [];
@@ -66,6 +73,10 @@ export class WhiteboardSource {
   }
 
   append(scene = EMPTY_EXCALIDRAW): string {
+    if (this.needsHeading) {
+      for (const node of parser.parse(this.value || '').children) if (node.type === 'heading') this.trailingHeading = plainText(node).trim();
+      this.needsHeading = false;
+    }
     const value = this.value ?? '', newline = value.match(/\r\n|\r|\n/)?.[0] || '\n';
     const separator = value && !value.endsWith(newline.repeat(2)) ? value.endsWith(newline) ? newline : newline.repeat(2) : '';
     const from = value.length + separator.length;

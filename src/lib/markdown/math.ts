@@ -17,15 +17,16 @@ function importedTex(raw: string) {
 function groupEnd(source: string, start: number): number {
   const close = source[start] === '{' ? '}' : source[start] === '[' ? ']' : ')'; let depth = 1;
   for (let i = start + 1; i < source.length; i++) { if (source[i] === source[start]) depth++; if (source[i] === close && !--depth) return i + 1; }
-  return start;
+  // An unclosed group is not an atom; returning its offset can trap the scanner in a loop.
+  return 0;
 }
 /** Conservative legacy detection: only short math identifiers, balanced groups and TeX commands join a run. */
 function legacyEnd(source: string, start: number): number {
   let end = start;
   while (end < source.length) {
     const rest = source.slice(end), space = /^ +/.exec(rest);
-    if (space) { const next = legacyAtom(source, end + space[0].length); if (!next) break; end = next; continue; }
-    const next = legacyAtom(source, end); if (!next) break; end = next;
+    if (space) { const next = legacyAtom(source, end + space[0].length); if (next <= end + space[0].length) break; end = next; continue; }
+    const next = legacyAtom(source, end); if (next <= end) break; end = next;
   }
   return end;
 }

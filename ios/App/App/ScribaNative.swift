@@ -36,7 +36,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     let jsName = "ScribaNative"
     let pluginMethods: [CAPPluginMethod] = [
         "folderStatus", "chooseFolder", "authorizeFolder", "disconnectFolder", "readNotes", "saveNote",
-        "document", "documentVersion", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance"
+        "document", "documentVersion", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance", "updateInfo", "openUpdate"
     ].map { CAPPluginMethod(name: $0, returnType: CAPPluginReturnPromise) }
 
     private let defaults = UserDefaults.standard
@@ -371,6 +371,52 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
             } catch { call.reject(error.localizedDescription) }
         }
     }
+    /** Update checks use fixed public endpoints and never include the private gateway session. */
+    @objc func updateInfo(_ call: CAPPluginCall) {
+        let bundle = Bundle.main
+        let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
+        let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+        #if DEBUG
+        call.resolve(["version": version, "build": build, "channel": "development"])
+        return
+        #else
+        let beta = bundle.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+        let channel = beta ? "testflight" : "app-store"
+        let country = Locale.current.regionCode ?? "US"
+        var components = URLComponents(string: "https://itunes.apple.com/lookup")!
+        components.queryItems = [URLQueryItem(name: "id", value: "6824664840"), URLQueryItem(name: "country", value: country)]
+        let url = beta ? URL(string: "https://scriba.aeonbridge.app/app-updates.json")! : components.url!
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.httpShouldSetCookies = false; configuration.httpCookieStorage = nil; configuration.urlCache = nil
+        let session = URLSession(configuration: configuration)
+        session.dataTask(with: request) { data, response, _ in
+            defer { session.finishTasksAndInvalidate() }
+            var result: [String: Any] = ["version": version, "build": build, "channel": channel]
+            if let response = response as? HTTPURLResponse, response.statusCode == 200,
+               let data = data, data.count <= 65536,
+               let catalog = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                result["catalog"] = catalog
+            }
+            call.resolve(result)
+        }.resume()
+        #endif
+    }
+
+    /** TestFlight users return to TestFlight; App Store users open the app's actual listing. */
+    @objc func openUpdate(_ call: CAPPluginCall) {
+        guard let channel = call.getString("channel"), ["testflight", "app-store"].contains(channel) else {
+            call.reject("Invalid update channel."); return
+        }
+        let destination = URL(string: channel == "testflight" ? "itms-beta://" : "https://apps.apple.com/app/id6824664840")!
+        DispatchQueue.main.async {
+            UIApplication.shared.open(destination, options: [:]) { opened in
+                if opened { call.resolve() } else { call.reject("Unable to open the update destination.") }
+            }
+        }
+    }
+
     @objc func openExternal(_ call: CAPPluginCall) {
         guard let text = call.getString("url"), let url = URL(string: text), url.scheme == "https" else { call.reject("Link externo inválido."); return }
         DispatchQueue.main.async { UIApplication.shared.open(url, options: [:]) { opened in if opened { call.resolve() } else { call.reject("Não foi possível abrir o link.") } } }

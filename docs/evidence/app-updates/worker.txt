@@ -1,0 +1,1 @@
+PASS: only explicit update messages activate the worker; other windows retain assets; private API requests bypass caching.

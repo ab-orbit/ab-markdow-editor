@@ -1,0 +1,68 @@
+/* Reused from Polis Brand/HypathiaLoader: three particles form the token-colored plume. */
+.hypathia-loader {
+  --hyp-size: 48px;
+  
+  --hyp-color: var(--oil);
+  --hyp-accent: var(--orgn-accent);
+  --hyp-duration: 1400ms;
+  
+  --hyp-delay: 0s;
+  display: inline-grid;
+  place-items: center;
+  width: var(--hyp-size);
+  height: var(--hyp-size);
+  line-height: 0;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hypathia-loader svg { width: 100%; height: 100%; overflow: visible; }
+.hypathia-loader__particle { fill: var(--hyp-color); transform-origin: 0 0; }
+.hypathia-loader__p1 { animation: hyp-p1 var(--hyp-duration) cubic-bezier(.4,0,.2,1) var(--hyp-delay) infinite; }
+.hypathia-loader__p2 { animation: hyp-p2 var(--hyp-duration) cubic-bezier(.4,0,.2,1) var(--hyp-delay) infinite; }
+.hypathia-loader__p3 { animation: hyp-p3 var(--hyp-duration) cubic-bezier(.4,0,.2,1) var(--hyp-delay) infinite; }
+.hypathia-loader__guide {
+  fill: none; stroke: var(--hyp-color); stroke-width: 3.2; stroke-linecap: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0;
+  animation: hyp-guide var(--hyp-duration) cubic-bezier(.4,0,.2,1) var(--hyp-delay) infinite;
+}
+.hypathia-loader__plume {
+  fill: var(--hyp-color); transform-box: fill-box; transform-origin: 50% 100%; opacity: 0;
+  animation: hyp-plume var(--hyp-duration) cubic-bezier(.4,0,.2,1) var(--hyp-delay) infinite;
+}
+.hypathia-loader__spark {
+  fill: var(--hyp-accent); opacity: 0; transform-origin: 40px 8px;
+  animation: hyp-spark var(--hyp-duration) cubic-bezier(.4,0,.2,1) var(--hyp-delay) infinite;
+}
+
+@keyframes hyp-p1 {0%,8%{transform:translate(20px,49px) scale(1);opacity:1}20%{transform:translate(24px,45px) scale(.95);opacity:1}33%{transform:translate(28px,38px) scale(.72);opacity:.8}42%,68%{transform:translate(30px,34px) scale(.35);opacity:0}80%{transform:translate(28px,38px) scale(.55);opacity:.45}92%{transform:translate(24px,45px) scale(.9);opacity:1}100%{transform:translate(20px,49px) scale(1);opacity:1}}
+@keyframes hyp-p2 {0%,8%{transform:translate(26px,45px) scale(.86);opacity:1}20%{transform:translate(29px,39px) scale(.82);opacity:1}33%{transform:translate(33px,29px) scale(.65);opacity:.82}42%,68%{transform:translate(35px,23px) scale(.32);opacity:0}80%{transform:translate(33px,29px) scale(.5);opacity:.48}92%{transform:translate(29px,39px) scale(.78);opacity:1}100%{transform:translate(26px,45px) scale(.86);opacity:1}}
+@keyframes hyp-p3 {0%,8%{transform:translate(32px,41px) scale(.68);opacity:1}20%{transform:translate(35px,31px) scale(.64);opacity:1}33%{transform:translate(39px,17px) scale(.55);opacity:.84}42%,68%{transform:translate(40px,9px) scale(.28);opacity:0}80%{transform:translate(39px,17px) scale(.45);opacity:.52}92%{transform:translate(35px,31px) scale(.6);opacity:1}100%{transform:translate(32px,41px) scale(.68);opacity:1}}
+@keyframes hyp-guide {0%,22%{stroke-dashoffset:1;opacity:0}28%{opacity:.3}42%{stroke-dashoffset:0;opacity:.88}52%{stroke-dashoffset:0;opacity:0}72%{stroke-dashoffset:0;opacity:0}82%{stroke-dashoffset:.28;opacity:.48}92%{stroke-dashoffset:1;opacity:0}100%{opacity:0}}
+@keyframes hyp-plume {0%,31%{opacity:0;transform:scale(.72) rotate(-3deg)}40%{opacity:.32;transform:scale(.86) rotate(-1deg)}49%{opacity:1;transform:scale(1)}61%{opacity:1;transform:scale(1.035) rotate(.35deg)}69%{opacity:1;transform:scale(1)}78%{opacity:.55;transform:scale(.91) rotate(1deg)}86%,100%{opacity:0;transform:scale(.74) rotate(3deg)}}
+@keyframes hyp-spark {0%,48%{opacity:0;transform:scale(.2)}55%{opacity:.72;transform:scale(1)}64%{opacity:.28;transform:scale(.55)}70%,100%{opacity:0;transform:scale(.2)}}
+
+.hypathia-loader.is-closing { animation: hyp-close-out 420ms cubic-bezier(.4,0,.2,1) forwards; }
+.hypathia-loader.is-closing .hypathia-loader__particle,
+.hypathia-loader.is-closing .hypathia-loader__guide,
+.hypathia-loader.is-closing .hypathia-loader__spark { animation: none; opacity: 0; }
+.hypathia-loader.is-closing .hypathia-loader__plume { animation: none; opacity: 1; transform: scale(1); }
+@keyframes hyp-close-out {0%,28%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.84)}}
+
+@media (prefers-reduced-motion: reduce) {
+  .hypathia-loader__particle,.hypathia-loader__guide,.hypathia-loader__spark { animation:none; opacity:0; }
+  .hypathia-loader__plume { animation:hyp-reduced 1.2s ease-in-out var(--hyp-delay) infinite; opacity:.82; }
+  @keyframes hyp-reduced {0%,100%{opacity:.55;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
+}
+
+
+.hypathia-loader.is-settling { animation: hyp-settle 360ms cubic-bezier(.4,0,.2,1) forwards; }
+.hypathia-loader.is-settling .hypathia-loader__particle,
+.hypathia-loader.is-settling .hypathia-loader__guide,
+.hypathia-loader.is-settling .hypathia-loader__spark,
+.hypathia-loader.is-settled .hypathia-loader__particle,
+.hypathia-loader.is-settled .hypathia-loader__guide,
+.hypathia-loader.is-settled .hypathia-loader__spark { animation: none; opacity: 0; }
+.hypathia-loader.is-settling .hypathia-loader__plume,
+.hypathia-loader.is-settled .hypathia-loader__plume { animation: none; opacity: 1; transform: none; }
+@keyframes hyp-settle { 0% { transform: scale(.9); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }

@@ -1,0 +1,1 @@
+PASS: native channel detection fixture, version notice, fixed store/TestFlight destinations, explicit opening and dismissal in the actual editor.

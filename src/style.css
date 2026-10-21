@@ -312,3 +312,16 @@ button.source-reload-pending { color: var(--status-warn); border-color: var(--st
  .note-preview, .notes-search input { font-size: 14px; }
  .notes-sidebar time, .note-group h3 { font-size: var(--desktop-ui-caption); }
 }
+
+/* Update information remains nonmodal and shares both theme token sets. */
+.app-update-notice { position: fixed; z-index: 90; inset: auto 16px max(16px, env(safe-area-inset-bottom)); margin-inline: auto; width: min(620px, calc(100vw - 32px)); display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); box-shadow: var(--shadow-panel); font: 14px/1.4 var(--font-ui); }
+.app-update-notice > svg { flex-shrink: 0; color: var(--text-secondary); }
+.app-update-notice > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.app-update-notice strong { font-weight: 600; }
+.app-update-notice span { color: var(--text-secondary); }
+.app-update-notice a, .app-update-notice button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.app-update-notice a { color: var(--cyan); padding: 8px; font-weight: 600; }
+.app-update-notice a[aria-disabled="true"] { pointer-events: none; }
+.app-update-notice button { width: 44px; border: 0; background: transparent; color: var(--text-secondary); padding: 8px; }
+.app-update-notice :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+@media (max-width: 600px) { .app-update-notice { flex-wrap: wrap; gap: 6px 10px; } .app-update-notice > div { flex-basis: calc(100% - 42px); padding-right: 32px; } .app-update-notice > button { position: absolute; right: 4px; top: 4px; } .app-update-notice > a { margin-left: 28px; } }
