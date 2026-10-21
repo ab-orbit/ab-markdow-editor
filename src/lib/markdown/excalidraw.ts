@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import createDOMPurify from 'dompurify';
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import type { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
@@ -39,11 +40,11 @@ function safeSvg(value: string) {
   const clean = purifier.sanitize(value, { USE_PROFILES: { svg: true, svgFilters: true }, FORBID_TAGS: ['foreignObject', 'a', 'script', 'animate', 'set', 'style'] });
   const template = document.createElement('template'); template.innerHTML = clean;
   const svg = template.content.querySelector('svg');
-  if (!svg || !svg.querySelector('path,rect,ellipse,text,image,line,polygon')) throw new Error('O desenho está vazio. Abra o editor visual para começar.');
+  if (!svg || !svg.querySelector('path,rect,ellipse,text,image,line,polygon')) throw new Error(t("O desenho está vazio. Abra o editor visual para começar."));
   svg.style.width = '100%'; svg.style.height = 'auto'; svg.style.maxWidth = '100%';
   const width = svg.viewBox.baseVal.width, sizes = [...svg.querySelectorAll('text')].map(text => parseFloat(text.getAttribute('font-size') || text.style.fontSize)).filter(value => value > 0);
   if (width && sizes.length) svg.dataset.diagramMinWidth = String(Math.min(1200, Math.ceil(width * Math.min(1, 14 / Math.min(...sizes)))));
-  svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Desenho Excalidraw');
+  svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', t("Desenho Excalidraw"));
   return svg.outerHTML;
 }
 const cache = new Map<string, string>(), pending = new Map<string, Promise<string>>();
@@ -55,7 +56,7 @@ export async function renderExcalidraw(source: string, dark: boolean): Promise<s
   if (pending.has(key)) return pending.get(key)!;
   const job = (async () => {
     const [scene, module] = await Promise.all([restoreExcalidraw(source), loadExcalidraw()]);
-    if (!scene.elements.some(element => !element.isDeleted)) throw new Error('O desenho está vazio. Abra o editor visual para começar.');
+    if (!scene.elements.some(element => !element.isDeleted)) throw new Error(t("O desenho está vazio. Abra o editor visual para começar."));
     const svg = await module.exportToSvg({ elements: scene.elements.filter(element => !element.isDeleted), files: scene.files, appState: { ...scene.appState, exportBackground: false, exportWithDarkMode: dark, exportEmbedScene: false }, exportPadding: 24, renderEmbeddables: false, skipInliningFonts: true });
     const result = safeSvg(svg.outerHTML);
     if (result.length < 4_000_000) {
@@ -86,7 +87,7 @@ export async function downloadExcalidraw(source: string, format: 'svg' | 'png' |
     const scale = Math.min(2, 8192 / width, 8192 / height, Math.sqrt(16_000_000 / (width * height)));
     const canvas = await module.exportToCanvas({ ...options, getDimensions: () => ({ width: Math.ceil(width * scale), height: Math.ceil(height * scale), scale }) });
     try {
-      const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((value: Blob | null) => value ? resolve(value) : reject(new Error('Não foi possível exportar o PNG. Use SVG.')), 'image/png'));
+      const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((value: Blob | null) => value ? resolve(value) : reject(new Error(t("Não foi possível exportar o PNG. Use SVG."))), 'image/png'));
       downloadBlob(blob, 'desenho.png');
     } finally { canvas.width = 1; canvas.height = 1; }
   }

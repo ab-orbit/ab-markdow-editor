@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const origin=process.env.SCRIBA_URL||'http://127.0.0.1:43999';
 try{for(const [width,height] of [[390,844],[844,390],[768,1024],[1440,900]]){
- const page=await browser.newPage({viewport:{width,height},serviceWorkers:'block'});
+ const page=await browser.newPage({locale:'pt-BR',viewport:{width,height},serviceWorkers:'block'});
  await page.goto(origin);await page.getByRole('button',{name:'Fonte',exact:true}).click();const editor=page.locator('.cm-content');await editor.fill('# Rascunho preservado\n\nPágina de configurações.');
  await page.getByRole('button',{name:'Configurações',exact:true}).click();const settings=page.getByRole('region',{name:'Configurações',exact:true});await settings.waitFor();assert.equal(new URL(page.url()).hash,'#settings');assert.equal(await page.getByRole('dialog').count(),0);assert.equal(await editor.isVisible(),false);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.getByRole('heading',{name:'Salvamento e sincronização',exact:true}).scrollIntoViewIfNeeded();const back=page.getByRole('button',{name:'Voltar ao editor'});assert.ok(await back.isVisible());const box=await back.boundingBox();assert.ok(box.y>=0&&box.y+box.height<=height);await page.screenshot({path:`docs/evidence/settings-page-${width}x${height}.png`});

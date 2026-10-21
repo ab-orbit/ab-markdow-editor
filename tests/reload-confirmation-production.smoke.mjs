@@ -11,7 +11,7 @@ for (const engine of ['chromium', 'webkit']) {
   const browser = await (engine === 'webkit' ? webkit.launch({ headless: true }) : chromium.launch({ channel: 'chrome', headless: true }));
   try {
     for (const [width, height] of [[1440, 900], [390, 844]]) {
-      const context = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block' });
+      const context = await browser.newContext({locale:'pt-BR', viewport: { width, height }, serviceWorkers: 'block' });
       const page = await context.newPage(); page.setDefaultTimeout(10000);
       await page.goto(url);
       const input = page.getByLabel('Arquivo Markdown', { exact: true });

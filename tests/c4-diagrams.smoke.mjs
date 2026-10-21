@@ -34,7 +34,7 @@ try {
   }
   assert.ok(origin);
   browser = webKit ? await webkit.launch({ headless: true }) : await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), page = await context.newPage();
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), page = await context.newPage();
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(origin);
   await page.getByLabel('Bancada Markdown').waitFor();
@@ -94,7 +94,7 @@ try {
     await page.reload(); await expect(figures).toHaveCount(5); await expect(figures.first()).toHaveAttribute('data-diagram-engine', 'mermaid');
     // A separate browser has no stored choices and starts every block on Pele.
     if (root) {
-      const fresh = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), freshPage = await fresh.newPage();
+      const fresh = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), freshPage = await fresh.newPage();
       await freshPage.goto(origin); await freshPage.getByRole('button', { name: 'C4.md', exact: true }).click();
       await expect(freshPage.locator('article figure[data-diagram-engine=pele]')).toHaveCount(5);
       await freshPage.getByRole('button', { name: 'Escrever', exact: true }).click();

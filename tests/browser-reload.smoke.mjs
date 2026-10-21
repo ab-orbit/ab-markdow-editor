@@ -9,7 +9,7 @@ const server=http.createServer(async(req,res)=>{
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch({channel:'chrome',headless:true});
 try{
- const context=await browser.newContext({viewport:{width:1440,height:900},serviceWorkers:'block'}),page=await context.newPage();await page.clock.install();await page.goto(origin);
+ const context=await browser.newContext({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:'block'}),page=await context.newPage();await page.clock.install();await page.goto(origin);
  await expect(page.locator('input[type=file]').first()).toBeEnabled();await page.locator('input[type=file]').first().setInputFiles({name:'Tab.md',mimeType:'text/markdown',buffer:Buffer.from('# Primeira aba')});await page.getByRole('button',{name:'Salvar nota',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Nota salva neste navegador.'})).toBeVisible();
  await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');await page.getByRole('heading',{name:'Primeira aba',exact:true}).dblclick();await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-block-editing','true');await page.keyboard.press('Escape');await expect(page.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode','read');
  await page.getByRole('button',{name:'Fonte',exact:true}).click();
@@ -22,7 +22,7 @@ try{
  await privateReload.getByRole('button',{name:'Continuar editando',exact:true}).click();await expect(privateReload).toHaveCount(0);await expect(page.locator('.cm-content')).toHaveText('# Rascunho da primeira aba');
  await page.getByRole('button',{name:'Recarregar nota',exact:true}).first().click();await privateReload.getByRole('button',{name:'Recarregar e descartar rascunho',exact:true}).click();await expect(privateReload).toHaveCount(0);await expect(page.locator('.cm-content')).toHaveText('# Mais uma alteração externa');
  // The chooser alone is simulated. OPFS handles, IndexedDB and writable streams are real browser APIs.
- const diskContext=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+ const diskContext=await browser.newContext({locale:'pt-BR',viewport:{width:390,height:844},serviceWorkers:'block'});
  await diskContext.addInitScript(()=>{window.showDirectoryPicker=async()=>{const root=await navigator.storage.getDirectory(),file=await root.getFileHandle('Disk.md',{create:true}),stream=await file.createWritable();await stream.write('# Original em Files');await stream.close();return root;};});
  const disk=await diskContext.newPage();await disk.clock.install();await disk.goto(origin);await disk.getByRole('button',{name:'Configurações',exact:true}).click();await disk.getByRole('button',{name:'Selecionar pasta em Files'}).click();await expect(disk.getByRole('status').filter({hasText:'notas carregadas. Pasta:'})).toBeVisible();await disk.getByRole('button',{name:'Disk.md',exact:true}).click();await disk.getByRole('button',{name:'Mais opções da nota',exact:true}).click();await disk.getByRole('button',{name:'Fonte',exact:true}).click();
  const writeDisk=async value=>disk.evaluate(async value=>{const folder=await(await navigator.storage.getDirectory()).getDirectoryHandle('scriba'),handle=await folder.getFileHandle('Disk.md'),stream=await handle.createWritable();await stream.write(value);await stream.close();},value);

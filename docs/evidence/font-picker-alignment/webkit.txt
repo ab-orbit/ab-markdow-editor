@@ -1,0 +1,3 @@
+PASS: font alignment, touch sizes, selection and full picker at 440px.
+PASS: font alignment, touch sizes, selection and full picker at 390px.
+PASS: font alignment, touch sizes, selection and full picker at 1440px.

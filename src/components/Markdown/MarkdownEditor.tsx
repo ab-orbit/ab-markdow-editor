@@ -1,3 +1,4 @@
+import { useLanguage } from '../../i18n';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Annotation, Compartment, EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
@@ -22,9 +23,15 @@ export interface MarkdownEditorHandle {
   /** Return syntax-tree table ranges in the current source. */
   tables: () => SourceRange[];
   /** Navigate without changing the source or adding an undo entry. */
-  revealPosition: (position: number, focus?: boolean) => void;
+  revealPosition: (position: number, focus?: boolean, scroll?: boolean) => void;
   /** One-based source line at the visible document edge, for the outline. */
   visibleLine: (top: number) => number;
+  /** Source coordinate at the viewport edge, used for bidirectional split synchronization. */
+  visibleSourcePosition: (top: number) => number;
+  scrollToSourcePosition: (position: number, scroller: HTMLElement, padding?: number) => void;
+  /** Map source text positions to viewport geometry without moving focus. */
+  sourcePositionY: (position: number) => number;
+  selectSourcePosition: (position: number) => void;
 }
 
 export interface MarkdownEditorProps {
@@ -55,6 +62,7 @@ const externalChange = Annotation.define<boolean>();
 /** A browser editor mounted after hydration; history survives mode switches. */
 const noAssets: readonly MarkdownAsset[] = [];
 export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorProps>(function MarkdownEditor({ value, onChange, onSelectionChange, livePreview = true, doubleClickToEdit = true, onBlockEditChange, readOnly = false, assets = noAssets, onImageFiles, diagramScope = 'document' }: MarkdownEditorProps, ref) {
+  const language = useLanguage();
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);
   const callback = useRef(onChange);
@@ -77,12 +85,34 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
     editBlock: range => {if(editor.current)revealBlock(editor.current,range?.from);},
     finishBlock: () => {if(editor.current)finishBlock(editor.current);},
     tables: () => editor.current ? sourceTables(editor.current.state) : [],
-    revealPosition: (position, focus = true) => {
+    revealPosition: (position, focus = true, scroll = true) => {
       const view = editor.current;
       if (!view) return;
       const anchor = Math.max(0, Math.min(view.state.doc.length, position));
-      view.dispatch({ selection: { anchor }, effects: EditorView.scrollIntoView(anchor, { y: 'start', yMargin: 24 }) });
+      view.dispatch({ selection: { anchor }, effects: scroll ? EditorView.scrollIntoView(anchor, { y: 'start', yMargin: 24 }) : [] });
       if (focus) view.focus();
+    },
+    visibleSourcePosition: top => {
+      const view = editor.current; if (!view) return 0;
+      const bounds = view.contentDOM.getBoundingClientRect();
+      return view.posAtCoords({ x: bounds.left + 30, y: Math.max(top + 2, bounds.top + 1) }, false) ?? 0;
+    },
+    sourcePositionY: position => {
+      const view = editor.current; if (!view) return 0;
+      const anchor = Math.max(0, Math.min(view.state.doc.length, position));
+      return view.coordsAtPos(anchor)?.top ?? view.documentTop + view.lineBlockAt(anchor).top;
+    },
+    selectSourcePosition: position => {
+      const view = editor.current; if (!view) return;
+      const anchor = Math.max(0, Math.min(view.state.doc.length, position));
+      view.dispatch({ selection: { anchor } });
+    },
+    scrollToSourcePosition: (position, _scroller, padding = 0) => {
+      const view = editor.current; if (!view) return;
+      const anchor = Math.max(0, Math.min(view.state.doc.length, position));
+      // Let CodeMirror measure virtualized lines and scroll their ancestor pane.
+      // This changes presentation only: selection, text and focus are preserved.
+      view.dispatch({ effects: EditorView.scrollIntoView(anchor, { y: 'start', yMargin: Math.max(0, padding) }) });
     },
     visibleLine: top => {
       const view = editor.current;
@@ -93,6 +123,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEditorPro
     },
   }), []);
 
+  useEffect(() => { editor.current?.dispatch({}); }, [language]);
   useEffect(() => { callback.current = onChange; }, [onChange]);
   useEffect(() => { imageCallback.current = onImageFiles; }, [onImageFiles]);
   useEffect(() => {

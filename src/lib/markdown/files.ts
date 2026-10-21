@@ -1,13 +1,14 @@
+import { t } from '../../i18n';
 export const MAX_MARKDOWN_BYTES = 5 * 1024 * 1024;
 
 /** Decode a local Markdown file strictly, preserving its decoded source. */
 export async function readMarkdownFile(file: File): Promise<string> {
-  if (!/\.(md|markdown|mdown)$/i.test(file.name)) throw new Error('Selecione um arquivo .md, .markdown ou .mdown.');
-  if (file.size > MAX_MARKDOWN_BYTES) throw new Error('O arquivo excede o limite de 5 MB.');
+  if (!/\.(md|markdown|mdown)$/i.test(file.name)) throw new Error(t("Selecione um arquivo .md, .markdown ou .mdown."));
+  if (file.size > MAX_MARKDOWN_BYTES) throw new Error(t("O arquivo excede o limite de 5 MB."));
   try {
     return new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(await file.arrayBuffer());
   } catch {
-    throw new Error('Não foi possível ler o arquivo. Verifique se está em UTF-8.');
+    throw new Error(t("Não foi possível ler o arquivo. Verifique se está em UTF-8."));
   }
 }
 
@@ -18,7 +19,7 @@ export function downloadMarkdown(value: string, fileName: string): void {
 
 /** Trigger a browser download and release its URL after the download starts. */
 export function downloadBlob(blob: Blob, fileName: string): void {
-  if (isIosApp) { void shareNativeBlob(blob, fileName).catch(error => window.alert(error instanceof Error ? error.message : 'Não foi possível exportar o arquivo.')); return; }
+  if (isIosApp) { void shareNativeBlob(blob, fileName).catch(error => window.alert(error instanceof Error ? error.message : t("Não foi possível exportar o arquivo."))); return; }
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;

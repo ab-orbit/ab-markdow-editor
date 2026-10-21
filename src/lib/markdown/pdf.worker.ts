@@ -1,3 +1,4 @@
+import { t, setLanguage } from '../../i18n';
 import pdfMake from 'pdfmake/build/pdfmake';
 import fonts from 'pdfmake/build/vfs_fonts';
 import courier from 'pdfmake/build/standard-fonts/Courier';
@@ -13,11 +14,12 @@ const scope = globalThis as unknown as {
 };
 scope.onmessage = async ({ data: job }) => {
   try {
+    setLanguage(job.language || 'en');
     const { palette } = job;
     pdfMake.addTableLayouts({ scribaTable: { hLineWidth: () => .4, vLineWidth: () => 0, hLineColor: () => palette.border, paddingLeft: () => 6, paddingRight: () => 6 } });
     const definition: TDocumentDefinitions = {
       pageSize: 'A4', pageMargins: [42, 42, 42, 58],
-      info: { title: job.title, creator: 'Scriba Markdown Editor' },
+      info: { title: job.title, creator: t("Scriba Markdown Editor") },
       defaultStyle: { font: 'Roboto', fontSize: 11, color: palette.text, lineHeight: 1.35 },
       styles: {
         paragraph: { margin: [0, 0, 0, 11], alignment: 'justify' },
@@ -35,7 +37,7 @@ scope.onmessage = async ({ data: job }) => {
         { style: 'scribaFooter', canvas: [{ type: 'line', x1: 0, y1: 0, x2: 511.28, y2: 0, lineWidth: .4, lineColor: palette.border }], margin: [0, 0, 0, 7] },
         { style: 'scribaFooter', columns: [
           { style: 'scribaFooter', image: job.logo, width: 13, height: 13, margin: [0, 0, 7, 0] },
-          { style: 'scribaFooter', text: 'scriba markdown editor - powered by Aeon Bridge Co.', fontSize: 8, color: palette.muted, margin: [0, 2, 0, 0], width: '*' },
+          { style: 'scribaFooter', text: t("scriba markdown editor - powered by Aeon Bridge Co."), fontSize: 8, color: palette.muted, margin: [0, 2, 0, 0], width: '*' },
           { style: 'scribaFooter', text: `${page} / ${count}`, width: 36, alignment: 'right', fontSize: 8, color: palette.muted, margin: [0, 2, 0, 0] },
         ], columnGap: 5 },
       ] }),
@@ -43,7 +45,7 @@ scope.onmessage = async ({ data: job }) => {
       pageBreakBefore: (node, queries) => !!node.headlineLevel && !queries.getFollowingNodesOnPage().some(next => next.style !== 'scribaFooter' && !next.headlineLevel),
     };
     const bytes = Uint8Array.from(await pdfMake.createPdf(definition).getBuffer()).buffer;
-    if (bytes.byteLength > 60 * 1024 * 1024) throw new Error('O PDF excede 60 MB. Exporte uma seção menor ou reduza as imagens.');
+    if (bytes.byteLength > 60 * 1024 * 1024) throw new Error(t("O PDF excede 60 MB. Exporte uma seção menor ou reduza as imagens."));
     scope.postMessage({ bytes }, [bytes]);
-  } catch (cause) { scope.postMessage({ error: cause instanceof Error ? cause.message : 'Não foi possível gerar o PDF.' }); }
+  } catch (cause) { scope.postMessage({ error: cause instanceof Error ? cause.message : t("Não foi possível gerar o PDF.") }); }
 };

@@ -1,8 +1,11 @@
+import { stopService } from './local-service.mjs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 const state = process.env.MARKDOWN_STATE_DIR || path.join(os.homedir(), 'Library', 'Application Support', 'AB Markdown');
 const file = path.join(state, 'runtime.json');
+// An explicit stop/update must unload supervision before terminating the server.
+if (!process.env.MARKDOWN_STATE_DIR) await stopService();
 let runtime;
 try { runtime = JSON.parse(await fs.readFile(file, 'utf8')); } catch { process.exit(0); }
 // Verify the process identity through the loopback service before sending a signal.

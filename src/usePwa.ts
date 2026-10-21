@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import { useEffect, useState } from 'react';
 import { isIosApp } from './lib/ios';
 interface InstallEvent extends Event {
@@ -12,7 +13,7 @@ export function usePwa() {
   const [installEvent,setInstallEvent]=useState<InstallEvent | null>(null);
   const [ready,setReady]=useState(false);
   const [updateAvailable,setUpdateAvailable]=useState(false);
-  const [standalone,setStandalone]=useState(()=>window.matchMedia('(display-mode: standalone)').matches);
+  const [standalone,setStandalone]=useState(()=>window.matchMedia("(display-mode: standalone)").matches);
   useEffect(()=>{
     if(isIosApp){setReady(true);setStandalone(true);return;}
     const beforeInstall=(event:Event)=>{event.preventDefault();setInstallEvent(event as InstallEvent);};

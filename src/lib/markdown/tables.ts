@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 export interface EditableTable {
   /** First row contains header cells; the remaining rows contain body cells. */
   rows: string[][];
@@ -22,14 +23,15 @@ function cells(line: string): string[] {
   result.push(cell.trim()); return result;
 }
 
-export function parseEditableTable(source: string): EditableTable {
+/** Modal editing limits are optional for an already-rendered inline table. */
+export function parseEditableTable(source: string, enforceEditorLimits = true): EditableTable {
   const lines = source.trim().split(/\r?\n/);
   const header = cells(lines[0]); const separators = cells(lines[1] ?? '');
-  if (lines.length < 2 || separators.length !== header.length || separators.some(cell => !/^:?-+:?$/.test(cell))) throw new Error('Selecione uma tabela Markdown válida.');
+  if (lines.length < 2 || separators.length !== header.length || separators.some(cell => !/^:?-+:?$/.test(cell))) throw new Error(t("Selecione uma tabela Markdown válida."));
   const rows = [header, ...lines.slice(2).filter(line => line.trim()).map(line => {
     const row = cells(line); return header.map((_, index) => row[index] ?? '');
   })];
-  if (header.length > 20 || rows.length > 100) throw new Error('A edição visual aceita até 20 colunas e 100 linhas. Edite tabelas maiores na fonte.');
+  if (enforceEditorLimits && (header.length > 20 || rows.length > 100)) throw new Error(t("A edição visual aceita até 20 colunas e 100 linhas. Edite tabelas maiores na fonte."));
   return { rows, alignments: separators.map(cell => cell.startsWith(':') && cell.endsWith(':') ? 'center' : cell.endsWith(':') ? 'right' : 'left') };
 }
 

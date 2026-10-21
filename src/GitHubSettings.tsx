@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import { useEffect, useId, useState } from "react";
 import { isIosApp, iosBridge } from './lib/ios';
 import { FolderGit2, RefreshCw, CircleCheck } from "lucide-react";
@@ -27,7 +28,7 @@ export function GitHubSettings({
   const [status, setStatus] = useState<GitHubStatus | null>(null),
     [repositories, setRepositories] = useState<Repository[]>([]),
     [repo, setRepo] = useState(""),
-    [folder, setFolder] = useState("scriba"),
+    [folder, setFolder] = useState(t("scriba")),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [token, setToken] = useState("");
@@ -62,7 +63,7 @@ export function GitHubSettings({
     try {
       await action();
     } catch (error) {
-      setError(error instanceof Error ? error.message : String(error));
+      setError(error instanceof Error ? t(error.message) : String(error));
     } finally {
       setBusy(false);
     }
@@ -81,45 +82,16 @@ export function GitHubSettings({
     void run(refresh);
   }, []);
   return (
-    <section className="repository" aria-label="GitHub remoto">
-      <h3>
-        <FolderGit2 size={20} /> GitHub · todos os dispositivos
-      </h3>
-      <p>
-        Conecte sua conta e escolha um repositório para ler e salvar notas no
-        iPhone, iPad e computador. Cada salvamento cria um commit com o Markdown
-        e suas imagens.
-      </p>
-      {error && <p role="alert">{error}</p>}
-      {!status && <p>Verificando conexão GitHub…</p>}
-      {status && !status.connected && (
-        <>
-          {status.configured ? (
-            <a className="settings-action" href="/github/login" onClick={isIosApp ? event => {event.preventDefault();void run(async()=>{await iosBridge.githubLogin();await refresh();});} : undefined}>
-              Conectar GitHub
-            </a>
+    <section className="repository" aria-label={t("GitHub remoto")}><h3><FolderGit2 size={20} />{t("GitHub · todos os dispositivos")}</h3><p>{t("Conecte sua conta e escolha um repositório para ler e salvar notas no iPhone, iPad e computador. Cada salvamento cria um commit com o Markdown e suas imagens.")}</p>{error && <p role="alert">{error}</p>}{!status && <p>{t("Verificando conexão GitHub…")}</p>}{status && !status.connected && (
+        <>{status.configured ? (
+            <a className="settings-action" href="/github/login" onClick={isIosApp ? event => {event.preventDefault();void run(async()=>{await iosBridge.githubLogin();await refresh();});} : undefined}>{t("Conectar GitHub")}</a>
           ) : (
-            <p>
-              A conexão com um clique aguarda a ativação do GitHub App pela
-              administração. Enquanto isso, você pode conectar usando um token
-              do seu repositório.
-            </p>
-          )}
-          <details>
-            <summary>Conectar com token de acesso</summary>
-            <p>
-              Crie um token fine-grained limitado ao repositório desejado, com
-              Contents: leitura e escrita. Ele fica criptografado na sessão do
-              servidor; não é guardado no navegador.
-            </p>
-            <a
+            <p>{t("A conexão com um clique aguarda a ativação do GitHub App pela administração. Enquanto isso, você pode conectar usando um token do seu repositório.")}</p>
+          )}<details><summary>{t("Conectar com token de acesso")}</summary><p>{t("Crie um token fine-grained limitado ao repositório desejado, com Contents: leitura e escrita. Ele fica criptografado na sessão do servidor; não é guardado no navegador.")}</p><a
               href="https://github.com/settings/personal-access-tokens/new"
               target="_blank"
               rel="noopener noreferrer"
-            >
-              Criar token no GitHub
-            </a>
-            <form
+            >{t("Criar token no GitHub")}</a><form
               onSubmit={(event) => {
                 event.preventDefault();
                 if (!canSwitch()) return;
@@ -129,51 +101,25 @@ export function GitHubSettings({
                   await refresh();
                 });
               }}
-            >
-              <label>
-                Token GitHub
-                <input
+            ><label>{t("Token GitHub")}<input
                   type="password"
                   autoComplete="off"
                   value={token}
                   onChange={(event) => setToken(event.target.value)}
                   required
-                />
-              </label>
-              <button disabled={busy}>Conectar com token</button>
-            </form>
-          </details>
-        </>
-      )}
-      {status?.connected && (
-        <>
-          <p>
-            <span className="connection-status" data-state="connected"><CircleCheck size={16} aria-hidden="true"/>Conectado como <strong>{status.user?.login}</strong></span>
-            {status.selection &&
-              ` · ${status.selection.fullName}/${status.selection.folder}`}
-          </p>
-          <p>
-            {githubSelection()
-              ? "Salvamento ativo no GitHub."
-              : "Conta conectada. Use este repositório para ativar o salvamento no GitHub."}
-          </p>
-          <div className="settings-actions">
-            {status.installUrl && (
+                /></label><button disabled={busy}>{t("Conectar com token")}</button></form></details></>
+      )}{status?.connected && (
+        <><p><span className="connection-status" data-state="connected"><CircleCheck size={16} aria-hidden="true"/>{t("Conectado como")}{' '}<strong>{status.user?.login}</strong></span>{status.selection &&
+              ` · ${status.selection.fullName}/${status.selection.folder}`}</p><p>{githubSelection()
+              ? t("Salvamento ativo no GitHub.")
+              : t("Conta conectada. Use este repositório para ativar o salvamento no GitHub.")}</p><div className="settings-actions">{status.installUrl && (
               <a
                 className="settings-action"
                 href={status.installUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-              >
-                Autorizar repositórios no GitHub
-              </a>
-            )}
-            <button disabled={busy} onClick={() => void run(refresh)}>
-              <RefreshCw size={18} />
-              Atualizar repositórios
-            </button>
-          </div>
-          <form
+              >{t("Autorizar repositórios no GitHub")}</a>
+            )}<button disabled={busy} onClick={() => void run(refresh)}><RefreshCw size={18} />{t("Atualizar repositórios")}</button></div><form
             onSubmit={(event) => {
               event.preventDefault();
               if (!canSwitch()) return;
@@ -186,15 +132,12 @@ export function GitHubSettings({
                 await refresh();
               });
             }}
-          >
-            <label className="grow">
-              Buscar repositório
-              <input
-                aria-label="Buscar repositório"
+          ><label className="grow">{t("Buscar repositório")}<input
+                aria-label={t("Buscar repositório")}
                 type="search"
                 list={suggestionsId}
                 autoComplete="off"
-                placeholder="Organização ou nome do repositório"
+                placeholder={t("Organização ou nome do repositório")}
                 value={repositoryQuery}
                 onChange={(event) => {
                   const query = event.target.value;
@@ -206,59 +149,26 @@ export function GitHubSettings({
                     )?.fullName || "",
                   );
                 }}
-              />
-              <datalist id={suggestionsId}>
-                {matchingRepositories.map((item) => (
-                  <option key={item.fullName} value={item.fullName}>
-                    {item.private ? "Privado" : "Público"}
-                  </option>
-                ))}
-              </datalist>
-            </label>
-            <label className="grow">
-              Repositório
-              <select
-                aria-label="Repositório GitHub"
+              /><datalist id={suggestionsId}>{matchingRepositories.map((item) => (
+                  <option key={item.fullName} value={item.fullName}>{item.private ? t("Privado") : t("Público")}</option>
+                ))}</datalist></label><label className="grow">{t("Repositório")}<select
+                aria-label={t("Repositório GitHub")}
                 value={repo}
                 onChange={(event) => setRepo(event.target.value)}
                 required
-              >
-                <option value="">Selecione um repositório</option>
-                {[...repositoryGroups].map(([owner, items]) => (
-                  <optgroup key={owner} label={owner}>
-                    {items.map((item) => (
-                      <option key={item.fullName} value={item.fullName}>
-                        {item.fullName.split("/")[1]}
-                        {item.private ? " · privado" : ""}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </label>
-            {repositoryQuery && (
-              <p role="status">
-                {matchingRepositories.length
-                  ? `${matchingRepositories.length} ${matchingRepositories.length === 1 ? "repositório encontrado" : "repositórios encontrados"}.`
-                  : "Nenhum repositório encontrado."}
-              </p>
-            )}
-            <label>
-              Pasta das notas
-              <input
+              ><option value={""}>{t("Selecione um repositório")}</option>{[...repositoryGroups].map(([owner, items]) => (
+                  <optgroup key={owner} label={owner}>{items.map((item) => (
+                      <option key={item.fullName} value={item.fullName}>{item.fullName.split("/")[1]}{item.private ? t(" · privado") : ""}</option>
+                    ))}</optgroup>
+                ))}</select></label>{repositoryQuery && (
+              <p role="status">{matchingRepositories.length
+                  ? t("{0} {1}.", matchingRepositories.length, matchingRepositories.length === 1 ? t("repositório encontrado") : t("repositórios encontrados"))
+                  : t("Nenhum repositório encontrado.")}</p>
+            )}<label>{t("Pasta das notas")}<input
                 value={folder}
                 onChange={(event) => setFolder(event.target.value)}
-                placeholder="scriba"
-              />
-            </label>
-            <p>
-              Use scriba para uma pasta dedicada. Deixe vazio para ler as notas
-              desde a raiz do repositório. Seus rascunhos do navegador continuam
-              separados por destino.
-            </p>
-            <button disabled={busy || !repo}>Usar este repositório</button>
-          </form>
-          <button
+                placeholder={t("scriba")}
+              /></label><p>{t("Use scriba para uma pasta dedicada. Deixe vazio para ler as notas desde a raiz do repositório. Seus rascunhos do navegador continuam separados por destino.")}</p><button disabled={busy || !repo}>{t("Usar este repositório")}</button></form><button
             disabled={busy}
             onClick={() => {
               if (!canSwitch()) return;
@@ -269,17 +179,7 @@ export function GitHubSettings({
                 await refresh();
               });
             }}
-          >
-            Desconectar e usar navegador
-          </button>
-        </>
-      )}
-      <p>
-        Alterações offline ficam neste dispositivo. Ao reconectar, salve a nota
-        pendente ou aguarde o salvamento automático enquanto ela estiver aberta.
-        Se uma nota mudar em outro dispositivo, o editor pede para reabrir ou
-        salvar uma cópia.
-      </p>
-    </section>
+          >{t("Desconectar e usar navegador")}</button></>
+      )}<p>{t("Alterações offline ficam neste dispositivo. Ao reconectar, salve a nota pendente ou aguarde o salvamento automático enquanto ela estiver aberta. Se uma nota mudar em outro dispositivo, o editor pede para reabrir ou salvar uma cópia.")}</p></section>
   );
 }

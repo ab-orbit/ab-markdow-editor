@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
 import { MagnifiableDiagram } from './MagnifiableDiagram';
 import styles from './DiagramBlock.module.css';
@@ -49,11 +50,9 @@ export function ZoomableDiagram({ ref, svg, id, magnifying, onZoom, onLayout, mi
   }, []);
   useEffect(() => { change(1); onZoom(1); }, [svg]);
   useEffect(() => { if (height) onLayout?.(); }, [height]);
-  return <div ref={viewport} className={styles.zoomViewport} data-diagram-zoom={zoom.toFixed(3)} style={{ height: height || undefined }} tabIndex={0} role="group" aria-label="Zoom do diagrama" title="Use a roda do mouse para ampliar; arraste para navegar. Shift + roda rola horizontalmente."
+  return <div ref={viewport} className={styles.zoomViewport} data-diagram-zoom={zoom.toFixed(3)} style={{ height: height || undefined }} tabIndex={0} role="group" aria-label={t("Zoom do diagrama")} title={t("Use a roda do mouse para ampliar; arraste para navegar. Shift + roda rola horizontalmente.")}
     onKeyDown={event => { if (event.target !== event.currentTarget) return; if (['+', '=', '-', '0'].includes(event.key)) { event.preventDefault(); event.key === '0' ? change(1) : change(scale.current * (event.key === '-' ? 1 / 1.25 : 1.25)); } }}
     onPointerDown={event => { if (event.pointerType !== 'mouse' || event.button !== 0 || magnifying || scale.current <= 1) return; const element = event.currentTarget; drag.current = { x: event.clientX, y: event.clientY, left: element.scrollLeft, top: element.scrollTop }; element.setPointerCapture(event.pointerId); event.preventDefault(); }}
     onPointerMove={event => { if (!drag.current) return; event.currentTarget.scrollLeft = drag.current.left - (event.clientX - drag.current.x); event.currentTarget.scrollTop = drag.current.top - (event.clientY - drag.current.y); }}
-    onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}>
-    <div className={styles.zoomBounds} style={{ width: `${zoom * 100}%`, minWidth: minWidth ? minWidth * zoom : undefined, height: height * zoom || undefined }}><div ref={surface} className={styles.zoomSurface} style={{ width: `${100 / zoom}%`, transform: `scale(${zoom})` }}><MagnifiableDiagram svg={svg} enabled={magnifying} id={id}/></div></div>
-  </div>;
+    onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}><div className={styles.zoomBounds} style={{ width: `${zoom * 100}%`, minWidth: minWidth ? minWidth * zoom : undefined, height: height * zoom || undefined }}><div ref={surface} className={styles.zoomSurface} style={{ width: `${100 / zoom}%`, transform: `scale(${zoom})` }}><MagnifiableDiagram svg={svg} enabled={magnifying} id={id}/></div></div></div>;
 }

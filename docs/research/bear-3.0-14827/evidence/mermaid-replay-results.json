@@ -1,0 +1,4653 @@
+{
+  "kind": "controlled-resource-replay",
+  "limitations": [
+    "This executes the exact installed HTML/JS resources in isolated browser engines; it does not drive Bear native UI or prove that every syntax is accepted by the native Markdown parser.",
+    "Native-provided theme parameters are represented by declared test values; they are not claimed to be exact Bear theme values.",
+    "All non-loopback network requests are aborted; screenshots and SVGs contain only analyst-authored fixtures.",
+    "One successful fixture establishes that diagram family, not exhaustive grammar compatibility."
+  ],
+  "createdAt": "2026-10-18T14:41:49.768Z",
+  "root": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources",
+  "fixtures": [
+    [
+      "flowchart",
+      "flowchart LR\n  Start --> Finish"
+    ],
+    [
+      "graph-alias",
+      "graph TD\n  Start --> Finish"
+    ],
+    [
+      "sequence",
+      "sequenceDiagram\n  Alice->>Bob: Hello\n  Bob-->>Alice: Received"
+    ],
+    [
+      "class",
+      "classDiagram\n  class Note {\n    +String title\n  }\n  Notebook \"1\" --> \"*\" Note"
+    ],
+    [
+      "state",
+      "stateDiagram-v2\n  [*] --> Draft\n  Draft --> Saved\n  Saved --> [*]"
+    ],
+    [
+      "state-legacy",
+      "stateDiagram\n  [*] --> Draft\n  Draft --> [*]"
+    ],
+    [
+      "er",
+      "erDiagram\n  NOTEBOOK ||--o{ NOTE : contains\n  NOTE {\n    int id PK\n    string title\n  }"
+    ],
+    [
+      "ed-typo",
+      "edDiagram\n  NOTEBOOK ||--o{ NOTE : contains"
+    ],
+    [
+      "gantt",
+      "gantt\n  title Release\n  dateFormat YYYY-MM-DD\n  section Work\n  Build :a1, 2026-10-01, 3d"
+    ],
+    [
+      "pie",
+      "pie title Notes\n  \"Drafts\" : 2\n  \"Saved\" : 5"
+    ],
+    [
+      "mindmap",
+      "mindmap\n  root((Notes))\n    Work\n    Personal"
+    ],
+    [
+      "timeline",
+      "timeline\n  title Releases\n  2025 : Draft\n  2026 : Release"
+    ],
+    [
+      "journey",
+      "journey\n  title Write a note\n  section Draft\n    Open : 5: User\n    Write : 4: User"
+    ],
+    [
+      "c4-context",
+      "C4Context\n  Person(user, \"User\")\n  System(app, \"Notes\")\n  Rel(user, app, \"Writes\")"
+    ],
+    [
+      "c4-container",
+      "C4Container\n  Person(user, \"User\")\n  Container(app, \"Notes\", \"Web\", \"Editor\")\n  Rel(user, app, \"Writes\")"
+    ],
+    [
+      "c4-component",
+      "C4Component\n  Component(editor, \"Editor\", \"Web\")\n  Component(store, \"Store\", \"Disk\")\n  Rel(editor, store, \"Saves\")"
+    ],
+    [
+      "c4-dynamic",
+      "C4Dynamic\n  Person(user, \"User\")\n  System(app, \"Notes\")\n  Rel(user, app, \"Writes\")"
+    ],
+    [
+      "c4-deployment",
+      "C4Deployment\n  Deployment_Node(device, \"Device\", \"Mac\") {\n    Container(app, \"Notes\", \"Web\", \"Editor\")\n  }"
+    ],
+    [
+      "sankey",
+      "sankey-beta\nDrafts,Saved,5\nDrafts,Archived,2"
+    ],
+    [
+      "xychart",
+      "xychart-beta\n  title \"Notes\"\n  x-axis [Mon, Tue, Wed]\n  y-axis \"Count\" 0 --> 10\n  bar [2, 5, 8]"
+    ],
+    [
+      "quadrant",
+      "quadrantChart\n  title Work\n  x-axis Low --> High\n  y-axis Low --> High\n  Task: [0.6, 0.7]"
+    ],
+    [
+      "gitgraph",
+      "gitGraph\n  commit\n  branch draft\n  checkout draft\n  commit"
+    ],
+    [
+      "requirement",
+      "requirementDiagram\n  requirement save_note {\n    id: 1\n    text: Save a note\n    risk: low\n    verifymethod: test\n  }"
+    ],
+    [
+      "packet",
+      "packet-beta\n  0-7: \"Header\"\n  8-15: \"Body\""
+    ],
+    [
+      "architecture",
+      "architecture-beta\n  group app(cloud)[Notes]\n  service web(server)[Editor] in app\n  service db(database)[Store] in app\n  web:R -- L:db"
+    ],
+    [
+      "block",
+      "block-beta\n  columns 2\n  A[\"Editor\"] B[\"Storage\"]\n  A --> B"
+    ],
+    [
+      "kanban",
+      "kanban\n  todo[Todo]\n    task[Write a note]\n  done[Done]\n    saved[Save a note]"
+    ],
+    [
+      "radar",
+      "radar-beta\n  axis speed[\"Speed\"], quality[\"Quality\"], cost[\"Cost\"]\n  curve release[\"Release\"]{4, 5, 3}"
+    ],
+    [
+      "treemap",
+      "treemap-beta\n  \"Notes\"\n    \"Work\": 7\n    \"Personal\": 3"
+    ],
+    [
+      "treeview",
+      "treeView-beta\n  notes/\n    work/\n      draft.md\n    personal.md"
+    ],
+    [
+      "eventmodeling",
+      "eventmodeling\n  tf 01 ui Editor\n  tf 02 cmd SaveNote\n  tf 03 evt NoteSaved"
+    ],
+    [
+      "ishikawa",
+      "ishikawa-beta\n  Save failed\n  Network\n    Offline\n  Storage\n    Full disk"
+    ],
+    [
+      "venn",
+      "venn-beta\n  set Work: 10\n  set Personal: 8\n  union Work,Personal: 3"
+    ],
+    [
+      "wardley",
+      "wardley-beta\n  title Notes\n  component Editor [0.9, 0.6]\n  component Storage [0.4, 0.9]\n  Editor -> Storage"
+    ],
+    [
+      "cynefin",
+      "cynefin-beta\n  complex\n  \"Explore note links\"\n  clear\n  \"Save a note\""
+    ],
+    [
+      "railroad",
+      "railroad-beta\n  note = sequence(terminal(\"#\"), nonterminal(\"heading\"));\n  heading = terminal(\"Notes\");"
+    ],
+    [
+      "railroad-ebnf",
+      "railroad-ebnf-beta\n  note = \"#\" heading ;\n  heading = \"Notes\" ;"
+    ],
+    [
+      "railroad-abnf",
+      "railroad-abnf-beta\n  note = \"#\" heading ;\n  heading = \"Notes\" ;"
+    ],
+    [
+      "railroad-peg",
+      "railroad-peg-beta\n  note <- \"#\" heading ;\n  heading <- \"Notes\" ;"
+    ],
+    [
+      "swimlane",
+      "swimlane-beta LR\n  subgraph Author\n    A[Write]\n  end\n  subgraph Storage\n    B[Save]\n  end\n  A --> B"
+    ],
+    [
+      "flowchart-elk",
+      "flowchart-elk LR\n  Start --> Finish"
+    ],
+    [
+      "zenuml-not-registered",
+      "zenuml\nAlice->Bob: Hello"
+    ],
+    [
+      "usecase-not-registered",
+      "usecaseDiagram\nactor User"
+    ],
+    [
+      "info",
+      "info"
+    ]
+  ],
+  "files": {
+    "mermaid/mermaid.html": {
+      "bytes": 1652,
+      "sha256": "80d00777e4eadefa2bc7f099c5473b6998e4119bffbd973a73547869a6945a89"
+    },
+    "mermaid/mermaid.js": {
+      "bytes": 5231,
+      "sha256": "38bb4e524b02b5d2d507e03f05269b19a79874ae816fba574d6fbecf9b8b141c"
+    },
+    "mermaid/mermaid.min.js": {
+      "bytes": 3565102,
+      "sha256": "74d7c46dabca328c2294733910a8aa1ed0c37451776e8d5295da38a2b758fb9b"
+    },
+    "mathjax/math.html": {
+      "bytes": 916,
+      "sha256": "72f1b189422af61f839095acc23352c6031f7091092db7881ef894e5f2c9ae46"
+    },
+    "mathjax/math.js": {
+      "bytes": 3896,
+      "sha256": "021528a0f1dc98520e105e47c028a1f3a7ae1cd3790eb337e46f6e2cd9fd778d"
+    },
+    "mathjax/mathjax/tex-svg.js": {
+      "bytes": 1845599,
+      "sha256": "438b7c266ac8c59e7cd9718f8d3dbf56a2fe0dcb32df1cfb9803cdda0d09bdfd"
+    },
+    "mathjax/mathjax/core.js": {
+      "bytes": 140345,
+      "sha256": "1c0e06bcb6b81bdef4e945b69cb507daa02589c2dfc3a013145ebe9ad32f4c77"
+    },
+    "mathjax/mathjax/startup.js": {
+      "bytes": 17109,
+      "sha256": "ae70412837810e6202c958bb9ef847bf96eb4cea9841671fe8818a1888f05332"
+    }
+  },
+  "engines": [
+    {
+      "name": "chromium",
+      "version": "155.0.8059.80",
+      "externalRequestsBlocked": [
+        "https://cdn.jsdelivr.net/npm/@mathjax/mathjax-mhchem-font-extension/svg.js"
+      ],
+      "resourceErrors": [],
+      "pageErrors": [],
+      "results": [
+        {
+          "id": "flowchart",
+          "detected": "flowchart-v2",
+          "parsed": {
+            "diagramType": "flowchart-v2",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 263.21875,
+            "height": 70
+          },
+          "svgBytes": 13681,
+          "svgText": "-1792334510612 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510612 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510612-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510612 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510612-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510612 :root{--mermaid-font-family:BearSansUI;}StartFinish",
+          "hasSvg": true,
+          "width": "263.21875",
+          "height": "70",
+          "viewBox": "0 0 263.21875 70"
+        },
+        {
+          "id": "graph-alias",
+          "detected": "flowchart",
+          "parsed": {
+            "diagramType": "flowchart-v2",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 118.265625,
+            "height": 174
+          },
+          "svgBytes": 13699,
+          "svgText": "-1792334510634 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510634 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510634-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510634 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510634-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510634 :root{--mermaid-font-family:BearSansUI;}StartFinish",
+          "hasSvg": true,
+          "width": "118.265625",
+          "height": "174",
+          "viewBox": "0 0 118.265625 174"
+        },
+        {
+          "id": "sequence",
+          "detected": "sequence",
+          "parsed": {
+            "diagramType": "sequence",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 450,
+            "height": 275
+          },
+          "svgBytes": 24720,
+          "svgText": "792334510650 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510650 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510650-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510650 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510650-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510650 :root{--mermaid-font-family:BearSansUI;}HelloReceived",
+          "hasSvg": true,
+          "width": "450",
+          "height": "275",
+          "viewBox": "-50 -10 450 275"
+        },
+        {
+          "id": "class",
+          "detected": "class",
+          "parsed": {
+            "diagramType": "class",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 142.421875,
+            "height": 270
+          },
+          "svgBytes": 20923,
+          "svgText": "data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510667 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510667-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510667 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510667-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510667 :root{--mermaid-font-family:BearSansUI;}1*Note+String titleNotebook",
+          "hasSvg": true,
+          "width": "142.421875",
+          "height": "270",
+          "viewBox": "0 0 142.421875 270"
+        },
+        {
+          "id": "state",
+          "detected": "stateDiagram",
+          "parsed": {
+            "diagramType": "stateDiagram",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 76.09375,
+            "height": 274
+          },
+          "svgBytes": 29831,
+          "svgText": "r-1792334510693 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510693 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510693-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510693 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510693-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510693 :root{--mermaid-font-family:BearSansUI;}DraftSaved",
+          "hasSvg": true,
+          "width": "76.09375",
+          "height": "274",
+          "viewBox": "0 0 76.09375 274"
+        },
+        {
+          "id": "state-legacy",
+          "detected": "state",
+          "parsed": {
+            "diagramType": "stateDiagram",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 69.140625,
+            "height": 184
+          },
+          "svgBytes": 28336,
+          "svgText": "render-1792334510713 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510713 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510713-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510713 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510713-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510713 :root{--mermaid-font-family:BearSansUI;}Draft",
+          "hasSvg": true,
+          "width": "69.140625",
+          "height": "184",
+          "viewBox": "0 0 69.140625 184"
+        },
+        {
+          "id": "er",
+          "detected": "er",
+          "parsed": {
+            "diagramType": "er",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 180.46875,
+            "height": 329.25
+          },
+          "svgBytes": 19571,
+          "svgText": "neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510729 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510729-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510729 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510729-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510729 :root{--mermaid-font-family:BearSansUI;}containsNOTEBOOKNOTEintidPKstringtitle",
+          "hasSvg": true,
+          "width": "180.46875",
+          "height": "329.25",
+          "viewBox": "0 0 180.46875 329.25"
+        },
+        {
+          "id": "ed-typo",
+          "detected": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: edDiagram\n  NOTEBOOK ||--o{ NOTE : contains"
+          },
+          "parsed": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: edDiagram\n  NOTEBOOK ||--o{ NOTE : contains"
+          },
+          "dimensions": {
+            "error": "No diagram type detected matching given configuration for text: edDiagram"
+          },
+          "svgBytes": 0,
+          "hasSvg": false
+        },
+        {
+          "id": "gantt",
+          "detected": "gantt",
+          "parsed": {
+            "diagramType": "gantt",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 124
+          },
+          "svgBytes": 12720,
+          "svgText": "{fill:url(#mermaid-render-1792334510841-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510841 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510841-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510841 :root{--mermaid-font-family:BearSansUI;}2026-10-012026-10-012026-10-012026-10-012026-10-022026-10-022026-10-022026-10-022026-10-032026-10-032026-10-032026-10-032026-10-04Build WorkRelease",
+          "hasSvg": true,
+          "width": "1440",
+          "height": "124",
+          "viewBox": "0 0 1440 124"
+        },
+        {
+          "id": "pie",
+          "detected": "pie",
+          "parsed": {
+            "diagramType": "pie",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 559.078125,
+            "height": 450
+          },
+          "svgBytes": 4735,
+          "svgText": "855 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510855 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510855-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510855 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510855-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510855 :root{--mermaid-font-family:BearSansUI;}29%71%NotesDraftsSaved",
+          "hasSvg": true,
+          "width": "559.078125",
+          "height": "450",
+          "viewBox": "0 0 559.078125 450"
+        },
+        {
+          "id": "mindmap",
+          "detected": "mindmap",
+          "parsed": {
+            "diagramType": "mindmap",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 370.203125,
+            "height": 83.078125
+          },
+          "svgBytes": 34118,
+          "svgText": "34510862 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510862 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510862-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510862 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510862-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510862 :root{--mermaid-font-family:BearSansUI;}NotesWorkPersonal",
+          "hasSvg": true,
+          "width": "370.20770263671875",
+          "height": "83.078125",
+          "viewBox": "5 5 370.20770263671875 83.078125"
+        },
+        {
+          "id": "timeline",
+          "detected": "timeline",
+          "parsed": {
+            "diagramType": "timeline",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 895,
+            "height": 479.59375
+          },
+          "svgBytes": 22123,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510903 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510903-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510903 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510903-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510903 :root{--mermaid-font-family:BearSansUI;}2025Draft2026ReleaseReleases",
+          "hasSvg": true,
+          "width": "895",
+          "height": "479.6000061035156",
+          "viewBox": "-5 -60 895 479.6000061035156"
+        },
+        {
+          "id": "journey",
+          "detected": "journey",
+          "parsed": {
+            "diagramType": "journey",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 700,
+            "height": 540
+          },
+          "svgBytes": 9987,
+          "svgText": ".state-start{fill:#000000;}#mermaid-render-1792334510912 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510912-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510912 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510912-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510912 :root{--mermaid-font-family:BearSansUI;}UserDraftDraftUserOpen Open UserWrite Write Write a note",
+          "hasSvg": true,
+          "width": "700",
+          "height": "540",
+          "viewBox": "0 -25 700 540"
+        },
+        {
+          "id": "c4-context",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 381
+          },
+          "svgBytes": 20659,
+          "svgText": "k=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510923 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510923-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510923 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510923-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510923 :root{--mermaid-font-family:BearSansUI;}<<person>>User<<system>>NotesWrites",
+          "hasSvg": true,
+          "width": "832",
+          "height": "381",
+          "viewBox": "0 -10 832 381"
+        },
+        {
+          "id": "c4-container",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 383
+          },
+          "svgBytes": 21153,
+          "svgText": "circle .state-start{fill:#000000;}#mermaid-render-1792334510935 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510935-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510935 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510935-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510935 :root{--mermaid-font-family:BearSansUI;}<<person>>User<<container>>Notes[Web]EditorWrites",
+          "hasSvg": true,
+          "width": "832",
+          "height": "383",
+          "viewBox": "0 -10 832 383"
+        },
+        {
+          "id": "c4-component",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 352
+          },
+          "svgBytes": 20349,
+          "svgText": "le .state-start{fill:#000000;}#mermaid-render-1792334510943 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510943-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510943 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510943-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510943 :root{--mermaid-font-family:BearSansUI;}<<component>>Editor[Web]<<component>>Store[Disk]Saves",
+          "hasSvg": true,
+          "width": "832",
+          "height": "352",
+          "viewBox": "0 -10 832 352"
+        },
+        {
+          "id": "c4-dynamic",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 381
+          },
+          "svgBytes": 20664,
+          "svgText": "neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510949 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510949-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510949 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510949-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510949 :root{--mermaid-font-family:BearSansUI;}<<person>>User<<system>>Notes1: Writes",
+          "hasSvg": true,
+          "width": "832",
+          "height": "381",
+          "viewBox": "0 -10 832 381"
+        },
+        {
+          "id": "c4-deployment",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 616,
+            "height": 490
+          },
+          "svgBytes": 19906,
+          "svgText": "o\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510954 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510954-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510954 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510954-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510954 :root{--mermaid-font-family:BearSansUI;}<<container>>Notes[Web]EditorDevice[Mac]",
+          "hasSvg": true,
+          "width": "616",
+          "height": "490",
+          "viewBox": "0 -10 616 490"
+        },
+        {
+          "id": "sankey",
+          "detected": "sankey",
+          "parsed": {
+            "diagramType": "sankey",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 600,
+            "height": 400
+          },
+          "svgBytes": 5253,
+          "svgText": " [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510962 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510962-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510962 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510962-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510962 :root{--mermaid-font-family:BearSansUI;}Drafts\n7Saved\n5Archived\n2",
+          "hasSvg": true,
+          "width": "600",
+          "height": "400",
+          "viewBox": "0 0 600 400"
+        },
+        {
+          "id": "xychart",
+          "detected": "xychart",
+          "parsed": {
+            "diagramType": "xychart",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 700,
+            "height": 500
+          },
+          "svgBytes": 8266,
+          "svgText": "-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510972 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510972-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510972 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510972-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510972 :root{--mermaid-font-family:BearSansUI;}NotesMonTueWed109876543210Count",
+          "hasSvg": true,
+          "width": "700",
+          "height": "500",
+          "viewBox": "0 0 700 500"
+        },
+        {
+          "id": "quadrant",
+          "detected": "quadrantChart",
+          "parsed": {
+            "diagramType": "quadrantChart",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 500,
+            "height": 500
+          },
+          "svgBytes": 5972,
+          "svgText": "983 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510983 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510983-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510983 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510983-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510983 :root{--mermaid-font-family:BearSansUI;}TaskLowHighLowHighWork",
+          "hasSvg": true,
+          "width": "500",
+          "height": "500",
+          "viewBox": "0 0 500 500"
+        },
+        {
+          "id": "gitgraph",
+          "detected": "gitGraph",
+          "parsed": {
+            "diagramType": "gitGraph",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 203.828125,
+            "height": 177.578125
+          },
+          "svgBytes": 12739,
+          "svgText": "data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334510997 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334510997-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510997 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334510997-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334510997 :root{--mermaid-font-family:BearSansUI;}maindraft0-4abd0271-be0a7ca",
+          "hasSvg": true,
+          "width": "203.828125",
+          "height": "177.58126831054688",
+          "viewBox": "-95.828125 -22.5 203.828125 177.58126831054688"
+        },
+        {
+          "id": "requirement",
+          "detected": "requirement",
+          "parsed": {
+            "diagramType": "requirement",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 163.859375,
+            "height": 200
+          },
+          "svgBytes": 9377,
+          "svgText": ":#000000;}#mermaid-render-1792334511007 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511007-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511007 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511007-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511007 :root{--mermaid-font-family:BearSansUI;}<<Requirement>>save_noteID: 1Text: Save a noteRisk: LowVerification: Test",
+          "hasSvg": true,
+          "width": "163.859375",
+          "height": "200",
+          "viewBox": "0 0 163.859375 200"
+        },
+        {
+          "id": "packet",
+          "detected": "packet",
+          "parsed": {
+            "diagramType": "packet",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 1026,
+            "height": 62
+          },
+          "svgBytes": 4334,
+          "svgText": "2334511021 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511021 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511021-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511021 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511021-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511021 :root{--mermaid-font-family:BearSansUI;}Header07Body815",
+          "hasSvg": true,
+          "width": "1026",
+          "height": "62",
+          "viewBox": "0 0 1026 62"
+        },
+        {
+          "id": "architecture",
+          "detected": "architecture",
+          "parsed": {
+            "diagramType": "architecture",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 445.671875,
+            "height": 262
+          },
+          "svgBytes": 9695,
+          "svgText": "334511035 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511035 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511035-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511035 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511035-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511035 :root{--mermaid-font-family:BearSansUI;}EditorStoreNotes",
+          "hasSvg": true,
+          "width": "445.6865539550781",
+          "height": "262",
+          "viewBox": "-182.84327697753906 -65.5 445.6865539550781 262"
+        },
+        {
+          "id": "block",
+          "detected": "block",
+          "parsed": {
+            "diagramType": "block",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 147.625,
+            "height": 42
+          },
+          "svgBytes": 9119,
+          "svgText": "792334511064 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511064 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511064-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511064 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511064-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511064 :root{--mermaid-font-family:BearSansUI;}EditorStorage",
+          "hasSvg": true,
+          "width": "147.625",
+          "height": "42",
+          "viewBox": "-5 -21 147.625 42"
+        },
+        {
+          "id": "kanban",
+          "detected": "kanban",
+          "parsed": {
+            "diagramType": "kanban",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 425,
+            "height": 99
+          },
+          "svgBytes": 22816,
+          "svgText": "-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511076 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511076-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511076 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511076-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511076 :root{--mermaid-font-family:BearSansUI;}TodoDoneWrite a noteSave a note",
+          "hasSvg": true,
+          "width": "425",
+          "height": "99",
+          "viewBox": "90 -310 425 99"
+        },
+        {
+          "id": "radar",
+          "detected": "radar",
+          "parsed": {
+            "diagramType": "radar",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 700,
+            "height": 700
+          },
+          "svgBytes": 9100,
+          "svgText": "94 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511094 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511094-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511094 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511094-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511094 :root{--mermaid-font-family:BearSansUI;}SpeedQualityCostRelease",
+          "hasSvg": true,
+          "width": "700",
+          "height": "700",
+          "viewBox": "0 0 700 700"
+        },
+        {
+          "id": "treemap",
+          "detected": "treemap",
+          "parsed": {
+            "diagramType": "treemap",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 996,
+            "height": 371
+          },
+          "svgBytes": 7060,
+          "svgText": "04 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511104 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511104-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511104 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511104-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511104 :root{--mermaid-font-family:BearSansUI;}10Notes10Work7Personal3",
+          "hasSvg": true,
+          "width": "996",
+          "height": "371",
+          "viewBox": "2 27 996 371"
+        },
+        {
+          "id": "treeview",
+          "detected": "treeView",
+          "parsed": {
+            "diagramType": "treeView",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 128.5625,
+            "height": 155
+          },
+          "svgBytes": 4930,
+          "svgText": "ta-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511115 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511115-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511115 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511115-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511115 :root{--mermaid-font-family:BearSansUI;}/notesworkdraft.mdpersonal.md",
+          "hasSvg": true,
+          "width": "128.5625",
+          "height": "155",
+          "viewBox": "-0.5 0 128.5625 155"
+        },
+        {
+          "id": "eventmodeling",
+          "detected": "eventmodeling",
+          "parsed": {
+            "diagramType": "eventmodeling",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 696,
+            "height": 470
+          },
+          "svgBytes": 5426,
+          "svgText": "te-start{fill:#000000;}#mermaid-render-1792334511126 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511126-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511126 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511126-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511126 :root{--mermaid-font-family:BearSansUI;}UI/AutomationCommand/Read ModelEventsEditorSaveNoteNoteSaved",
+          "hasSvg": true,
+          "width": "696",
+          "height": "470",
+          "viewBox": "-30 -30 696 470"
+        },
+        {
+          "id": "ishikawa",
+          "detected": "ishikawa",
+          "parsed": {
+            "diagramType": "ishikawa",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 261.359375,
+            "height": 582.125
+          },
+          "svgBytes": 6842,
+          "svgText": "\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511139 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511139-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511139 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511139-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511139 :root{--mermaid-font-family:BearSansUI;}Save failedNetworkOfflineStorageFull disk",
+          "hasSvg": true,
+          "width": "261.3622589111328",
+          "height": "582.134033203125",
+          "viewBox": "-146.03726196289062 -42.7701416015625 261.3622589111328 582.134033203125"
+        },
+        {
+          "id": "venn",
+          "detected": "venn",
+          "parsed": {
+            "diagramType": "venn",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 800,
+            "height": 450
+          },
+          "svgBytes": 5048,
+          "svgText": "1792334511153 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511153 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511153-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511153 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511153-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511153 :root{--mermaid-font-family:BearSansUI;}WorkPersonal",
+          "hasSvg": true,
+          "width": "800",
+          "height": "450",
+          "viewBox": "0 0 800 450"
+        },
+        {
+          "id": "wardley",
+          "detected": "wardley",
+          "parsed": {
+            "diagramType": "wardley",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 900,
+            "height": 600
+          },
+          "svgBytes": 3430,
+          "svgText": "NotesEvolutionVisibilityGenesisCustom BuiltProductCommodityEditorStorage",
+          "hasSvg": true,
+          "width": "900",
+          "height": "600",
+          "viewBox": "0 0 900 600"
+        },
+        {
+          "id": "cynefin",
+          "detected": "cynefin",
+          "parsed": {
+            "diagramType": "cynefin",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 880,
+            "height": 680
+          },
+          "svgBytes": 9004,
+          "svgText": "185,185,185,1));}#mermaid-render-1792334511182 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511182-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511182 :root{--mermaid-font-family:BearSansUI;}ComplexComplicatedChaoticClearConfusionProbe → Sense → RespondEmergent PracticesSense → Analyse → RespondGood PracticesAct → Sense → RespondNovel PracticesSense → Categorise → RespondBest PracticesDisorderExplore note linksSave a note",
+          "hasSvg": true,
+          "width": "880",
+          "height": "680",
+          "viewBox": "0 0 880 680"
+        },
+        {
+          "id": "railroad",
+          "detected": "railroad",
+          "parsed": {
+            "diagramType": "railroad",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 158
+          },
+          "svgBytes": 6422,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511194 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511194-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511194 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511194-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511194 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "158",
+          "viewBox": "0 0 238.421875 158"
+        },
+        {
+          "id": "railroad-ebnf",
+          "detected": "railroadEbnf",
+          "parsed": {
+            "diagramType": "railroadEbnf",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 158
+          },
+          "svgBytes": 6426,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511207 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511207-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511207 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511207-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511207 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "158",
+          "viewBox": "0 0 238.421875 158"
+        },
+        {
+          "id": "railroad-abnf",
+          "detected": "railroadAbnf",
+          "parsed": {
+            "diagramType": "railroadAbnf",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 158
+          },
+          "svgBytes": 6426,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511217 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511217-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511217 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511217-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511217 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "158",
+          "viewBox": "0 0 238.421875 158"
+        },
+        {
+          "id": "railroad-peg",
+          "detected": "railroadPeg",
+          "parsed": {
+            "diagramType": "railroadPeg",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 158
+          },
+          "svgBytes": 6425,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511227 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511227-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511227 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511227-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511227 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "158",
+          "viewBox": "0 0 238.421875 158"
+        },
+        {
+          "id": "swimlane",
+          "detected": "swimlane",
+          "parsed": {
+            "diagramType": "swimlane",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 171.703125,
+            "height": 339.171875
+          },
+          "svgBytes": 14969,
+          "svgText": "236 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511236 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511236-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511236 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511236-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511236 :root{--mermaid-font-family:BearSansUI;}StorageAuthorWriteSave",
+          "hasSvg": true,
+          "width": "171.703125",
+          "height": "339.171875",
+          "viewBox": "-67.8515625 -71 171.703125 339.171875"
+        },
+        {
+          "id": "flowchart-elk",
+          "detected": "flowchart-elk",
+          "parsed": {
+            "diagramType": "flowchart-elk",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 263.21875,
+            "height": 70
+          },
+          "svgBytes": 13707,
+          "svgText": "-1792334511259 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511259 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511259-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511259 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511259-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511259 :root{--mermaid-font-family:BearSansUI;}StartFinish",
+          "hasSvg": true,
+          "width": "263.21875",
+          "height": "70",
+          "viewBox": "0 0 263.21875 70"
+        },
+        {
+          "id": "zenuml-not-registered",
+          "detected": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: zenuml\nAlice->Bob: Hello"
+          },
+          "parsed": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: zenuml\nAlice->Bob: Hello"
+          },
+          "dimensions": {
+            "error": "No diagram type detected matching given configuration for text: zenuml"
+          },
+          "svgBytes": 0,
+          "hasSvg": false
+        },
+        {
+          "id": "usecase-not-registered",
+          "detected": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: usecaseDiagram\nactor User"
+          },
+          "parsed": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: usecaseDiagram\nactor User"
+          },
+          "dimensions": {
+            "error": "No diagram type detected matching given configuration for text: usecaseDiagram"
+          },
+          "svgBytes": 0,
+          "hasSvg": false
+        },
+        {
+          "id": "info",
+          "detected": "info",
+          "parsed": {
+            "diagramType": "info",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 300,
+            "height": 150
+          },
+          "svgBytes": 3177,
+          "svgText": "der-1792334511274 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334511274 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334511274-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511274 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334511274-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334511274 :root{--mermaid-font-family:BearSansUI;}v11.16.0",
+          "hasSvg": true,
+          "width": "100%",
+          "height": null,
+          "viewBox": null
+        }
+      ],
+      "mermaid": {
+        "exports": [
+          "startOnLoad",
+          "mermaidAPI",
+          "parse",
+          "render",
+          "init",
+          "run",
+          "registerExternalDiagrams",
+          "registerLayoutLoaders",
+          "initialize",
+          "parseError",
+          "contentLoaded",
+          "setParseErrorHandler",
+          "detectType",
+          "registerIconPacks",
+          "getRegisteredDiagramsMetadata"
+        ],
+        "registry": [
+          {
+            "id": "error"
+          },
+          {
+            "id": "---"
+          },
+          {
+            "id": "flowchart-elk"
+          },
+          {
+            "id": "mindmap"
+          },
+          {
+            "id": "architecture"
+          },
+          {
+            "id": "c4"
+          },
+          {
+            "id": "kanban"
+          },
+          {
+            "id": "classDiagram"
+          },
+          {
+            "id": "class"
+          },
+          {
+            "id": "er"
+          },
+          {
+            "id": "gantt"
+          },
+          {
+            "id": "info"
+          },
+          {
+            "id": "pie"
+          },
+          {
+            "id": "requirement"
+          },
+          {
+            "id": "sequence"
+          },
+          {
+            "id": "swimlane"
+          },
+          {
+            "id": "flowchart-v2"
+          },
+          {
+            "id": "flowchart"
+          },
+          {
+            "id": "timeline"
+          },
+          {
+            "id": "gitGraph"
+          },
+          {
+            "id": "stateDiagram"
+          },
+          {
+            "id": "state"
+          },
+          {
+            "id": "journey"
+          },
+          {
+            "id": "quadrantChart"
+          },
+          {
+            "id": "sankey"
+          },
+          {
+            "id": "packet"
+          },
+          {
+            "id": "xychart"
+          },
+          {
+            "id": "block"
+          },
+          {
+            "id": "eventmodeling"
+          },
+          {
+            "id": "treeView"
+          },
+          {
+            "id": "radar"
+          },
+          {
+            "id": "ishikawa"
+          },
+          {
+            "id": "treemap"
+          },
+          {
+            "id": "railroad"
+          },
+          {
+            "id": "railroadEbnf"
+          },
+          {
+            "id": "railroadAbnf"
+          },
+          {
+            "id": "railroadPeg"
+          },
+          {
+            "id": "venn"
+          },
+          {
+            "id": "wardley"
+          },
+          {
+            "id": "cynefin"
+          }
+        ],
+        "infoText": "v11.16.0",
+        "initialConfig": {
+          "flowchart": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "subGraphTitleMargin": {
+              "top": 0,
+              "bottom": 0
+            },
+            "diagramPadding": 8,
+            "nodeSpacing": 50,
+            "rankSpacing": 50,
+            "curve": "basis",
+            "padding": 15,
+            "defaultRenderer": "dagre-wrapper",
+            "wrappingWidth": 200,
+            "inheritDir": false
+          },
+          "swimlane": {
+            "useMaxWidth": true,
+            "lineHops": "arc",
+            "ignoreCrossLaneEdges": true,
+            "optimizeRanksByCrossings": true,
+            "automaticLaneOrdering": false
+          },
+          "sequence": {
+            "useMaxWidth": true,
+            "hideUnusedParticipants": false,
+            "activationWidth": 10,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "actorMargin": 50,
+            "width": 150,
+            "height": 65,
+            "boxMargin": 10,
+            "boxTextMargin": 5,
+            "noteMargin": 10,
+            "messageMargin": 35,
+            "messageAlign": "center",
+            "mirrorActors": true,
+            "forceMenus": false,
+            "bottomMarginAdj": 1,
+            "rightAngles": false,
+            "showSequenceNumbers": false,
+            "actorFontSize": 14,
+            "actorFontFamily": "\"Open Sans\", sans-serif",
+            "actorFontWeight": 400,
+            "noteFontSize": 14,
+            "noteFontFamily": "\"trebuchet ms\", verdana, arial, sans-serif",
+            "noteFontWeight": 400,
+            "noteAlign": "center",
+            "messageFontSize": 16,
+            "messageFontFamily": "\"trebuchet ms\", verdana, arial, sans-serif",
+            "messageFontWeight": 400,
+            "wrap": false,
+            "wrapPadding": 10,
+            "labelBoxWidth": 50,
+            "labelBoxHeight": 20
+          },
+          "gantt": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "barHeight": 20,
+            "barGap": 4,
+            "topPadding": 50,
+            "rightPadding": 75,
+            "leftPadding": 75,
+            "gridLineStartPadding": 35,
+            "fontSize": 11,
+            "sectionFontSize": 11,
+            "numberSectionStyles": 4,
+            "axisFormat": "%Y-%m-%d",
+            "topAxis": false,
+            "displayMode": "",
+            "weekday": "sunday"
+          },
+          "journey": {
+            "useMaxWidth": true,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "leftMargin": 150,
+            "maxLabelWidth": 360,
+            "width": 150,
+            "height": 50,
+            "boxMargin": 10,
+            "boxTextMargin": 5,
+            "noteMargin": 10,
+            "messageMargin": 35,
+            "messageAlign": "center",
+            "bottomMarginAdj": 1,
+            "rightAngles": false,
+            "taskFontSize": 14,
+            "taskFontFamily": "\"Open Sans\", sans-serif",
+            "taskMargin": 50,
+            "activationWidth": 10,
+            "textPlacement": "fo",
+            "actorColours": [
+              "#8FBC8F",
+              "#7CFC00",
+              "#00FFFF",
+              "#20B2AA",
+              "#B0E0E6",
+              "#FFFFE0"
+            ],
+            "sectionFills": [
+              "#191970",
+              "#8B008B",
+              "#4B0082",
+              "#2F4F4F",
+              "#800000",
+              "#8B4513",
+              "#00008B"
+            ],
+            "sectionColours": [
+              "#fff"
+            ],
+            "titleColor": "",
+            "titleFontFamily": "\"trebuchet ms\", verdana, arial, sans-serif",
+            "titleFontSize": "4ex"
+          },
+          "class": {
+            "hideEmptyMembersBox": false,
+            "hierarchicalNamespaces": true
+          },
+          "state": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "dividerMargin": 10,
+            "sizeUnit": 5,
+            "padding": 8,
+            "textHeight": 10,
+            "titleShift": -15,
+            "noteMargin": 10,
+            "forkWidth": 70,
+            "forkHeight": 7,
+            "miniPadding": 2,
+            "fontSizeFactor": 5.02,
+            "fontSize": 24,
+            "labelHeight": 16,
+            "edgeLengthFactor": "20",
+            "compositTitleSize": 35,
+            "radius": 5,
+            "defaultRenderer": "dagre-wrapper"
+          },
+          "er": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "diagramPadding": 20,
+            "layoutDirection": "TB",
+            "minEntityWidth": 100,
+            "minEntityHeight": 75,
+            "entityPadding": 15,
+            "nodeSpacing": 140,
+            "rankSpacing": 80,
+            "stroke": "gray",
+            "fill": "honeydew",
+            "fontSize": 12
+          },
+          "pie": {
+            "useMaxWidth": true,
+            "textPosition": 0.75,
+            "donutHole": 0,
+            "legendPosition": "right",
+            "highlightSlice": "",
+            "useWidth": 984
+          },
+          "quadrantChart": {
+            "useMaxWidth": true,
+            "chartWidth": 500,
+            "chartHeight": 500,
+            "titleFontSize": 20,
+            "titlePadding": 10,
+            "quadrantPadding": 5,
+            "xAxisLabelPadding": 5,
+            "yAxisLabelPadding": 5,
+            "xAxisLabelFontSize": 16,
+            "yAxisLabelFontSize": 16,
+            "quadrantLabelFontSize": 16,
+            "quadrantTextTopPadding": 5,
+            "pointTextPadding": 5,
+            "pointLabelFontSize": 12,
+            "pointRadius": 5,
+            "xAxisPosition": "top",
+            "yAxisPosition": "left",
+            "quadrantInternalBorderStrokeWidth": 1,
+            "quadrantExternalBorderStrokeWidth": 2
+          },
+          "xyChart": {
+            "useMaxWidth": true,
+            "width": 700,
+            "height": 500,
+            "titleFontSize": 20,
+            "titlePadding": 10,
+            "showDataLabel": false,
+            "showDataLabelOutsideBar": false,
+            "showTitle": true,
+            "xAxis": {
+              "$ref": "#/$defs/XYChartAxisConfig",
+              "showLabel": true,
+              "labelFontSize": 14,
+              "labelPadding": 5,
+              "showTitle": true,
+              "titleFontSize": 16,
+              "titlePadding": 5,
+              "showTick": true,
+              "tickLength": 5,
+              "tickWidth": 2,
+              "showAxisLine": true,
+              "axisLineWidth": 2,
+              "labelRotation": 0
+            },
+            "yAxis": {
+              "$ref": "#/$defs/XYChartAxisConfig",
+              "showLabel": true,
+              "labelFontSize": 14,
+              "labelPadding": 5,
+              "showTitle": true,
+              "titleFontSize": 16,
+              "titlePadding": 5,
+              "showTick": true,
+              "tickLength": 5,
+              "tickWidth": 2,
+              "showAxisLine": true,
+              "axisLineWidth": 2,
+              "labelRotation": 0
+            },
+            "chartOrientation": "vertical",
+            "plotReservedSpacePercent": 50
+          },
+          "requirement": {
+            "useMaxWidth": true,
+            "rect_fill": "#f9f9f9",
+            "text_color": "#333",
+            "rect_border_size": "0.5px",
+            "rect_border_color": "#bbb",
+            "rect_min_width": 200,
+            "rect_min_height": 200,
+            "fontSize": 14,
+            "rect_padding": 10,
+            "line_height": 20
+          },
+          "mindmap": {
+            "useMaxWidth": true,
+            "padding": 10,
+            "maxNodeWidth": 200,
+            "layoutAlgorithm": "cose-bilkent"
+          },
+          "ishikawa": {
+            "useMaxWidth": true,
+            "diagramPadding": 20
+          },
+          "kanban": {
+            "useMaxWidth": true,
+            "padding": 8,
+            "sectionWidth": 200,
+            "ticketBaseUrl": ""
+          },
+          "timeline": {
+            "useMaxWidth": true,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "leftMargin": 150,
+            "width": 150,
+            "height": 50,
+            "boxMargin": 10,
+            "boxTextMargin": 5,
+            "noteMargin": 10,
+            "messageMargin": 35,
+            "messageAlign": "center",
+            "bottomMarginAdj": 1,
+            "rightAngles": false,
+            "taskFontSize": 14,
+            "taskFontFamily": "\"Open Sans\", sans-serif",
+            "taskMargin": 50,
+            "activationWidth": 10,
+            "textPlacement": "fo",
+            "actorColours": [
+              "#8FBC8F",
+              "#7CFC00",
+              "#00FFFF",
+              "#20B2AA",
+              "#B0E0E6",
+              "#FFFFE0"
+            ],
+            "sectionFills": [
+              "#191970",
+              "#8B008B",
+              "#4B0082",
+              "#2F4F4F",
+              "#800000",
+              "#8B4513",
+              "#00008B"
+            ],
+            "sectionColours": [
+              "#fff"
+            ],
+            "disableMulticolor": false
+          },
+          "gitGraph": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "diagramPadding": 8,
+            "nodeLabel": {
+              "width": 75,
+              "height": 100,
+              "x": -25,
+              "y": 0
+            },
+            "mainBranchName": "main",
+            "mainBranchOrder": 0,
+            "showCommitLabel": true,
+            "showBranches": true,
+            "rotateCommitLabel": true,
+            "parallelCommits": false,
+            "arrowMarkerAbsolute": false
+          },
+          "c4": {
+            "useMaxWidth": true,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "c4ShapeMargin": 50,
+            "c4ShapePadding": 20,
+            "width": 216,
+            "height": 60,
+            "boxMargin": 10,
+            "c4ShapeInRow": 4,
+            "nextLinePaddingX": 0,
+            "c4BoundaryInRow": 2,
+            "personFontSize": 14,
+            "personFontFamily": "\"Open Sans\", sans-serif",
+            "personFontWeight": "normal",
+            "external_personFontSize": 14,
+            "external_personFontFamily": "\"Open Sans\", sans-serif",
+            "external_personFontWeight": "normal",
+            "systemFontSize": 14,
+            "systemFontFamily": "\"Open Sans\", sans-serif",
+            "systemFontWeight": "normal",
+            "external_systemFontSize": 14,
+            "external_systemFontFamily": "\"Open Sans\", sans-serif",
+            "external_systemFontWeight": "normal",
+            "system_dbFontSize": 14,
+            "system_dbFontFamily": "\"Open Sans\", sans-serif",
+            "system_dbFontWeight": "normal",
+            "external_system_dbFontSize": 14,
+            "external_system_dbFontFamily": "\"Open Sans\", sans-serif",
+            "external_system_dbFontWeight": "normal",
+            "system_queueFontSize": 14,
+            "system_queueFontFamily": "\"Open Sans\", sans-serif",
+            "system_queueFontWeight": "normal",
+            "external_system_queueFontSize": 14,
+            "external_system_queueFontFamily": "\"Open Sans\", sans-serif",
+            "external_system_queueFontWeight": "normal",
+            "boundaryFontSize": 14,
+            "boundaryFontFamily": "\"Open Sans\", sans-serif",
+            "boundaryFontWeight": "normal",
+            "messageFontSize": 12,
+            "messageFontFamily": "\"Open Sans\", sans-serif",
+            "messageFontWeight": "normal",
+            "containerFontSize": 14,
+            "containerFontFamily": "\"Open Sans\", sans-serif",
+            "containerFontWeight": "normal",
+            "external_containerFontSize": 14,
+            "external_containerFontFamily": "\"Open Sans\", sans-serif",
+            "external_containerFontWeight": "normal",
+            "container_dbFontSize": 14,
+            "container_dbFontFamily": "\"Open Sans\", sans-serif",
+            "container_dbFontWeight": "normal",
+            "external_container_dbFontSize": 14,
+            "external_container_dbFontFamily": "\"Open Sans\", sans-serif",
+            "external_container_dbFontWeight": "normal",
+            "container_queueFontSize": 14,
+            "container_queueFontFamily": "\"Open Sans\", sans-serif",
+            "container_queueFontWeight": "normal",
+            "external_container_queueFontSize": 14,
+            "external_container_queueFontFamily": "\"Open Sans\", sans-serif",
+            "external_container_queueFontWeight": "normal",
+            "componentFontSize": 14,
+            "componentFontFamily": "\"Open Sans\", sans-serif",
+            "componentFontWeight": "normal",
+            "external_componentFontSize": 14,
+            "external_componentFontFamily": "\"Open Sans\", sans-serif",
+            "external_componentFontWeight": "normal",
+            "component_dbFontSize": 14,
+            "component_dbFontFamily": "\"Open Sans\", sans-serif",
+            "component_dbFontWeight": "normal",
+            "external_component_dbFontSize": 14,
+            "external_component_dbFontFamily": "\"Open Sans\", sans-serif",
+            "external_component_dbFontWeight": "normal",
+            "component_queueFontSize": 14,
+            "component_queueFontFamily": "\"Open Sans\", sans-serif",
+            "component_queueFontWeight": "normal",
+            "external_component_queueFontSize": 14,
+            "external_component_queueFontFamily": "\"Open Sans\", sans-serif",
+            "external_component_queueFontWeight": "normal",
+            "wrap": true,
+            "wrapPadding": 10,
+            "person_bg_color": "#08427B",
+            "person_border_color": "#073B6F",
+            "external_person_bg_color": "#686868",
+            "external_person_border_color": "#8A8A8A",
+            "system_bg_color": "#1168BD",
+            "system_border_color": "#3C7FC0",
+            "system_db_bg_color": "#1168BD",
+            "system_db_border_color": "#3C7FC0",
+            "system_queue_bg_color": "#1168BD",
+            "system_queue_border_color": "#3C7FC0",
+            "external_system_bg_color": "#999999",
+            "external_system_border_color": "#8A8A8A",
+            "external_system_db_bg_color": "#999999",
+            "external_system_db_border_color": "#8A8A8A",
+            "external_system_queue_bg_color": "#999999",
+            "external_system_queue_border_color": "#8A8A8A",
+            "container_bg_color": "#438DD5",
+            "container_border_color": "#3C7FC0",
+            "container_db_bg_color": "#438DD5",
+            "container_db_border_color": "#3C7FC0",
+            "container_queue_bg_color": "#438DD5",
+            "container_queue_border_color": "#3C7FC0",
+            "external_container_bg_color": "#B3B3B3",
+            "external_container_border_color": "#A6A6A6",
+            "external_container_db_bg_color": "#B3B3B3",
+            "external_container_db_border_color": "#A6A6A6",
+            "external_container_queue_bg_color": "#B3B3B3",
+            "external_container_queue_border_color": "#A6A6A6",
+            "component_bg_color": "#85BBF0",
+            "component_border_color": "#78A8D8",
+            "component_db_bg_color": "#85BBF0",
+            "component_db_border_color": "#78A8D8",
+            "component_queue_bg_color": "#85BBF0",
+            "component_queue_border_color": "#78A8D8",
+            "external_component_bg_color": "#CCCCCC",
+            "external_component_border_color": "#BFBFBF",
+            "external_component_db_bg_color": "#CCCCCC",
+            "external_component_db_border_color": "#BFBFBF",
+            "external_component_queue_bg_color": "#CCCCCC",
+            "external_component_queue_border_color": "#BFBFBF",
+            "flowchart": {
+              "useMaxWidth": true,
+              "titleTopMargin": 25,
+              "subGraphTitleMargin": {
+                "top": 0,
+                "bottom": 0
+              },
+              "diagramPadding": 8,
+              "htmlLabels": null,
+              "nodeSpacing": 50,
+              "rankSpacing": 50,
+              "curve": "basis",
+              "padding": 15,
+              "defaultRenderer": "dagre-wrapper",
+              "wrappingWidth": 200,
+              "inheritDir": false
+            }
+          },
+          "sankey": {
+            "useMaxWidth": true,
+            "width": 600,
+            "height": 400,
+            "linkColor": "gradient",
+            "nodeAlignment": "justify",
+            "showValues": true,
+            "prefix": "",
+            "suffix": "",
+            "nodeWidth": 10,
+            "nodePadding": 12,
+            "labelStyle": "legacy"
+          },
+          "block": {
+            "useMaxWidth": true,
+            "padding": 8
+          },
+          "packet": {
+            "useMaxWidth": true,
+            "rowHeight": 32,
+            "bitWidth": 32,
+            "bitsPerRow": 32,
+            "showBits": true,
+            "paddingX": 5,
+            "paddingY": 5
+          },
+          "treeView": {
+            "useMaxWidth": true,
+            "rowIndent": 10,
+            "paddingX": 5,
+            "paddingY": 5,
+            "lineThickness": 1,
+            "showIcons": false,
+            "defaultIconPack": "",
+            "filenameIcons": {},
+            "extensionIcons": {}
+          },
+          "architecture": {
+            "useMaxWidth": true,
+            "padding": 40,
+            "iconSize": 80,
+            "fontSize": 16,
+            "randomize": false,
+            "nodeSeparation": 75,
+            "idealEdgeLengthMultiplier": 1.5,
+            "edgeElasticity": 0.45,
+            "numIter": 2500,
+            "seed": 1
+          },
+          "eventmodeling": {
+            "useMaxWidth": true,
+            "padding": 30,
+            "rowHeight": 32
+          },
+          "radar": {
+            "useMaxWidth": true,
+            "width": 600,
+            "height": 600,
+            "marginTop": 50,
+            "marginRight": 50,
+            "marginBottom": 50,
+            "marginLeft": 50,
+            "axisScaleFactor": 1,
+            "axisLabelFactor": 1.05,
+            "curveTension": 0.17
+          },
+          "venn": {
+            "useMaxWidth": true,
+            "width": 800,
+            "height": 450,
+            "padding": 8,
+            "useDebugLayout": false
+          },
+          "cynefin": {
+            "useMaxWidth": true,
+            "width": 800,
+            "height": 600,
+            "padding": 40,
+            "showDomainDescriptions": true,
+            "boundaryAmplitude": 8,
+            "seed": 0
+          },
+          "theme": "base",
+          "look": "classic",
+          "handDrawnSeed": 0,
+          "layout": "dagre",
+          "maxTextSize": 50000,
+          "maxEdges": 500,
+          "darkMode": false,
+          "fontFamily": "sans-serif",
+          "logLevel": 5,
+          "securityLevel": "strict",
+          "startOnLoad": false,
+          "arrowMarkerAbsolute": false,
+          "secure": [
+            "secure",
+            "securityLevel",
+            "startOnLoad",
+            "maxTextSize",
+            "suppressErrorRendering",
+            "maxEdges"
+          ],
+          "legacyMathML": false,
+          "forceLegacyMathML": false,
+          "deterministicIds": false,
+          "fontSize": 16,
+          "markdownAutoWrap": true,
+          "suppressErrorRendering": false,
+          "elk": {
+            "mergeEdges": false,
+            "nodePlacementStrategy": "BRANDES_KOEPF",
+            "forceNodeModelOrder": false,
+            "considerModelOrder": "NODES_AND_EDGES"
+          },
+          "themeVariables": {
+            "background": "#f4f4f4",
+            "primaryColor": "#fff4dd",
+            "noteBkgColor": "#fff5ad",
+            "noteTextColor": "#333",
+            "THEME_COLOR_LIMIT": 12,
+            "radius": 5,
+            "strokeWidth": 1,
+            "fontFamily": "sans-serif",
+            "fontSize": "16px",
+            "useGradient": true,
+            "dropShadow": "drop-shadow( 1px 2px 2px rgba(185,185,185,1))",
+            "primaryTextColor": "#333",
+            "secondaryColor": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "tertiaryColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "primaryBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "secondaryBorderColor": "hsl(-79.4117647059, 60%, 83.3333333333%)",
+            "tertiaryBorderColor": "hsl(220.5882352941, 60%, 88.3333333333%)",
+            "noteBorderColor": "hsl(52.6829268293, 60%, 73.9215686275%)",
+            "secondaryTextColor": "rgb(11.0000000001, 34.0000000002, 0)",
+            "tertiaryTextColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "lineColor": "#0b0b0b",
+            "arrowheadColor": "#0b0b0b",
+            "textColor": "#333",
+            "border2": "hsl(220.5882352941, 60%, 88.3333333333%)",
+            "nodeBkg": "#fff4dd",
+            "mainBkg": "#fff4dd",
+            "nodeBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "clusterBkg": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "clusterBorder": "hsl(220.5882352941, 60%, 88.3333333333%)",
+            "defaultLinkColor": "#0b0b0b",
+            "titleColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "edgeLabelBackground": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "nodeTextColor": "#333",
+            "actorBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "actorBkg": "#fff4dd",
+            "actorTextColor": "#333",
+            "actorLineColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "labelBoxBkgColor": "#fff4dd",
+            "signalColor": "#333",
+            "signalTextColor": "#333",
+            "labelBoxBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "labelTextColor": "#333",
+            "loopTextColor": "#333",
+            "activationBorderColor": "hsl(-79.4117647059, 100%, 83.3333333333%)",
+            "activationBkgColor": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "sequenceNumberColor": "#f4f4f4",
+            "rectBkgColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "sectionBkgColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "altSectionBkgColor": "white",
+            "sectionBkgColor2": "#fff4dd",
+            "excludeBkgColor": "#eeeeee",
+            "taskBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "taskBkgColor": "#fff4dd",
+            "activeTaskBorderColor": "#fff4dd",
+            "activeTaskBkgColor": "hsl(40.5882352941, 100%, 100%)",
+            "gridColor": "lightgrey",
+            "doneTaskBkgColor": "lightgrey",
+            "doneTaskBorderColor": "grey",
+            "critBorderColor": "#ff8888",
+            "critBkgColor": "red",
+            "todayLineColor": "red",
+            "vertLineColor": "navy",
+            "taskTextColor": "#333",
+            "taskTextOutsideColor": "#333",
+            "taskTextLightColor": "#333",
+            "taskTextDarkColor": "#333",
+            "taskTextClickableColor": "#003163",
+            "noteFontWeight": "normal",
+            "fontWeight": "normal",
+            "personBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "personBkg": "#fff4dd",
+            "rowOdd": "hsl(40.5882352941, 100%, 100%)",
+            "rowEven": "hsl(40.5882352941, 100%, 98.3333333333%)",
+            "transitionColor": "#0b0b0b",
+            "transitionLabelColor": "#333",
+            "stateLabelColor": "#333",
+            "stateBkg": "#fff4dd",
+            "labelBackgroundColor": "#fff4dd",
+            "compositeBackground": "#f4f4f4",
+            "altBackground": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "compositeTitleBackground": "#fff4dd",
+            "compositeBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "innerEndBackground": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "errorBkgColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "errorTextColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "specialStateColor": "#0b0b0b",
+            "cScale0": "hsl(40.5882352941, 100%, 68.3333333333%)",
+            "cScale1": "hsl(-79.4117647059, 100%, 68.3333333333%)",
+            "cScale2": "hsl(220.5882352941, 100%, 73.3333333333%)",
+            "cScale3": "hsl(70.5882352941, 100%, 68.3333333333%)",
+            "cScale4": "hsl(100.5882352941, 100%, 68.3333333333%)",
+            "cScale5": "hsl(130.5882352941, 100%, 68.3333333333%)",
+            "cScale6": "hsl(160.5882352941, 100%, 68.3333333333%)",
+            "cScale7": "hsl(190.5882352941, 100%, 68.3333333333%)",
+            "cScale8": "hsl(250.5882352941, 100%, 75%)",
+            "cScale9": "hsl(310.5882352941, 100%, 68.3333333333%)",
+            "cScale10": "hsl(340.5882352941, 100%, 68.3333333333%)",
+            "cScale11": "hsl(10.5882352941, 100%, 68.3333333333%)",
+            "cScaleInv0": "rgb(0, 52.2500000001, 161.5000000002)",
+            "cScaleInv1": "rgb(52.2500000001, 161.5000000002, 0)",
+            "cScaleInv2": "rgb(136.0000000002, 92.0000000001, 0)",
+            "cScaleInv3": "rgb(28.5, 0, 161.5000000002)",
+            "cScaleInv4": "rgb(109.2500000001, 0, 161.5000000002)",
+            "cScaleInv5": "rgb(161.5000000002, 0, 133.0000000002)",
+            "cScaleInv6": "rgb(161.5000000002, 0, 52.2500000001)",
+            "cScaleInv7": "rgb(161.5000000002, 28.5, 0)",
+            "cScaleInv8": "rgb(105, 127.5, 0)",
+            "cScaleInv9": "rgb(0, 161.5000000002, 28.5)",
+            "cScaleInv10": "rgb(0, 161.5000000002, 109.2500000001)",
+            "cScaleInv11": "rgb(0, 133.0000000002, 161.5000000002)",
+            "cScalePeer0": "hsl(40.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer1": "hsl(-79.4117647059, 100%, 58.3333333333%)",
+            "cScalePeer2": "hsl(220.5882352941, 100%, 63.3333333333%)",
+            "cScalePeer3": "hsl(70.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer4": "hsl(100.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer5": "hsl(130.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer6": "hsl(160.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer7": "hsl(190.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer8": "hsl(250.5882352941, 100%, 65%)",
+            "cScalePeer9": "hsl(310.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer10": "hsl(340.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer11": "hsl(10.5882352941, 100%, 58.3333333333%)",
+            "scaleLabelColor": "#333",
+            "cScaleLabel0": "#333",
+            "cScaleLabel1": "#333",
+            "cScaleLabel2": "#333",
+            "cScaleLabel3": "#333",
+            "cScaleLabel4": "#333",
+            "cScaleLabel5": "#333",
+            "cScaleLabel6": "#333",
+            "cScaleLabel7": "#333",
+            "cScaleLabel8": "#333",
+            "cScaleLabel9": "#333",
+            "cScaleLabel10": "#333",
+            "cScaleLabel11": "#333",
+            "surface0": "hsl(220.5882352941, 85%, 88.3333333333%)",
+            "surfacePeer0": "hsl(220.5882352941, 85%, 85.3333333333%)",
+            "surface1": "hsl(220.5882352941, 85%, 85.3333333333%)",
+            "surfacePeer1": "hsl(220.5882352941, 85%, 82.3333333333%)",
+            "surface2": "hsl(220.5882352941, 85%, 82.3333333333%)",
+            "surfacePeer2": "hsl(220.5882352941, 85%, 79.3333333333%)",
+            "surface3": "hsl(220.5882352941, 85%, 79.3333333333%)",
+            "surfacePeer3": "hsl(220.5882352941, 85%, 76.3333333333%)",
+            "surface4": "hsl(220.5882352941, 85%, 76.3333333333%)",
+            "surfacePeer4": "hsl(220.5882352941, 85%, 73.3333333333%)",
+            "classText": "#333",
+            "fillType0": "#fff4dd",
+            "fillType1": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "fillType2": "hsl(104.5882352941, 100%, 93.3333333333%)",
+            "fillType3": "hsl(-15.4117647059, 100%, 93.3333333333%)",
+            "fillType4": "hsl(-23.4117647059, 100%, 93.3333333333%)",
+            "fillType5": "hsl(-143.4117647059, 100%, 93.3333333333%)",
+            "fillType6": "hsl(168.5882352941, 100%, 93.3333333333%)",
+            "fillType7": "hsl(48.5882352941, 100%, 93.3333333333%)",
+            "pie1": "#fff4dd",
+            "pie2": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "pie3": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "pie4": "hsl(40.5882352941, 100%, 83.3333333333%)",
+            "pie5": "hsl(-79.4117647059, 100%, 83.3333333333%)",
+            "pie6": "hsl(220.5882352941, 100%, 88.3333333333%)",
+            "pie7": "hsl(100.5882352941, 100%, 83.3333333333%)",
+            "pie8": "hsl(-19.4117647059, 100%, 83.3333333333%)",
+            "pie9": "hsl(160.5882352941, 100%, 93.3333333333%)",
+            "pie10": "hsl(100.5882352941, 100%, 73.3333333333%)",
+            "pie11": "hsl(-19.4117647059, 100%, 73.3333333333%)",
+            "pie12": "hsl(160.5882352941, 100%, 83.3333333333%)",
+            "pieTitleTextSize": "25px",
+            "pieTitleTextColor": "#333",
+            "pieSectionTextSize": "17px",
+            "pieSectionTextColor": "#333",
+            "pieLegendTextSize": "17px",
+            "pieLegendTextColor": "#333",
+            "pieStrokeColor": "black",
+            "pieStrokeWidth": "2px",
+            "pieOuterStrokeWidth": "2px",
+            "pieOuterStrokeColor": "black",
+            "pieOpacity": "0.7",
+            "venn1": "hsl(40.5882352941, 100%, 63.3333333333%)",
+            "venn2": "hsl(-79.4117647059, 100%, 63.3333333333%)",
+            "venn3": "hsl(220.5882352941, 100%, 68.3333333333%)",
+            "venn4": "hsl(100.5882352941, 100%, 63.3333333333%)",
+            "venn5": "hsl(-19.4117647059, 100%, 63.3333333333%)",
+            "venn6": "hsl(-19.4117647059, 100%, 63.3333333333%)",
+            "venn7": "hsl(160.5882352941, 100%, 63.3333333333%)",
+            "venn8": "hsl(40.5882352941, 100%, 63.3333333333%)",
+            "vennTitleTextColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "vennSetTextColor": "#333",
+            "cynefin": {
+              "domainFontSize": 16,
+              "itemFontSize": 12,
+              "boundaryColor": "#0b0b0b",
+              "boundaryWidth": 2,
+              "cliffColor": "#8B0000",
+              "cliffWidth": 4,
+              "arrowColor": "#0b0b0b",
+              "arrowWidth": 2,
+              "complexBg": "#E8F5E9",
+              "complicatedBg": "#E3F2FD",
+              "chaoticBg": "#FBE9E7",
+              "clearBg": "#FFF8E1",
+              "confusionBg": "#F3E5F5",
+              "textColor": "#333",
+              "labelColor": "#333"
+            },
+            "radar": {
+              "axisColor": "#0b0b0b",
+              "axisStrokeWidth": 2,
+              "axisLabelFontSize": 12,
+              "curveOpacity": 0.5,
+              "curveStrokeWidth": 2,
+              "graticuleColor": "#DEDEDE",
+              "graticuleStrokeWidth": 1,
+              "graticuleOpacity": 0.3,
+              "legendBoxSize": 12,
+              "legendFontSize": 12
+            },
+            "wardleyEvolutionColor": "#dc3545",
+            "wardley": {
+              "backgroundColor": "#f4f4f4",
+              "axisColor": "#0b0b0b",
+              "axisTextColor": "#333",
+              "gridColor": "lightgrey",
+              "componentFill": "#f4f4f4",
+              "componentStroke": "#0b0b0b",
+              "componentLabelColor": "#333",
+              "linkStroke": "#0b0b0b",
+              "evolutionStroke": "#dc3545",
+              "annotationStroke": "#0b0b0b",
+              "annotationTextColor": "#333",
+              "annotationFill": "#f4f4f4"
+            },
+            "archEdgeColor": "#777",
+            "archEdgeArrowColor": "#777",
+            "archEdgeWidth": "3",
+            "archGroupBorderColor": "#000",
+            "archGroupBorderWidth": "2px",
+            "quadrant1Fill": "#fff4dd",
+            "quadrant2Fill": "#fff9e2",
+            "quadrant3Fill": "#fffee7",
+            "quadrant4Fill": "#ffffec",
+            "quadrant1TextFill": "#333",
+            "quadrant2TextFill": "#2e2e2e",
+            "quadrant3TextFill": "#292929",
+            "quadrant4TextFill": "#242424",
+            "quadrantPointFill": "hsl(40.5882352941, 100%, NaN%)",
+            "quadrantPointTextFill": "#333",
+            "quadrantXAxisTextFill": "#333",
+            "quadrantYAxisTextFill": "#333",
+            "quadrantInternalBorderStrokeFill": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "quadrantExternalBorderStrokeFill": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "quadrantTitleFill": "#333",
+            "xyChart": {
+              "backgroundColor": "#f4f4f4",
+              "titleColor": "#333",
+              "dataLabelColor": "#333",
+              "xAxisTitleColor": "#333",
+              "xAxisLabelColor": "#333",
+              "xAxisTickColor": "#333",
+              "xAxisLineColor": "#333",
+              "yAxisTitleColor": "#333",
+              "yAxisLabelColor": "#333",
+              "yAxisTickColor": "#333",
+              "yAxisLineColor": "#333",
+              "plotColorPalette": "#FFF4DD,#FFD8B1,#FFA07A,#ECEFF1,#D6DBDF,#C3E0A8,#FFB6A4,#FFD74D,#738FA7,#FFFFF0"
+            },
+            "requirementBackground": "#fff4dd",
+            "requirementBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "requirementBorderSize": "1",
+            "requirementTextColor": "#333",
+            "relationColor": "#0b0b0b",
+            "relationLabelBackground": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "relationLabelColor": "#333",
+            "git0": "hsl(40.5882352941, 100%, 68.3333333333%)",
+            "git1": "hsl(-79.4117647059, 100%, 68.3333333333%)",
+            "git2": "hsl(220.5882352941, 100%, 73.3333333333%)",
+            "git3": "hsl(10.5882352941, 100%, 68.3333333333%)",
+            "git4": "hsl(-19.4117647059, 100%, 68.3333333333%)",
+            "git5": "hsl(-49.4117647059, 100%, 68.3333333333%)",
+            "git6": "hsl(100.5882352941, 100%, 68.3333333333%)",
+            "git7": "hsl(160.5882352941, 100%, 68.3333333333%)",
+            "gitInv0": "rgb(0, 52.2500000001, 161.5000000002)",
+            "gitInv1": "rgb(52.2500000001, 161.5000000002, 0)",
+            "gitInv2": "rgb(136.0000000002, 92.0000000001, 0)",
+            "gitInv3": "rgb(0, 133.0000000002, 161.5000000002)",
+            "gitInv4": "rgb(0, 161.5000000002, 109.2500000001)",
+            "gitInv5": "rgb(0, 161.5000000002, 28.5)",
+            "gitInv6": "rgb(109.2500000001, 0, 161.5000000002)",
+            "gitInv7": "rgb(161.5000000002, 0, 52.2500000001)",
+            "branchLabelColor": "#333",
+            "gitBranchLabel0": "#333",
+            "gitBranchLabel1": "#333",
+            "gitBranchLabel2": "#333",
+            "gitBranchLabel3": "#333",
+            "gitBranchLabel4": "#333",
+            "gitBranchLabel5": "#333",
+            "gitBranchLabel6": "#333",
+            "gitBranchLabel7": "#333",
+            "tagLabelColor": "#333",
+            "tagLabelBackground": "#fff4dd",
+            "tagLabelBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "tagLabelFontSize": "10px",
+            "commitLabelColor": "rgb(11.0000000001, 34.0000000002, 0)",
+            "commitLabelBackground": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "commitLabelFontSize": "10px",
+            "emUiFill": "white",
+            "emUiStroke": "#dbdada",
+            "emProcessorFill": "#edb3f6",
+            "emProcessorStroke": "#b88cbf",
+            "emReadModelFill": "#d3f1a2",
+            "emReadModelStroke": "#a3b732",
+            "emCommandFill": "#bcd6fe",
+            "emCommandStroke": "#679ac3",
+            "emEventFill": "#ffb778",
+            "emEventStroke": "#c19a0f",
+            "emSwimlaneBackgroundOdd": "rgb(250,250,250)",
+            "emSwimlaneBackgroundStroke": "rgb(240,240,240)",
+            "emArrowhead": "#0b0b0b",
+            "emRelationStroke": "#0b0b0b",
+            "attributeBackgroundColorOdd": "#ffffff",
+            "attributeBackgroundColorEven": "#f2f2f2",
+            "gradientStart": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "gradientStop": "hsl(-79.4117647059, 60%, 83.3333333333%)"
+          },
+          "railroad": {},
+          "treemap": {
+            "useMaxWidth": true,
+            "padding": 10,
+            "diagramPadding": 8,
+            "showValues": true,
+            "nodeWidth": 100,
+            "nodeHeight": 40,
+            "borderWidth": 1,
+            "valueFontSize": 12,
+            "labelFontSize": 14,
+            "valueFormat": ","
+          }
+        }
+      },
+      "themeSwitch": {
+        "background": "rgb(255, 255, 255)",
+        "overrideRulesPresent": true,
+        "font": "Times"
+      },
+      "mathjax": {
+        "version": "4.1.0",
+        "loader": {
+          "load": [],
+          "paths": {
+            "mathjax": "http://127.0.0.1:59138/mathjax/mathjax",
+            "fonts": "https://cdn.jsdelivr.net/npm/@mathjax",
+            "tex": "[mathjax]/input/tex/extensions",
+            "mml": "[mathjax]/input/mml/extensions",
+            "sre": "[mathjax]/sre",
+            "mathmaps": "[sre]/mathmaps",
+            "mathjax-newcm": "[fonts]/mathjax-newcm-font"
+          },
+          "source": {
+            "[tex]/amsCd": "[tex]/amscd",
+            "[tex]/colorV2": "[tex]/colorv2",
+            "[tex]/configMacros": "[tex]/configmacros",
+            "[tex]/tagFormat": "[tex]/tagformat"
+          },
+          "dependencies": {
+            "a11y/semantic-enrich": [
+              "input/mml",
+              "a11y/sre"
+            ],
+            "a11y/speech": [
+              "a11y/semantic-enrich"
+            ],
+            "a11y/complexity": [
+              "a11y/semantic-enrich"
+            ],
+            "a11y/explorer": [
+              "a11y/speech"
+            ],
+            "[mml]/mml3": [
+              "input/mml"
+            ],
+            "[tex]/action": [
+              "input/tex-base"
+            ],
+            "[tex]/ams": [
+              "input/tex-base",
+              "[tex]/newcommand"
+            ],
+            "[tex]/amscd": [
+              "input/tex-base"
+            ],
+            "[tex]/autoload": [
+              "input/tex-base",
+              "[tex]/require"
+            ],
+            "[tex]/bbm": [
+              "input/tex-base"
+            ],
+            "[tex]/bboldx": [
+              "input/tex-base",
+              "[tex]/textmacros"
+            ],
+            "[tex]/bbox": [
+              "input/tex-base"
+            ],
+            "[tex]/begingroup": [
+              "input/tex-base",
+              "[tex]/newcommand"
+            ],
+            "[tex]/boldsymbol": [
+              "input/tex-base"
+            ],
+            "[tex]/braket": [
+              "input/tex-base"
+            ],
+            "[tex]/bussproofs": [
+              "input/tex-base"
+            ],
+            "[tex]/cancel": [
+              "input/tex-base",
+              "[tex]/enclose"
+            ],
+            "[tex]/cases": [
+              "[tex]/empheq"
+            ],
+            "[tex]/centernot": [
+              "input/tex-base"
+            ],
+            "[tex]/color": [
+              "input/tex-base"
+            ],
+            "[tex]/colortbl": [
+              "input/tex-base",
+              "[tex]/color"
+            ],
+            "[tex]/colorv2": [
+              "input/tex-base"
+            ],
+            "[tex]/configmacros": [
+              "input/tex-base",
+              "[tex]/newcommand"
+            ],
+            "[tex]/dsfont": [
+              "input/tex-base"
+            ],
+            "[tex]/empheq": [
+              "input/tex-base",
+              "[tex]/ams"
+            ],
+            "[tex]/enclose": [
+              "input/tex-base"
+            ],
+            "[tex]/extpfeil": [
+              "input/tex-base",
+              "[tex]/newcommand",
+              "[tex]/ams"
+            ],
+            "[tex]/gensymb": [
+              "input/tex-base"
+            ],
+            "[tex]/html": [
+              "input/tex-base"
+            ],
+            "[tex]/mathtools": [
+              "input/tex-base",
+              "[tex]/newcommand",
+              "[tex]/ams",
+              "[tex]/boldsymbol"
+            ],
+            "[tex]/mhchem": [
+              "input/tex-base",
+              "[tex]/ams"
+            ],
+            "[tex]/newcommand": [
+              "input/tex-base"
+            ],
+            "[tex]/noerrors": [
+              "input/tex-base"
+            ],
+            "[tex]/noundefined": [
+              "input/tex-base"
+            ],
+            "[tex]/physics": [
+              "input/tex-base"
+            ],
+            "[tex]/require": [
+              "input/tex-base"
+            ],
+            "[tex]/setoptions": [
+              "input/tex-base"
+            ],
+            "[tex]/tagformat": [
+              "input/tex-base"
+            ],
+            "[tex]/texhtml": [
+              "input/tex-base"
+            ],
+            "[tex]/textcomp": [
+              "input/tex-base",
+              "[tex]/textmacros"
+            ],
+            "[tex]/textmacros": [
+              "input/tex-base"
+            ],
+            "[tex]/unicode": [
+              "input/tex-base"
+            ],
+            "[tex]/units": [
+              "input/tex-base"
+            ],
+            "[tex]/upgreek": [
+              "input/tex-base"
+            ],
+            "[tex]/verb": [
+              "input/tex-base"
+            ],
+            "ui/menu": [
+              "a11y/sre"
+            ]
+          },
+          "provides": {
+            "startup": [
+              "loader"
+            ],
+            "input/tex": [
+              "input/tex-base",
+              "[tex]/ams",
+              "[tex]/newcommand",
+              "[tex]/textmacros",
+              "[tex]/noundefined",
+              "[tex]/require",
+              "[tex]/autoload",
+              "[tex]/configmacros"
+            ]
+          },
+          "pathFilters": [],
+          "versionWarnings": true
+        },
+        "texPackages": [
+          "base",
+          "ams",
+          "newcommand",
+          "textmacros",
+          "noundefined",
+          "require",
+          "autoload",
+          "configmacros"
+        ],
+        "options": {
+          "enableMenu": false,
+          "enableExplorer": false,
+          "enableSpeech": false,
+          "enableBraille": false,
+          "a11y": {
+            "speech": false,
+            "braille": false
+          },
+          "worker": {
+            "path": "http://127.0.0.1:59138/mathjax/mathjax/sre",
+            "maps": "http://127.0.0.1:59138/mathjax/mathjax/sre/mathmaps"
+          }
+        },
+        "exports": [
+          "version",
+          "_",
+          "config",
+          "loader",
+          "startup",
+          "options",
+          "typeset",
+          "typesetPromise",
+          "typesetClear",
+          "tex2mml",
+          "tex2mmlPromise",
+          "texReset",
+          "tex2svg",
+          "tex2svgPromise",
+          "svgStylesheet",
+          "getMetricsFor",
+          "done",
+          "whenReady"
+        ],
+        "initializationError": "Error: page.evaluate: ps: Error: Can't load \"https://cdn.jsdelivr.net/npm/@mathjax/mathjax-mhchem-font-extension/svg.js\"\n    at ms.failed (http://127.0.0.1:59138/mathjax/mathjax/tex-svg.js:1:146328)\n    at http://127.0.0.1:59138/mathjax/mathjax/tex-svg.js:1:146428",
+        "examples": [
+          {
+            "id": "fraction",
+            "result": {
+              "width": 23.5,
+              "height": 91.125,
+              "baseline": -74.125
+            },
+            "svg": true,
+            "textNodes": [],
+            "errors": [],
+            "undefinedTextNodes": []
+          },
+          {
+            "id": "mhchem",
+            "result": {
+              "error": "Extension \"mhchem\" failed to load"
+            },
+            "svg": true,
+            "textNodes": [
+              "Extension \"mhchem\" failed to load"
+            ],
+            "errors": [
+              "Extension \"mhchem\" failed to load"
+            ],
+            "undefinedTextNodes": [
+              {
+                "text": "Extension \"mhchem\" failed to load",
+                "color": null
+              }
+            ]
+          },
+          {
+            "id": "physics",
+            "result": {
+              "width": 51.78125,
+              "height": 79.96875,
+              "baseline": -62.96875
+            },
+            "svg": true,
+            "textNodes": [],
+            "errors": [],
+            "undefinedTextNodes": [
+              {
+                "text": "",
+                "color": "red"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "webkit",
+      "version": "27.2",
+      "externalRequestsBlocked": [
+        "https://cdn.jsdelivr.net/npm/@mathjax/mathjax-mhchem-font-extension/svg.js"
+      ],
+      "resourceErrors": [],
+      "pageErrors": [],
+      "results": [
+        {
+          "id": "flowchart",
+          "detected": "flowchart-v2",
+          "parsed": {
+            "diagramType": "flowchart-v2",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 263.21875,
+            "height": 70
+          },
+          "svgBytes": 13689,
+          "svgText": "-1792334512688 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512688 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512688-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512688 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512688-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512688 :root{--mermaid-font-family:BearSansUI;}StartFinish",
+          "hasSvg": true,
+          "width": "263.21875",
+          "height": "70",
+          "viewBox": "0 0 263.21875 70"
+        },
+        {
+          "id": "graph-alias",
+          "detected": "flowchart",
+          "parsed": {
+            "diagramType": "flowchart-v2",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 118.265625,
+            "height": 174
+          },
+          "svgBytes": 13707,
+          "svgText": "-1792334512723 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512723 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512723-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512723 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512723-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512723 :root{--mermaid-font-family:BearSansUI;}StartFinish",
+          "hasSvg": true,
+          "width": "118.265625",
+          "height": "174",
+          "viewBox": "0 0 118.265625 174"
+        },
+        {
+          "id": "sequence",
+          "detected": "sequence",
+          "parsed": {
+            "diagramType": "sequence",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 450,
+            "height": 275
+          },
+          "svgBytes": 24720,
+          "svgText": "792334512738 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512738 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512738-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512738 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512738-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512738 :root{--mermaid-font-family:BearSansUI;}HelloReceived",
+          "hasSvg": true,
+          "width": "450",
+          "height": "275",
+          "viewBox": "-50 -10 450 275"
+        },
+        {
+          "id": "class",
+          "detected": "class",
+          "parsed": {
+            "diagramType": "class",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 142.421875,
+            "height": 270
+          },
+          "svgBytes": 20940,
+          "svgText": "data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512758 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512758-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512758 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512758-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512758 :root{--mermaid-font-family:BearSansUI;}1*Note+String titleNotebook",
+          "hasSvg": true,
+          "width": "142.421875",
+          "height": "270",
+          "viewBox": "0 0 142.421875 270"
+        },
+        {
+          "id": "state",
+          "detected": "stateDiagram",
+          "parsed": {
+            "diagramType": "stateDiagram",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 76.09375,
+            "height": 274
+          },
+          "svgBytes": 29849,
+          "svgText": "r-1792334512784 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512784 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512784-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512784 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512784-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512784 :root{--mermaid-font-family:BearSansUI;}DraftSaved",
+          "hasSvg": true,
+          "width": "76.09375",
+          "height": "274",
+          "viewBox": "0 0 76.09375 274"
+        },
+        {
+          "id": "state-legacy",
+          "detected": "state",
+          "parsed": {
+            "diagramType": "stateDiagram",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 69.140625,
+            "height": 184
+          },
+          "svgBytes": 28355,
+          "svgText": "render-1792334512804 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512804 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512804-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512804 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512804-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512804 :root{--mermaid-font-family:BearSansUI;}Draft",
+          "hasSvg": true,
+          "width": "69.140625",
+          "height": "184",
+          "viewBox": "0 0 69.140625 184"
+        },
+        {
+          "id": "er",
+          "detected": "er",
+          "parsed": {
+            "diagramType": "er",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 180.46875,
+            "height": 329.25
+          },
+          "svgBytes": 19559,
+          "svgText": "neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512819 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512819-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512819 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512819-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512819 :root{--mermaid-font-family:BearSansUI;}containsNOTEBOOKNOTEintidPKstringtitle",
+          "hasSvg": true,
+          "width": "180.46875",
+          "height": "329.25",
+          "viewBox": "0 0 180.46875 329.25"
+        },
+        {
+          "id": "ed-typo",
+          "detected": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: edDiagram\n  NOTEBOOK ||--o{ NOTE : contains"
+          },
+          "parsed": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: edDiagram\n  NOTEBOOK ||--o{ NOTE : contains"
+          },
+          "dimensions": {
+            "error": "No diagram type detected matching given configuration for text: edDiagram"
+          },
+          "svgBytes": 0,
+          "hasSvg": false
+        },
+        {
+          "id": "gantt",
+          "detected": "gantt",
+          "parsed": {
+            "diagramType": "gantt",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 124
+          },
+          "svgBytes": 12720,
+          "svgText": "{fill:url(#mermaid-render-1792334512898-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512898 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512898-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512898 :root{--mermaid-font-family:BearSansUI;}2026-10-012026-10-012026-10-012026-10-012026-10-022026-10-022026-10-022026-10-022026-10-032026-10-032026-10-032026-10-032026-10-04Build WorkRelease",
+          "hasSvg": true,
+          "width": "1440",
+          "height": "124",
+          "viewBox": "0 0 1440 124"
+        },
+        {
+          "id": "pie",
+          "detected": "pie",
+          "parsed": {
+            "diagramType": "pie",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 559.25,
+            "height": 450
+          },
+          "svgBytes": 4727,
+          "svgText": "915 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512915 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512915-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512915 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512915-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512915 :root{--mermaid-font-family:BearSansUI;}29%71%NotesDraftsSaved",
+          "hasSvg": true,
+          "width": "559.25",
+          "height": "450",
+          "viewBox": "0 0 559.25 450"
+        },
+        {
+          "id": "mindmap",
+          "detected": "mindmap",
+          "parsed": {
+            "diagramType": "mindmap",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 370.203125,
+            "height": 83.078125
+          },
+          "svgBytes": 34122,
+          "svgText": "34512925 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512925 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512925-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512925 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512925-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512925 :root{--mermaid-font-family:BearSansUI;}NotesWorkPersonal",
+          "hasSvg": true,
+          "width": "370.20770263671875",
+          "height": "83.078125",
+          "viewBox": "5 5 370.20770263671875 83.078125"
+        },
+        {
+          "id": "timeline",
+          "detected": "timeline",
+          "parsed": {
+            "diagramType": "timeline",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 895,
+            "height": 479.046875
+          },
+          "svgBytes": 22208,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512969 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512969-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512969 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512969-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512969 :root{--mermaid-font-family:BearSansUI;}2025Draft2026ReleaseReleases",
+          "hasSvg": true,
+          "width": "895",
+          "height": "479.0531311035156",
+          "viewBox": "-5 -59.984375 895 479.0531311035156"
+        },
+        {
+          "id": "journey",
+          "detected": "journey",
+          "parsed": {
+            "diagramType": "journey",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 700,
+            "height": 540
+          },
+          "svgBytes": 9840,
+          "svgText": ".state-start{fill:#000000;}#mermaid-render-1792334512980 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512980-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512980 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512980-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512980 :root{--mermaid-font-family:BearSansUI;}UserDraftDraftUserOpen Open UserWrite Write Write a note",
+          "hasSvg": true,
+          "width": "700",
+          "height": "540",
+          "viewBox": "0 -25 700 540"
+        },
+        {
+          "id": "c4-context",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 381
+          },
+          "svgBytes": 20623,
+          "svgText": "k=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334512992 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334512992-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512992 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334512992-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334512992 :root{--mermaid-font-family:BearSansUI;}<<person>>User<<system>>NotesWrites",
+          "hasSvg": true,
+          "width": "832",
+          "height": "381",
+          "viewBox": "0 -10 832 381"
+        },
+        {
+          "id": "c4-container",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 382
+          },
+          "svgBytes": 21120,
+          "svgText": "circle .state-start{fill:#000000;}#mermaid-render-1792334513006 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513006-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513006 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513006-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513006 :root{--mermaid-font-family:BearSansUI;}<<person>>User<<container>>Notes[Web]EditorWrites",
+          "hasSvg": true,
+          "width": "832",
+          "height": "382",
+          "viewBox": "0 -10 832 382"
+        },
+        {
+          "id": "c4-component",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 351
+          },
+          "svgBytes": 20287,
+          "svgText": "le .state-start{fill:#000000;}#mermaid-render-1792334513016 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513016-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513016 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513016-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513016 :root{--mermaid-font-family:BearSansUI;}<<component>>Editor[Web]<<component>>Store[Disk]Saves",
+          "hasSvg": true,
+          "width": "832",
+          "height": "351",
+          "viewBox": "0 -10 832 351"
+        },
+        {
+          "id": "c4-dynamic",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 832,
+            "height": 381
+          },
+          "svgBytes": 20628,
+          "svgText": "neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513023 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513023-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513023 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513023-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513023 :root{--mermaid-font-family:BearSansUI;}<<person>>User<<system>>Notes1: Writes",
+          "hasSvg": true,
+          "width": "832",
+          "height": "381",
+          "viewBox": "0 -10 832 381"
+        },
+        {
+          "id": "c4-deployment",
+          "detected": "c4",
+          "parsed": {
+            "diagramType": "c4",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 616,
+            "height": 489
+          },
+          "svgBytes": 19846,
+          "svgText": "o\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513031 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513031-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513031 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513031-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513031 :root{--mermaid-font-family:BearSansUI;}<<container>>Notes[Web]EditorDevice[Mac]",
+          "hasSvg": true,
+          "width": "616",
+          "height": "489",
+          "viewBox": "0 -10 616 489"
+        },
+        {
+          "id": "sankey",
+          "detected": "sankey",
+          "parsed": {
+            "diagramType": "sankey",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 600,
+            "height": 400
+          },
+          "svgBytes": 5253,
+          "svgText": " [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513040 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513040-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513040 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513040-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513040 :root{--mermaid-font-family:BearSansUI;}Drafts\n7Saved\n5Archived\n2",
+          "hasSvg": true,
+          "width": "600",
+          "height": "400",
+          "viewBox": "0 0 600 400"
+        },
+        {
+          "id": "xychart",
+          "detected": "xychart",
+          "parsed": {
+            "diagramType": "xychart",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 700,
+            "height": 500
+          },
+          "svgBytes": 8900,
+          "svgText": "-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513050 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513050-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513050 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513050-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513050 :root{--mermaid-font-family:BearSansUI;}NotesMonTueWed109876543210Count",
+          "hasSvg": true,
+          "width": "700",
+          "height": "500",
+          "viewBox": "0 0 700 500"
+        },
+        {
+          "id": "quadrant",
+          "detected": "quadrantChart",
+          "parsed": {
+            "diagramType": "quadrantChart",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 500,
+            "height": 500
+          },
+          "svgBytes": 5972,
+          "svgText": "062 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513062 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513062-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513062 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513062-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513062 :root{--mermaid-font-family:BearSansUI;}TaskLowHighLowHighWork",
+          "hasSvg": true,
+          "width": "500",
+          "height": "500",
+          "viewBox": "0 0 500 500"
+        },
+        {
+          "id": "gitgraph",
+          "detected": "gitGraph",
+          "parsed": {
+            "diagramType": "gitGraph",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 204,
+            "height": 175.3125
+          },
+          "svgBytes": 12747,
+          "svgText": "data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513077 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513077-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513077 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513077-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513077 :root{--mermaid-font-family:BearSansUI;}maindraft0-e8f399e1-6845f4f",
+          "hasSvg": true,
+          "width": "204",
+          "height": "175.3240203857422",
+          "viewBox": "-96 -22.3671875 204 175.3240203857422"
+        },
+        {
+          "id": "requirement",
+          "detected": "requirement",
+          "parsed": {
+            "diagramType": "requirement",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 163.859375,
+            "height": 200
+          },
+          "svgBytes": 9379,
+          "svgText": ":#000000;}#mermaid-render-1792334513089 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513089-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513089 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513089-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513089 :root{--mermaid-font-family:BearSansUI;}<<Requirement>>save_noteID: 1Text: Save a noteRisk: LowVerification: Test",
+          "hasSvg": true,
+          "width": "163.859375",
+          "height": "200",
+          "viewBox": "0 0 163.859375 200"
+        },
+        {
+          "id": "packet",
+          "detected": "packet",
+          "parsed": {
+            "diagramType": "packet",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 1026,
+            "height": 62
+          },
+          "svgBytes": 4334,
+          "svgText": "2334513105 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513105 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513105-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513105 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513105-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513105 :root{--mermaid-font-family:BearSansUI;}Header07Body815",
+          "hasSvg": true,
+          "width": "1026",
+          "height": "62",
+          "viewBox": "0 0 1026 62"
+        },
+        {
+          "id": "architecture",
+          "detected": "architecture",
+          "parsed": {
+            "diagramType": "architecture",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 445.671875,
+            "height": 262
+          },
+          "svgBytes": 9695,
+          "svgText": "334513116 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513116 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513116-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513116 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513116-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513116 :root{--mermaid-font-family:BearSansUI;}EditorStoreNotes",
+          "hasSvg": true,
+          "width": "445.6865539550781",
+          "height": "262",
+          "viewBox": "-182.84327697753906 -65.5 445.6865539550781 262"
+        },
+        {
+          "id": "block",
+          "detected": "block",
+          "parsed": {
+            "diagramType": "block",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 147.625,
+            "height": 42
+          },
+          "svgBytes": 9119,
+          "svgText": "792334513151 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513151 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513151-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513151 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513151-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513151 :root{--mermaid-font-family:BearSansUI;}EditorStorage",
+          "hasSvg": true,
+          "width": "147.625",
+          "height": "42",
+          "viewBox": "-5 -21 147.625 42"
+        },
+        {
+          "id": "kanban",
+          "detected": "kanban",
+          "parsed": {
+            "diagramType": "kanban",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 425,
+            "height": 99
+          },
+          "svgBytes": 22816,
+          "svgText": "-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513163 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513163-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513163 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513163-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513163 :root{--mermaid-font-family:BearSansUI;}TodoDoneWrite a noteSave a note",
+          "hasSvg": true,
+          "width": "425",
+          "height": "99",
+          "viewBox": "90 -310 425 99"
+        },
+        {
+          "id": "radar",
+          "detected": "radar",
+          "parsed": {
+            "diagramType": "radar",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 700,
+            "height": 700
+          },
+          "svgBytes": 9100,
+          "svgText": "81 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513181 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513181-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513181 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513181-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513181 :root{--mermaid-font-family:BearSansUI;}SpeedQualityCostRelease",
+          "hasSvg": true,
+          "width": "700",
+          "height": "700",
+          "viewBox": "0 0 700 700"
+        },
+        {
+          "id": "treemap",
+          "detected": "treemap",
+          "parsed": {
+            "diagramType": "treemap",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 996,
+            "height": 371
+          },
+          "svgBytes": 7060,
+          "svgText": "91 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513191 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513191-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513191 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513191-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513191 :root{--mermaid-font-family:BearSansUI;}10Notes10Work7Personal3",
+          "hasSvg": true,
+          "width": "996",
+          "height": "371",
+          "viewBox": "2 27 996 371"
+        },
+        {
+          "id": "treeview",
+          "detected": "treeView",
+          "parsed": {
+            "diagramType": "treeView",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 128.5625,
+            "height": 153.703125
+          },
+          "svgBytes": 5070,
+          "svgText": "ta-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513204 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513204-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513204 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513204-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513204 :root{--mermaid-font-family:BearSansUI;}/notesworkdraft.mdpersonal.md",
+          "hasSvg": true,
+          "width": "128.5625",
+          "height": "153.703125",
+          "viewBox": "-0.5 0 128.5625 153.703125"
+        },
+        {
+          "id": "eventmodeling",
+          "detected": "eventmodeling",
+          "parsed": {
+            "diagramType": "eventmodeling",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 696,
+            "height": 470
+          },
+          "svgBytes": 5315,
+          "svgText": "te-start{fill:#000000;}#mermaid-render-1792334513215 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513215-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513215 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513215-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513215 :root{--mermaid-font-family:BearSansUI;}UI/AutomationCommand/Read ModelEventsEditorSaveNoteNoteSaved",
+          "hasSvg": true,
+          "width": "696",
+          "height": "470",
+          "viewBox": "-30 -30 696 470"
+        },
+        {
+          "id": "ishikawa",
+          "detected": "ishikawa",
+          "parsed": {
+            "diagramType": "ishikawa",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 261.796875,
+            "height": 581.875
+          },
+          "svgBytes": 6812,
+          "svgText": "\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513226 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513226-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513226 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513226-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513226 :root{--mermaid-font-family:BearSansUI;}Save failedNetworkOfflineStorageFull disk",
+          "hasSvg": true,
+          "width": "261.8062438964844",
+          "height": "581.875",
+          "viewBox": "-146.03125 -46.375 261.8062438964844 581.875"
+        },
+        {
+          "id": "venn",
+          "detected": "venn",
+          "parsed": {
+            "diagramType": "venn",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 800,
+            "height": 450
+          },
+          "svgBytes": 5048,
+          "svgText": "1792334513235 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513235 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513235-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513235 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513235-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513235 :root{--mermaid-font-family:BearSansUI;}WorkPersonal",
+          "hasSvg": true,
+          "width": "800",
+          "height": "450",
+          "viewBox": "0 0 800 450"
+        },
+        {
+          "id": "wardley",
+          "detected": "wardley",
+          "parsed": {
+            "diagramType": "wardley",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 900,
+            "height": 600
+          },
+          "svgBytes": 3430,
+          "svgText": "NotesEvolutionVisibilityGenesisCustom BuiltProductCommodityEditorStorage",
+          "hasSvg": true,
+          "width": "900",
+          "height": "600",
+          "viewBox": "0 0 900 600"
+        },
+        {
+          "id": "cynefin",
+          "detected": "cynefin",
+          "parsed": {
+            "diagramType": "cynefin",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 880,
+            "height": 680
+          },
+          "svgBytes": 8994,
+          "svgText": "185,185,185,1));}#mermaid-render-1792334513262 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513262-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513262 :root{--mermaid-font-family:BearSansUI;}ComplexComplicatedChaoticClearConfusionProbe → Sense → RespondEmergent PracticesSense → Analyse → RespondGood PracticesAct → Sense → RespondNovel PracticesSense → Categorise → RespondBest PracticesDisorderExplore note linksSave a note",
+          "hasSvg": true,
+          "width": "880",
+          "height": "680",
+          "viewBox": "0 0 880 680"
+        },
+        {
+          "id": "railroad",
+          "detected": "railroad",
+          "parsed": {
+            "diagramType": "railroad",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 157.46875
+          },
+          "svgBytes": 6571,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513275 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513275-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513275 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513275-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513275 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "157.46875",
+          "viewBox": "0 0 238.421875 157.46875"
+        },
+        {
+          "id": "railroad-ebnf",
+          "detected": "railroadEbnf",
+          "parsed": {
+            "diagramType": "railroadEbnf",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 157.46875
+          },
+          "svgBytes": 6575,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513286 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513286-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513286 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513286-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513286 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "157.46875",
+          "viewBox": "0 0 238.421875 157.46875"
+        },
+        {
+          "id": "railroad-abnf",
+          "detected": "railroadAbnf",
+          "parsed": {
+            "diagramType": "railroadAbnf",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 157.46875
+          },
+          "svgBytes": 6575,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513295 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513295-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513295 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513295-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513295 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "157.46875",
+          "viewBox": "0 0 238.421875 157.46875"
+        },
+        {
+          "id": "railroad-peg",
+          "detected": "railroadPeg",
+          "parsed": {
+            "diagramType": "railroadPeg",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 238.421875,
+            "height": 157.46875
+          },
+          "svgBytes": 6574,
+          "svgText": "ata-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513305 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513305-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513305 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513305-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513305 :root{--mermaid-font-family:BearSansUI;}#headingnote =Notesheading =",
+          "hasSvg": true,
+          "width": "238.421875",
+          "height": "157.46875",
+          "viewBox": "0 0 238.421875 157.46875"
+        },
+        {
+          "id": "swimlane",
+          "detected": "swimlane",
+          "parsed": {
+            "diagramType": "swimlane",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 171.703125,
+            "height": 339.171875
+          },
+          "svgBytes": 14983,
+          "svgText": "312 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513312 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513312-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513312 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513312-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513312 :root{--mermaid-font-family:BearSansUI;}StorageAuthorWriteSave",
+          "hasSvg": true,
+          "width": "171.703125",
+          "height": "339.171875",
+          "viewBox": "-67.8515625 -71 171.703125 339.171875"
+        },
+        {
+          "id": "flowchart-elk",
+          "detected": "flowchart-elk",
+          "parsed": {
+            "diagramType": "flowchart-elk",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 263.21875,
+            "height": 70
+          },
+          "svgBytes": 13715,
+          "svgText": "-1792334513332 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513332 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513332-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513332 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513332-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513332 :root{--mermaid-font-family:BearSansUI;}StartFinish",
+          "hasSvg": true,
+          "width": "263.21875",
+          "height": "70",
+          "viewBox": "0 0 263.21875 70"
+        },
+        {
+          "id": "zenuml-not-registered",
+          "detected": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: zenuml\nAlice->Bob: Hello"
+          },
+          "parsed": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: zenuml\nAlice->Bob: Hello"
+          },
+          "dimensions": {
+            "error": "No diagram type detected matching given configuration for text: zenuml"
+          },
+          "svgBytes": 0,
+          "hasSvg": false
+        },
+        {
+          "id": "usecase-not-registered",
+          "detected": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: usecaseDiagram\nactor User"
+          },
+          "parsed": {
+            "error": "UnknownDiagramError: No diagram type detected matching given configuration for text: usecaseDiagram\nactor User"
+          },
+          "dimensions": {
+            "error": "No diagram type detected matching given configuration for text: usecaseDiagram"
+          },
+          "svgBytes": 0,
+          "hasSvg": false
+        },
+        {
+          "id": "info",
+          "detected": "info",
+          "parsed": {
+            "diagramType": "info",
+            "config": {}
+          },
+          "dimensions": {
+            "x": 0,
+            "y": 0,
+            "width": 300,
+            "height": 150
+          },
+          "svgBytes": 3177,
+          "svgText": "der-1792334513348 [data-look=\"neo\"].node circle .state-start{fill:#000000;}#mermaid-render-1792334513348 [data-look=\"neo\"].icon-shape .icon{fill:url(#mermaid-render-1792334513348-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513348 [data-look=\"neo\"].icon-shape .icon-neo path{stroke:url(#mermaid-render-1792334513348-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#mermaid-render-1792334513348 :root{--mermaid-font-family:BearSansUI;}v11.16.0",
+          "hasSvg": true,
+          "width": "100%",
+          "height": null,
+          "viewBox": null
+        }
+      ],
+      "mermaid": {
+        "exports": [
+          "startOnLoad",
+          "mermaidAPI",
+          "parse",
+          "render",
+          "init",
+          "run",
+          "registerExternalDiagrams",
+          "registerLayoutLoaders",
+          "initialize",
+          "parseError",
+          "contentLoaded",
+          "setParseErrorHandler",
+          "detectType",
+          "registerIconPacks",
+          "getRegisteredDiagramsMetadata"
+        ],
+        "registry": [
+          {
+            "id": "error"
+          },
+          {
+            "id": "---"
+          },
+          {
+            "id": "flowchart-elk"
+          },
+          {
+            "id": "mindmap"
+          },
+          {
+            "id": "architecture"
+          },
+          {
+            "id": "c4"
+          },
+          {
+            "id": "kanban"
+          },
+          {
+            "id": "classDiagram"
+          },
+          {
+            "id": "class"
+          },
+          {
+            "id": "er"
+          },
+          {
+            "id": "gantt"
+          },
+          {
+            "id": "info"
+          },
+          {
+            "id": "pie"
+          },
+          {
+            "id": "requirement"
+          },
+          {
+            "id": "sequence"
+          },
+          {
+            "id": "swimlane"
+          },
+          {
+            "id": "flowchart-v2"
+          },
+          {
+            "id": "flowchart"
+          },
+          {
+            "id": "timeline"
+          },
+          {
+            "id": "gitGraph"
+          },
+          {
+            "id": "stateDiagram"
+          },
+          {
+            "id": "state"
+          },
+          {
+            "id": "journey"
+          },
+          {
+            "id": "quadrantChart"
+          },
+          {
+            "id": "sankey"
+          },
+          {
+            "id": "packet"
+          },
+          {
+            "id": "xychart"
+          },
+          {
+            "id": "block"
+          },
+          {
+            "id": "eventmodeling"
+          },
+          {
+            "id": "treeView"
+          },
+          {
+            "id": "radar"
+          },
+          {
+            "id": "ishikawa"
+          },
+          {
+            "id": "treemap"
+          },
+          {
+            "id": "railroad"
+          },
+          {
+            "id": "railroadEbnf"
+          },
+          {
+            "id": "railroadAbnf"
+          },
+          {
+            "id": "railroadPeg"
+          },
+          {
+            "id": "venn"
+          },
+          {
+            "id": "wardley"
+          },
+          {
+            "id": "cynefin"
+          }
+        ],
+        "infoText": "v11.16.0",
+        "initialConfig": {
+          "flowchart": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "subGraphTitleMargin": {
+              "top": 0,
+              "bottom": 0
+            },
+            "diagramPadding": 8,
+            "nodeSpacing": 50,
+            "rankSpacing": 50,
+            "curve": "basis",
+            "padding": 15,
+            "defaultRenderer": "dagre-wrapper",
+            "wrappingWidth": 200,
+            "inheritDir": false
+          },
+          "swimlane": {
+            "useMaxWidth": true,
+            "lineHops": "arc",
+            "ignoreCrossLaneEdges": true,
+            "optimizeRanksByCrossings": true,
+            "automaticLaneOrdering": false
+          },
+          "sequence": {
+            "useMaxWidth": true,
+            "hideUnusedParticipants": false,
+            "activationWidth": 10,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "actorMargin": 50,
+            "width": 150,
+            "height": 65,
+            "boxMargin": 10,
+            "boxTextMargin": 5,
+            "noteMargin": 10,
+            "messageMargin": 35,
+            "messageAlign": "center",
+            "mirrorActors": true,
+            "forceMenus": false,
+            "bottomMarginAdj": 1,
+            "rightAngles": false,
+            "showSequenceNumbers": false,
+            "actorFontSize": 14,
+            "actorFontFamily": "\"Open Sans\", sans-serif",
+            "actorFontWeight": 400,
+            "noteFontSize": 14,
+            "noteFontFamily": "\"trebuchet ms\", verdana, arial, sans-serif",
+            "noteFontWeight": 400,
+            "noteAlign": "center",
+            "messageFontSize": 16,
+            "messageFontFamily": "\"trebuchet ms\", verdana, arial, sans-serif",
+            "messageFontWeight": 400,
+            "wrap": false,
+            "wrapPadding": 10,
+            "labelBoxWidth": 50,
+            "labelBoxHeight": 20
+          },
+          "gantt": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "barHeight": 20,
+            "barGap": 4,
+            "topPadding": 50,
+            "rightPadding": 75,
+            "leftPadding": 75,
+            "gridLineStartPadding": 35,
+            "fontSize": 11,
+            "sectionFontSize": 11,
+            "numberSectionStyles": 4,
+            "axisFormat": "%Y-%m-%d",
+            "topAxis": false,
+            "displayMode": "",
+            "weekday": "sunday"
+          },
+          "journey": {
+            "useMaxWidth": true,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "leftMargin": 150,
+            "maxLabelWidth": 360,
+            "width": 150,
+            "height": 50,
+            "boxMargin": 10,
+            "boxTextMargin": 5,
+            "noteMargin": 10,
+            "messageMargin": 35,
+            "messageAlign": "center",
+            "bottomMarginAdj": 1,
+            "rightAngles": false,
+            "taskFontSize": 14,
+            "taskFontFamily": "\"Open Sans\", sans-serif",
+            "taskMargin": 50,
+            "activationWidth": 10,
+            "textPlacement": "fo",
+            "actorColours": [
+              "#8FBC8F",
+              "#7CFC00",
+              "#00FFFF",
+              "#20B2AA",
+              "#B0E0E6",
+              "#FFFFE0"
+            ],
+            "sectionFills": [
+              "#191970",
+              "#8B008B",
+              "#4B0082",
+              "#2F4F4F",
+              "#800000",
+              "#8B4513",
+              "#00008B"
+            ],
+            "sectionColours": [
+              "#fff"
+            ],
+            "titleColor": "",
+            "titleFontFamily": "\"trebuchet ms\", verdana, arial, sans-serif",
+            "titleFontSize": "4ex"
+          },
+          "class": {
+            "hideEmptyMembersBox": false,
+            "hierarchicalNamespaces": true
+          },
+          "state": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "dividerMargin": 10,
+            "sizeUnit": 5,
+            "padding": 8,
+            "textHeight": 10,
+            "titleShift": -15,
+            "noteMargin": 10,
+            "forkWidth": 70,
+            "forkHeight": 7,
+            "miniPadding": 2,
+            "fontSizeFactor": 5.02,
+            "fontSize": 24,
+            "labelHeight": 16,
+            "edgeLengthFactor": "20",
+            "compositTitleSize": 35,
+            "radius": 5,
+            "defaultRenderer": "dagre-wrapper"
+          },
+          "er": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "diagramPadding": 20,
+            "layoutDirection": "TB",
+            "minEntityWidth": 100,
+            "minEntityHeight": 75,
+            "entityPadding": 15,
+            "nodeSpacing": 140,
+            "rankSpacing": 80,
+            "stroke": "gray",
+            "fill": "honeydew",
+            "fontSize": 12
+          },
+          "pie": {
+            "useMaxWidth": true,
+            "textPosition": 0.75,
+            "donutHole": 0,
+            "legendPosition": "right",
+            "highlightSlice": "",
+            "useWidth": 984
+          },
+          "quadrantChart": {
+            "useMaxWidth": true,
+            "chartWidth": 500,
+            "chartHeight": 500,
+            "titleFontSize": 20,
+            "titlePadding": 10,
+            "quadrantPadding": 5,
+            "xAxisLabelPadding": 5,
+            "yAxisLabelPadding": 5,
+            "xAxisLabelFontSize": 16,
+            "yAxisLabelFontSize": 16,
+            "quadrantLabelFontSize": 16,
+            "quadrantTextTopPadding": 5,
+            "pointTextPadding": 5,
+            "pointLabelFontSize": 12,
+            "pointRadius": 5,
+            "xAxisPosition": "top",
+            "yAxisPosition": "left",
+            "quadrantInternalBorderStrokeWidth": 1,
+            "quadrantExternalBorderStrokeWidth": 2
+          },
+          "xyChart": {
+            "useMaxWidth": true,
+            "width": 700,
+            "height": 500,
+            "titleFontSize": 20,
+            "titlePadding": 10,
+            "showDataLabel": false,
+            "showDataLabelOutsideBar": false,
+            "showTitle": true,
+            "xAxis": {
+              "$ref": "#/$defs/XYChartAxisConfig",
+              "showLabel": true,
+              "labelFontSize": 14,
+              "labelPadding": 5,
+              "showTitle": true,
+              "titleFontSize": 16,
+              "titlePadding": 5,
+              "showTick": true,
+              "tickLength": 5,
+              "tickWidth": 2,
+              "showAxisLine": true,
+              "axisLineWidth": 2,
+              "labelRotation": 0
+            },
+            "yAxis": {
+              "$ref": "#/$defs/XYChartAxisConfig",
+              "showLabel": true,
+              "labelFontSize": 14,
+              "labelPadding": 5,
+              "showTitle": true,
+              "titleFontSize": 16,
+              "titlePadding": 5,
+              "showTick": true,
+              "tickLength": 5,
+              "tickWidth": 2,
+              "showAxisLine": true,
+              "axisLineWidth": 2,
+              "labelRotation": 0
+            },
+            "chartOrientation": "vertical",
+            "plotReservedSpacePercent": 50
+          },
+          "requirement": {
+            "useMaxWidth": true,
+            "rect_fill": "#f9f9f9",
+            "text_color": "#333",
+            "rect_border_size": "0.5px",
+            "rect_border_color": "#bbb",
+            "rect_min_width": 200,
+            "rect_min_height": 200,
+            "fontSize": 14,
+            "rect_padding": 10,
+            "line_height": 20
+          },
+          "mindmap": {
+            "useMaxWidth": true,
+            "padding": 10,
+            "maxNodeWidth": 200,
+            "layoutAlgorithm": "cose-bilkent"
+          },
+          "ishikawa": {
+            "useMaxWidth": true,
+            "diagramPadding": 20
+          },
+          "kanban": {
+            "useMaxWidth": true,
+            "padding": 8,
+            "sectionWidth": 200,
+            "ticketBaseUrl": ""
+          },
+          "timeline": {
+            "useMaxWidth": true,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "leftMargin": 150,
+            "width": 150,
+            "height": 50,
+            "boxMargin": 10,
+            "boxTextMargin": 5,
+            "noteMargin": 10,
+            "messageMargin": 35,
+            "messageAlign": "center",
+            "bottomMarginAdj": 1,
+            "rightAngles": false,
+            "taskFontSize": 14,
+            "taskFontFamily": "\"Open Sans\", sans-serif",
+            "taskMargin": 50,
+            "activationWidth": 10,
+            "textPlacement": "fo",
+            "actorColours": [
+              "#8FBC8F",
+              "#7CFC00",
+              "#00FFFF",
+              "#20B2AA",
+              "#B0E0E6",
+              "#FFFFE0"
+            ],
+            "sectionFills": [
+              "#191970",
+              "#8B008B",
+              "#4B0082",
+              "#2F4F4F",
+              "#800000",
+              "#8B4513",
+              "#00008B"
+            ],
+            "sectionColours": [
+              "#fff"
+            ],
+            "disableMulticolor": false
+          },
+          "gitGraph": {
+            "useMaxWidth": true,
+            "titleTopMargin": 25,
+            "diagramPadding": 8,
+            "nodeLabel": {
+              "width": 75,
+              "height": 100,
+              "x": -25,
+              "y": 0
+            },
+            "mainBranchName": "main",
+            "mainBranchOrder": 0,
+            "showCommitLabel": true,
+            "showBranches": true,
+            "rotateCommitLabel": true,
+            "parallelCommits": false,
+            "arrowMarkerAbsolute": false
+          },
+          "c4": {
+            "useMaxWidth": true,
+            "diagramMarginX": 50,
+            "diagramMarginY": 10,
+            "c4ShapeMargin": 50,
+            "c4ShapePadding": 20,
+            "width": 216,
+            "height": 60,
+            "boxMargin": 10,
+            "c4ShapeInRow": 4,
+            "nextLinePaddingX": 0,
+            "c4BoundaryInRow": 2,
+            "personFontSize": 14,
+            "personFontFamily": "\"Open Sans\", sans-serif",
+            "personFontWeight": "normal",
+            "external_personFontSize": 14,
+            "external_personFontFamily": "\"Open Sans\", sans-serif",
+            "external_personFontWeight": "normal",
+            "systemFontSize": 14,
+            "systemFontFamily": "\"Open Sans\", sans-serif",
+            "systemFontWeight": "normal",
+            "external_systemFontSize": 14,
+            "external_systemFontFamily": "\"Open Sans\", sans-serif",
+            "external_systemFontWeight": "normal",
+            "system_dbFontSize": 14,
+            "system_dbFontFamily": "\"Open Sans\", sans-serif",
+            "system_dbFontWeight": "normal",
+            "external_system_dbFontSize": 14,
+            "external_system_dbFontFamily": "\"Open Sans\", sans-serif",
+            "external_system_dbFontWeight": "normal",
+            "system_queueFontSize": 14,
+            "system_queueFontFamily": "\"Open Sans\", sans-serif",
+            "system_queueFontWeight": "normal",
+            "external_system_queueFontSize": 14,
+            "external_system_queueFontFamily": "\"Open Sans\", sans-serif",
+            "external_system_queueFontWeight": "normal",
+            "boundaryFontSize": 14,
+            "boundaryFontFamily": "\"Open Sans\", sans-serif",
+            "boundaryFontWeight": "normal",
+            "messageFontSize": 12,
+            "messageFontFamily": "\"Open Sans\", sans-serif",
+            "messageFontWeight": "normal",
+            "containerFontSize": 14,
+            "containerFontFamily": "\"Open Sans\", sans-serif",
+            "containerFontWeight": "normal",
+            "external_containerFontSize": 14,
+            "external_containerFontFamily": "\"Open Sans\", sans-serif",
+            "external_containerFontWeight": "normal",
+            "container_dbFontSize": 14,
+            "container_dbFontFamily": "\"Open Sans\", sans-serif",
+            "container_dbFontWeight": "normal",
+            "external_container_dbFontSize": 14,
+            "external_container_dbFontFamily": "\"Open Sans\", sans-serif",
+            "external_container_dbFontWeight": "normal",
+            "container_queueFontSize": 14,
+            "container_queueFontFamily": "\"Open Sans\", sans-serif",
+            "container_queueFontWeight": "normal",
+            "external_container_queueFontSize": 14,
+            "external_container_queueFontFamily": "\"Open Sans\", sans-serif",
+            "external_container_queueFontWeight": "normal",
+            "componentFontSize": 14,
+            "componentFontFamily": "\"Open Sans\", sans-serif",
+            "componentFontWeight": "normal",
+            "external_componentFontSize": 14,
+            "external_componentFontFamily": "\"Open Sans\", sans-serif",
+            "external_componentFontWeight": "normal",
+            "component_dbFontSize": 14,
+            "component_dbFontFamily": "\"Open Sans\", sans-serif",
+            "component_dbFontWeight": "normal",
+            "external_component_dbFontSize": 14,
+            "external_component_dbFontFamily": "\"Open Sans\", sans-serif",
+            "external_component_dbFontWeight": "normal",
+            "component_queueFontSize": 14,
+            "component_queueFontFamily": "\"Open Sans\", sans-serif",
+            "component_queueFontWeight": "normal",
+            "external_component_queueFontSize": 14,
+            "external_component_queueFontFamily": "\"Open Sans\", sans-serif",
+            "external_component_queueFontWeight": "normal",
+            "wrap": true,
+            "wrapPadding": 10,
+            "person_bg_color": "#08427B",
+            "person_border_color": "#073B6F",
+            "external_person_bg_color": "#686868",
+            "external_person_border_color": "#8A8A8A",
+            "system_bg_color": "#1168BD",
+            "system_border_color": "#3C7FC0",
+            "system_db_bg_color": "#1168BD",
+            "system_db_border_color": "#3C7FC0",
+            "system_queue_bg_color": "#1168BD",
+            "system_queue_border_color": "#3C7FC0",
+            "external_system_bg_color": "#999999",
+            "external_system_border_color": "#8A8A8A",
+            "external_system_db_bg_color": "#999999",
+            "external_system_db_border_color": "#8A8A8A",
+            "external_system_queue_bg_color": "#999999",
+            "external_system_queue_border_color": "#8A8A8A",
+            "container_bg_color": "#438DD5",
+            "container_border_color": "#3C7FC0",
+            "container_db_bg_color": "#438DD5",
+            "container_db_border_color": "#3C7FC0",
+            "container_queue_bg_color": "#438DD5",
+            "container_queue_border_color": "#3C7FC0",
+            "external_container_bg_color": "#B3B3B3",
+            "external_container_border_color": "#A6A6A6",
+            "external_container_db_bg_color": "#B3B3B3",
+            "external_container_db_border_color": "#A6A6A6",
+            "external_container_queue_bg_color": "#B3B3B3",
+            "external_container_queue_border_color": "#A6A6A6",
+            "component_bg_color": "#85BBF0",
+            "component_border_color": "#78A8D8",
+            "component_db_bg_color": "#85BBF0",
+            "component_db_border_color": "#78A8D8",
+            "component_queue_bg_color": "#85BBF0",
+            "component_queue_border_color": "#78A8D8",
+            "external_component_bg_color": "#CCCCCC",
+            "external_component_border_color": "#BFBFBF",
+            "external_component_db_bg_color": "#CCCCCC",
+            "external_component_db_border_color": "#BFBFBF",
+            "external_component_queue_bg_color": "#CCCCCC",
+            "external_component_queue_border_color": "#BFBFBF",
+            "flowchart": {
+              "useMaxWidth": true,
+              "titleTopMargin": 25,
+              "subGraphTitleMargin": {
+                "top": 0,
+                "bottom": 0
+              },
+              "diagramPadding": 8,
+              "htmlLabels": null,
+              "nodeSpacing": 50,
+              "rankSpacing": 50,
+              "curve": "basis",
+              "padding": 15,
+              "defaultRenderer": "dagre-wrapper",
+              "wrappingWidth": 200,
+              "inheritDir": false
+            }
+          },
+          "sankey": {
+            "useMaxWidth": true,
+            "width": 600,
+            "height": 400,
+            "linkColor": "gradient",
+            "nodeAlignment": "justify",
+            "showValues": true,
+            "prefix": "",
+            "suffix": "",
+            "nodeWidth": 10,
+            "nodePadding": 12,
+            "labelStyle": "legacy"
+          },
+          "block": {
+            "useMaxWidth": true,
+            "padding": 8
+          },
+          "packet": {
+            "useMaxWidth": true,
+            "rowHeight": 32,
+            "bitWidth": 32,
+            "bitsPerRow": 32,
+            "showBits": true,
+            "paddingX": 5,
+            "paddingY": 5
+          },
+          "treeView": {
+            "useMaxWidth": true,
+            "rowIndent": 10,
+            "paddingX": 5,
+            "paddingY": 5,
+            "lineThickness": 1,
+            "showIcons": false,
+            "defaultIconPack": "",
+            "filenameIcons": {},
+            "extensionIcons": {}
+          },
+          "architecture": {
+            "useMaxWidth": true,
+            "padding": 40,
+            "iconSize": 80,
+            "fontSize": 16,
+            "randomize": false,
+            "nodeSeparation": 75,
+            "idealEdgeLengthMultiplier": 1.5,
+            "edgeElasticity": 0.45,
+            "numIter": 2500,
+            "seed": 1
+          },
+          "eventmodeling": {
+            "useMaxWidth": true,
+            "padding": 30,
+            "rowHeight": 32
+          },
+          "radar": {
+            "useMaxWidth": true,
+            "width": 600,
+            "height": 600,
+            "marginTop": 50,
+            "marginRight": 50,
+            "marginBottom": 50,
+            "marginLeft": 50,
+            "axisScaleFactor": 1,
+            "axisLabelFactor": 1.05,
+            "curveTension": 0.17
+          },
+          "venn": {
+            "useMaxWidth": true,
+            "width": 800,
+            "height": 450,
+            "padding": 8,
+            "useDebugLayout": false
+          },
+          "cynefin": {
+            "useMaxWidth": true,
+            "width": 800,
+            "height": 600,
+            "padding": 40,
+            "showDomainDescriptions": true,
+            "boundaryAmplitude": 8,
+            "seed": 0
+          },
+          "theme": "base",
+          "look": "classic",
+          "handDrawnSeed": 0,
+          "layout": "dagre",
+          "maxTextSize": 50000,
+          "maxEdges": 500,
+          "darkMode": false,
+          "fontFamily": "sans-serif",
+          "logLevel": 5,
+          "securityLevel": "strict",
+          "startOnLoad": false,
+          "arrowMarkerAbsolute": false,
+          "secure": [
+            "secure",
+            "securityLevel",
+            "startOnLoad",
+            "maxTextSize",
+            "suppressErrorRendering",
+            "maxEdges"
+          ],
+          "legacyMathML": false,
+          "forceLegacyMathML": false,
+          "deterministicIds": false,
+          "fontSize": 16,
+          "markdownAutoWrap": true,
+          "suppressErrorRendering": false,
+          "elk": {
+            "mergeEdges": false,
+            "nodePlacementStrategy": "BRANDES_KOEPF",
+            "forceNodeModelOrder": false,
+            "considerModelOrder": "NODES_AND_EDGES"
+          },
+          "themeVariables": {
+            "background": "#f4f4f4",
+            "primaryColor": "#fff4dd",
+            "noteBkgColor": "#fff5ad",
+            "noteTextColor": "#333",
+            "THEME_COLOR_LIMIT": 12,
+            "radius": 5,
+            "strokeWidth": 1,
+            "fontFamily": "sans-serif",
+            "fontSize": "16px",
+            "useGradient": true,
+            "dropShadow": "drop-shadow( 1px 2px 2px rgba(185,185,185,1))",
+            "primaryTextColor": "#333",
+            "secondaryColor": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "tertiaryColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "primaryBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "secondaryBorderColor": "hsl(-79.4117647059, 60%, 83.3333333333%)",
+            "tertiaryBorderColor": "hsl(220.5882352941, 60%, 88.3333333333%)",
+            "noteBorderColor": "hsl(52.6829268293, 60%, 73.9215686275%)",
+            "secondaryTextColor": "rgb(11.0000000001, 34.0000000002, 0)",
+            "tertiaryTextColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "lineColor": "#0b0b0b",
+            "arrowheadColor": "#0b0b0b",
+            "textColor": "#333",
+            "border2": "hsl(220.5882352941, 60%, 88.3333333333%)",
+            "nodeBkg": "#fff4dd",
+            "mainBkg": "#fff4dd",
+            "nodeBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "clusterBkg": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "clusterBorder": "hsl(220.5882352941, 60%, 88.3333333333%)",
+            "defaultLinkColor": "#0b0b0b",
+            "titleColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "edgeLabelBackground": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "nodeTextColor": "#333",
+            "actorBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "actorBkg": "#fff4dd",
+            "actorTextColor": "#333",
+            "actorLineColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "labelBoxBkgColor": "#fff4dd",
+            "signalColor": "#333",
+            "signalTextColor": "#333",
+            "labelBoxBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "labelTextColor": "#333",
+            "loopTextColor": "#333",
+            "activationBorderColor": "hsl(-79.4117647059, 100%, 83.3333333333%)",
+            "activationBkgColor": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "sequenceNumberColor": "#f4f4f4",
+            "rectBkgColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "sectionBkgColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "altSectionBkgColor": "white",
+            "sectionBkgColor2": "#fff4dd",
+            "excludeBkgColor": "#eeeeee",
+            "taskBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "taskBkgColor": "#fff4dd",
+            "activeTaskBorderColor": "#fff4dd",
+            "activeTaskBkgColor": "hsl(40.5882352941, 100%, 100%)",
+            "gridColor": "lightgrey",
+            "doneTaskBkgColor": "lightgrey",
+            "doneTaskBorderColor": "grey",
+            "critBorderColor": "#ff8888",
+            "critBkgColor": "red",
+            "todayLineColor": "red",
+            "vertLineColor": "navy",
+            "taskTextColor": "#333",
+            "taskTextOutsideColor": "#333",
+            "taskTextLightColor": "#333",
+            "taskTextDarkColor": "#333",
+            "taskTextClickableColor": "#003163",
+            "noteFontWeight": "normal",
+            "fontWeight": "normal",
+            "personBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "personBkg": "#fff4dd",
+            "rowOdd": "hsl(40.5882352941, 100%, 100%)",
+            "rowEven": "hsl(40.5882352941, 100%, 98.3333333333%)",
+            "transitionColor": "#0b0b0b",
+            "transitionLabelColor": "#333",
+            "stateLabelColor": "#333",
+            "stateBkg": "#fff4dd",
+            "labelBackgroundColor": "#fff4dd",
+            "compositeBackground": "#f4f4f4",
+            "altBackground": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "compositeTitleBackground": "#fff4dd",
+            "compositeBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "innerEndBackground": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "errorBkgColor": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "errorTextColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "specialStateColor": "#0b0b0b",
+            "cScale0": "hsl(40.5882352941, 100%, 68.3333333333%)",
+            "cScale1": "hsl(-79.4117647059, 100%, 68.3333333333%)",
+            "cScale2": "hsl(220.5882352941, 100%, 73.3333333333%)",
+            "cScale3": "hsl(70.5882352941, 100%, 68.3333333333%)",
+            "cScale4": "hsl(100.5882352941, 100%, 68.3333333333%)",
+            "cScale5": "hsl(130.5882352941, 100%, 68.3333333333%)",
+            "cScale6": "hsl(160.5882352941, 100%, 68.3333333333%)",
+            "cScale7": "hsl(190.5882352941, 100%, 68.3333333333%)",
+            "cScale8": "hsl(250.5882352941, 100%, 75%)",
+            "cScale9": "hsl(310.5882352941, 100%, 68.3333333333%)",
+            "cScale10": "hsl(340.5882352941, 100%, 68.3333333333%)",
+            "cScale11": "hsl(10.5882352941, 100%, 68.3333333333%)",
+            "cScaleInv0": "rgb(0, 52.2500000001, 161.5000000002)",
+            "cScaleInv1": "rgb(52.2500000001, 161.5000000002, 0)",
+            "cScaleInv2": "rgb(136.0000000002, 92.0000000001, 0)",
+            "cScaleInv3": "rgb(28.5, 0, 161.5000000002)",
+            "cScaleInv4": "rgb(109.2500000001, 0, 161.5000000002)",
+            "cScaleInv5": "rgb(161.5000000002, 0, 133.0000000002)",
+            "cScaleInv6": "rgb(161.5000000002, 0, 52.2500000001)",
+            "cScaleInv7": "rgb(161.5000000002, 28.5, 0)",
+            "cScaleInv8": "rgb(105, 127.5, 0)",
+            "cScaleInv9": "rgb(0, 161.5000000002, 28.5)",
+            "cScaleInv10": "rgb(0, 161.5000000002, 109.2500000001)",
+            "cScaleInv11": "rgb(0, 133.0000000002, 161.5000000002)",
+            "cScalePeer0": "hsl(40.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer1": "hsl(-79.4117647059, 100%, 58.3333333333%)",
+            "cScalePeer2": "hsl(220.5882352941, 100%, 63.3333333333%)",
+            "cScalePeer3": "hsl(70.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer4": "hsl(100.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer5": "hsl(130.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer6": "hsl(160.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer7": "hsl(190.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer8": "hsl(250.5882352941, 100%, 65%)",
+            "cScalePeer9": "hsl(310.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer10": "hsl(340.5882352941, 100%, 58.3333333333%)",
+            "cScalePeer11": "hsl(10.5882352941, 100%, 58.3333333333%)",
+            "scaleLabelColor": "#333",
+            "cScaleLabel0": "#333",
+            "cScaleLabel1": "#333",
+            "cScaleLabel2": "#333",
+            "cScaleLabel3": "#333",
+            "cScaleLabel4": "#333",
+            "cScaleLabel5": "#333",
+            "cScaleLabel6": "#333",
+            "cScaleLabel7": "#333",
+            "cScaleLabel8": "#333",
+            "cScaleLabel9": "#333",
+            "cScaleLabel10": "#333",
+            "cScaleLabel11": "#333",
+            "surface0": "hsl(220.5882352941, 85%, 88.3333333333%)",
+            "surfacePeer0": "hsl(220.5882352941, 85%, 85.3333333333%)",
+            "surface1": "hsl(220.5882352941, 85%, 85.3333333333%)",
+            "surfacePeer1": "hsl(220.5882352941, 85%, 82.3333333333%)",
+            "surface2": "hsl(220.5882352941, 85%, 82.3333333333%)",
+            "surfacePeer2": "hsl(220.5882352941, 85%, 79.3333333333%)",
+            "surface3": "hsl(220.5882352941, 85%, 79.3333333333%)",
+            "surfacePeer3": "hsl(220.5882352941, 85%, 76.3333333333%)",
+            "surface4": "hsl(220.5882352941, 85%, 76.3333333333%)",
+            "surfacePeer4": "hsl(220.5882352941, 85%, 73.3333333333%)",
+            "classText": "#333",
+            "fillType0": "#fff4dd",
+            "fillType1": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "fillType2": "hsl(104.5882352941, 100%, 93.3333333333%)",
+            "fillType3": "hsl(-15.4117647059, 100%, 93.3333333333%)",
+            "fillType4": "hsl(-23.4117647059, 100%, 93.3333333333%)",
+            "fillType5": "hsl(-143.4117647059, 100%, 93.3333333333%)",
+            "fillType6": "hsl(168.5882352941, 100%, 93.3333333333%)",
+            "fillType7": "hsl(48.5882352941, 100%, 93.3333333333%)",
+            "pie1": "#fff4dd",
+            "pie2": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "pie3": "hsl(220.5882352941, 100%, 98.3333333333%)",
+            "pie4": "hsl(40.5882352941, 100%, 83.3333333333%)",
+            "pie5": "hsl(-79.4117647059, 100%, 83.3333333333%)",
+            "pie6": "hsl(220.5882352941, 100%, 88.3333333333%)",
+            "pie7": "hsl(100.5882352941, 100%, 83.3333333333%)",
+            "pie8": "hsl(-19.4117647059, 100%, 83.3333333333%)",
+            "pie9": "hsl(160.5882352941, 100%, 93.3333333333%)",
+            "pie10": "hsl(100.5882352941, 100%, 73.3333333333%)",
+            "pie11": "hsl(-19.4117647059, 100%, 73.3333333333%)",
+            "pie12": "hsl(160.5882352941, 100%, 83.3333333333%)",
+            "pieTitleTextSize": "25px",
+            "pieTitleTextColor": "#333",
+            "pieSectionTextSize": "17px",
+            "pieSectionTextColor": "#333",
+            "pieLegendTextSize": "17px",
+            "pieLegendTextColor": "#333",
+            "pieStrokeColor": "black",
+            "pieStrokeWidth": "2px",
+            "pieOuterStrokeWidth": "2px",
+            "pieOuterStrokeColor": "black",
+            "pieOpacity": "0.7",
+            "venn1": "hsl(40.5882352941, 100%, 63.3333333333%)",
+            "venn2": "hsl(-79.4117647059, 100%, 63.3333333333%)",
+            "venn3": "hsl(220.5882352941, 100%, 68.3333333333%)",
+            "venn4": "hsl(100.5882352941, 100%, 63.3333333333%)",
+            "venn5": "hsl(-19.4117647059, 100%, 63.3333333333%)",
+            "venn6": "hsl(-19.4117647059, 100%, 63.3333333333%)",
+            "venn7": "hsl(160.5882352941, 100%, 63.3333333333%)",
+            "venn8": "hsl(40.5882352941, 100%, 63.3333333333%)",
+            "vennTitleTextColor": "rgb(8.5000000002, 5.7500000001, 0)",
+            "vennSetTextColor": "#333",
+            "cynefin": {
+              "domainFontSize": 16,
+              "itemFontSize": 12,
+              "boundaryColor": "#0b0b0b",
+              "boundaryWidth": 2,
+              "cliffColor": "#8B0000",
+              "cliffWidth": 4,
+              "arrowColor": "#0b0b0b",
+              "arrowWidth": 2,
+              "complexBg": "#E8F5E9",
+              "complicatedBg": "#E3F2FD",
+              "chaoticBg": "#FBE9E7",
+              "clearBg": "#FFF8E1",
+              "confusionBg": "#F3E5F5",
+              "textColor": "#333",
+              "labelColor": "#333"
+            },
+            "radar": {
+              "axisColor": "#0b0b0b",
+              "axisStrokeWidth": 2,
+              "axisLabelFontSize": 12,
+              "curveOpacity": 0.5,
+              "curveStrokeWidth": 2,
+              "graticuleColor": "#DEDEDE",
+              "graticuleStrokeWidth": 1,
+              "graticuleOpacity": 0.3,
+              "legendBoxSize": 12,
+              "legendFontSize": 12
+            },
+            "wardleyEvolutionColor": "#dc3545",
+            "wardley": {
+              "backgroundColor": "#f4f4f4",
+              "axisColor": "#0b0b0b",
+              "axisTextColor": "#333",
+              "gridColor": "lightgrey",
+              "componentFill": "#f4f4f4",
+              "componentStroke": "#0b0b0b",
+              "componentLabelColor": "#333",
+              "linkStroke": "#0b0b0b",
+              "evolutionStroke": "#dc3545",
+              "annotationStroke": "#0b0b0b",
+              "annotationTextColor": "#333",
+              "annotationFill": "#f4f4f4"
+            },
+            "archEdgeColor": "#777",
+            "archEdgeArrowColor": "#777",
+            "archEdgeWidth": "3",
+            "archGroupBorderColor": "#000",
+            "archGroupBorderWidth": "2px",
+            "quadrant1Fill": "#fff4dd",
+            "quadrant2Fill": "#fff9e2",
+            "quadrant3Fill": "#fffee7",
+            "quadrant4Fill": "#ffffec",
+            "quadrant1TextFill": "#333",
+            "quadrant2TextFill": "#2e2e2e",
+            "quadrant3TextFill": "#292929",
+            "quadrant4TextFill": "#242424",
+            "quadrantPointFill": "hsl(40.5882352941, 100%, NaN%)",
+            "quadrantPointTextFill": "#333",
+            "quadrantXAxisTextFill": "#333",
+            "quadrantYAxisTextFill": "#333",
+            "quadrantInternalBorderStrokeFill": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "quadrantExternalBorderStrokeFill": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "quadrantTitleFill": "#333",
+            "xyChart": {
+              "backgroundColor": "#f4f4f4",
+              "titleColor": "#333",
+              "dataLabelColor": "#333",
+              "xAxisTitleColor": "#333",
+              "xAxisLabelColor": "#333",
+              "xAxisTickColor": "#333",
+              "xAxisLineColor": "#333",
+              "yAxisTitleColor": "#333",
+              "yAxisLabelColor": "#333",
+              "yAxisTickColor": "#333",
+              "yAxisLineColor": "#333",
+              "plotColorPalette": "#FFF4DD,#FFD8B1,#FFA07A,#ECEFF1,#D6DBDF,#C3E0A8,#FFB6A4,#FFD74D,#738FA7,#FFFFF0"
+            },
+            "requirementBackground": "#fff4dd",
+            "requirementBorderColor": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "requirementBorderSize": "1",
+            "requirementTextColor": "#333",
+            "relationColor": "#0b0b0b",
+            "relationLabelBackground": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "relationLabelColor": "#333",
+            "git0": "hsl(40.5882352941, 100%, 68.3333333333%)",
+            "git1": "hsl(-79.4117647059, 100%, 68.3333333333%)",
+            "git2": "hsl(220.5882352941, 100%, 73.3333333333%)",
+            "git3": "hsl(10.5882352941, 100%, 68.3333333333%)",
+            "git4": "hsl(-19.4117647059, 100%, 68.3333333333%)",
+            "git5": "hsl(-49.4117647059, 100%, 68.3333333333%)",
+            "git6": "hsl(100.5882352941, 100%, 68.3333333333%)",
+            "git7": "hsl(160.5882352941, 100%, 68.3333333333%)",
+            "gitInv0": "rgb(0, 52.2500000001, 161.5000000002)",
+            "gitInv1": "rgb(52.2500000001, 161.5000000002, 0)",
+            "gitInv2": "rgb(136.0000000002, 92.0000000001, 0)",
+            "gitInv3": "rgb(0, 133.0000000002, 161.5000000002)",
+            "gitInv4": "rgb(0, 161.5000000002, 109.2500000001)",
+            "gitInv5": "rgb(0, 161.5000000002, 28.5)",
+            "gitInv6": "rgb(109.2500000001, 0, 161.5000000002)",
+            "gitInv7": "rgb(161.5000000002, 0, 52.2500000001)",
+            "branchLabelColor": "#333",
+            "gitBranchLabel0": "#333",
+            "gitBranchLabel1": "#333",
+            "gitBranchLabel2": "#333",
+            "gitBranchLabel3": "#333",
+            "gitBranchLabel4": "#333",
+            "gitBranchLabel5": "#333",
+            "gitBranchLabel6": "#333",
+            "gitBranchLabel7": "#333",
+            "tagLabelColor": "#333",
+            "tagLabelBackground": "#fff4dd",
+            "tagLabelBorder": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "tagLabelFontSize": "10px",
+            "commitLabelColor": "rgb(11.0000000001, 34.0000000002, 0)",
+            "commitLabelBackground": "hsl(-79.4117647059, 100%, 93.3333333333%)",
+            "commitLabelFontSize": "10px",
+            "emUiFill": "white",
+            "emUiStroke": "#dbdada",
+            "emProcessorFill": "#edb3f6",
+            "emProcessorStroke": "#b88cbf",
+            "emReadModelFill": "#d3f1a2",
+            "emReadModelStroke": "#a3b732",
+            "emCommandFill": "#bcd6fe",
+            "emCommandStroke": "#679ac3",
+            "emEventFill": "#ffb778",
+            "emEventStroke": "#c19a0f",
+            "emSwimlaneBackgroundOdd": "rgb(250,250,250)",
+            "emSwimlaneBackgroundStroke": "rgb(240,240,240)",
+            "emArrowhead": "#0b0b0b",
+            "emRelationStroke": "#0b0b0b",
+            "attributeBackgroundColorOdd": "#ffffff",
+            "attributeBackgroundColorEven": "#f2f2f2",
+            "gradientStart": "hsl(40.5882352941, 60%, 83.3333333333%)",
+            "gradientStop": "hsl(-79.4117647059, 60%, 83.3333333333%)"
+          },
+          "railroad": {},
+          "treemap": {
+            "useMaxWidth": true,
+            "padding": 10,
+            "diagramPadding": 8,
+            "showValues": true,
+            "nodeWidth": 100,
+            "nodeHeight": 40,
+            "borderWidth": 1,
+            "valueFontSize": 12,
+            "labelFontSize": 14,
+            "valueFormat": ","
+          }
+        }
+      },
+      "themeSwitch": {
+        "background": "rgb(255, 255, 255)",
+        "overrideRulesPresent": true,
+        "font": "-webkit-standard"
+      },
+      "mathjax": {
+        "version": "4.1.0",
+        "loader": {
+          "load": [],
+          "paths": {
+            "mathjax": "http://127.0.0.1:59138/mathjax/mathjax",
+            "fonts": "https://cdn.jsdelivr.net/npm/@mathjax",
+            "tex": "[mathjax]/input/tex/extensions",
+            "mml": "[mathjax]/input/mml/extensions",
+            "sre": "[mathjax]/sre",
+            "mathmaps": "[sre]/mathmaps",
+            "mathjax-newcm": "[fonts]/mathjax-newcm-font"
+          },
+          "source": {
+            "[tex]/amsCd": "[tex]/amscd",
+            "[tex]/colorV2": "[tex]/colorv2",
+            "[tex]/configMacros": "[tex]/configmacros",
+            "[tex]/tagFormat": "[tex]/tagformat"
+          },
+          "dependencies": {
+            "a11y/semantic-enrich": [
+              "input/mml",
+              "a11y/sre"
+            ],
+            "a11y/speech": [
+              "a11y/semantic-enrich"
+            ],
+            "a11y/complexity": [
+              "a11y/semantic-enrich"
+            ],
+            "a11y/explorer": [
+              "a11y/speech"
+            ],
+            "[mml]/mml3": [
+              "input/mml"
+            ],
+            "[tex]/action": [
+              "input/tex-base"
+            ],
+            "[tex]/ams": [
+              "input/tex-base",
+              "[tex]/newcommand"
+            ],
+            "[tex]/amscd": [
+              "input/tex-base"
+            ],
+            "[tex]/autoload": [
+              "input/tex-base",
+              "[tex]/require"
+            ],
+            "[tex]/bbm": [
+              "input/tex-base"
+            ],
+            "[tex]/bboldx": [
+              "input/tex-base",
+              "[tex]/textmacros"
+            ],
+            "[tex]/bbox": [
+              "input/tex-base"
+            ],
+            "[tex]/begingroup": [
+              "input/tex-base",
+              "[tex]/newcommand"
+            ],
+            "[tex]/boldsymbol": [
+              "input/tex-base"
+            ],
+            "[tex]/braket": [
+              "input/tex-base"
+            ],
+            "[tex]/bussproofs": [
+              "input/tex-base"
+            ],
+            "[tex]/cancel": [
+              "input/tex-base",
+              "[tex]/enclose"
+            ],
+            "[tex]/cases": [
+              "[tex]/empheq"
+            ],
+            "[tex]/centernot": [
+              "input/tex-base"
+            ],
+            "[tex]/color": [
+              "input/tex-base"
+            ],
+            "[tex]/colortbl": [
+              "input/tex-base",
+              "[tex]/color"
+            ],
+            "[tex]/colorv2": [
+              "input/tex-base"
+            ],
+            "[tex]/configmacros": [
+              "input/tex-base",
+              "[tex]/newcommand"
+            ],
+            "[tex]/dsfont": [
+              "input/tex-base"
+            ],
+            "[tex]/empheq": [
+              "input/tex-base",
+              "[tex]/ams"
+            ],
+            "[tex]/enclose": [
+              "input/tex-base"
+            ],
+            "[tex]/extpfeil": [
+              "input/tex-base",
+              "[tex]/newcommand",
+              "[tex]/ams"
+            ],
+            "[tex]/gensymb": [
+              "input/tex-base"
+            ],
+            "[tex]/html": [
+              "input/tex-base"
+            ],
+            "[tex]/mathtools": [
+              "input/tex-base",
+              "[tex]/newcommand",
+              "[tex]/ams",
+              "[tex]/boldsymbol"
+            ],
+            "[tex]/mhchem": [
+              "input/tex-base",
+              "[tex]/ams"
+            ],
+            "[tex]/newcommand": [
+              "input/tex-base"
+            ],
+            "[tex]/noerrors": [
+              "input/tex-base"
+            ],
+            "[tex]/noundefined": [
+              "input/tex-base"
+            ],
+            "[tex]/physics": [
+              "input/tex-base"
+            ],
+            "[tex]/require": [
+              "input/tex-base"
+            ],
+            "[tex]/setoptions": [
+              "input/tex-base"
+            ],
+            "[tex]/tagformat": [
+              "input/tex-base"
+            ],
+            "[tex]/texhtml": [
+              "input/tex-base"
+            ],
+            "[tex]/textcomp": [
+              "input/tex-base",
+              "[tex]/textmacros"
+            ],
+            "[tex]/textmacros": [
+              "input/tex-base"
+            ],
+            "[tex]/unicode": [
+              "input/tex-base"
+            ],
+            "[tex]/units": [
+              "input/tex-base"
+            ],
+            "[tex]/upgreek": [
+              "input/tex-base"
+            ],
+            "[tex]/verb": [
+              "input/tex-base"
+            ],
+            "ui/menu": [
+              "a11y/sre"
+            ]
+          },
+          "provides": {
+            "startup": [
+              "loader"
+            ],
+            "input/tex": [
+              "input/tex-base",
+              "[tex]/ams",
+              "[tex]/newcommand",
+              "[tex]/textmacros",
+              "[tex]/noundefined",
+              "[tex]/require",
+              "[tex]/autoload",
+              "[tex]/configmacros"
+            ]
+          },
+          "pathFilters": [],
+          "versionWarnings": true
+        },
+        "texPackages": [
+          "base",
+          "ams",
+          "newcommand",
+          "textmacros",
+          "noundefined",
+          "require",
+          "autoload",
+          "configmacros"
+        ],
+        "options": {
+          "enableMenu": false,
+          "enableExplorer": false,
+          "enableSpeech": false,
+          "enableBraille": false,
+          "a11y": {
+            "speech": false,
+            "braille": false
+          },
+          "worker": {
+            "path": "http://127.0.0.1:59138/mathjax/mathjax/sre",
+            "maps": "http://127.0.0.1:59138/mathjax/mathjax/sre/mathmaps"
+          }
+        },
+        "exports": [
+          "version",
+          "_",
+          "config",
+          "loader",
+          "startup",
+          "options",
+          "typeset",
+          "typesetPromise",
+          "typesetClear",
+          "tex2mml",
+          "tex2mmlPromise",
+          "texReset",
+          "tex2svg",
+          "tex2svgPromise",
+          "svgStylesheet",
+          "getMetricsFor",
+          "done",
+          "whenReady"
+        ],
+        "initializationError": "Error: page.evaluate: Error: Error: Can't load \"https://cdn.jsdelivr.net/npm/@mathjax/mathjax-mhchem-font-extension/svg.js\"",
+        "examples": [
+          {
+            "id": "fraction",
+            "result": {
+              "width": 23.5,
+              "height": 91.125,
+              "baseline": -74.125
+            },
+            "svg": true,
+            "textNodes": [],
+            "errors": [],
+            "undefinedTextNodes": []
+          },
+          {
+            "id": "mhchem",
+            "result": {
+              "error": "Extension \"mhchem\" failed to load"
+            },
+            "svg": true,
+            "textNodes": [
+              "Extension \"mhchem\" failed to load"
+            ],
+            "errors": [
+              "Extension \"mhchem\" failed to load"
+            ],
+            "undefinedTextNodes": [
+              {
+                "text": "Extension \"mhchem\" failed to load",
+                "color": null
+              }
+            ]
+          },
+          {
+            "id": "physics",
+            "result": {
+              "width": 51.78125,
+              "height": 79.96875,
+              "baseline": -62.96875
+            },
+            "svg": true,
+            "textNodes": [],
+            "errors": [],
+            "undefinedTextNodes": [
+              {
+                "text": "",
+                "color": "red"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

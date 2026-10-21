@@ -20,7 +20,7 @@ try {
   const runtime=path.join(temporary,'runtime.json');server=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'0',MARKDOWN_STATE_DIR:state,MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});
   let origin;for(let n=0;n<100;n++){try{origin=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}assert.ok(origin);
   const safari=process.env.MARKDOWN_BROWSER==='webkit';browser=safari?await webkit.launch({headless:true}):await chromium.launch({channel:'chrome',headless:true});
-  const page=await browser.newPage({viewport:{width:1440,height:900},serviceWorkers:'block'}),errors=[];page.setDefaultTimeout(12000);page.on('pageerror',error=>errors.push(error.message));
+  const page=await browser.newPage({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:'block'}),errors=[];page.setDefaultTimeout(12000);page.on('pageerror',error=>errors.push(error.message));
   let cancel=true;
   const filename=path.join(outside,'Cópia.md');
   await page.route('**/api/pick-save-as',async route=>{

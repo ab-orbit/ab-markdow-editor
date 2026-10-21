@@ -27,7 +27,7 @@ try {
     origin = `http://127.0.0.1:${server.address().port}`;
   }
   browser = await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 } });
   const page = await context.newPage(), errors = [], api = [], remote = [], infrastructure = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => {
@@ -96,7 +96,7 @@ try {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   await page.screenshot({ path: 'docs/evidence/diagrams-offline-mobile.png' });
   await context.setOffline(false);
-  const other = await browser.newContext();
+  const other = await browser.newContext({locale:'pt-BR'});
   const empty = await other.newPage(); await empty.goto(origin); await empty.getByLabel('Bancada Markdown').waitFor();
   await expect(empty.getByText('Diagramas offline', { exact: true })).toHaveCount(0);
   await other.close();

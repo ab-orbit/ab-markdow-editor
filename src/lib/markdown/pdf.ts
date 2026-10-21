@@ -1,3 +1,4 @@
+import { t, currentLanguage } from '../../i18n';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
@@ -23,7 +24,7 @@ interface Options {
 const WIDTH = 511.28, HEIGHT = 640;
 const parser = unified().use(remarkParse).use(remarkGfm);
 const plain = (nodes: readonly PhrasingContent[]): string => nodes.map(node => 'value' in node ? node.value : 'children' in node ? plain(node.children) : node.type === 'image' ? node.alt || '' : '').join('');
-const cancelled = (signal: AbortSignal) => { if (signal.aborted) throw new DOMException('Exportação cancelada.', 'AbortError'); };
+const cancelled = (signal: AbortSignal) => { if (signal.aborted) throw new DOMException(t("Exportação cancelada."), 'AbortError'); };
 function base64(bytes: Uint8Array) { let value = ''; for (let index = 0; index < bytes.length; index += 8192) value += String.fromCharCode(...bytes.subarray(index, index + 8192)); return btoa(value); }
 
 /** Resolve print colors from the application's light tokens without changing the user's theme. */
@@ -35,12 +36,12 @@ async function raster(data: string, signal: AbortSignal, diagram = false): Promi
   cancelled(signal);
   const image = new Image(); image.src = data; await image.decode(); cancelled(signal);
   const width = image.naturalWidth, height = image.naturalHeight;
-  if (!width || !height) throw new Error('Uma imagem não tem dimensões válidas para o PDF.');
+  if (!width || !height) throw new Error(t("Uma imagem não tem dimensões válidas para o PDF."));
   const fit: [number, number] = [Math.min(WIDTH, width * .75), HEIGHT];
   if (!diagram && /^data:image\/(?:png|jpeg);/i.test(data)) return { image: data, fit };
   const scale = Math.min(diagram ? 4 : 1, 2200 / width, 8192 / height, Math.sqrt(8_000_000 / (width * height)));
   const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.ceil(width * scale)); canvas.height = Math.max(1, Math.ceil(height * scale));
-  try { const context = canvas.getContext('2d'); if (!context) throw new Error('Não foi possível preparar uma imagem do PDF.'); context.drawImage(image, 0, 0, canvas.width, canvas.height); return { image: canvas.toDataURL('image/png'), fit }; }
+  try { const context = canvas.getContext('2d'); if (!context) throw new Error(t("Não foi possível preparar uma imagem do PDF.")); context.drawImage(image, 0, 0, canvas.width, canvas.height); return { image: canvas.toDataURL('image/png'), fit }; }
   finally { canvas.width = canvas.height = 1; }
 }
 function layout(job: PdfJob, signal: AbortSignal): Promise<Blob> {
@@ -48,11 +49,11 @@ function layout(job: PdfJob, signal: AbortSignal): Promise<Blob> {
   const worker = new Worker(new URL('./pdf.worker.ts', import.meta.url), { type: 'module' });
   return new Promise((resolve, reject) => {
     const stop = () => { signal.removeEventListener('abort', abort); worker.terminate(); };
-    const abort = () => { stop(); reject(new DOMException('Exportação cancelada.', 'AbortError')); };
+    const abort = () => { stop(); reject(new DOMException(t("Exportação cancelada."), 'AbortError')); };
     signal.addEventListener('abort', abort, { once: true });
     worker.onmessage = ({ data }: MessageEvent<PdfReply>) => { stop(); if ('error' in data) reject(new Error(data.error)); else resolve(new Blob([data.bytes], { type: 'application/pdf' })); };
-    worker.onerror = event => { stop(); reject(new Error(event.message || 'Não foi possível preparar o PDF neste navegador.')); };
-    worker.postMessage(job);
+    worker.onerror = event => { stop(); reject(new Error(event.message || t("Não foi possível preparar o PDF neste navegador."))); };
+    worker.postMessage({...job, language: currentLanguage()});
   });
 }
 
@@ -93,11 +94,11 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
       return [{ ...await raster(data, signal), margin: [0, 3, 0, 3] }, ...(alt ? [{ text: alt, style: 'caption' }] : [])];
     }
     async function diagram(source: string, language: NonNullable<ReturnType<typeof diagramLanguage>>): Promise<Content[]> {
-      onProgress(`Preparando diagramas… ${++completedDiagrams} de ${totalDiagrams}`); cancelled(signal);
+      onProgress(t("Preparando diagramas… {0} de {1}", ++completedDiagrams, totalDiagrams)); cancelled(signal);
       let svg: string, fonts = '';
       if (language === 'excalidraw') {
         const { parseExcalidrawScene } = await import('./excalidrawScene'), scene = parseExcalidrawScene(source);
-        if (!scene.elements.some(element => !element.isDeleted)) return [{ text: 'Quadro vazio', style: 'caption' }];
+        if (!scene.elements.some(element => !element.isDeleted)) return [{ text: t("Quadro vazio"), style: 'caption' }];
         const [{ renderExcalidraw }, { excalidrawFontCss }] = await Promise.all([import('./excalidraw'), import('./excalidrawFonts')]);
         svg = await renderExcalidraw(source, false);
         fonts = await excalidrawFontCss(scene.elements.map(element => ({ type: String(element.type), fontFamily: Number(element.fontFamily) || 5, text: typeof element.text === 'string' ? element.text : '' })));
@@ -108,7 +109,7 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
         svg = (await renderDiagram(engine, source, appearance, 800)).svg;
       }
       cancelled(signal);
-      host.innerHTML = svg; const element = host.querySelector('svg'); if (!element) throw new Error('O diagrama não produziu uma imagem válida.');
+      host.innerHTML = svg; const element = host.querySelector('svg'); if (!element) throw new Error(t("O diagrama não produziu uma imagem válida."));
       await document.fonts.ready;
       const portable = portableSvg(element, fonts), data = URL.createObjectURL(new Blob([portable.source], { type: 'image/svg+xml;charset=utf-8' }));
       let result: Awaited<ReturnType<typeof raster>>;
@@ -143,27 +144,27 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
             const language = diagramLanguage(node.lang || '');
             if (language) {
               try { output.push(...await diagram(node.value, language)); }
-              catch (cause) { cancelled(signal); output.push({ text: `Diagrama não renderizado: ${cause instanceof Error ? cause.message : 'revise o código.'}`, style: 'caption' }, { text: node.value, style: 'code', margin: [0, 0, 0, 12] }); }
+              catch (cause) { cancelled(signal); output.push({ text: t("Diagrama não renderizado: {0}", cause instanceof Error ? t(cause.message) : t("revise o código.")), style: 'caption' }, { text: node.value, style: 'code', margin: [0, 0, 0, 12] }); }
             } else output.push({ table: { widths: ['*'], body: [[{ text: node.value, style: 'code', fillColor: palette.code, margin: [8, 8, 8, 8] }]] }, layout: 'noBorders', margin: [0, 3, 0, 14] });
             break;
           }
           case 'thematicBreak': output.push({ canvas: [{ type: 'line', x1: 0, x2: WIDTH, y1: 0, y2: 0, lineWidth: .5, lineColor: palette.border }], margin: [0, 8, 0, 16] }); break;
-          // Comments, raw HTML and reference definitions follow the reader's non-executable presentation.
+          // Raw HTML layouts are preserved in source exports but are not supported by this PDF renderer.
           case 'html': case 'definition': case 'footnoteDefinition': break;
         }
       }
       return output;
     }
-    onProgress('Preparando PDF…');
+    onProgress(t("Preparando PDF…"));
     const content = await blocks(tree.children);
     if (numbers.size) {
       content.push({ text: 'Referências', style: 'h2', headlineLevel: 2 });
       for (const [id, number] of numbers) { const note = footnotes.get(id); if (note) content.push({ text: `[${number}]`, bold: true, fontSize: 9 }, { stack: await blocks(note.children), margin: [12, 0, 0, 6] }); }
     }
-    const response = await fetch('/icons/profile-v3/scribe-64.png', { signal }); if (!response.ok) throw new Error('Não foi possível carregar a logo do PDF.');
+    const response = await fetch('/icons/profile-v3/scribe-64.png', { signal }); if (!response.ok) throw new Error(t("Não foi possível carregar a logo do PDF."));
     const logo = `data:image/png;base64,${base64(new Uint8Array(await response.arrayBuffer()))}`;
     const titleNode = tree.children.find(node => node.type === 'heading'), title = titleNode?.type === 'heading' ? plain(titleNode.children) : fileName.replace(/\.[^.]+$/, '');
-    cancelled(signal); onProgress('Finalizando páginas…');
+    cancelled(signal); onProgress(t("Finalizando páginas…"));
     return await layout({ content, title, logo, palette }, signal);
   } finally { host.remove(); }
 }

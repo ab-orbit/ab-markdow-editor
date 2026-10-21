@@ -1,0 +1,74 @@
+{
+  "target": "/Applications/Bear.app",
+  "version": "3.0",
+  "build": "14827",
+  "analysisDate": "2026-10-18",
+  "nativeArchitecture": "arm64",
+  "files": [
+    {
+      "path": "/Applications/Bear.app/Contents/MacOS/Bear",
+      "bytes": 14036512,
+      "sha256": "4b5f4626dd3c7a798c55053dfbb6b17390cdc8b846f3fef3966bfd276d877d24"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/MacOS/bearcli",
+      "bytes": 4030928,
+      "sha256": "713edbe11c15b939ecd9d6760e63a70041c1e5c27140d7d54dd979763622bb71"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/PolarMark.framework/Versions/A/PolarMark",
+      "bytes": 3386704,
+      "sha256": "45a2f3de4ca6423a001a844ac5cc6f3a6c95f2e861e490dbaadaa306fd710b60"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKit.framework/Versions/A/MDTextKit",
+      "bytes": 1390880,
+      "sha256": "bd9e89266023c2596bbe9e7413b359b3be41ad20fde6f7f54a8c6a3a876b2874"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/MDTextKitUI",
+      "bytes": 6278208,
+      "sha256": "b6d73658b148e6426b914cf38fd49ec6e1302a3a752873d00475adca763e4217"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mermaid/mermaid.html",
+      "bytes": 1652,
+      "sha256": "80d00777e4eadefa2bc7f099c5473b6998e4119bffbd973a73547869a6945a89"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mermaid/mermaid.js",
+      "bytes": 5231,
+      "sha256": "38bb4e524b02b5d2d507e03f05269b19a79874ae816fba574d6fbecf9b8b141c"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mermaid/mermaid.min.js",
+      "bytes": 3565102,
+      "sha256": "74d7c46dabca328c2294733910a8aa1ed0c37451776e8d5295da38a2b758fb9b"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mathjax/math.html",
+      "bytes": 916,
+      "sha256": "72f1b189422af61f839095acc23352c6031f7091092db7881ef894e5f2c9ae46"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mathjax/math.js",
+      "bytes": 3896,
+      "sha256": "021528a0f1dc98520e105e47c028a1f3a7ae1cd3790eb337e46f6e2cd9fd778d"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mathjax/mathjax/tex-svg.js",
+      "bytes": 1845599,
+      "sha256": "438b7c266ac8c59e7cd9718f8d3dbf56a2fe0dcb32df1cfb9803cdda0d09bdfd"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mathjax/mathjax/core.js",
+      "bytes": 140345,
+      "sha256": "1c0e06bcb6b81bdef4e945b69cb507daa02589c2dfc3a013145ebe9ad32f4c77"
+    },
+    {
+      "path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/Resources/mathjax/mathjax/startup.js",
+      "bytes": 17109,
+      "sha256": "ae70412837810e6202c958bb9ef847bf96eb4cea9841671fe8818a1888f05332"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { t, useLanguage } from '../../i18n';
 import { memo, useEffect, useMemo, useRef, type KeyboardEvent, type PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { scopeDiagramSvg } from '@/lib/markdown/diagrams';
@@ -16,6 +17,7 @@ const ZOOM = 2;
 
 /** Reuse the vector drawing; pointer movement never invokes a rendering engine. */
 export const MagnifiableDiagram = memo(function MagnifiableDiagram({ svg, enabled, id }: MagnifiableDiagramProps) {
+  useLanguage();
   const drawing = useRef<HTMLDivElement>(null);
   const lens = useRef<HTMLDivElement>(null);
   const enlarged = useRef<HTMLDivElement>(null);
@@ -26,7 +28,7 @@ export const MagnifiableDiagram = memo(function MagnifiableDiagram({ svg, enable
   // React compares this prop by identity; toggling the lens must retain the SVG DOM.
   const originalMarkup = useMemo(() => ({ __html: svg }), [svg]);
   // Only create the second SVG while enabled; fresh IDs avoid marker/style clashes.
-  const magnified = useMemo(() => enabled ? scopeDiagramSvg(svg, `${id}-magnifier`) : '', [svg, enabled, id]);
+  const magnified = useMemo(() => enabled ? scopeDiagramSvg(svg, `${id}-magnifier`) : "", [svg, enabled, id]);
 
   function hide() {
     cancelAnimationFrame(animation.current); animation.current = 0;
@@ -93,10 +95,9 @@ export const MagnifiableDiagram = memo(function MagnifiableDiagram({ svg, enable
     };
   }, [enabled, svg]);
 
-  return <>
-    <div ref={drawing} id={id} data-diagram-drawing="" className={`${styles.drawing} ${enabled ? styles.magnifiable : ''}`}
+  return <><div ref={drawing} id={id} data-diagram-drawing={""} className={`${styles.drawing} ${enabled ? styles.magnifiable : ""}`}
       tabIndex={enabled ? 0 : undefined} role={enabled ? 'group' : undefined}
-      aria-label={enabled ? 'Explorar diagrama com lupa' : undefined}
+      aria-label={enabled ? t("Explorar diagrama com lupa") : undefined}
       aria-describedby={enabled ? `${id}-help` : undefined}
       onFocus={focusPoint} onBlur={hide} onKeyDown={keyDown}
       onPointerEnter={pointer} onPointerMove={pointer} onPointerLeave={hide}
@@ -109,13 +110,5 @@ export const MagnifiableDiagram = memo(function MagnifiableDiagram({ svg, enable
       onPointerUp={event => { if (event.pointerType === 'touch') { touchId.current = null; hide(); } }}
       onPointerCancel={() => { touchId.current = null; hide(); }}
       onDoubleClick={event => { if (enabled) { event.preventDefault(); event.stopPropagation(); window.getSelection()?.removeAllRanges(); } }}
-      dangerouslySetInnerHTML={originalMarkup}/>
-    {enabled && <>
-      <span id={`${id}-help`} className={styles.hiddenHint}>Passe o mouse ou arraste o dedo para ampliar 2 vezes. No teclado, use as setas; Esc desativa a lupa.</span>
-      {createPortal(<div ref={lens} className={styles.magnifier} data-diagram-magnifier={id} aria-hidden="true">
-        <div ref={enlarged} className={styles.magnified} dangerouslySetInnerHTML={{ __html: magnified }}/>
-        <span className={styles.magnification}>2×</span>
-      </div>, document.body)}
-    </>}
-  </>;
+      dangerouslySetInnerHTML={originalMarkup}/>{enabled && <><span id={`${id}-help`} className={styles.hiddenHint}>{t("Passe o mouse ou arraste o dedo para ampliar 2 vezes. No teclado, use as setas; Esc desativa a lupa.")}</span>{createPortal(<div ref={lens} className={styles.magnifier} data-diagram-magnifier={id} aria-hidden="true"><div ref={enlarged} className={styles.magnified} dangerouslySetInnerHTML={{ __html: magnified }}/><span className={styles.magnification}>{t("2×")}</span></div>, document.body)}</>}</>;
 });

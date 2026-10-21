@@ -39,7 +39,7 @@ for (const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wi
       await page.reload();await page.getByRole('button',{name:'Fonte',exact:true}).click();await expect(source).toContainText('Rascunho offline preservado');
       await expect(settings).toHaveCount(0);
       await page.getByRole('button',{name:'Ler',exact:true}).click();await expect(page.locator('article img')).toHaveCount(1);await expect(page.locator('article img')).toBeVisible();
-      const downloadEvent=page.waitForEvent('download');await page.getByRole('button',{name:'Baixar pacote',exact:true}).click();const download=await downloadEvent;
+      const downloadEvent=page.waitForEvent('download');await page.getByLabel('Exportar nota', {exact:true}).click(); await page.getByRole('button', {name:/^Markdown \(.md\)/}).click();const download=await downloadEvent;
       const archive=unzipSync(new Uint8Array(await readFile((await download.path())!)));expect(strFromU8(archive['text.md'])).toContain('Rascunho offline preservado');expect(Object.keys(archive).filter(name=>name.startsWith('assets/'))).toHaveLength(1);
       await page.screenshot({path:`docs/evidence/${viewport.name}-pwa-offline-draft.png`,fullPage:true});
       const cached=await page.evaluate(async()=>{const keys=await caches.keys();const result={urls:[] as string[],shell:''};for(const key of keys){const cache=await caches.open(key);result.urls.push(...(await cache.keys()).map(request=>new URL(request.url).pathname));const shell=await cache.match('/app-shell.html');if(shell)result.shell=await shell.text();}return result;});

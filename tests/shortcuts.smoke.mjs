@@ -29,7 +29,7 @@ try {
   assert.ok(origin);
   const safari = process.env.MARKDOWN_BROWSER === 'webkit';
   browser = safari ? await webkit.launch({headless: true}) : await chromium.launch({channel: 'chrome', headless: true});
-  const page = await browser.newPage({viewport: {width: 1440, height: 900}, serviceWorkers: 'block'}), errors = [];
+  const page = await browser.newPage({locale:'pt-BR',viewport: {width: 1440, height: 900}, serviceWorkers: 'block'}), errors = [];
   page.setDefaultTimeout(10000); page.setDefaultNavigationTimeout(10000);
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => {if(request.url().endsWith('/api/save-sync'))console.log('Save request sent.');});

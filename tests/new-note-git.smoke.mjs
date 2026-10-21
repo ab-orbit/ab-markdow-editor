@@ -21,7 +21,7 @@ try {
   const runtime = path.join(directory, 'runtime.json'); server = spawn(process.execPath, ['server/index.mjs'], { cwd: new URL('..', import.meta.url), env: { ...process.env, PORT: '0', MARKDOWN_STATE_DIR: state, MARKDOWN_RUNTIME_FILE: runtime }, stdio: 'pipe' });
   let origin; for (let attempt = 0; attempt < 100; attempt++) { try { origin = JSON.parse(await fs.readFile(runtime, 'utf8')).url; break; } catch { await new Promise(resolve => setTimeout(resolve, 50)); } } assert.ok(origin);
   browser = await chromium.launch({ channel: 'chrome', headless: true });
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), errors = []; page.on('pageerror', error => errors.push(error.message)); await page.goto(origin);
+  const page = await browser.newPage({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), errors = []; page.on('pageerror', error => errors.push(error.message)); await page.goto(origin);
   const editor = page.locator('.cm-content'), confirmation = page.getByRole('dialog', { name: 'Salvar antes de criar uma nova nota?', exact: true });
   async function edit(value) { await page.getByRole('button', { name, exact: true }).click(); await page.getByRole('button', { name: 'Fonte', exact: true }).click(); await editor.fill(value); }
   async function saveAndCreate() { await page.keyboard.press('Meta+Shift+Enter'); await confirmation.getByRole('button', { name: 'Salvar e criar', exact: true }).click(); }

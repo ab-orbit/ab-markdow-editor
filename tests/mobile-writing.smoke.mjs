@@ -1,0 +1,78 @@
+import {chromium, webkit, expect} from '@playwright/test';
+import {createServer} from 'vite';
+import {readFile,mkdir} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+process.env.VITE_STORAGE_MODE='browser';
+const server=process.env.SCRIBA_URL?null:await createServer({server:{host:'127.0.0.1',port:0}});if(server)await server.listen();
+const safari=process.env.MARKDOWN_BROWSER==='webkit';
+const browser=await(safari?webkit:chromium).launch({headless:true});
+try{
+ const context=await browser.newContext({locale:'pt-BR',viewport:{width:440,height:956},isMobile:true,hasTouch:true,serviceWorkers:'block'});
+ if(process.env.MARKDOWN_THEME==='light')await context.addInitScript(()=>localStorage.setItem('ab-markdown-theme','light'));
+ const page=await context.newPage();page.setDefaultTimeout(10000);
+ await page.goto(process.env.SCRIBA_URL||server.resolvedUrls.local[0]);
+ await expect(page.getByLabel('Arquivo Markdown',{exact:true})).toBeEnabled();
+ // Legacy opt-out and commit prompts must not disable mandatory mobile saving.
+ await page.evaluate(()=>new Promise((resolve,reject)=>{const request=indexedDB.open('scriba-private-notes',1);request.onsuccess=()=>{const db=request.result,tx=db.transaction('library','readwrite'),store=tx.objectStore('library'),get=store.get('state');get.onsuccess=()=>{const state=get.result;state.preferences.autoSave=false;state.preferences.askCommitNote=true;store.put(state,'state');};tx.oncomplete=()=>{db.close();resolve(true);};tx.onerror=()=>reject(tx.error);};}));
+ await page.reload();
+ await expect(page.getByLabel('Arquivo Markdown',{exact:true})).toBeEnabled();
+ await page.getByLabel('Arquivo Markdown',{exact:true}).setInputFiles({name:'Writing.md',mimeType:'text/markdown',buffer:Buffer.from('# Writing\n\n## Executive summary\n\n### Evidence and recommendations\n\n'+Array.from({length:45},(_,i)=>`Paragraph ${i}. ${'Readable text for editing. '.repeat(5)}\n\n`).join(''))});
+ const close=page.getByRole('button',{name:'Fechar lista de notas',exact:true});if(await close.isVisible())await close.click();
+ await expect(page.getByRole('heading',{name:'Writing',exact:true})).toBeVisible();
+ const edit=page.getByRole('button',{name:'Editar nota',exact:true});if(await edit.isVisible())await edit.click();
+ const visual=page.locator('.tiptap'), toolbar=page.getByRole('toolbar',{name:'Ferramentas de edição'});
+ await expect(visual).toBeVisible();await expect(toolbar).not.toBeVisible();
+ const target=visual.locator('p').filter({hasText:/^Paragraph 35\./});
+ await target.scrollIntoViewIfNeeded();await target.click();await page.keyboard.insertText('CURSOR-MARKER');
+ await expect.poll(()=>page.evaluate(()=>new Promise(resolve=>{const request=indexedDB.open('scriba-private-notes',1);request.onsuccess=()=>{const db=request.result,tx=db.transaction('library','readonly'),get=tx.objectStore('library').get('state');get.onsuccess=()=>resolve(Object.values(get.result.notes).some(note=>note.value.includes('CURSOR-MARKER')));tx.oncomplete=()=>db.close();};})),{timeout:10000}).toBe(true);
+ await expect(page.getByRole('dialog',{name:'Nota do commit',exact:true})).toHaveCount(0);
+ const selected=await page.evaluate(()=>window.getSelection()?.anchorNode?.textContent);
+ async function caretVisible(){
+  return page.evaluate(()=>{const selection=window.getSelection();if(!selection?.rangeCount)return false;const box=selection.getRangeAt(0).getBoundingClientRect(),pane=document.querySelector('[data-document-scroll]').getBoundingClientRect();const tools=document.querySelector('[role=toolbar]');const bottom=tools?.getClientRects().length?Math.min(pane.bottom,tools.getBoundingClientRect().top):pane.bottom;return box.height>0 && box.top>=pane.top-2 && box.bottom<=bottom+2 && box.bottom<=innerHeight;});
+ }
+ await page.setViewportSize({width:956,height:440});
+ await expect.poll(caretVisible).toBe(true);
+ await page.setViewportSize({width:956,height:240});
+ await expect.poll(caretVisible).toBe(true);
+ assert.equal(await page.evaluate(()=>window.getSelection()?.anchorNode?.textContent),selected,'Rotation and keyboard geometry preserve the text selection');
+ await page.setViewportSize({width:440,height:956});
+ await expect(toolbar).toHaveCount(0);
+ await page.getByRole('button',{name:'Concluir edição',exact:true}).click();
+ await page.getByRole('button',{name:'Mais opções da nota',exact:true}).click();
+ const menu=page.getByRole('menu',{name:'Mais opções da nota',exact:true});
+ await expect(menu.getByRole('menuitem')).toHaveText(['Importar','Exportar','Configurações']);
+ await mkdir('docs/evidence/mobile-simplification',{recursive:true});
+ await page.screenshot({path:`docs/evidence/mobile-simplification/menu-${safari?'webkit':'chrome'}${process.env.MARKDOWN_THEME==='light'?'-light':''}.png`});
+ await page.keyboard.press('Escape');
+ await page.getByRole('button',{name:'Informações da nota',exact:true}).click();
+ await expect(page.getByRole('tab')).toHaveCount(2);
+ await expect(page.getByRole('tabpanel')).toContainText('Palavras');
+ await expect(page.getByRole('tabpanel')).toContainText('Parágrafos');
+ await expect(page.getByRole('tabpanel')).toContainText('Criado');
+ await mkdir('docs/evidence/mobile-simplification',{recursive:true});
+ await page.screenshot({path:`docs/evidence/mobile-simplification/statistics-${safari?'webkit':'chrome'}${process.env.MARKDOWN_THEME==='light'?'-light':''}.png`});
+ await page.getByRole('tab',{name:'Índice',exact:true}).click();
+ await expect(page.getByRole('tabpanel')).toContainText('Writing');
+ await page.getByRole('button',{name:'Recolher todos os níveis',exact:true}).click();
+ await expect(page.getByRole('link',{name:'Executive summary',exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:'Expandir todos os níveis',exact:true}).click();
+ await expect(page.getByRole('link',{name:'Executive summary',exact:true})).toBeVisible();
+ await page.screenshot({path:`docs/evidence/mobile-simplification/outline-${safari?'webkit':'chrome'}${process.env.MARKDOWN_THEME==='light'?'-light':''}.png`});
+ await page.getByRole('link',{name:'Writing',exact:true}).click();
+ await expect(page.getByRole('dialog')).toHaveCount(0);
+ await expect(page.getByRole('heading',{name:'Writing',exact:true})).toBeInViewport();
+ await page.getByRole('button',{name:'Mais opções da nota',exact:true}).click();
+ await menu.getByRole('menuitem',{name:'Exportar',exact:true}).click();
+ await expect(page.getByRole('group',{name:'Formatos de exportação'}).getByRole('button')).toHaveCount(2);
+ const download=page.waitForEvent('download');
+ await page.getByRole('button',{name:'Markdown (.md)',exact:true}).click();
+ assert.ok((await download).suggestedFilename().endsWith('.md'));
+ if(await page.getByRole('dialog').count())await page.keyboard.press('Escape');
+ await page.getByRole('button',{name:'Mais opções da nota',exact:true}).click();
+ await menu.getByRole('menuitem',{name:'Configurações',exact:true}).click();
+ await expect(page.locator('#interface-language')).toBeVisible();
+ await expect(page.getByRole('checkbox',{name:'Ativar salvamento automático',exact:true})).toBeChecked();
+ await expect(page.getByRole('checkbox',{name:'Ativar salvamento automático',exact:true})).toBeDisabled();
+ console.log('PASS: mandatory background autosave with legacy opt-out and commit prompts, no mobile toolbar, three menu actions, two information tabs, settings access, cursor preserved through rotation and keyboard geometry.');
+
+}finally{await browser.close();await server?.close();}

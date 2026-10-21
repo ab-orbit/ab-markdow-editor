@@ -21,3 +21,39 @@
 @media (max-width: 450px) { .title { width: 100%; } .title > div { display: flex; align-items: baseline; gap: 10px; } .actions { width: 100%; } .actions button.apply { margin-left: auto; } }
 @media (max-height: 500px) and (orientation: landscape) { .header { flex-wrap: nowrap; padding-top: 4px; padding-bottom: 4px; } .title { width: auto; } .editor .header .title span { display: none; } .actions { width: auto; } }
 @media (max-width: 1024px), (pointer: coarse) { .canvas :global(button), .canvas :global(.ToolIcon__icon) { min-width: 44px; min-height: 44px; } .canvas :global(input:not([type=radio]):not([type=checkbox])), .canvas :global(textarea), .canvas :global(select) { font-size: 16px; } }
+/* FontPicker's grid uses this SDK token; keep it consistent with our mobile touch targets. */
+@media (max-width: 1024px), (pointer: coarse) {
+  .canvas :global(.FontPicker__container) { --default-button-size: 44px; }
+}
+
+/* Keep mobile properties in a scrollable bottom sheet so the drawing stays visible. */
+.canvas :global(.excalidraw--mobile.excalidraw .App-mobile-menu) {
+  max-height: min(35dvh, 280px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.canvas :global(.excalidraw--mobile.excalidraw .properties-content > .Island) {
+  max-height: min(35dvh, 280px);
+  max-width: calc(100vw - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* Replace the sideways SDK flyout with a sheet over the properties area. */
+.canvas :global(.excalidraw--mobile.excalidraw [data-radix-popper-content-wrapper]:has(> .properties-content)) {
+  position: fixed !important;
+  top: auto !important;
+  left: 16px !important;
+  bottom: max(100px, env(safe-area-inset-bottom)) !important;
+  transform: none !important;
+  min-width: 0 !important;
+  width: calc(100vw - 32px);
+}
+.canvas :global(.excalidraw--mobile.excalidraw .properties-content > .Island) { width: 100% !important; box-sizing: border-box; }
+
+/* Enlarge desktop drawing controls without changing authored canvas text. */
+@media (min-width: 900px) {
+ .canvas :global(.excalidraw:not(.excalidraw--mobile) button),
+ .canvas :global(.excalidraw:not(.excalidraw--mobile) h3),
+ .canvas :global(.excalidraw:not(.excalidraw--mobile) .dropdown-menu-item) { font-size: var(--desktop-ui-size); }
+}

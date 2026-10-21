@@ -14426,3 +14426,142 @@ A integração oferece edição local, prévia e exportação. Colaboração ao 
 - [Propriedades do editor](https://docs.excalidraw.com/docs/@excalidraw/excalidraw/api/props), [elementos programáticos](https://docs.excalidraw.com/docs/@excalidraw/excalidraw/api/excalidraw-element-skeleton), [restauração](https://docs.excalidraw.com/docs/@excalidraw/excalidraw/api/utils/restore) e [exportação](https://docs.excalidraw.com/docs/@excalidraw/excalidraw/api/utils/export).
 
 <!-- scriba-extension:excalidraw-v1:end -->
+
+
+<!-- scriba-extension:html-icons-svg-v1:start -->
+
+## HTML, ícones Lucide e SVG inline
+
+**Referencial implementado em 20 de outubro de 2026.** Use esta seção quando precisar organizar conceitos em cartões, acrescentar ícones vetoriais ou desenhar uma figura simples dentro da nota. HTML complementa o Markdown no Scriba; o código original continua editável em **Fonte**.
+
+### Como inserir e conferir
+
+1. Abra **Fonte** e cole o HTML diretamente, deixando uma linha vazia antes e depois do bloco. Para renderizar, o HTML deve ficar fora de uma cerca de código.
+2. Mantenha as linhas internas do bloco juntas, sem linhas vazias entre as tags. Uma linha vazia pode fazer o parser retomar o Markdown dentro do HTML.
+3. Use **Ler** ou **Visão** para conferir o resultado. Para alterar a estrutura, volte a **Fonte**.
+4. Copie os exemplos cercados por `html` para consultar o código. Os exemplos sem cerca, logo abaixo, mostram o resultado real no editor.
+
+### Ícones locais com Lucide
+
+**Galeria incorporada:** abra **Formatação → Ícones** na barra do editor. Busque pelo nome em inglês e clique no ícone para inseri-lo no ponto selecionado. A galeria funciona em Fonte e na edição visual. Use Esc para fechar sem inserir.
+
+**Pergunta:** como representar organizações, relações e perspectivas sem usar emojis ou imagens externas?
+
+Use `<i data-lucide="nome-do-icone"></i>`. Os nomes seguem o formato com hífens do catálogo Lucide instalado. O catálogo é distribuído com o Scriba e não depende de CDN. O ícone herda a cor do texto; `font-size` determina seu tamanho.
+
+```html
+<i data-lucide="users" style="font-size:24px"></i>
+<i data-lucide="git-branch" style="font-size:24px"></i>
+<i data-lucide="messages-square" style="font-size:24px"></i>
+```
+
+<div style="display:flex;gap:16px;align-items:center"><i data-lucide="users" style="font-size:24px"></i><i data-lucide="git-branch" style="font-size:24px"></i><i data-lucide="messages-square" style="font-size:24px"></i></div>
+
+**Leia assim:** pessoas, relações e diálogo. Um nome não encontrado aparece como texto entre colchetes, ajudando a identificar o erro.
+
+**Adapte:** mantenha um rótulo textual ao lado do ícone. Os ícones decorativos ficam ocultos para leitores de tela. Quando o ícone carregar significado sozinho, acrescente uma descrição, por exemplo `<i data-lucide="users" aria-label="Stakeholders"></i>`.
+
+### Cartões de uma cadeia de valor
+
+**Pergunta:** como mostrar que estrutura econômica, stakeholders e perspectivas fazem parte do mesmo ecossistema?
+
+Este exemplo reproduz a organização com título superior e três cartões. As cores são herdadas do tema, e os cartões passam para novas linhas quando falta espaço.
+
+```html
+<div style="border:1px solid currentColor;border-radius:14px;padding:12px">
+<div style="text-align:center;padding:16px;margin-bottom:12px">
+<strong>Value Chain</strong>
+<div>Ecossistema de geração, circulação, captura e percepção de valor</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<div style="flex:1;min-width:180px;border:1px solid currentColor;border-radius:10px;padding:16px 12px;text-align:center">
+<i data-lucide="git-branch" style="font-size:24px"></i>
+<div><strong>Estrutura econômica</strong></div>
+<div>Fases, fluxos, CNAE/NCM, relações</div>
+</div>
+<div style="flex:1;min-width:180px;border:1px solid currentColor;border-radius:10px;padding:16px 12px;text-align:center">
+<i data-lucide="users" style="font-size:24px"></i>
+<div><strong>Stakeholders</strong></div>
+<div>Organizações, pessoas, coletivos, agregados</div>
+</div>
+<div style="flex:1;min-width:180px;border:1px solid currentColor;border-radius:10px;padding:16px 12px;text-align:center">
+<i data-lucide="messages-square" style="font-size:24px"></i>
+<div><strong>Vozes e perspectivas</strong></div>
+<div>Demandas, interesses, riscos, oportunidades e posições</div>
+</div>
+</div>
+</div>
+```
+
+**Resultado no Scriba:**
+
+<div style="border:1px solid currentColor;border-radius:14px;padding:12px">
+<div style="text-align:center;padding:16px;margin-bottom:12px">
+<strong>Value Chain</strong>
+<div>Ecossistema de geração, circulação, captura e percepção de valor</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<div style="flex:1;min-width:180px;border:1px solid currentColor;border-radius:10px;padding:16px 12px;text-align:center">
+<i data-lucide="git-branch" style="font-size:24px"></i>
+<div><strong>Estrutura econômica</strong></div>
+<div>Fases, fluxos, CNAE/NCM, relações</div>
+</div>
+<div style="flex:1;min-width:180px;border:1px solid currentColor;border-radius:10px;padding:16px 12px;text-align:center">
+<i data-lucide="users" style="font-size:24px"></i>
+<div><strong>Stakeholders</strong></div>
+<div>Organizações, pessoas, coletivos, agregados</div>
+</div>
+<div style="flex:1;min-width:180px;border:1px solid currentColor;border-radius:10px;padding:16px 12px;text-align:center">
+<i data-lucide="messages-square" style="font-size:24px"></i>
+<div><strong>Vozes e perspectivas</strong></div>
+<div>Demandas, interesses, riscos, oportunidades e posições</div>
+</div>
+</div>
+</div>
+
+**Leia assim:** o título apresenta o ecossistema; os três cartões detalham dimensões complementares. Os ícones reforçam os rótulos, sem substituir o texto.
+
+**Adapte:** altere títulos e descrições, mantenha `flex-wrap:wrap` para a adaptação a telas pequenas e use `currentColor` ou cores do tema. Evite tamanhos fixos que cortem o conteúdo. Para organizar cartões, o editor aceita estilos de flex/grid, espaçamento, bordas e tipografia; nem todas as propriedades CSS são permitidas.
+
+### SVG estático dentro da nota
+
+**Pergunta:** como inserir um vetor simples sem anexar um arquivo de imagem?
+
+Cole o elemento `<svg>` diretamente em **Fonte**. Este exemplo usa somente geometria local, com traço herdado do texto.
+
+```html
+<svg viewBox="0 0 120 40" width="120" height="40" role="img" aria-label="Relação entre duas entidades">
+<circle cx="20" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+<line x1="32" y1="20" x2="88" y2="20" stroke="currentColor" stroke-width="2"/>
+<circle cx="100" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+</svg>
+```
+
+<svg viewBox="0 0 120 40" width="120" height="40" role="img" aria-label="Relação entre duas entidades">
+<circle cx="20" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+<line x1="32" y1="20" x2="88" y2="20" stroke="currentColor" stroke-width="2"/>
+<circle cx="100" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+</svg>
+
+**Leia assim:** duas entidades ligadas por uma relação. A descrição acessível apresenta o significado da figura.
+
+**Adapte:** use `path`, `circle`, `rect`, `line`, `polygon`, `polyline`, `ellipse`, grupos e texto estático. SVG inline é um subconjunto estático: conteúdo arbitrário de um arquivo SVG pode ser removido pela sanitização. O seletor de anexos continua aceitando imagens raster; para SVG, cole o código na nota.
+
+### Segurança, portabilidade e exportação
+
+| Recurso | Comportamento atual |
+| --- | --- |
+| HTML de apresentação | Renderiza na leitura e na prévia, com atributos e estilos permitidos |
+| Ícones Lucide | Catálogo local; nomes em `data-lucide`; tamanho e cor herdados do texto |
+| SVG inline | Geometria estática permitida, sem dependências externas |
+| Scripts e conteúdo ativo | Scripts, eventos como `onclick`/`onload`, iframes, `foreignObject` e animações SVG são removidos |
+| Estilos e recursos externos | URLs em CSS, posicionamento fixo e recursos externos de SVG são removidos |
+| Baixar .md / pacote ZIP | Preserva o código-fonte original, incluindo HTML, SVG e marcadores Lucide |
+| Exportar PDF | Ainda não renderiza blocos HTML, seus cartões, ícones ou SVG inline; esse conteúdo pode ficar ausente |
+| Outros leitores Markdown | Podem bloquear HTML, retirar estilos ou não reconhecer `data-lucide`; confira o destino antes de compartilhar |
+
+**Atenção ao PDF:** se o conteúdo for essencial, mantenha uma explicação em Markdown fora do bloco HTML. O suporte de exportação SVG/PNG dos motores de diagramas é independente deste recurso.
+
+A implementação é verificada por `tests/document-html.spec.ts`: renderização de HTML, Lucide e SVG, bloqueio de conteúdo ativo, preservação das âncoras do índice e das notas de rodapé, além de visualização em desktop e celular.
+
+<!-- scriba-extension:html-icons-svg-v1:end -->

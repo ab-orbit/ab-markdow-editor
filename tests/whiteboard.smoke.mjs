@@ -24,7 +24,7 @@ const browser = await (safari ? webkit.launch({ headless: true }) : chromium.lau
 const evidence = new URL('../docs/evidence/whiteboard/', import.meta.url);
 const errors = [];
 try {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block', acceptDownloads: true });
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block', acceptDownloads: true });
   const page = await context.newPage(); page.setDefaultTimeout(10000); page.on('pageerror', error => errors.push(error.message));
   await page.goto(origin); await expect(page.getByLabel('Arquivo Markdown', { exact: true })).toBeEnabled();
   const prefix = '\uFEFF<!-- Keep comments, references and line endings. -->\r\n\r\n# Projeto Aurora\r\n\r\nEsta nota permanece com **Markdown original** e [sua referência][origem].\r\n\r\n[origem]: https://example.invalid/context "Original"\r\n';
@@ -124,11 +124,11 @@ try {
   await formats.getByRole('button', { name: 'Whiteboard', exact: true }).click(); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready');
   await board.getByRole('button', { name: 'Novo quadro', exact: true }).click(); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready');
   const portable = await downloadNote();
-  const fresh = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }); const imported = await fresh.newPage(); await imported.goto(origin);
+  const fresh = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }); const imported = await fresh.newPage(); await imported.goto(origin);
   await expect(imported.getByLabel('Arquivo Markdown', { exact: true })).toBeEnabled(); await imported.getByLabel('Arquivo Markdown', { exact: true }).setInputFiles({ name: 'Quadros-portateis.md', mimeType: 'text/markdown', buffer: Buffer.from(portable) });
   await expect(imported.getByLabel('Bancada Markdown')).toHaveAttribute('data-mode', 'whiteboard'); await expect(imported.getByRole('region', { name: 'Whiteboard Excalidraw', exact: true })).toHaveAttribute('data-whiteboard-state', 'ready', { timeout: 30000 });
   await expect(imported.getByRole('combobox', { name: 'Quadro da nota', exact: true }).locator('option')).toHaveCount(2); await fresh.close();
-  const touch = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' }); const phone = await touch.newPage(); await phone.goto(origin);
+  const touch = await browser.newContext({locale:'pt-BR', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' }); const phone = await touch.newPage(); await phone.goto(origin);
   await expect(phone.getByLabel('Arquivo Markdown', { exact: true })).toBeEnabled(); await phone.getByLabel('Arquivo Markdown', { exact: true }).setInputFiles({ name: 'Toque.md', mimeType: 'text/markdown', buffer: Buffer.from(portable) });
   const phoneBoard = phone.getByRole('region', { name: 'Whiteboard Excalidraw', exact: true }); await expect(phoneBoard).toHaveAttribute('data-whiteboard-state', 'ready', { timeout: 30000 });
   await phoneBoard.getByRole('radio', { name: 'Texto', exact: true }).locator('..').tap(); const touchArea = await phoneBoard.locator('canvas.interactive').boundingBox(); await phone.touchscreen.tap(touchArea.x + touchArea.width * .6, touchArea.y + touchArea.height * .6);

@@ -1,0 +1,4642 @@
+{
+  "evidence_id": "ev_1744fcc74ff6dded2445c0896dfeb782ea279bec9650249ef40200075e5ad97e",
+  "subject": {
+    "name": "MDTextKitUI",
+    "digest": {
+      "sha256": "b6d73658b148e6426b914cf38fd49ec6e1302a3a752873d00475adca763e4217"
+    },
+    "local_path": "/Applications/Bear.app/Contents/Frameworks/MDTextKitUI.framework/Versions/A/MDTextKitUI",
+    "format": "mach-o-universal",
+    "architecture": "arm64"
+  },
+  "provider": {
+    "id": "hopper",
+    "name": "Hopper Disassembler",
+    "version": "launcher-sha256:dad6f886261fad0d4cdd01aee6fcf57439c60d7b5c54e62fc97f0180116690e0"
+  },
+  "analysis_profile": {
+    "provider": {
+      "id": "hopper",
+      "name": "Hopper Disassembler",
+      "version": "launcher-sha256:dad6f886261fad0d4cdd01aee6fcf57439c60d7b5c54e62fc97f0180116690e0"
+    },
+    "parameters": {
+      "target_kind": "executable",
+      "target_format": "mach-o-universal",
+      "function_dossier_coverage": "observed-facets-and-call-relationships-v1",
+      "architecture": "arm64",
+      "available_architectures": [
+        "arm64",
+        "x86_64"
+      ],
+      "macho_container": "fat32",
+      "prepared_image": {
+        "method": "fat32_thin_slice",
+        "architecture_count": 2,
+        "container_table_sha256": "cb818a88d0630ece3975d13d5180b678e14d71360ff4eb7910862ec9abbb6195",
+        "source_offset": 3407872,
+        "byte_length": 2870336,
+        "cpu_type": 16777228,
+        "cpu_subtype": 0
+      },
+      "loader": {
+        "source": "derived",
+        "arguments": [
+          "-l",
+          "Mach-O",
+          "--aarch64"
+        ]
+      }
+    },
+    "digest": "6cdf865c312de5900d04dd5053b2c7ca518495e6c4b24c1aa4ced113fde69138"
+  },
+  "predicate_type": "rea.analysis",
+  "operation": "analyze_function",
+  "parameters": {
+    "procedure": "0x1a67d0"
+  },
+  "raw_result": null,
+  "normalized_result": {
+    "procedure": {
+      "address": "0x1a67d0",
+      "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+      "classification": null,
+      "body": {
+        "available": false,
+        "reason": "Hopper's public Python API does not expose complete function body ranges"
+      },
+      "signature": "void _$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF(void * self, int arg1)",
+      "locals": [
+        {
+          "description": "saved_fp (stack displacement 0)",
+          "provenance": "hopper-public-python-api",
+          "name": "saved_fp",
+          "stack_displacement": "0"
+        },
+        {
+          "description": "var_10 (stack displacement -16)",
+          "provenance": "hopper-public-python-api",
+          "name": "var_10",
+          "stack_displacement": "-16"
+        },
+        {
+          "description": "var_20 (stack displacement -32)",
+          "provenance": "hopper-public-python-api",
+          "name": "var_20",
+          "stack_displacement": "-32"
+        },
+        {
+          "description": "var_30 (stack displacement -48)",
+          "provenance": "hopper-public-python-api",
+          "name": "var_30",
+          "stack_displacement": "-48"
+        },
+        {
+          "description": "var_40 (stack displacement -64)",
+          "provenance": "hopper-public-python-api",
+          "name": "var_40",
+          "stack_displacement": "-64"
+        },
+        {
+          "description": "var_50 (stack displacement -80)",
+          "provenance": "hopper-public-python-api",
+          "name": "var_50",
+          "stack_displacement": "-80"
+        },
+        {
+          "description": "var_60 (stack displacement -96)",
+          "provenance": "hopper-public-python-api",
+          "name": "var_60",
+          "stack_displacement": "-96"
+        }
+      ]
+    },
+    "pseudocode": "    r20 = self;\n    r31 = r31 - 0x140;\n    var_60 = d9;\n    decomp_var_58 = d8;\n    var_50 = r28;\n    decomp_var_48 = r27;\n    var_40 = r26;\n    decomp_var_38 = r25;\n    var_30 = r24;\n    decomp_var_28 = r23;\n    var_20 = r22;\n    decomp_var_18 = r21;\n    var_10 = r20;\n    decomp_var_8 = r19;\n    saved_fp = r29;\n    decomp_var_m8 = r30;\n    r23 = arg1;\n    swift_beginAccess(r20 + *direct field offset for MDTextKitUI.MDAttachmentCoreViewController.textAttachment : __C.SFTextAttachmentView?, &decomp_var_80, 0x0, 0x0);\n    r0 = swift_unknownObjectWeakLoadStrong();\n    if (r0 != 0x0) {\n            r19 = r0;\n            r1 = objc_opt_self(@class(MDMermaidTextAttachment));\n            r0 = swift_dynamicCastObjCClass(r19, r1);\n            if (r0 != 0x0) {\n                    r22 = r0;\n                    r21 = [objc_allocWithZone(type metadata accessor for MDTextKitUI.MDMermaidRenderOptions()) init];\n                    r0 = [r22 font];\n                    r0 = [r0 retain];\n                    r24 = r0;\n                    [r0 pointSize];\n                    v8 = v0;\n                    [r24 release];\n                    r24 = *direct field offset for MDTextKitUI.MDMermaidRenderOptions.fontSize : CoreGraphics.CGFloat;\n                    swift_beginAccess(r21 + r24, &decomp_var_98, 0x1, 0x0);\n                    *(r21 + r24) = d8;\n                    r23 = sub_1a7868();\n                    r26 = r21 + *direct field offset for MDTextKitUI.MDMermaidRenderOptions.themeKey : Swift.String;\n                    swift_beginAccess(r26, &decomp_var_b0, 0x1, 0x0);\n                    r0 = r26[0x1];\n                    *r26 = r23;\n                    r26[0x1] = r1;\n                    swift_bridgeObjectRelease(r0);\n                    r23 = *direct field offset for MDTextKitUI.MDMermaidRenderOptions.themeVariables : [Swift.String : Any];\n                    swift_beginAccess(r21 + r23, &decomp_var_c8, 0x1, 0x0);\n                    r0 = *(r21 + r23);\n                    *(r21 + r23) = r2;\n                    swift_bridgeObjectRelease(r0);\n                    r23 = [[r22 mermaidCode] retain];\n                    r25 = sub_1afed8();\n                    r24 = r1;\n                    [r23 release];\n                    r8 = r25 & 0xffffffffffff;\n                    asm { ubfx       x9, x24, #0x38, #0x4 };\n                    if ((r24 & 0x2000000000000000) != 0x0) {\n                            r8 = r9;\n                    }\n                    if (r8 != 0x0) {\n                            r26 = swift_allocObject(0x20cb68, 0x18, 0x7);\n                            swift_unknownObjectWeakInit();\n                            r0 = swift_allocObject(0x20cb90, 0x28, 0x7);\n                            r23 = r0;\n                            r0[0x2] = r26;\n                            r0[0x3] = r25;\n                            r0[0x4] = r24;\n                            r26 = *direct field offset for MDTextKitUI.MDAttachmentCoreViewController.canLoadAsync : Swift.Bool;\n                            swift_beginAccess(r20 + r26, &decomp_var_e0, 0x0, 0x0);\n                            r27 = *(int8_t *)(r20 + r26);\n                            swift_bridgeObjectRetain(r24);\n                            if (r27 == 0x1) {\n                                    if (*qword_23a3d8 != -0x1) {\n                                            swift_once(qword_23a3d8, sub_1a5fe4, 0x0);\n                                    }\n                                    r20 = [*qword_23ac10 retain];\n                                    MDTextKitUI.MDMermaidRenderer.renderMermaid(r20, {r25:r24}, options: r21, completionHandler: sub_1ae0cc);\n                                    swift_bridgeObjectRelease(r24);\n                                    [r20 release];\n                                    swift_release(r23);\n                                    [r19 release];\n                                    r0 = r21;\n                            }\n                            else {\n                                    r28 = r20;\n                                    if (*qword_23a3d8 != -0x1) {\n                                            swift_once(qword_23a3d8, sub_1a5fe4, 0x0);\n                                    }\n                                    r20 = *qword_23ac10;\n                                    r0 = swift_allocObject(0x20cbb8, 0x18, 0x7);\n                                    r26 = r0;\n                                    r27 = r0 + 0x10;\n                                    *r27 = 0x0;\n                                    r20 = [r20 retain];\n                                    swift_retain(r26);\n                                    MDTextKitUI.MDMermaidRenderer.renderMermaid(r20, {r25:r24}, options: r21, completionHandler: sub_62f50);\n                                    swift_release(r26);\n                                    swift_beginAccess(r27, &decomp_var_f8, 0x0, 0x0);\n                                    if (*r27 == 0x0) {\n                                            do {\n                                                    CFRunLoopRunInMode(**_kCFRunLoopDefaultMode, 0x0, 0x0);\n                                            } while (*r27 == 0x0);\n                                    }\n                                    swift_bridgeObjectRelease(r24);\n                                    [r20 release];\n                                    r25 = r26[0x2];\n                                    r24 = [r25 retain];\n                                    swift_release(r26);\n                                    if (r25 != 0x0) {\n                                            r25 = *direct field offset for MDTextKitUI.MDMermaidRenderResult.image : __C.NSImage?;\n                                            swift_beginAccess(r24 + r25, &decomp_var_110, 0x0, 0x0);\n                                            r25 = *(r24 + r25);\n                                            r26 = *direct field offset for MDTextKitUI.MDMermaidRenderResult.error : Swift.Error?;\n                                            swift_beginAccess(r24 + r26, &decomp_var_128, 0x0, 0x0);\n                                            r26 = *(r24 + r26);\n                                            [r25 retain];\n                                            swift_errorRetain(r26);\n                                    }\n                                    else {\n                                            r26 = 0x0;\n                                    }\n                                    sub_1a6e3c(r22, r25);\n                                    swift_release(r23);\n                                    [r19 release];\n                                    [r21 release];\n                                    swift_errorRelease(r26);\n                                    [r24 release];\n                                    r0 = r25;\n                            }\n                            [r0 release];\n                    }\n                    else {\n                            [r19 release];\n                            [r21 release];\n                            swift_bridgeObjectRelease(r24);\n                    }\n            }\n            else {\n                    r0 = r19;\n                    [r0 release];\n            }\n    }\n    return;\n",
+    "assembly": [
+      "0x1a67d0: sub sp, sp, #0x140",
+      "0x1a67d4: stp d9, d8, [sp, #0xd0]",
+      "0x1a67d8: stp x28, x27, [sp, #0xe0]",
+      "0x1a67dc: stp x26, x25, [sp, #0xf0]",
+      "0x1a67e0: stp x24, x23, [sp, #0x100]",
+      "0x1a67e4: stp x22, x21, [sp, #0x110]",
+      "0x1a67e8: stp x20, x19, [sp, #0x120]",
+      "0x1a67ec: stp fp, lr, [sp, #0x130]",
+      "0x1a67f0: add fp, sp, #0x130",
+      "0x1a67f4: mov x23, x0",
+      "0x1a67f8: adrp x8, #0x23a000",
+      "0x1a67fc: add x8, x8, #0x7d0",
+      "0x1a6800: ldr x19, [x8]",
+      "0x1a6804: add x0, x20, x19",
+      "0x1a6808: sub x1, fp, #0x80",
+      "0x1a680c: mov x2, #0x0",
+      "0x1a6810: mov x3, #0x0",
+      "0x1a6814: bl imp___stubs__swift_beginAccess",
+      "0x1a6818: add x0, x20, x19",
+      "0x1a681c: bl imp___stubs__swift_unknownObjectWeakLoadStrong",
+      "0x1a6820: cbz x0, loc_1a6bdc",
+      "0x1a6824: mov x19, x0",
+      "0x1a6828: adrp x8, #0x221000",
+      "0x1a682c: ldr x0, [x8, #0x558]",
+      "0x1a6830: bl imp___stubs__objc_opt_self",
+      "0x1a6834: mov x1, x0",
+      "0x1a6838: mov x0, x19",
+      "0x1a683c: bl imp___stubs__swift_dynamicCastObjCClass",
+      "0x1a6840: cbz x0, loc_1a6a2c",
+      "0x1a6844: mov x22, x0",
+      "0x1a6848: mov x0, #0x0",
+      "0x1a684c: bl _$s11MDTextKitUI22MDMermaidRenderOptionsCMa",
+      "0x1a6850: bl imp___stubs__objc_allocWithZone",
+      "0x1a6854: bl _objc_msgSend$init",
+      "0x1a6858: mov x21, x0",
+      "0x1a685c: mov x0, x22",
+      "0x1a6860: bl _objc_msgSend$font",
+      "0x1a6864: mov fp, fp",
+      "0x1a6868: bl imp___stubs__objc_retainAutoreleasedReturnValue",
+      "0x1a686c: mov x24, x0",
+      "0x1a6870: bl _objc_msgSend$pointSize",
+      "0x1a6874: mov v8, v0",
+      "0x1a6878: mov x0, x24",
+      "0x1a687c: bl imp___stubs__objc_release",
+      "0x1a6880: adrp x8, #0x23a000",
+      "0x1a6884: add x8, x8, #0x338",
+      "0x1a6888: ldr x24, [x8]",
+      "0x1a688c: add x0, x21, x24",
+      "0x1a6890: add x1, sp, #0x98",
+      "0x1a6894: mov w2, #0x1",
+      "0x1a6898: mov x3, #0x0",
+      "0x1a689c: bl imp___stubs__swift_beginAccess",
+      "0x1a68a0: str d8, [x21, x24]",
+      "0x1a68a4: mov x0, x23",
+      "0x1a68a8: bl sub_1a7868",
+      "0x1a68ac: mov x23, x0",
+      "0x1a68b0: mov x24, x1",
+      "0x1a68b4: mov x25, x2",
+      "0x1a68b8: adrp x8, #0x23a000",
+      "0x1a68bc: add x8, x8, #0x330",
+      "0x1a68c0: ldr x8, [x8]",
+      "0x1a68c4: add x26, x21, x8",
+      "0x1a68c8: add x1, sp, #0x80",
+      "0x1a68cc: mov x0, x26",
+      "0x1a68d0: mov w2, #0x1",
+      "0x1a68d4: mov x3, #0x0",
+      "0x1a68d8: bl imp___stubs__swift_beginAccess",
+      "0x1a68dc: ldr x0, [x26, #0x8]",
+      "0x1a68e0: stp x23, x24, [x26]",
+      "0x1a68e4: bl imp___stubs__swift_bridgeObjectRelease",
+      "0x1a68e8: adrp x8, #0x23a000",
+      "0x1a68ec: add x8, x8, #0x358",
+      "0x1a68f0: ldr x23, [x8]",
+      "0x1a68f4: add x0, x21, x23",
+      "0x1a68f8: add x1, sp, #0x68",
+      "0x1a68fc: mov w2, #0x1",
+      "0x1a6900: mov x3, #0x0",
+      "0x1a6904: bl imp___stubs__swift_beginAccess",
+      "0x1a6908: ldr x0, [x21, x23]",
+      "0x1a690c: str x25, [x21, x23]",
+      "0x1a6910: bl imp___stubs__swift_bridgeObjectRelease",
+      "0x1a6914: mov x0, x22",
+      "0x1a6918: bl _objc_msgSend$mermaidCode",
+      "0x1a691c: mov fp, fp",
+      "0x1a6920: bl imp___stubs__objc_retainAutoreleasedReturnValue",
+      "0x1a6924: mov x23, x0",
+      "0x1a6928: bl sub_1afed8",
+      "0x1a692c: mov x25, x0",
+      "0x1a6930: mov x24, x1",
+      "0x1a6934: mov x0, x23",
+      "0x1a6938: bl imp___stubs__objc_release",
+      "0x1a693c: and x8, x25, #0xffffffffffff",
+      "0x1a6940: ubfx x9, x24, #0x38, #0x4",
+      "0x1a6944: tst x24, #0x2000000000000000",
+      "0x1a6948: csel x8, x8, x9, eq",
+      "0x1a694c: cbz x8, loc_1a6a34",
+      "0x1a6950: adrp x0, #0x20c000",
+      "0x1a6954: add x0, x0, #0xb68",
+      "0x1a6958: mov w1, #0x18",
+      "0x1a695c: mov w2, #0x7",
+      "0x1a6960: bl imp___stubs__swift_allocObject",
+      "0x1a6964: mov x26, x0",
+      "0x1a6968: add x0, x0, #0x10",
+      "0x1a696c: mov x1, x20",
+      "0x1a6970: bl imp___stubs__swift_unknownObjectWeakInit",
+      "0x1a6974: adrp x0, #0x20c000",
+      "0x1a6978: add x0, x0, #0xb90",
+      "0x1a697c: mov w1, #0x28",
+      "0x1a6980: mov w2, #0x7",
+      "0x1a6984: bl imp___stubs__swift_allocObject",
+      "0x1a6988: mov x23, x0",
+      "0x1a698c: stp x26, x25, [x0, #0x10]",
+      "0x1a6990: str x24, [x0, #0x20]",
+      "0x1a6994: adrp x8, #0x23a000",
+      "0x1a6998: add x8, x8, #0x7e8",
+      "0x1a699c: ldr x26, [x8]",
+      "0x1a69a0: add x0, x20, x26",
+      "0x1a69a4: add x1, sp, #0x50",
+      "0x1a69a8: mov x2, #0x0",
+      "0x1a69ac: mov x3, #0x0",
+      "0x1a69b0: bl imp___stubs__swift_beginAccess",
+      "0x1a69b4: ldrb w27, [x20, x26]",
+      "0x1a69b8: adrp x8, #0x23a000",
+      "0x1a69bc: ldr x26, [x8, #0x3d8]",
+      "0x1a69c0: mov x0, x24",
+      "0x1a69c4: bl imp___stubs__swift_bridgeObjectRetain",
+      "0x1a69c8: cmp w27, #0x1",
+      "0x1a69cc: b.ne loc_1a6a50",
+      "0x1a69d0: cmn x26, #0x1",
+      "0x1a69d4: b.ne loc_1a6c00",
+      "0x1a69d8: adrp x8, #0x23a000",
+      "0x1a69dc: ldr x0, [x8, #0xc10]",
+      "0x1a69e0: bl imp___stubs__objc_retain",
+      "0x1a69e4: mov x20, x0",
+      "0x1a69e8: adrp x3, #0x1ae000",
+      "0x1a69ec: add x3, x3, #0xcc",
+      "0x1a69f0: mov x0, x25",
+      "0x1a69f4: mov x1, x24",
+      "0x1a69f8: mov x2, x21",
+      "0x1a69fc: mov x4, x23",
+      "0x1a6a00: bl _$s11MDTextKitUI17MDMermaidRendererC13renderMermaid_7options17completionHandlerySS_AA0D13RenderOptionsCyAA0dK6ResultCctF",
+      "0x1a6a04: mov x0, x24",
+      "0x1a6a08: bl imp___stubs__swift_bridgeObjectRelease",
+      "0x1a6a0c: mov x0, x20",
+      "0x1a6a10: bl imp___stubs__objc_release",
+      "0x1a6a14: mov x0, x23",
+      "0x1a6a18: bl imp___stubs__swift_release",
+      "0x1a6a1c: mov x0, x19",
+      "0x1a6a20: bl imp___stubs__objc_release",
+      "0x1a6a24: mov x0, x21",
+      "0x1a6a28: b loc_1a6bd8",
+      "0x1a6bd8: bl imp___stubs__objc_release",
+      "0x1a6c00: adrp x0, #0x23a000",
+      "0x1a6c04: add x0, x0, #0x3d8",
+      "0x1a6c08: adrp x1, #0x1a5000",
+      "0x1a6c0c: add x1, x1, #0xfe4",
+      "0x1a6c10: bl imp___stubs__swift_once",
+      "0x1a6c14: b loc_1a69d8",
+      "0x1a6a50: mov x28, x20",
+      "0x1a6a54: cmn x26, #0x1",
+      "0x1a6a58: b.ne loc_1a6c18",
+      "0x1a6a5c: adrp x8, #0x23a000",
+      "0x1a6a60: ldr x20, [x8, #0xc10]",
+      "0x1a6a64: adrp x0, #0x20c000",
+      "0x1a6a68: add x0, x0, #0xbb8",
+      "0x1a6a6c: mov w1, #0x18",
+      "0x1a6a70: mov w2, #0x7",
+      "0x1a6a74: bl imp___stubs__swift_allocObject",
+      "0x1a6a78: mov x26, x0",
+      "0x1a6a7c: mov x27, x0",
+      "0x1a6a80: str xzr, [x27, #0x10]!",
+      "0x1a6a84: mov x0, x20",
+      "0x1a6a88: bl imp___stubs__objc_retain",
+      "0x1a6a8c: mov x20, x0",
+      "0x1a6a90: mov x0, x26",
+      "0x1a6a94: bl imp___stubs__swift_retain",
+      "0x1a6a98: adrp x3, #0x62000",
+      "0x1a6a9c: add x3, x3, #0xf50",
+      "0x1a6aa0: mov x0, x25",
+      "0x1a6aa4: mov x1, x24",
+      "0x1a6aa8: mov x2, x21",
+      "0x1a6aac: mov x4, x26",
+      "0x1a6ab0: bl _$s11MDTextKitUI17MDMermaidRendererC13renderMermaid_7options17completionHandlerySS_AA0D13RenderOptionsCyAA0dK6ResultCctF",
+      "0x1a6ab4: mov x0, x26",
+      "0x1a6ab8: bl imp___stubs__swift_release",
+      "0x1a6abc: add x1, sp, #0x38",
+      "0x1a6ac0: mov x0, x27",
+      "0x1a6ac4: mov x2, #0x0",
+      "0x1a6ac8: mov x3, #0x0",
+      "0x1a6acc: bl imp___stubs__swift_beginAccess",
+      "0x1a6ad0: ldr x8, [x27]",
+      "0x1a6ad4: cbnz x8, loc_1a6b0c",
+      "0x1a6ad8: adrp x8, #0x20d000",
+      "0x1a6adc: ldr x8, [x8, #0x958]",
+      "0x1a6ae0: ldr x25, [x8]",
+      "0x1a6ae4: orr x8, xzr, #0x9999999999999999",
+      "0x1a6ae8: movk x8, #0x999a",
+      "0x1a6aec: movk x8, #0x3fb9, lsl #48",
+      "0x1a6af0: fmov d8, x8",
+      "0x1a6af4: mov x0, x25",
+      "0x1a6af8: mov v0, v8",
+      "0x1a6afc: mov w1, #0x0",
+      "0x1a6b00: bl imp___stubs__CFRunLoopRunInMode",
+      "0x1a6b04: ldr x8, [x27]",
+      "0x1a6b08: cbz x8, loc_1a6af4",
+      "0x1a6b0c: mov x0, x24",
+      "0x1a6b10: bl imp___stubs__swift_bridgeObjectRelease",
+      "0x1a6b14: mov x0, x20",
+      "0x1a6b18: bl imp___stubs__objc_release",
+      "0x1a6b1c: ldr x25, [x26, #0x10]",
+      "0x1a6b20: mov x0, x25",
+      "0x1a6b24: bl imp___stubs__objc_retain",
+      "0x1a6b28: mov x24, x0",
+      "0x1a6b2c: mov x0, x26",
+      "0x1a6b30: bl imp___stubs__swift_release",
+      "0x1a6b34: mov x20, x28",
+      "0x1a6b38: cbz x25, loc_1a6b98",
+      "0x1a6b3c: adrp x8, #0x23a000",
+      "0x1a6b40: add x8, x8, #0x348",
+      "0x1a6b44: ldr x25, [x8]",
+      "0x1a6b48: add x0, x24, x25",
+      "0x1a6b4c: add x1, sp, #0x20",
+      "0x1a6b50: mov x2, #0x0",
+      "0x1a6b54: mov x3, #0x0",
+      "0x1a6b58: bl imp___stubs__swift_beginAccess",
+      "0x1a6b5c: ldr x25, [x24, x25]",
+      "0x1a6b60: adrp x8, #0x23a000",
+      "0x1a6b64: add x8, x8, #0x350",
+      "0x1a6b68: ldr x26, [x8]",
+      "0x1a6b6c: add x0, x24, x26",
+      "0x1a6b70: add x1, sp, #0x8",
+      "0x1a6b74: mov x2, #0x0",
+      "0x1a6b78: mov x3, #0x0",
+      "0x1a6b7c: bl imp___stubs__swift_beginAccess",
+      "0x1a6b80: ldr x26, [x24, x26]",
+      "0x1a6b84: mov x0, x25",
+      "0x1a6b88: bl imp___stubs__objc_retain",
+      "0x1a6b8c: mov x0, x26",
+      "0x1a6b90: bl imp___stubs__swift_errorRetain",
+      "0x1a6b94: b loc_1a6b9c",
+      "0x1a6b9c: mov x0, x22",
+      "0x1a6ba0: mov x1, x25",
+      "0x1a6ba4: mov x2, x26",
+      "0x1a6ba8: bl sub_1a6e3c",
+      "0x1a6bac: mov x0, x23",
+      "0x1a6bb0: bl imp___stubs__swift_release",
+      "0x1a6bb4: mov x0, x19",
+      "0x1a6bb8: bl imp___stubs__objc_release",
+      "0x1a6bbc: mov x0, x21",
+      "0x1a6bc0: bl imp___stubs__objc_release",
+      "0x1a6bc4: mov x0, x26",
+      "0x1a6bc8: bl imp___stubs__swift_errorRelease",
+      "0x1a6bcc: mov x0, x24",
+      "0x1a6bd0: bl imp___stubs__objc_release",
+      "0x1a6bd4: mov x0, x25",
+      "0x1a6b98: mov x26, #0x0",
+      "0x1a6c18: adrp x0, #0x23a000",
+      "0x1a6c1c: add x0, x0, #0x3d8",
+      "0x1a6c20: adrp x1, #0x1a5000",
+      "0x1a6c24: add x1, x1, #0xfe4",
+      "0x1a6c28: bl imp___stubs__swift_once",
+      "0x1a6c2c: b loc_1a6a5c",
+      "0x1a6a34: mov x0, x19",
+      "0x1a6a38: bl imp___stubs__objc_release",
+      "0x1a6a3c: mov x0, x21",
+      "0x1a6a40: bl imp___stubs__objc_release",
+      "0x1a6a44: mov x0, x24",
+      "0x1a6a48: bl imp___stubs__swift_bridgeObjectRelease",
+      "0x1a6a4c: b loc_1a6bdc",
+      "0x1a6bdc: ldp fp, lr, [sp, #0x130]",
+      "0x1a6be0: ldp x20, x19, [sp, #0x120]",
+      "0x1a6be4: ldp x22, x21, [sp, #0x110]",
+      "0x1a6be8: ldp x24, x23, [sp, #0x100]",
+      "0x1a6bec: ldp x26, x25, [sp, #0xf0]",
+      "0x1a6bf0: ldp x28, x27, [sp, #0xe0]",
+      "0x1a6bf4: ldp d9, d8, [sp, #0xd0]",
+      "0x1a6bf8: add sp, sp, #0x140",
+      "0x1a6bfc: ret",
+      "0x1a6a2c: mov x0, x19",
+      "0x1a6a30: b loc_1a6bd8"
+    ],
+    "comments": [],
+    "callers": [
+      {
+        "address": "0x1a6de8",
+        "name": "-[_TtC11MDTextKitUI27MDMermaidCoreViewController styleObjectWithThemeManager:]",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1ae4c4",
+        "name": "-[_TtC11MDTextKitUI23MDMermaidViewController styleObjectWithThemeManager:]",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      }
+    ],
+    "callees": [
+      {
+        "address": "0x1a19f8",
+        "name": "_$s11MDTextKitUI17MDMermaidRendererC13renderMermaid_7options17completionHandlerySS_AA0D13RenderOptionsCyAA0dK6ResultCctF",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1a53d0",
+        "name": "_$s11MDTextKitUI22MDMermaidRenderOptionsCMa",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1a6e3c",
+        "name": "sub_1a6e3c",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1a7868",
+        "name": "sub_1a7868",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1afed8",
+        "name": "sub_1afed8",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0760",
+        "name": "imp___stubs__CFRunLoopRunInMode",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0ae4",
+        "name": "imp___stubs__objc_allocWithZone",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0b2c",
+        "name": "imp___stubs__objc_opt_self",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0b38",
+        "name": "imp___stubs__objc_release",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0b44",
+        "name": "imp___stubs__objc_retain",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0b5c",
+        "name": "imp___stubs__objc_retainAutoreleasedReturnValue",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0bd4",
+        "name": "imp___stubs__swift_allocObject",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0c10",
+        "name": "imp___stubs__swift_beginAccess",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0c1c",
+        "name": "imp___stubs__swift_bridgeObjectRelease",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0c34",
+        "name": "imp___stubs__swift_bridgeObjectRetain",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0cf4",
+        "name": "imp___stubs__swift_dynamicCastObjCClass",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0d30",
+        "name": "imp___stubs__swift_errorRelease",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0d3c",
+        "name": "imp___stubs__swift_errorRetain",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0e14",
+        "name": "imp___stubs__swift_once",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0e20",
+        "name": "imp___stubs__swift_release",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0e38",
+        "name": "imp___stubs__swift_retain",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0f04",
+        "name": "imp___stubs__swift_unknownObjectWeakInit",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b0f10",
+        "name": "imp___stubs__swift_unknownObjectWeakLoadStrong",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b39e0",
+        "name": "_objc_msgSend$font",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b4600",
+        "name": "_objc_msgSend$init",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b5a00",
+        "name": "_objc_msgSend$mermaidCode",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      },
+      {
+        "address": "0x1b6180",
+        "name": "_objc_msgSend$pointSize",
+        "classification": null,
+        "body": {
+          "available": false,
+          "reason": "Hopper's public Python API does not expose complete function body ranges"
+        }
+      }
+    ],
+    "incoming_references": [
+      {
+        "source_address": "0x1a6e1c",
+        "target_address": "0x1a67d0",
+        "source_procedure": {
+          "address": "0x1a6de8",
+          "name": "-[_TtC11MDTextKitUI27MDMermaidCoreViewController styleObjectWithThemeManager:]",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1ae4f8",
+        "target_address": "0x1a67d0",
+        "source_procedure": {
+          "address": "0x1ae4c4",
+          "name": "-[_TtC11MDTextKitUI23MDMermaidViewController styleObjectWithThemeManager:]",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x233710",
+        "target_address": "0x1a67d0",
+        "source_procedure": null,
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      }
+    ],
+    "outgoing_references": [
+      {
+        "source_address": "0x1a67d0",
+        "target_address": "0x140",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a67f0",
+        "target_address": "0x130",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a67fc",
+        "target_address": "0x7d0",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a67fc",
+        "target_address": "0x23a7d0",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6800",
+        "target_address": "0x23a7d0",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6814",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a681c",
+        "target_address": "0x1b0f10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0f10",
+          "name": "imp___stubs__swift_unknownObjectWeakLoadStrong",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6820",
+        "target_address": "0x1a6bdc",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6828",
+        "target_address": "0x221000",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a682c",
+        "target_address": "0x221558",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a682c",
+        "target_address": "0x2c4468",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6830",
+        "target_address": "0x1b0b2c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b2c",
+          "name": "imp___stubs__objc_opt_self",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a683c",
+        "target_address": "0x1b0cf4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0cf4",
+          "name": "imp___stubs__swift_dynamicCastObjCClass",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6840",
+        "target_address": "0x1a6a2c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a684c",
+        "target_address": "0x1a53d0",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a53d0",
+          "name": "_$s11MDTextKitUI22MDMermaidRenderOptionsCMa",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6850",
+        "target_address": "0x1b0ae4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0ae4",
+          "name": "imp___stubs__objc_allocWithZone",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6854",
+        "target_address": "0x1b4600",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b4600",
+          "name": "_objc_msgSend$init",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6860",
+        "target_address": "0x1b39e0",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b39e0",
+          "name": "_objc_msgSend$font",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6868",
+        "target_address": "0x1b0b5c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b5c",
+          "name": "imp___stubs__objc_retainAutoreleasedReturnValue",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6870",
+        "target_address": "0x1b6180",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b6180",
+          "name": "_objc_msgSend$pointSize",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a687c",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6884",
+        "target_address": "0x338",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6884",
+        "target_address": "0x23a338",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6888",
+        "target_address": "0x23a338",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a689c",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a68a8",
+        "target_address": "0x1a7868",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a7868",
+          "name": "sub_1a7868",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a68bc",
+        "target_address": "0x330",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a68bc",
+        "target_address": "0x23a330",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a68c0",
+        "target_address": "0x23a330",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a68d8",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a68e4",
+        "target_address": "0x1b0c1c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c1c",
+          "name": "imp___stubs__swift_bridgeObjectRelease",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a68ec",
+        "target_address": "0x358",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a68ec",
+        "target_address": "0x23a358",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a68f0",
+        "target_address": "0x23a358",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6904",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6910",
+        "target_address": "0x1b0c1c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c1c",
+          "name": "imp___stubs__swift_bridgeObjectRelease",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6918",
+        "target_address": "0x1b5a00",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b5a00",
+          "name": "_objc_msgSend$mermaidCode",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6920",
+        "target_address": "0x1b0b5c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b5c",
+          "name": "imp___stubs__objc_retainAutoreleasedReturnValue",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6928",
+        "target_address": "0x1afed8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1afed8",
+          "name": "sub_1afed8",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6938",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a694c",
+        "target_address": "0x1a6a34",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6954",
+        "target_address": "0xb68",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6954",
+        "target_address": "0x20cb68",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6960",
+        "target_address": "0x1b0bd4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0bd4",
+          "name": "imp___stubs__swift_allocObject",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6970",
+        "target_address": "0x1b0f04",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0f04",
+          "name": "imp___stubs__swift_unknownObjectWeakInit",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6978",
+        "target_address": "0xb90",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6978",
+        "target_address": "0x20cb90",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6984",
+        "target_address": "0x1b0bd4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0bd4",
+          "name": "imp___stubs__swift_allocObject",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6998",
+        "target_address": "0x7e8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6998",
+        "target_address": "0x23a7e8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a699c",
+        "target_address": "0x23a7e8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a69b0",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a69b8",
+        "target_address": "0x23a000",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a69bc",
+        "target_address": "0x23a3d8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a69c4",
+        "target_address": "0x1b0c34",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c34",
+          "name": "imp___stubs__swift_bridgeObjectRetain",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a69cc",
+        "target_address": "0x1a6a50",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a69d4",
+        "target_address": "0x1a6c00",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a69d8",
+        "target_address": "0x23a000",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a69dc",
+        "target_address": "0x23ac10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a69e0",
+        "target_address": "0x1b0b44",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b44",
+          "name": "imp___stubs__objc_retain",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a69ec",
+        "target_address": "0x1ae0cc",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1ae0cc",
+          "name": "sub_1ae0cc",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a00",
+        "target_address": "0x1a19f8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a19f8",
+          "name": "_$s11MDTextKitUI17MDMermaidRendererC13renderMermaid_7options17completionHandlerySS_AA0D13RenderOptionsCyAA0dK6ResultCctF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a08",
+        "target_address": "0x1b0c1c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c1c",
+          "name": "imp___stubs__swift_bridgeObjectRelease",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a10",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a18",
+        "target_address": "0x1b0e20",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0e20",
+          "name": "imp___stubs__swift_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a20",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a28",
+        "target_address": "0x1a6bd8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a30",
+        "target_address": "0x1a6bd8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a38",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a40",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a48",
+        "target_address": "0x1b0c1c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c1c",
+          "name": "imp___stubs__swift_bridgeObjectRelease",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a4c",
+        "target_address": "0x1a6bdc",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a58",
+        "target_address": "0x1a6c18",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a5c",
+        "target_address": "0x23a000",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a60",
+        "target_address": "0x23ac10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a68",
+        "target_address": "0xbb8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a68",
+        "target_address": "0x20cbb8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a74",
+        "target_address": "0x1b0bd4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0bd4",
+          "name": "imp___stubs__swift_allocObject",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a88",
+        "target_address": "0x1b0b44",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b44",
+          "name": "imp___stubs__objc_retain",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a94",
+        "target_address": "0x1b0e38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0e38",
+          "name": "imp___stubs__swift_retain",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6a9c",
+        "target_address": "0xf50",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6a9c",
+        "target_address": "0x62f50",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x62f50",
+          "name": "sub_62f50",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6ab0",
+        "target_address": "0x1a19f8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a19f8",
+          "name": "_$s11MDTextKitUI17MDMermaidRendererC13renderMermaid_7options17completionHandlerySS_AA0D13RenderOptionsCyAA0dK6ResultCctF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6ab8",
+        "target_address": "0x1b0e20",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0e20",
+          "name": "imp___stubs__swift_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6acc",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6ad4",
+        "target_address": "0x1a6b0c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6adc",
+        "target_address": "0x20d958",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6adc",
+        "target_address": "0x2c4b70",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6ae0",
+        "target_address": "0x2c4b70",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6ae8",
+        "target_address": "0x999a",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x996c",
+          "name": "-[_TtC11MDTextKitUI23WordCountViewController textView]",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6aec",
+        "target_address": "0x3fb9",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x3fa4",
+          "name": "sub_3fa4",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b00",
+        "target_address": "0x1b0760",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0760",
+          "name": "imp___stubs__CFRunLoopRunInMode",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b08",
+        "target_address": "0x1a6af4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b10",
+        "target_address": "0x1b0c1c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c1c",
+          "name": "imp___stubs__swift_bridgeObjectRelease",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b18",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b24",
+        "target_address": "0x1b0b44",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b44",
+          "name": "imp___stubs__objc_retain",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b30",
+        "target_address": "0x1b0e20",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0e20",
+          "name": "imp___stubs__swift_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b38",
+        "target_address": "0x1a6b98",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b40",
+        "target_address": "0x348",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b40",
+        "target_address": "0x23a348",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b44",
+        "target_address": "0x23a348",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b58",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b64",
+        "target_address": "0x350",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b64",
+        "target_address": "0x23a350",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b68",
+        "target_address": "0x23a350",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6b7c",
+        "target_address": "0x1b0c10",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0c10",
+          "name": "imp___stubs__swift_beginAccess",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b88",
+        "target_address": "0x1b0b44",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b44",
+          "name": "imp___stubs__objc_retain",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b90",
+        "target_address": "0x1b0d3c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0d3c",
+          "name": "imp___stubs__swift_errorRetain",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6b94",
+        "target_address": "0x1a6b9c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6ba8",
+        "target_address": "0x1a6e3c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a6e3c",
+          "name": "sub_1a6e3c",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6bb0",
+        "target_address": "0x1b0e20",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0e20",
+          "name": "imp___stubs__swift_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6bb8",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6bc0",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6bc8",
+        "target_address": "0x1b0d30",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0d30",
+          "name": "imp___stubs__swift_errorRelease",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6bd0",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6bd8",
+        "target_address": "0x1b0b38",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0b38",
+          "name": "imp___stubs__objc_release",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6bf8",
+        "target_address": "0x140",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c04",
+        "target_address": "0x3d8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c04",
+        "target_address": "0x23a3d8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c0c",
+        "target_address": "0xfe4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c0c",
+        "target_address": "0x1a5fe4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a5fe4",
+          "name": "sub_1a5fe4",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c10",
+        "target_address": "0x1b0e14",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0e14",
+          "name": "imp___stubs__swift_once",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6c14",
+        "target_address": "0x1a69d8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c1c",
+        "target_address": "0x3d8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c1c",
+        "target_address": "0x23a3d8",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c24",
+        "target_address": "0xfe4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": null,
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c24",
+        "target_address": "0x1a5fe4",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a5fe4",
+          "name": "sub_1a5fe4",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      },
+      {
+        "source_address": "0x1a6c28",
+        "target_address": "0x1b0e14",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1b0e14",
+          "name": "imp___stubs__swift_once",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        },
+        "call": {
+          "classification": "direct",
+          "provider_type": 2,
+          "provenance": "hopper-public-python-api:CallReference"
+        }
+      },
+      {
+        "source_address": "0x1a6c2c",
+        "target_address": "0x1a6a5c",
+        "source_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "target_procedure": {
+          "address": "0x1a67d0",
+          "name": "_$s11MDTextKitUI27MDMermaidCoreViewControllerC11styleObject4withySo14SFThemeManagerCSg_tF",
+          "classification": null,
+          "body": {
+            "available": false,
+            "reason": "Hopper's public Python API does not expose complete function body ranges"
+          }
+        },
+        "kind": {
+          "available": false,
+          "reason": "Hopper exposes partial CallReference classification, but not detailed reference flags"
+        }
+      }
+    ],
+    "unresolved_calls": [],
+    "referenced_strings": [],
+    "referenced_names": [
+      {
+        "address": "0x62f50",
+        "value": "sub_62f50",
+        "source_address": "0x1a6a9c"
+      },
+      {
+        "address": "0x1a19f8",
+        "value": "_$s11MDTextKitUI17MDMermaidRendererC13renderMermaid_7options17completionHandlerySS_AA0D13RenderOptionsCyAA0dK6ResultCctF",
+        "source_address": "0x1a6a00"
+      },
+      {
+        "address": "0x1a19f8",
+        "value": "_$s11MDTextKitUI17MDMermaidRendererC13renderMermaid_7options17completionHandlerySS_AA0D13RenderOptionsCyAA0dK6ResultCctF",
+        "source_address": "0x1a6ab0"
+      },
+      {
+        "address": "0x1a53d0",
+        "value": "_$s11MDTextKitUI22MDMermaidRenderOptionsCMa",
+        "source_address": "0x1a684c"
+      },
+      {
+        "address": "0x1a5fe4",
+        "value": "sub_1a5fe4",
+        "source_address": "0x1a6c0c"
+      },
+      {
+        "address": "0x1a5fe4",
+        "value": "sub_1a5fe4",
+        "source_address": "0x1a6c24"
+      },
+      {
+        "address": "0x1a6e3c",
+        "value": "sub_1a6e3c",
+        "source_address": "0x1a6ba8"
+      },
+      {
+        "address": "0x1a7868",
+        "value": "sub_1a7868",
+        "source_address": "0x1a68a8"
+      },
+      {
+        "address": "0x1ae0cc",
+        "value": "sub_1ae0cc",
+        "source_address": "0x1a69ec"
+      },
+      {
+        "address": "0x1afed8",
+        "value": "sub_1afed8",
+        "source_address": "0x1a6928"
+      },
+      {
+        "address": "0x1b0760",
+        "value": "imp___stubs__CFRunLoopRunInMode",
+        "source_address": "0x1a6b00"
+      },
+      {
+        "address": "0x1b0ae4",
+        "value": "imp___stubs__objc_allocWithZone",
+        "source_address": "0x1a6850"
+      },
+      {
+        "address": "0x1b0b2c",
+        "value": "imp___stubs__objc_opt_self",
+        "source_address": "0x1a6830"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a687c"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6938"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6a10"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6a20"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6a38"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6a40"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6b18"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6bb8"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6bc0"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6bd0"
+      },
+      {
+        "address": "0x1b0b38",
+        "value": "imp___stubs__objc_release",
+        "source_address": "0x1a6bd8"
+      },
+      {
+        "address": "0x1b0b44",
+        "value": "imp___stubs__objc_retain",
+        "source_address": "0x1a69e0"
+      },
+      {
+        "address": "0x1b0b44",
+        "value": "imp___stubs__objc_retain",
+        "source_address": "0x1a6a88"
+      },
+      {
+        "address": "0x1b0b44",
+        "value": "imp___stubs__objc_retain",
+        "source_address": "0x1a6b24"
+      },
+      {
+        "address": "0x1b0b44",
+        "value": "imp___stubs__objc_retain",
+        "source_address": "0x1a6b88"
+      },
+      {
+        "address": "0x1b0b5c",
+        "value": "imp___stubs__objc_retainAutoreleasedReturnValue",
+        "source_address": "0x1a6868"
+      },
+      {
+        "address": "0x1b0b5c",
+        "value": "imp___stubs__objc_retainAutoreleasedReturnValue",
+        "source_address": "0x1a6920"
+      },
+      {
+        "address": "0x1b0bd4",
+        "value": "imp___stubs__swift_allocObject",
+        "source_address": "0x1a6960"
+      },
+      {
+        "address": "0x1b0bd4",
+        "value": "imp___stubs__swift_allocObject",
+        "source_address": "0x1a6984"
+      },
+      {
+        "address": "0x1b0bd4",
+        "value": "imp___stubs__swift_allocObject",
+        "source_address": "0x1a6a74"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a6814"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a689c"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a68d8"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a6904"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a69b0"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a6acc"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a6b58"
+      },
+      {
+        "address": "0x1b0c10",
+        "value": "imp___stubs__swift_beginAccess",
+        "source_address": "0x1a6b7c"
+      },
+      {
+        "address": "0x1b0c1c",
+        "value": "imp___stubs__swift_bridgeObjectRelease",
+        "source_address": "0x1a68e4"
+      },
+      {
+        "address": "0x1b0c1c",
+        "value": "imp___stubs__swift_bridgeObjectRelease",
+        "source_address": "0x1a6910"
+      },
+      {
+        "address": "0x1b0c1c",
+        "value": "imp___stubs__swift_bridgeObjectRelease",
+        "source_address": "0x1a6a08"
+      },
+      {
+        "address": "0x1b0c1c",
+        "value": "imp___stubs__swift_bridgeObjectRelease",
+        "source_address": "0x1a6a48"
+      },
+      {
+        "address": "0x1b0c1c",
+        "value": "imp___stubs__swift_bridgeObjectRelease",
+        "source_address": "0x1a6b10"
+      },
+      {
+        "address": "0x1b0c34",
+        "value": "imp___stubs__swift_bridgeObjectRetain",
+        "source_address": "0x1a69c4"
+      },
+      {
+        "address": "0x1b0cf4",
+        "value": "imp___stubs__swift_dynamicCastObjCClass",
+        "source_address": "0x1a683c"
+      },
+      {
+        "address": "0x1b0d30",
+        "value": "imp___stubs__swift_errorRelease",
+        "source_address": "0x1a6bc8"
+      },
+      {
+        "address": "0x1b0d3c",
+        "value": "imp___stubs__swift_errorRetain",
+        "source_address": "0x1a6b90"
+      },
+      {
+        "address": "0x1b0e14",
+        "value": "imp___stubs__swift_once",
+        "source_address": "0x1a6c10"
+      },
+      {
+        "address": "0x1b0e14",
+        "value": "imp___stubs__swift_once",
+        "source_address": "0x1a6c28"
+      },
+      {
+        "address": "0x1b0e20",
+        "value": "imp___stubs__swift_release",
+        "source_address": "0x1a6a18"
+      },
+      {
+        "address": "0x1b0e20",
+        "value": "imp___stubs__swift_release",
+        "source_address": "0x1a6ab8"
+      },
+      {
+        "address": "0x1b0e20",
+        "value": "imp___stubs__swift_release",
+        "source_address": "0x1a6b30"
+      },
+      {
+        "address": "0x1b0e20",
+        "value": "imp___stubs__swift_release",
+        "source_address": "0x1a6bb0"
+      },
+      {
+        "address": "0x1b0e38",
+        "value": "imp___stubs__swift_retain",
+        "source_address": "0x1a6a94"
+      },
+      {
+        "address": "0x1b0f04",
+        "value": "imp___stubs__swift_unknownObjectWeakInit",
+        "source_address": "0x1a6970"
+      },
+      {
+        "address": "0x1b0f10",
+        "value": "imp___stubs__swift_unknownObjectWeakLoadStrong",
+        "source_address": "0x1a681c"
+      },
+      {
+        "address": "0x1b39e0",
+        "value": "_objc_msgSend$font",
+        "source_address": "0x1a6860"
+      },
+      {
+        "address": "0x1b4600",
+        "value": "_objc_msgSend$init",
+        "source_address": "0x1a6854"
+      },
+      {
+        "address": "0x1b5a00",
+        "value": "_objc_msgSend$mermaidCode",
+        "source_address": "0x1a6918"
+      },
+      {
+        "address": "0x1b6180",
+        "value": "_objc_msgSend$pointSize",
+        "source_address": "0x1a6870"
+      },
+      {
+        "address": "0x20d958",
+        "value": "_kCFRunLoopDefaultMode_20d958",
+        "source_address": "0x1a6adc"
+      },
+      {
+        "address": "0x221558",
+        "value": "objc_cls_ref_MDMermaidTextAttachment",
+        "source_address": "0x1a682c"
+      },
+      {
+        "address": "0x23a330",
+        "value": "_$s11MDTextKitUI22MDMermaidRenderOptionsC8themeKeySSvpWvd",
+        "source_address": "0x1a68bc"
+      },
+      {
+        "address": "0x23a330",
+        "value": "_$s11MDTextKitUI22MDMermaidRenderOptionsC8themeKeySSvpWvd",
+        "source_address": "0x1a68c0"
+      },
+      {
+        "address": "0x23a338",
+        "value": "_$s11MDTextKitUI22MDMermaidRenderOptionsC8fontSize12CoreGraphics7CGFloatVvpWvd",
+        "source_address": "0x1a6884"
+      },
+      {
+        "address": "0x23a338",
+        "value": "_$s11MDTextKitUI22MDMermaidRenderOptionsC8fontSize12CoreGraphics7CGFloatVvpWvd",
+        "source_address": "0x1a6888"
+      },
+      {
+        "address": "0x23a348",
+        "value": "_$s11MDTextKitUI21MDMermaidRenderResultC5imageSo7NSImageCSgvpWvd",
+        "source_address": "0x1a6b40"
+      },
+      {
+        "address": "0x23a348",
+        "value": "_$s11MDTextKitUI21MDMermaidRenderResultC5imageSo7NSImageCSgvpWvd",
+        "source_address": "0x1a6b44"
+      },
+      {
+        "address": "0x23a350",
+        "value": "_$s11MDTextKitUI21MDMermaidRenderResultC5errors5Error_pSgvpWvd",
+        "source_address": "0x1a6b64"
+      },
+      {
+        "address": "0x23a350",
+        "value": "_$s11MDTextKitUI21MDMermaidRenderResultC5errors5Error_pSgvpWvd",
+        "source_address": "0x1a6b68"
+      },
+      {
+        "address": "0x23a358",
+        "value": "_$s11MDTextKitUI22MDMermaidRenderOptionsC14themeVariablesSDySSypGvpWvd",
+        "source_address": "0x1a68ec"
+      },
+      {
+        "address": "0x23a358",
+        "value": "_$s11MDTextKitUI22MDMermaidRenderOptionsC14themeVariablesSDySSypGvpWvd",
+        "source_address": "0x1a68f0"
+      },
+      {
+        "address": "0x23a3d8",
+        "value": "qword_23a3d8",
+        "source_address": "0x1a69bc"
+      },
+      {
+        "address": "0x23a3d8",
+        "value": "qword_23a3d8",
+        "source_address": "0x1a6c04"
+      },
+      {
+        "address": "0x23a3d8",
+        "value": "qword_23a3d8",
+        "source_address": "0x1a6c1c"
+      },
+      {
+        "address": "0x23a7d0",
+        "value": "_$s11MDTextKitUI30MDAttachmentCoreViewControllerC14textAttachmentSo06SFTextiF0CSgvpWvd",
+        "source_address": "0x1a67fc"
+      },
+      {
+        "address": "0x23a7d0",
+        "value": "_$s11MDTextKitUI30MDAttachmentCoreViewControllerC14textAttachmentSo06SFTextiF0CSgvpWvd",
+        "source_address": "0x1a6800"
+      },
+      {
+        "address": "0x23a7e8",
+        "value": "_$s11MDTextKitUI30MDAttachmentCoreViewControllerC12canLoadAsyncSbvpWvd",
+        "source_address": "0x1a6998"
+      },
+      {
+        "address": "0x23a7e8",
+        "value": "_$s11MDTextKitUI30MDAttachmentCoreViewControllerC12canLoadAsyncSbvpWvd",
+        "source_address": "0x1a699c"
+      },
+      {
+        "address": "0x23ac10",
+        "value": "qword_23ac10",
+        "source_address": "0x1a69dc"
+      },
+      {
+        "address": "0x23ac10",
+        "value": "qword_23ac10",
+        "source_address": "0x1a6a60"
+      },
+      {
+        "address": "0x2c4468",
+        "value": "_OBJC_CLASS_$_MDMermaidTextAttachment",
+        "source_address": "0x1a682c"
+      },
+      {
+        "address": "0x2c4b70",
+        "value": "_kCFRunLoopDefaultMode",
+        "source_address": "0x1a6adc"
+      },
+      {
+        "address": "0x2c4b70",
+        "value": "_kCFRunLoopDefaultMode",
+        "source_address": "0x1a6ae0"
+      }
+    ],
+    "basic_blocks": [
+      {
+        "start": "0x1a67d0",
+        "end": "0x1a6824",
+        "successors": [
+          "0x1a6824",
+          "0x1a6bdc"
+        ]
+      },
+      {
+        "start": "0x1a6824",
+        "end": "0x1a6844",
+        "successors": [
+          "0x1a6844",
+          "0x1a6a2c"
+        ]
+      },
+      {
+        "start": "0x1a6844",
+        "end": "0x1a6950",
+        "successors": [
+          "0x1a6950",
+          "0x1a6a34"
+        ]
+      },
+      {
+        "start": "0x1a6950",
+        "end": "0x1a69d0",
+        "successors": [
+          "0x1a69d0",
+          "0x1a6a50"
+        ]
+      },
+      {
+        "start": "0x1a69d0",
+        "end": "0x1a69d8",
+        "successors": [
+          "0x1a69d8",
+          "0x1a6c00"
+        ]
+      },
+      {
+        "start": "0x1a69d8",
+        "end": "0x1a6a2c",
+        "successors": [
+          "0x1a6bd8"
+        ]
+      },
+      {
+        "start": "0x1a6bd8",
+        "end": "0x1a6bdc",
+        "successors": [
+          "0x1a6bdc"
+        ]
+      },
+      {
+        "start": "0x1a6c00",
+        "end": "0x1a6c18",
+        "successors": [
+          "0x1a69d8"
+        ]
+      },
+      {
+        "start": "0x1a6a50",
+        "end": "0x1a6a5c",
+        "successors": [
+          "0x1a6a5c",
+          "0x1a6c18"
+        ]
+      },
+      {
+        "start": "0x1a6a5c",
+        "end": "0x1a6ad8",
+        "successors": [
+          "0x1a6ad8",
+          "0x1a6b0c"
+        ]
+      },
+      {
+        "start": "0x1a6ad8",
+        "end": "0x1a6af4",
+        "successors": [
+          "0x1a6af4"
+        ]
+      },
+      {
+        "start": "0x1a6af4",
+        "end": "0x1a6b0c",
+        "successors": [
+          "0x1a6af4",
+          "0x1a6b0c"
+        ]
+      },
+      {
+        "start": "0x1a6b0c",
+        "end": "0x1a6b3c",
+        "successors": [
+          "0x1a6b3c",
+          "0x1a6b98"
+        ]
+      },
+      {
+        "start": "0x1a6b3c",
+        "end": "0x1a6b98",
+        "successors": [
+          "0x1a6b9c"
+        ]
+      },
+      {
+        "start": "0x1a6b9c",
+        "end": "0x1a6bd8",
+        "successors": [
+          "0x1a6bd8"
+        ]
+      },
+      {
+        "start": "0x1a6b98",
+        "end": "0x1a6b9c",
+        "successors": [
+          "0x1a6b9c"
+        ]
+      },
+      {
+        "start": "0x1a6c18",
+        "end": "0x1a6c30",
+        "successors": [
+          "0x1a6a5c"
+        ]
+      },
+      {
+        "start": "0x1a6a34",
+        "end": "0x1a6a50",
+        "successors": [
+          "0x1a6bdc"
+        ]
+      },
+      {
+        "start": "0x1a6bdc",
+        "end": "0x1a6c00",
+        "successors": []
+      },
+      {
+        "start": "0x1a6a2c",
+        "end": "0x1a6a34",
+        "successors": [
+          "0x1a6bd8"
+        ]
+      }
+    ],
+    "native_api": null,
+    "native_value_flow": null,
+    "facet_availability": {
+      "pseudocode": {
+        "available": true
+      },
+      "assembly": {
+        "available": true
+      },
+      "comments": {
+        "available": true
+      },
+      "callers": {
+        "available": true
+      },
+      "callees": {
+        "available": true
+      },
+      "references": {
+        "available": true
+      },
+      "strings_names": {
+        "available": true
+      },
+      "cfg": {
+        "available": true
+      }
+    },
+    "limitations": [
+      "Native CallReference classifications are observed where available; detailed reference flags remain unknown.",
+      "Hopper's public Python API does not expose equivalent external or thunk classification in this dossier.",
+      "Native calls without resolved target addresses are not represented as edges; enumeration beyond reported CallReference objects is unknown.",
+      "Pseudocode and assembly are provider-specific representations, not original source."
+    ]
+  },
+  "confidence": "observed",
+  "authority": "shipped-artifact",
+  "environment": null,
+  "limitations": [
+    "REA loaded a verified thin Mach-O slice from the original FAT source. Identity and file offsets refer to the original file. The owned temporary image and its Hopper document close together, including on MCP shutdown.",
+    "Results depend on Hopper's completed static analysis.",
+    "String values cover native typed objects. Hopper may split long literals into adjacent unterminated fragments; string searches match each object independently.",
+    "Undecodable typed objects retain native display text with an explicit decoding unknown; these values do not establish decoded source literals.",
+    "Reported string encodings are inferred from typed bytes and native display; the original source's intended encoding is unknown."
+  ],
+  "relationship_coverage": {
+    "status": "complete"
+  },
+  "locations": [],
+  "evidence_links": []
+}

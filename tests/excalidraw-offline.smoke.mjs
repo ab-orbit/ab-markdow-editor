@@ -25,7 +25,7 @@ try {
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve)); origin = `http://127.0.0.1:${server.address().port}`;
   }
   browser = safari ? await webkit.launch({ headless: true }) : await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } }), page = await context.newPage(), errors = [], api = [], remote = [];
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 } }), page = await context.newPage(), errors = [], api = [], remote = [];
   page.on('pageerror', error => errors.push(error.message)); page.on('dialog', dialog => dialog.accept());
   page.on('request', request => { const url = new URL(request.url()); if (url.pathname.startsWith('/api/')) api.push(url.pathname); if (url.origin !== origin && !['data:', 'blob:'].includes(url.protocol) && url.hostname !== 'static.cloudflareinsights.com') remote.push(url.origin + url.pathname); });
   await page.goto(origin); await expect(page.getByLabel('Arquivo Markdown', { exact: true })).toBeEnabled();

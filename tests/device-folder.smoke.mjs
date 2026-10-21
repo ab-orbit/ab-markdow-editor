@@ -1,7 +1,7 @@
 import {chromium} from '@playwright/test';
 import assert from 'node:assert/strict';
 const browser=await chromium.launch({channel:'chrome',headless:true});
-const page=await browser.newPage({viewport:{width:390,height:844}});
+const page=await browser.newPage({locale:'pt-BR',viewport:{width:390,height:844}});
 // Simulate only the OS picker; real browser directory handles and writable streams perform I/O.
 await page.addInitScript(()=>{window.showDirectoryPicker=async()=>{const root=await navigator.storage.getDirectory();const file=await root.getFileHandle('nota-existente.md',{create:true});const stream=await file.createWritable();await stream.write('# Nota do repositório existente');await stream.close();return root;};});
 try {

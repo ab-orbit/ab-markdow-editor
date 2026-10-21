@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 /** GitHub credentials stay in an HttpOnly server session, never in browser storage. */
 import { isIosApp, iosBridge } from './ios';
 export interface GitHubSelection {
@@ -61,7 +62,7 @@ export async function githubJson<T>(route: string, body?: unknown): Promise<T> {
   const response = await githubRequest(route, body);
   const result = await response.json();
   if (!response.ok)
-    throw new Error(result.error || "Não foi possível conectar ao GitHub.");
+    throw new Error(result.error || t("Não foi possível conectar ao GitHub."));
   return result;
 }
 export async function githubStatus() {

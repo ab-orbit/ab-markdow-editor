@@ -6,7 +6,10 @@ export interface DraftSnapshot {
   /** Explicit document closure restores an empty workspace instead of a discarded note. */
   documentClosed?: boolean;
   /** Checkout identity retained for offline editing and safe reconnection. */
-  repository: {repository: string | null; branch: string; status: string};
+  repository: {
+    /** Canonical private/GitHub library key; translated names never determine ownership. */
+    scope?: string;
+    repository: string | null; branch: string; status: string};
   /** Current document-relative filename. */
   name: string;
   /** Last destination associated with the on-disk version. */

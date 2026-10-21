@@ -7,16 +7,17 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "build": "tsc --noEmit && vite build && node scripts/build-pwa.mjs && node scripts/build-picker.mjs",
+    "build": "npm run check:locales && tsc --noEmit && vite build && node scripts/build-pwa.mjs && node scripts/build-picker.mjs",
     "start": "node server/index.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:e2e": "playwright test",
     "stop": "node scripts/stop.mjs",
     "icons": "node scripts/build-icons.mjs",
-    "ios:sync": "tsc --noEmit && VITE_STORAGE_MODE=browser VITE_APP_PLATFORM=ios vite build --outDir dist-ios && node scripts/prepare-ios.mjs && cap sync ios",
+    "ios:sync": "npm run check:locales && tsc --noEmit && VITE_STORAGE_MODE=browser VITE_APP_PLATFORM=ios vite build --outDir dist-ios && node scripts/prepare-ios.mjs && cap sync ios",
     "ios:open": "cap open ios",
     "ios:archive": "node scripts/archive-ios.mjs",
-    "screenshots:store": "node scripts/build-store-screenshots.mjs"
+    "screenshots:store": "node scripts/build-store-screenshots.mjs",
+    "check:locales": "node scripts/check-locales.mjs"
   },
   "dependencies": {
     "@capacitor/core": "8.5.3",
@@ -24,6 +25,7 @@
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-markdown": "^6.5.2",
     "@codemirror/language": "^6.13.1",
+    "@codemirror/language-data": "^6.5.2",
     "@codemirror/state": "^6.7.6",
     "@codemirror/view": "^6.43.14",
     "@excalidraw/excalidraw": "0.18.1",
@@ -44,14 +46,20 @@
     "beautiful-mermaid": "1.1.3",
     "dompurify": "3.4.17",
     "fflate": "^0.8.3",
+    "katex": "^0.19.0",
     "lucide-react": "^1.7.0",
     "mermaid": "12.2.0",
+    "micromark-util-decode-string": "^2.0.1",
     "pdfmake": "0.3.12",
     "pele": "1.6.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "remark-parse": "11.0.0",
     "shiki": "4.5.0",
     "unified": "11.0.5"
@@ -59,6 +67,7 @@
   "devDependencies": {
     "@capacitor/cli": "8.5.3",
     "@playwright/test": "^1.62.0",
+    "@types/katex": "^0.16.8",
     "@types/node": "^22",
     "@types/pdfmake": "^0.3.3",
     "@types/react": "^19",

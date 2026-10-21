@@ -277,3 +277,38 @@ body { font-family: var(--font-ui); }
 button.source-reload-pending { color: var(--status-warn); border-color: var(--status-warn); }
 .reload-confirmation { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 600px) { .source-change { flex-wrap: wrap; } .source-change button { margin-left: 28px; } }
+
+/* Compact note commands keep creation and search in one consistent header. */
+.notes-commandbar { gap: 4px; min-height: 44px; }
+.notes-commandbar > .notes-header-actions { display: flex; flex: 0 0 auto; gap: 2px; }
+.notes-commandbar .notes-header-actions button { width: 36px; min-width: 36px; min-height: 36px; height: 36px; padding: 6px; border: 1px solid var(--border-panel); border-radius: var(--radius-full); background: transparent; }
+.notes-commandbar .notes-header-actions button:hover { color: var(--text-primary); background: var(--bg-hover); }
+.notes-menu { position: relative; min-width: 0; }
+.notes-menu summary { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; list-style: none; cursor: pointer; font: 650 14px var(--font-ui); color: var(--text-primary); }
+.notes-menu summary::-webkit-details-marker { display: none; }
+.notes-menu-content { position: absolute; top: 100%; left: 0; z-index: 8; min-width: 190px; padding: 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--bg-surface); }
+.notes-menu-content button { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; min-height: 44px; }
+.notes-menu-content p { padding: 6px; }
+@media (max-width: 1024px), (pointer: coarse) {
+ .notes-commandbar .notes-header-actions button { width: 44px; min-width: 44px; height: 44px; min-height: 44px; }
+}
+
+/* Keep conflict recovery actions below the filename in a compact, responsive dialog. */
+.editor-app .file-conflict-dialog { width: min(720px, calc(100vw - 32px)); max-width: 720px; font-family: var(--font-ui); }
+.editor-app .file-conflict-dialog form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-bottom: 0; }
+.editor-app .file-conflict-dialog form label { min-width: 0; }
+.editor-app .file-conflict-dialog footer { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 0; }
+.editor-app .file-conflict-dialog footer button { flex: 0 1 auto; font-size: var(--text-sm); }
+@media (max-width: 600px) {
+  .editor-app .file-conflict-dialog footer { flex-direction: column; align-items: stretch; }
+}
+
+/* Quiet sidebar actions retain their hit area and keyboard focus without circular frames. */
+.notes-commandbar .notes-header-actions button { border-color: transparent; border-radius: var(--radius-sm); }
+@media (min-width: 900px) {
+ .notes-sidebar { flex-basis: var(--desktop-sidebar-width); width: var(--desktop-sidebar-width); }
+ .notes-menu summary { font-size: 16px; }
+ .notes-sidebar nav strong { font-size: var(--desktop-ui-size); }
+ .note-preview, .notes-search input { font-size: 14px; }
+ .notes-sidebar time, .note-group h3 { font-size: var(--desktop-ui-caption); }
+}

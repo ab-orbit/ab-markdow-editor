@@ -25,7 +25,7 @@ try {
   server=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'0',MARKDOWN_STATE_DIR:state,MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});
   let origin;for(let i=0;i<100;i++){try{origin=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}assert.ok(origin);
   browser=await chromium.launch({channel:'chrome',headless:true});
-  const page=await browser.newPage({viewport:{width:1440,height:900},serviceWorkers:'block'});
+  const page=await browser.newPage({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:'block'});
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   let calls=0;
   await page.route('**/api/sync',async route=>{calls++;await new Promise(resolve=>setTimeout(resolve,250));await route.continue();});

@@ -69,7 +69,7 @@ const server = http.createServer(async (req, res) => {
       for await (const chunk of req) { size += chunk.length; if (size > 65 * 1024 * 1024) throw new Error('Envio maior que 65 MB.'); chunks.push(chunk); }
       const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
       const actions = {
-        '/api/library/initialize': () => repository.initializeLibrary(),
+        '/api/library/initialize': () => repository.initializeLibrary(body),
         '/api/pin': () => repository.pin(body),
         '/api/pick-folder': () => pickFolder(),
         '/api/pick-save-as': async () => {

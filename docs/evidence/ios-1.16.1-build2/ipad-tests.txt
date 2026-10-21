@@ -1,0 +1,12 @@
+Test Case '-[ScribaTests.ScribaTests testBundledEditorAndPrivatePersistence]' passed (1.704 seconds).
+Test Case '-[ScribaTests.ScribaTests testLandscapeAndPortraitLayout]' passed (0.006 seconds).
+Test Case '-[ScribaTests.ScribaTests testNativeFilesRoundTripConflictsAndReload]' passed (0.041 seconds).
+Test Case '-[ScribaTests.ScribaTests testReferenceDiagramsCanvasAndSystemSheets]' passed (2.894 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 4.645 (4.647) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 4.645 (4.647) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 4.645 (4.648) seconds
+Test Case '-[ScribaUITests.ScribaUITests testRotationAndStoreScreenshots]' passed (7.669 seconds).
+	 Executed 1 test, with 0 failures (0 unexpected) in 7.669 (7.670) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 7.669 (7.671) seconds
+	 Executed 1 test, with 0 failures (0 unexpected) in 7.669 (7.671) seconds
+** TEST SUCCEEDED **

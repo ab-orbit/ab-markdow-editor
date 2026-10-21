@@ -24,3 +24,40 @@
   .header button { min-width: 44px; min-height: 44px; }
   .list a { min-height: 44px; padding-block: 11px; }
 }
+
+.list li { display: flex; align-items: flex-start; }
+.foldToggle { display: inline-flex; justify-content: center; align-items: center; flex: 0 0 30px; width: 30px; min-height: 44px; padding: 4px; border: 0; background: transparent; color: var(--text-secondary); cursor: pointer; }
+.list li[data-level] a { flex: 1; min-width: 0; padding-inline: 4px; min-height: 44px; }
+.levelBadge { display: inline-block; margin-right: 5px; font: 10px var(--font-mono); color: var(--text-secondary); }
+.list li[data-level="1"] a { font-size: 16px; font-weight: 750; }
+.list li[data-level="2"] a { font-size: 14px; font-weight: 650; }
+.list li[data-level="3"] a { font-size: 13px; font-weight: 600; }
+.list li[data-level="4"] a { font-size: 12px; font-weight: 600; }
+.list li[data-level="5"] a { font-size: 12px; font-weight: 500; }
+.list li[data-level="6"] a { font-size: 12px; font-weight: 400; }
+.foldToggle:hover { background: var(--bg-hover); color: var(--cyan); }
+@media (pointer: coarse) { .foldToggle { flex-basis: 44px; width: 44px; } }
+
+.header .headerActions { display: flex; align-items: center; gap: 0; }
+.foldSpacer { flex: 0 0 30px; width: 30px; }
+@media (pointer: coarse) { .foldSpacer { flex-basis: 44px; width: 44px; } }
+
+.embedded { width: 100%; flex: 1; border: 0; background: transparent; }
+.embedded .header { min-height: 36px; padding: 0 4px; justify-content: flex-end; border: 0; }
+.embedded .header > div:first-child, .embedded .levelBadge { display: none; }
+.embedded .list { padding: 0; flex: 1; }
+.embedded .list a { min-height: 44px; color: var(--text-secondary); border-radius: 0; border-bottom: 1px solid var(--border-panel); }
+
+/* A quiet hierarchy keeps long titles readable without heavy heading typography. */
+.list li[data-level] a { font-size: 14px; font-weight: 400; line-height: 1.4; color: var(--text-secondary); border-inline-start: 0; border-radius: 0; border-bottom: 1px solid var(--border-panel); }
+.list li[data-level="1"] a { font-weight: 600; color: var(--text-primary); }
+.list li[data-level="2"] a { color: var(--text-primary); }
+.levelBadge { display: none; }
+.list li a[aria-current="location"] { color: var(--text-primary); background: var(--bg-hover); }
+.foldToggle { color: var(--text-secondary); }
+.embedded .list li[data-level] a { padding-block: 10px; }
+.embedded .foldToggle, .embedded .header button { border: 0; background: transparent; border-radius: var(--radius-sm); padding: 4px; box-shadow: none; }
+.embedded .foldToggle:hover, .embedded .header button:hover { background: var(--bg-hover); color: var(--text-primary); }
+/* Global folding sits beside the sheet's close action, without an extra toolbar row. */
+.embedded .header { position: absolute; inset: 16px 64px auto auto; min-height: 44px; margin: 0; padding: 0; }
+.embedded .header { z-index: 3; }

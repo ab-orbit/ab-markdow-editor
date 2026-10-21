@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { ensureDiagramFontsLoaded, ensureDiagramIconsLoaded, getDiagramFontFaceCss, renderToSvg, setDiagramFontUrl } from '@zenuml/core';
 import { validate } from '@zenuml/core/parser';
 import { scopeDiagramSvg } from './diagrams';
@@ -10,15 +11,15 @@ setDiagramFontUrl(plexUrl);
 /** Keep the official layout/font metrics and local vector icons, without its HTML UI. */
 export async function renderZenUml(source: string): Promise<string> {
   const code = source.replace(/^\s*zenuml\s*(?:\n|$)/i, '');
-  if (!code.trim()) throw new Error('Adicione participantes e mensagens ao bloco ZenUML.');
+  if (!code.trim()) throw new Error(t("Adicione participantes e mensagens ao bloco ZenUML."));
   const parsed = validate(code);
   if (!parsed.pass) {
     const error = parsed.errorDetails[0];
-    throw new Error(error ? `ZenUML · linha ${error.line}, coluna ${error.column + 1}: ${error.msg}` : 'Confira a sintaxe ZenUML.');
+    throw new Error(error ? `ZenUML · linha ${error.line}, coluna ${error.column + 1}: ${error.msg}` : t("Confira a sintaxe ZenUML."));
   }
   await Promise.all([ensureDiagramFontsLoaded(), ensureDiagramIconsLoaded(code)]);
   const result = renderToSvg(code, { theme: 'theme-default', enableNumbering: true });
-  if (!(result.width > 0 && result.height > 0)) throw new Error('O bloco não contém um diagrama ZenUML válido.');
+  if (!(result.width > 0 && result.height > 0)) throw new Error(t("O bloco não contém um diagrama ZenUML válido."));
   const template = document.createElement('template'); template.innerHTML = result.svg;
   const root = template.content.querySelector('svg')!;
   // A repeated cloud icon can bring repeated gradient/path IDs from the

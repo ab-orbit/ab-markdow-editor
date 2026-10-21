@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import type { MermaidConfig } from 'mermaid';
 import type { DiagramAppearance } from './diagrams';
 
@@ -95,7 +96,7 @@ export function presentC4(root: SVGSVGElement, host: HTMLElement, appearance: Di
     // Leave other paints from UpdateElementStyle/UpdateRelStyle untouched.
     root.querySelectorAll<SVGElement>('[fill="#444444"]').forEach(node => node.setAttribute('fill', appearance.foreground));
     root.querySelectorAll<SVGElement>('[stroke="#444444"]').forEach(node => node.setAttribute('stroke', appearance.muted));
-    root.querySelectorAll<SVGElement>('marker path').forEach(node => node.setAttribute('fill', appearance.muted));
+    root.querySelectorAll<SVGElement>("marker path").forEach(node => node.setAttribute('fill', appearance.muted));
     for (const node of root.querySelectorAll<SVGTextElement>(':scope > g > text')) {
       if (node.closest('.c4-shape')) continue;
       // A narrow halo separates connection labels from the line behind them.

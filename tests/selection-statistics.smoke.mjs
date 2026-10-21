@@ -33,7 +33,7 @@ try {
     assert.ok(origin);
   }
   browser = safari ? await webkit.launch({ headless: true }) : await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' });
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' });
   page = await context.newPage(); const errors = [], api = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')) api.push(request.url()); });

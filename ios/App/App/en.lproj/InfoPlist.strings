@@ -1,0 +1,3 @@
+// System permission explanations follow the iOS app language.
+"NSCameraUsageDescription" = "Take a photo only when you choose to insert an image into your note.";
+"NSPhotoLibraryUsageDescription" = "Choose the images you want to insert into your note.";

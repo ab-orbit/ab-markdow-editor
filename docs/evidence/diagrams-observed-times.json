@@ -3,15 +3,15 @@
   "measurements": [
     {
       "engine": "mermaid",
-      "timing": "Tempo de desenho: 119.6 milissegundos"
+      "timing": "Tempo de desenho: 107.5 milissegundos"
     },
     {
       "engine": "pele",
-      "timing": "Tempo de desenho: 4.3 milissegundos"
+      "timing": "Tempo de desenho: 4.4 milissegundos"
     },
     {
       "engine": "beautiful",
-      "timing": "Tempo de desenho: 48.5 milissegundos"
+      "timing": "Tempo de desenho: 47.0 milissegundos"
     }
   ]
 }

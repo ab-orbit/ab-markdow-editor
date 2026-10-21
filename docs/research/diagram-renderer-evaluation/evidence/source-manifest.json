@@ -1,0 +1,54 @@
+{
+  "reviewDate": "2026-10-18",
+  "repository": "https://github.com/amrebada/markdown-viewer",
+  "commit": "cbca71054774fbc5fa3e898938085702e7636344",
+  "method": "Static source review and isolated Markdown parser-boundary experiment",
+  "externalApplicationExecuted": false,
+  "diagramRenderingBenchmarked": false,
+  "parserExperimentExecuted": true,
+  "externalFiles": [
+    {
+      "path": "package.json",
+      "bytes": 2552,
+      "sha256": "91c7d80dde003fe3822531a1264005c0acb9390ab5c8411f58efe71a13e89e59",
+      "url": "https://github.com/amrebada/markdown-viewer/blob/cbca71054774fbc5fa3e898938085702e7636344/package.json"
+    },
+    {
+      "path": "yarn.lock",
+      "bytes": 263606,
+      "sha256": "6798b60ea38038b26c110d95c39ca0b103ba7479808d44d3939d21f92d98c7c6",
+      "url": "https://github.com/amrebada/markdown-viewer/blob/cbca71054774fbc5fa3e898938085702e7636344/yarn.lock"
+    },
+    {
+      "path": "src/components/markdown-viewer.tsx",
+      "bytes": 3182,
+      "sha256": "2332f5ed0c69303657a9777b95462aec3bcb7cdd7027fdc0a7297c7290b79e15",
+      "url": "https://github.com/amrebada/markdown-viewer/blob/cbca71054774fbc5fa3e898938085702e7636344/src/components/markdown-viewer.tsx"
+    },
+    {
+      "path": "src/components/markdown-editor.tsx",
+      "bytes": 6863,
+      "sha256": "b7e9e2ad4c2d09f8d797cb75cb56ffbd7db3e7bc006f7df6b21c6c4255930113",
+      "url": "https://github.com/amrebada/markdown-viewer/blob/cbca71054774fbc5fa3e898938085702e7636344/src/components/markdown-editor.tsx"
+    },
+    {
+      "path": "src/actions/file-actions.ts",
+      "bytes": 1864,
+      "sha256": "a9c9c927af843c94c7c6a1a2529a9d9c5c644f921456bb480002b1ab0c016fc1",
+      "url": "https://github.com/amrebada/markdown-viewer/blob/cbca71054774fbc5fa3e898938085702e7636344/src/actions/file-actions.ts"
+    },
+    {
+      "path": "src/app/globals.css",
+      "bytes": 4764,
+      "sha256": "be24011a8308cc93fa1fcc8374830a5f727610bcf3101f191f3fea989e8762ab",
+      "url": "https://github.com/amrebada/markdown-viewer/blob/cbca71054774fbc5fa3e898938085702e7636344/src/app/globals.css"
+    }
+  ],
+  "experiment": {
+    "file": "parser-boundary-experiment.mjs",
+    "sha256": "5f7929018057e42e9cc3d4051d6bd593363cda178332c19ecffb6104136184c1",
+    "nodeVersion": "v24.22.0",
+    "reactVersion": "19.2.4",
+    "reactMarkdownVersion": "10.1.0"
+  }
+}

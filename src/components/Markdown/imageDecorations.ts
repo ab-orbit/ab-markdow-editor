@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { StateField, type EditorState } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
@@ -10,7 +11,7 @@ class ImageWidget extends WidgetType {
   toDOM(view: EditorView) {
     const figure = document.createElement('figure'); figure.className = 'md-live-image';
     const image = document.createElement('img'); image.src = this.url; image.alt = this.alt; image.draggable = false;
-    const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Editar descrição / caminho';
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = t("Editar descrição / caminho");
     button.addEventListener('click', () => { view.dispatch({ selection: { anchor: this.from } }); view.focus(); });
     figure.append(image, button); return figure;
   }

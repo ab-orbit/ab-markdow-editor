@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import type { PhrasingContent, Root, RootContent } from 'mdast';
 
 /** Annotate unresolved footnote syntax without fabricating definitions or links. */
@@ -12,7 +13,7 @@ export function remarkMissingFootnotes() {
         for (const match of child.value.matchAll(/\[\^([^\]\s]+)\]/gu)) {
           const index = match.index!;
           if (index > offset) children.push({ type: 'text', value: child.value.slice(offset, index) });
-          const label = `Referência ${match[1]} sem definição no arquivo`;
+          const label = t("Referência {0} sem definição no arquivo", match[1]);
           children.push({
             type: 'emphasis',
             data: { hName: 'sup', hProperties: { 'data-missing-footnote': match[1], title: label, 'aria-label': label } },

@@ -1,0 +1,109 @@
+OVERVIEW: Command line tool for reading and writing Bear notes.
+
+USAGE: bearcli [--version] <subcommand>
+
+OPTIONS:
+  -v, --version           Show the version.
+  -h, --help              Show help information.
+
+SUBCOMMANDS:
+  list                    List notes without a search query.
+  search                  Search notes using Bear's search syntax.
+  cat                     Print a note's raw content.
+  show                    Show note fields as a structured row. Use cat for raw
+                          content.
+  outline                 List a note's sections with their addresses and byte
+                          ranges.
+  search-in               Find exact string occurrences within a single note
+                          and its attachments.
+  create                  Create a new note.
+  append                  Append or prepend content to a note, or to one
+                          section of it.
+  edit                    Edit a note by finding an exact string and replacing
+                          it, inserting around it, or deleting it.
+  overwrite               Overwrite a note's content, or one section of it.
+  tags                    Manage tags.
+  attachments             Manage attachments on a note.
+  pin                     Manage pins on a note.
+  trash                   Move a note to the trash (soft-delete).
+  archive                 Move a note to the archive.
+  restore                 Move a note back to the active notes list.
+  app                     Interact with the running Bear app.
+  mcp-server              MCP server over stdio, an alternative interface to
+                          the CLI.
+
+HELP:
+  bearcli -h / help           This short overview.
+  bearcli help <subcommand>   Detailed help for one command.
+  bearcli help all            Full reference for every command (pipe to an AI).
+  bearcli --generate-completion-script <shell>   Shell completions (zsh|bash|fish).
+
+OUTPUT FORMATS:
+  --format tsv   Tab-separated, no header (default).
+  --format csv   Comma-separated, RFC 4180, with header row.
+  --format json  Single JSON document on stdout. Every command produces
+                 valid JSON when this flag is set, including errors.
+
+  --fields f1,f2   Select fields (comma-separated, or "all").
+  Default fields vary by command. See command --help.
+
+JSON OUTPUT SHAPES:
+  Returns many items → `[{...},{...}]`  (empty: `[]`)
+  Returns one item   → `{...}`
+  errors             → `{"error":{"code":"...","message":"..."}}` on stdout
+
+  Some read commands have a bespoke shape: cat → `{"content":"..."}`,
+  attachments save → `{"filename":...,"size":N,"base64":"..."}`. See the
+  command's --help.
+
+  Commands that change state or perform an app action write nothing on
+  success and do not accept --format. The exit code is the signal. Use the
+  MCP server if you need a structured response from a write.
+
+CONVENTIONS:
+  Exit codes: 0 success, 1 business error, 64 usage error.
+  Errors go to stderr as plain text for TSV/CSV. With --format json they
+  go to stdout as a JSON object. Exit code is unchanged.
+  Tags: #single, #multi word#, #nested/child. Input with or without #.
+  Timestamps: ISO 8601 UTC (YYYY-MM-DDTHH:MM:SSZ).
+  TSV escaping: \n \r \t \\. Text flags unescape the same. Stdin does not.
+  --content reads from stdin when omitted.
+  Note ID or --title (case-insensitive) to identify notes.
+  Encrypted note content is not accessible through the CLI.
+
+ADDRESSING SECTIONS:
+  Addressing a section: an address is one or more heading lines joined by
+  newlines (write `\n`: the CLI interprets it, and JSON encodes it as a newline),
+  written as they appear, `#` markers and all (surrounding and repeated
+  spaces don't matter, but case does). A
+  heading that is unique in the note stands alone. If it
+  repeats, prepend one or more enclosing ancestor headings, ordered outer to
+  inner, and/or end with a 1-based index line that selects the Nth section
+  matching the lines above it, in document order. A trailing
+  `preamble` line addresses a section's lead text, above its first
+  subheading. Either pass a heading you know (a missing or ambiguous one
+  comes back with a helpful error suggesting addresses to retry with), or
+  outline the note to get every section's address. Examples:
+    "## Install"               a uniquely-named section
+    "# Setup\n## Install"      the ## Install under # Setup, when it repeats elsewhere
+    "# Build\n## Install\n2"   the 2nd ## Install under # Build (ancestors and index combine)
+    "## Install\npreamble"     the lead text of ## Install, above its first subheading
+
+MARKDOWN:
+  Bear notes use a CommonMark variant with these additions:
+    ==highlight==, ~underline~, ~~strike~~
+    ==🔴highlight== (or 🔵 🟢 🟡 🟣): colored highlight
+    #tag, #multi word tag#, #nested/tag
+    [[Note Title]] and [[Title|alias]] wikilinks
+    $inline math$ and $$ ... $$ block math
+    Tasks: - [ ] todo, - [x] done
+    GFM-style tables (pipes required at both ends of every row)
+    Callouts: > [!NOTE] (or TIP, IMPORTANT, WARNING, CAUTION)
+    YAML front matter: --- fenced, opening on the note's first line
+
+  A few CommonMark rules are also disabled: setext headings, indented
+  code blocks, and lazy continuation. Continuation lines in lists and
+  block quotes must carry their own indentation or > marker.
+
+  Bear soft-wraps long lines, so a paragraph hard-wrapped with
+  newlines shows as ragged short lines instead of reflowed text.

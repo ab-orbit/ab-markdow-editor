@@ -981,3 +981,6 @@
   --diagram-code-token-function: #17627e; --diagram-code-token-parameter: #30383b;
   --diagram-code-token-link: #17627e; --diagram-code-token-punctuation: #494949;
 }
+
+/* Desktop application chrome is independent from document typography. */
+:root { --desktop-ui-size: 15px; --desktop-ui-caption: 13px; --desktop-sidebar-width: 280px; }

@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import {useEffect, useRef, useState} from 'react';
 
 interface Options<T extends {version: string | null}> {
@@ -49,7 +50,7 @@ export function useDocumentReload<T extends {version: string | null}>(options: O
       if(ticket!==sequence.current||current.identity!==snapshot.identity||!current.enabled||current.blocked||current.isBlocked?.())return;
       if(automatic&&(current.dirty||current.pending)){setChange({kind:'modified',version:document.version});return;}
       setChange(null);current.apply(document,automatic);
-    }catch(error){if(ticket===sequence.current&&latest.current.identity===snapshot.identity)setChange({kind:'error',version:null,message:error instanceof Error?error.message:'Não foi possível recarregar. Seu texto continua no editor.'});}
+    }catch(error){if(ticket===sequence.current&&latest.current.identity===snapshot.identity)setChange({kind:'error',version:null,message:error instanceof Error?error.message:t("Não foi possível recarregar. Seu texto continua no editor.")});}
     finally{if(loading.current===ticket){loading.current=null;setReloading(false);setManualLock(false);}}
   }
   const reload=useRef(load);reload.current=load;

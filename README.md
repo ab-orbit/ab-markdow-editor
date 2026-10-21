@@ -6,6 +6,16 @@ Scriba também tem uma versão pública em [scriba.aeonbridge.app](https://scrib
 
 Editor Markdown extraído do Lab do AB-POLInSights, como aplicação web local independente para macOS (Apple Silicon e Intel). A pasta contém todo o código e pode ser distribuída sozinha em outro repositório. O Lab original não é alterado e não é necessário para instalar ou executar esta aplicação.
 
+## Idioma da interface
+
+Em **Configurações → Idioma da interface**, escolha **Automático**, **Português**, **English**, **Deutsch** ou **Français**. O modo automático acompanha o idioma principal do dispositivo/navegador, incluindo variantes regionais; idiomas sem suporte usam inglês. A escolha manual fica salva neste aplicativo/navegador. A troca altera menus, avisos, datas e controles do desenho, sem reescrever notas ou desenhos. As traduções vêm no aplicativo e funcionam offline. [Validação e manutenção dos catálogos](docs/evidence/localization/README.md).
+
+## Fórmulas matemáticas
+
+Ler, Visão e Escrever renderizam TeX com KaTeX e fontes locais: `$...$`, `$$...$$`, `\(...\)`, `\[...\]` e blocos `math`, `latex` ou `tex`. Inclui frações, índices, potências, símbolos gregos, conjuntos, probabilidades, integrais, somatórios, matrizes, alinhamentos e funções por partes. No modo Escrever, clique numa fórmula para editar seu LaTeX; Enter aplica e Esc cancela.
+
+A compatibilidade com notas importadas reconhece comandos matemáticos sem delimitadores e barras duplicadas, preservando o Markdown original. Em novas notas, prefira delimitadores explícitos para evitar ambiguidades com texto comum. Código e links não passam pela inferência matemática. [Validação com o guia de privacidade diferencial](docs/evidence/math/README.md).
+
 ## Instalar no Mac
 
 Baixe ou clone este repositório, abra o Terminal na pasta do editor e execute:
@@ -162,7 +172,7 @@ O bundle é gerado localmente, sem assinatura/notarização de distribuição. A
 
 O ícone representa um escriba egípcio nas cores do SPHINX: azul profundo, laranja e papiro claro. Ele aparece no favicon, no aplicativo do Mac e na instalação PWA.
 
-Nas configurações, use **Instalar aplicativo** quando disponível; no Safari do Mac, **Arquivo → Adicionar ao Dock**. Depois do primeiro acesso, o editor abre offline e recupera automaticamente texto e imagens em rascunhos locais do navegador. A exportação também funciona offline. Para salvar no repositório e sincronizar Git, mantenha o serviço local aberto pelo ícone da Mesa; o push precisa de conexão ao remoto. O endereço local permanece em `http://127.0.0.1:43127`.
+Nas configurações, use **Instalar aplicativo** quando disponível; no Safari do Mac, **Arquivo → Adicionar ao Dock**. Depois do primeiro acesso, o editor abre offline e recupera automaticamente texto e imagens em rascunhos locais do navegador. A exportação também funciona offline. No Mac, o instalador registra um serviço de usuário do macOS: ele inicia ao entrar na sessão e reinicia se cair. O PWA e o navegador encontram esse mesmo serviço, e o editor reconecta automaticamente sem substituir o rascunho aberto. O push precisa de conexão ao remoto. O endereço local permanece em `http://127.0.0.1:43127`.
 
 Veja [funcionamento e limites da PWA](docs/PWA.md) e [origem do ícone](docs/ICON.md).
 
@@ -212,14 +222,12 @@ In Settings → GitHub, connect an account, choose an existing repository and th
 
 The account login button requires one-time activation of the organization's GitHub App. A repository-limited fine-grained token can also be used. See [authentication, deployment and conflict handling](docs/GITHUB.md).
 
-## Contextual diagram reference
+## Reference texts by language
 
-[Scriba — Manual contextual de diagramas](docs/Scriba-Diagramas.md) is the canonical, versioned Portuguese reference: 58 original examples across 33 Mermaid families (including the `info` diagnostic), plus 25 ZenUML sequence examples, a catalog of 513 cloud/infrastructure annotation keys and 29 editable Excalidraw scenes, with a question, interpretation, adaptation advice and measured compatibility for each example. The manual covers processes, state, data models, C4 architecture, planning, quantitative charts and analytical frameworks.
+The default reference is now an independent authored Markdown file for each interface language, bundled under [docs/reference-texts](docs/reference-texts). Portuguese, English, German and French each keep their own filename and title. All four use `![cover](assets/cover.jpg)` with the same bundled JPEG.
 
-Version 1.8 adds an editable pinned copy beside the platform guide, including existing libraries. Browser storage, selected GitHub destinations and the Mac Git checkout each receive their own copy once. Existing unrelated filenames get a numbered alternative; copied references are adopted. Later edits, unpinning and deletion are respected. Local-only repository switches do not trigger an automatic commit or push. The macOS installer includes the canonical source so seeding works offline.
+The reference for the selected language is added to the private library or selected repository once. Changing language adds its corresponding reference without rewriting the open note. Later edits, unpinning and deletion are respected. Filename collisions receive a numbered alternative; an unrelated repository cover is preserved by placing references in a separate folder. Existing notes and legacy manuals remain intact. Older clients that omit the language parameter retain the legacy initialization API.
 
-The reference's Unicode index links navigate inside the note. Compare engines, reveal the original source and use the existing magnifier on each drawing. Compatibility is limited to the tested examples, not a guarantee for every grammar combination. [Browser-rendering evidence](docs/evidence/diagram-reference/README.md) records the exact versions and results.
+Validation: `node --test tests/reference-texts.test.mjs`; `node tests/reference-texts.smoke.mjs`; `MARKDOWN_BROWSER=webkit node tests/reference-texts.smoke.mjs`. [Evidence](docs/evidence/reference-texts/README.md).
 
-Validation: `npm test`; local build followed by `node tests/diagram-reference.smoke.mjs`; public build followed by `node tests/diagram-reference-browser.smoke.mjs`. The browser checks use isolated storage and test repositories, never real user notes.
-
-ZenUML and Excalidraw reference upgrades append their versioned sections to an existing owned manual once, preserving previous bytes, annotations and unpinned state. Deleted manuals, user replacements and previously removed reference sections are not restored or overwritten. Browser, device-folder and Git destinations keep their existing save/conflict behavior.
+The [legacy Portuguese manual](docs/Scriba-Diagramas.md) remains archived for compatibility and its historical rendering evidence; updated clients use the independent localized texts.

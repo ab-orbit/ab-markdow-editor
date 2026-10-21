@@ -22,7 +22,7 @@ if (!origin) {
 const safari = process.env.MARKDOWN_BROWSER === 'webkit';
 const browser = await (safari ? webkit.launch({ headless: true }) : chromium.launch({ channel: 'chrome', headless: true }));
 try {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), page = await context.newPage(), errors = [];
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), page = await context.newPage(), errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(origin);
   const workbench = page.getByLabel('Bancada Markdown'), editor = page.locator('.cm-content'), confirmation = page.getByRole('dialog', { name: 'Salvar antes de criar uma nova nota?', exact: true });

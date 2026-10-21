@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { StateField, type EditorState } from '@codemirror/state';
 import { syntaxTree } from '@codemirror/language';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
@@ -42,7 +43,7 @@ export function diagramDecorations(scope: string) {
       if (!language) return;
       const parts: string[] = [];
       for (let child = node.node.firstChild; child; child = child.nextSibling) if (child.name === 'CodeText') parts.push(state.sliceDoc(child.from, child.to));
-      const source = parts.join(''), key = `${language}:${diagramSourceKey(source)}`, occurrence = occurrences.get(key) || 0;
+      const source = parts.join(""), key = `${language}:${diagramSourceKey(source)}`, occurrence = occurrences.get(key) || 0;
       occurrences.set(key, occurrence + 1);
       const widget = new DiagramWidget(source, node.from, node.to, scope, occurrence, language);
       const active = rawBlockContains(state, node.from, node.to) || state.selection.ranges.some(range => range.from <= node.to && range.to >= node.from);

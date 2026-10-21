@@ -16,17 +16,50 @@
   "description": "Scriba é um editor Markdown para escrever, ler e organizar suas ideias. Comece sem criar uma conta e mantenha suas notas no dispositivo.\n\nESCREVA E LEIA\nEdite diretamente no texto formatado ou abra o código Markdown. Use títulos, listas, tarefas, tabelas, links e imagens. Navegue pelo índice de títulos e confira palavras, caracteres e seleção.\n\nORGANIZE\nBusque nas notas recentes, fixe as mais importantes e acompanhe as alterações. Os guias incluídos apresentam exemplos editáveis para começar.\n\nDESENHE\nVisualize diagramas Mermaid e ZenUML, compare motores compatíveis e crie desenhos com Excalidraw. Amplie, inspecione o código e exporte SVG ou PNG transparente.\n\nESCOLHA O DESTINO\nTrabalhe offline, selecione uma pasta em Arquivos ou conecte opcionalmente seu GitHub. Importe Markdown e pacotes ZIP; compartilhe notas e imagens pelo menu do sistema. A sincronização GitHub ocorre enquanto o aplicativo está aberto e conectado.\n\nSEUS ARQUIVOS\nNotas privadas ficam no aplicativo até você escolher um destino. Exporte backups antes de remover o aplicativo. Um repositório GitHub público torna públicos os arquivos sincronizados.\n\nAB Markdown Editor, por Aeon Bridge Co.",
   "reviewNotes": "The app works without registration. Launch and open the two pinned reference notes; all diagram engines, fonts and the visual drawing editor ship inside the binary and work offline on first launch. Settings > Onde guardar suas notas > Selecionar pasta em Files opens the native iOS directory picker and retains the security-scoped permission. Saves use coordinated atomic file writes and reject external conflicts. Export uses the native share sheet. GitHub is an optional client integration, not the primary account/login for Scriba; ASWebAuthenticationSession opens the official authorization flow. No purchases, ads, tracking, live drawing rooms or remote code updates. GitHub background synchronization is not claimed.",
   "releaseType": "MANUAL",
-  "submissionStatus": "WAITING_FOR_APP_STORE_AND_EXTERNAL_BETA_REVIEW",
+  "submissionStatus": "APP_STORE_REJECTED_INFORMATION_NEEDED",
   "submittedAt": "2026-10-19T21:38:20Z",
   "euDsaStatus": "TRADER_IN_REVIEW",
-  "ownerInputRequired": [],
+  "ownerInputRequired": [
+    "Physical-device screen recording on the latest operating system, matching the build to be reviewed",
+    "Physical-device QA results and device/OS/build details"
+  ],
   "pendingAppleReviews": [
-    "App Store version 1.13.0 (1)",
-    "External TestFlight build 1.13.0 (1)",
-    "EU DSA trader documentation"
+    "External TestFlight status requires verification",
+    "EU DSA trader status requires verification"
   ],
   "developerTeamName": "Jefferson Cunha",
   "reviewContactEmail": "contact@aeonbridge.com",
   "brandName": "Aeon Bridge Co.",
-  "appStoreConnectId": "6824664840"
+  "appStoreConnectId": "6824664840",
+  "appStoreReviewStatus": "REJECTED",
+  "reviewIssue": "2.1.0 Performance: App Completeness — additional information and physical-device recording requested",
+  "reviewStatusSource": "Owner-provided App Store Connect message, 2026-10-20",
+  "externalBetaReviewStatus": "UNVERIFIED_SINCE_2026-10-19",
+  "latestUploadedBuild": {
+    "version": "1.16.1",
+    "build": "12",
+    "uploadedAt": "2026-10-20T18:10:07Z",
+    "uploadStatus": "UPLOADED_TO_APPLE",
+    "processingStatus": "PROCESSING",
+    "testFlightGroupAssignment": "NOT_YET_VERIFIED",
+    "appStoreSubmission": "NOT_RESUBMITTED"
+  },
+  "macAvailability": {
+    "verifiedAt": "2026-10-20",
+    "appStoreAppleSiliconEnabled": true,
+    "minimumMacOS": "Automatic (macOS 12.0)",
+    "testFlightInternalGroupEnabled": true,
+    "testFlightExternalGroupEnabled": true,
+    "localTestFlightStatus": "Works on this Mac — Install available — 1.16.1 (4)",
+    "developerCompatibilityAttestation": "NOT_SUBMITTED",
+    "intelMacAppStoreBuild": "NOT_PROVIDED"
+  },
+  "interfaceLanguages": [
+    "pt",
+    "en",
+    "de",
+    "fr"
+  ],
+  "interfaceLanguageDefault": "PRIMARY_DEVICE_LANGUAGE_WITH_ENGLISH_FALLBACK",
+  "interfaceLanguagePreference": "PERSISTED_USER_OVERRIDE_OR_AUTOMATIC"
 }

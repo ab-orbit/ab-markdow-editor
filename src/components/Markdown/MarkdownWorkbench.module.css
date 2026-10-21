@@ -206,18 +206,17 @@
 @media (max-width: 359px) { .compact[data-mode="read"] .mobileReadingBar { padding-inline: 12px; gap: 4px; } .mobileReadingBar > div { gap: 2px; } }
 @media (max-width: 359px) { .compact[data-mode="read"] .mobileReadingBar, .compact[data-mode="whiteboard"] .mobileReadingBar { padding-inline: 8px; gap: 4px; } .mobileFormat { max-width: 80px; } }
 
-/* Group export choices on narrow screens so adding reload does not create an orphan action row. */
-.exportMenu { display: none; }
-@media (max-width: 430px) {
- .compact .desktopExport { display: none; }
- .compact .exportMenu { display: block; position: relative; flex: 0 0 44px; width: 44px; }
- .exportMenu > summary { display: flex; list-style: none; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid transparent; border-radius: var(--radius-sm); color: var(--text-muted); }
- .exportMenu > summary::-webkit-details-marker { display: none; }
- .exportMenu > summary svg { margin: 0; color: inherit; }
- .exportMenu[open] > summary { border-color: var(--cyan); color: var(--cyan); }
- .exportMenu > div { position: absolute; top: calc(100% + 4px); left: 0; z-index: 20; width: 190px; padding: 4px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg-elevated); }
- .compact .exportMenu > div > button { display: flex; justify-content: flex-start; width: 100%; min-height: 44px; padding: 8px 12px; border-color: transparent; background: transparent; font-size: 14px; }
-}
+/* One export menu serves all viewport sizes. */
+.exportMenu { display: block; position: relative; flex: 0 0 36px; }
+.exportMenu > summary { display: flex; list-style: none; align-items: center; justify-content: center; width: 36px; height: 36px; cursor: pointer; border: 1px solid transparent; border-radius: var(--radius-sm); color: var(--text-secondary); }
+.exportMenu > summary::-webkit-details-marker { display: none; }
+.exportMenu > summary svg { margin: 0; color: inherit; }
+.exportMenu[open] > summary { border-color: var(--cyan); color: var(--cyan); }
+.exportMenu > summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.exportMenu > div { position: absolute; top: calc(100% + 4px); right: 0; z-index: 20; width: 240px; padding: 4px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--bg-elevated); }
+.actions .exportMenu > div > button { display: flex; gap: 10px; justify-content: flex-start; width: 100%; min-height: 44px; padding: 8px 12px; border-color: transparent; background: transparent; color: var(--text-primary); font-size: 14px; text-align: left; }
+.exportMenu small { display: block; color: var(--text-secondary); font-size: 12px; }
+@media (pointer: coarse) { .exportMenu > summary { width: 44px; height: 44px; } }
 
 /* Reading stays quiet; keyboard focus exposes the same block edit action as a double click. */
 .reading :global([data-source-from]) { touch-action: manipulation; }
@@ -228,6 +227,7 @@
 .compact[data-mode="live"] :global(.cm-content ::selection) { background: var(--bg-elevated); color: var(--text-primary); }
 
 /* The visual editor shares the reader's typography and horizontal table scroller. */
+.richContent:focus, .richContent:focus-visible { outline: none; }
 .richContent { outline: none; white-space: pre-wrap; overflow-wrap: break-word; min-height: 55dvh; }
 .richContent > :first-child { margin-top: 0; }
 .richContent :global([data-source-only]) { display: none; }
@@ -249,7 +249,6 @@
 .richContent :global(.ProseMirror-selectednode) { outline: 2px solid var(--cyan); outline-offset: 3px; }
 @media (max-width: 899px) {
  .compact[data-reading-editable="true"] .richReading { font-size: calc(16px * var(--ui-font-scale, 1)); }
- .compact[data-reading-editable="true"][data-formatting-open="true"] > .editingToolbar { display: flex; }
  .compact[data-reading-editable="true"] .mobileReadingBar { padding-inline: 16px; }
 }
 
@@ -257,3 +256,128 @@
 .savedDestination > span:first-of-type { min-width: 0; overflow-wrap: anywhere; }
 .savedDestination > span:last-child { margin-left: auto; color: var(--text-muted); white-space: nowrap; }
 .savedDestination strong { font-weight: 500; color: var(--text-primary); }
+
+.headingPicker { position: relative; }
+.headingMenu { position: fixed; z-index: 100; color: var(--text-primary); font-family: var(--font-ui); max-height: calc(100dvh - 16px); overflow-y: auto; width: 270px; max-width: calc(100vw - 32px); padding: 6px; background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); }
+.headingMenu .headingChoice { display: flex; align-items: center; background: transparent; color: var(--text-primary); border: 1px solid transparent; cursor: pointer; width: 100%; min-height: 60px; justify-content: flex-start; text-align: left; gap: 14px; padding: 10px 12px; border-radius: var(--radius-sm); }
+.headingBadge { font-size: var(--text-sm); color: var(--text-secondary); min-width: 28px; }
+.headingLabel { display: block; font-weight: 400; font-size: 16px; line-height: 1.25; color: var(--text-primary); }
+.headingChoice[data-heading-level="1"] .headingLabel { font-size: 28px; font-weight: 750; }
+.headingChoice[data-heading-level="2"] .headingLabel { font-size: 23px; font-weight: 650; }
+.headingChoice[data-heading-level="3"] .headingLabel { font-size: 19px; font-weight: 600; }
+.headingChoice small { display: block; margin-top: 4px; font-size: 12px; color: var(--text-secondary); }
+.iconGallery { width: min(850px, calc(100vw - 32px)); }
+.iconSearch { display: flex; flex-direction: column; gap: 6px; }
+.iconSearch input { width: 100%; min-width: 0; font-size: 16px; }
+.iconGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin: 16px 0; }
+.iconGrid button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 96px; }
+.iconGrid button > span:first-child { font-size: 28px; }
+.iconGrid button > span:last-child { font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+
+.headingChoice:hover, .headingChoice:focus-visible { background: var(--lime-trace); outline: 2px solid var(--cyan); outline-offset: -2px; }
+
+.inlineBlockEditor { position: relative; margin-block: 4px; border-left: 2px solid var(--cyan); background: var(--bg-surface); }
+.inlineBlockEditor :global(.cm-content) { min-height: 0 !important; padding: 4px 0 !important; font-family: var(--font-reading) !important; font-size: inherit !important; line-height: var(--reading-leading) !important; }
+.inlineBlockEditor :global(.cm-line) { padding: 0 12px !important; }
+.inlineHeadingBadge { position: absolute; right: calc(100% + 8px); top: 8px; color: var(--text-secondary); font: 12px var(--font-mono); white-space: nowrap; }
+.highlightedCode { background: var(--diagram-code-background); color: var(--diagram-code-foreground); border-radius: var(--radius-sm); overflow: auto; }
+.reading .highlightedCode pre { margin: 0; background: var(--diagram-code-background); color: var(--diagram-code-foreground); }
+.reading .highlightedCode code { background: transparent; color: inherit; }
+.reading [data-inline-table-editor] input { width: 100%; min-width: 90px; min-height: 44px; font: inherit; font-size: 16px; color: var(--text-primary); background: var(--bg-input); border: 1px solid var(--cyan); padding: 6px; }
+.reading [data-inline-table-editor] p { margin: 0; }
+
+.sectionHeading { display: flex; align-items: center; gap: 6px; position: relative; }
+.sectionHeading > button { display: inline-flex; align-items: center; justify-content: center; position: absolute; right: 100%; width: 28px; min-height: 44px; border: 0; padding: 4px; color: var(--text-secondary); background: transparent; cursor: pointer; }
+.sectionHeading > button:focus-visible { outline: 2px solid var(--cyan); }
+.sectionHeading > :last-child { flex: 1; min-width: 0; }
+.reading h4 { font-size: 1.08em; font-weight: 650; }
+.reading h5 { font-size: 1em; font-weight: 600; }
+.reading h6 { font-size: .95em; font-weight: 600; }
+.reading [data-heading-section] [hidden] { display: none; }
+.reading:has([data-heading-section]) { padding-inline-start: 52px; }
+.sectionHeading > button { width: 44px; right: calc(100% + 4px); }
+.reading > [data-heading-section]:first-child > .sectionHeading > :last-child { margin-top: 0; }
+.sectionHeading:has([data-inline-block-editor]) > button { visibility: hidden; }
+@media (max-width: 600px) { .exportMenu > div { left: 0; right: auto; } }
+
+/* Mobile writing keeps chrome in a short top bar and tools in an optional floating strip. */
+@media (max-width: 899px), (max-height: 600px) and (pointer: coarse) {
+ .compact { position: relative; }
+ .compact[data-mode="read"] .mobileReadingBar { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; min-height: 52px; padding: 4px 12px; gap: 8px; }
+ .compact[data-mode="read"] .mobileReadingBar > .mobileFormat { display: none; }
+ .compact[data-mode="read"] .mobileReadingBar > div { display: flex; gap: 0; border: 1px solid var(--border-panel); border-radius: var(--radius-full); }
+ .compact[data-mode="read"] .mobileReadingBar button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; width: auto; height: 44px; padding: 8px; border: 0; background: transparent; color: var(--text-secondary); }
+ .mobileReadingBar .mobileFormattingToggle span { font: 600 14px/1 var(--font-ui); letter-spacing: 1px; }
+ .compact[data-mode="read"][data-reading-actions="false"] > .toolbar { display: none; }
+ .compact[data-mode="read"] > .editingToolbar { display: none; }
+ .compact[data-mode="read"][data-mobile-formatting="true"] > .editingToolbar { display: flex; position: absolute; z-index: 30; bottom: max(8px, env(safe-area-inset-bottom)); left: 8px; right: 8px; flex-wrap: nowrap; align-items: center; gap: 0; min-height: 52px; max-height: 60px; padding: 4px; overflow-x: auto; overflow-y: hidden; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--bg-elevated); box-shadow: var(--shadow-panel); scrollbar-width: none; }
+ .compact[data-mode="read"] > .editingToolbar > *, .compact[data-mode="read"] > .editingToolbar .toolGroup { flex: 0 0 auto; flex-wrap: nowrap; }
+ .compact[data-mode="read"][data-mobile-formatting="true"] .pages { scroll-padding-bottom: 76px; }
+ .compact[data-mode="read"] > .footer { display: none; }
+ .compact[data-mode="read"] .reading { padding-top: 16px; }
+}
+
+/* Keep desktop commands near the document tab instead of stretching to the far edge. */
+@media (min-width: 900px) {
+ .compact .toolbar { justify-content: flex-start; gap: 8px; }
+ .compact .filename { flex: 0 1 220px; max-width: 220px; font-size: var(--desktop-ui-size); }
+ .compact .toolbar button, .compact .modes button,
+ .compact .editingToolbar button, .compact .editingToolbar select { font-size: var(--desktop-ui-size); min-height: 40px; }
+ .compact .toolbar button svg, .compact .editingToolbar button svg { width: 18px; height: 18px; }
+ .compact .footer, .compact .assetHint { font-size: var(--desktop-ui-caption); }
+}
+/* A wrapped desktop action row starts at the left; its export menu must open inward. */
+@media (min-width: 900px) { .exportMenu > div { left: 0; right: auto; } }
+
+/* Math uses bundled KaTeX fonts and remains scrollable on narrow screens. */
+.reading :global(.katex-display), :global(.scriba-math-display) { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-block: .3em; }
+.reading :global(.katex), :global(.scriba-math .katex) { font-size: 1.1em; color: inherit; }
+.reading :global(.math-error) { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+:global(.scriba-math-trigger) { display: inline; border: 0; background: transparent; padding: 0; color: inherit; font: inherit; text-align: inherit; cursor: text; max-width: 100%; }
+:global(.scriba-math-trigger:disabled) { opacity: 1; }
+:global(.scriba-math-trigger:focus-visible) { outline: 2px solid var(--cyan); outline-offset: 3px; }
+:global(.scriba-math input) { font-family: var(--font-mono); width: min(100%, 40em); font-size: 16px; }
+
+/* Mobile keeps document actions in one small menu, with no editing toolbar. */
+@media (max-width: 899px), (max-height: 600px) and (pointer: coarse) {
+ .compact.workbench > .toolbar, .compact.workbench > .editingToolbar { display: none !important; }
+ .compact.workbench .mobileReadingBar { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; min-height: 52px; gap: 8px; padding: 4px 12px; }
+ .compact.workbench .mobileReadingBar .mobileFormat { display: none; }
+ .compact.workbench > .footer, .compact.workbench > .modeHint { display: none; }
+}
+.noteInformation, .mobileMenu { position: fixed; inset: max(64px, env(safe-area-inset-top)) 12px auto auto; width: min(340px, calc(100vw - 24px)); max-height: calc(100dvh - 96px); padding: 16px; border-radius: var(--radius-lg); overflow: auto; font-family: var(--font-ui); }
+.noteInformation > header h2 { font-size: 15px; }
+.noteInformation > header { margin-bottom: 8px; }
+.informationTabs { display: flex; border-radius: var(--radius-sm); padding: 3px; background: var(--bg-elevated); margin-bottom: 16px; }
+.informationTabs button { flex: 1; min-height: 44px; display: flex; justify-content: center; align-items: center; border: 0; border-radius: var(--radius-sm); color: var(--text-secondary); background: transparent; }
+.informationTabs button[aria-selected="true"] { background: var(--bg-hover); color: var(--text-primary); }
+.informationCards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.informationCards > div { position: relative; display: flex; flex-direction: column; gap: 18px; padding: 12px; border-radius: var(--radius-md); background: var(--bg-elevated); }
+.informationCards strong { font-size: 24px; line-height: 1.2; color: var(--text-primary); }
+.informationCards span, .informationDates dt { font-size: 13px; color: var(--text-secondary); }
+.informationCards svg { position: absolute; top: 12px; right: 10px; color: var(--text-secondary); }
+.informationDates { margin: 14px 0 0; border-radius: var(--radius-md); background: var(--bg-elevated); overflow: hidden; }
+.informationDates > div { position: relative; padding: 12px; }
+.informationDates > div + div { border-top: 1px solid var(--border-panel); }
+.informationDates dd { margin: 0 24px 6px 0; color: var(--text-primary); font-weight: 600; font-size: 14px; }
+.informationDates svg { position: absolute; right: 12px; top: 14px; color: var(--text-secondary); }
+.informationOutline { display: flex; min-height: 0; height: min(60dvh,560px); }
+.mobileMenu [role="menu"], .mobileMenu [role="group"] { display: flex; flex-direction: column; gap: 4px; }
+.mobileMenu [role="menuitem"], .mobileMenu [role="group"] button { display: flex; align-items: center; gap: 12px; text-align: start; min-height: 48px; padding: 10px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-primary); font: inherit; }
+.mobileMenu button:hover { background: var(--bg-hover); }
+.noteInformation :focus-visible, .mobileMenu :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* Small anchored popovers share the application's surface and subtle elevation. */
+.noteInformation, .mobileMenu { border-radius: 16px; box-shadow: var(--shadow-panel); line-height: 1.4; }
+.noteInformation::backdrop, .mobileMenu::backdrop { background: transparent; }
+.noteInformation > header h2 { font-weight: 600; color: var(--text-secondary); }
+.mobileMenu { width: min(280px, calc(100vw - 24px)); padding: 6px; }
+.mobileMenu > header { display: none; }
+.mobileMenu [role="menu"], .mobileMenu [role="group"] { gap: 0; }
+.mobileMenu [role="menuitem"], .mobileMenu [role="group"] button { min-height: 44px; padding: 10px 14px; gap: 10px; font-size: 14px; font-weight: 400; border-radius: 6px; color: var(--text-primary); }
+.mobileMenu [role="menuitem"] svg, .mobileMenu [role="group"] svg { width: 16px; height: 16px; stroke-width: 1.65; color: var(--text-secondary); flex: 0 0 16px; }
+.mobileMenu [role="menuitem"]:last-child { margin-top: 5px; border-top: 1px solid var(--border-panel); border-top-left-radius: 0; border-top-right-radius: 0; }
+.mobileMenu button:hover { color: var(--text-primary); }
+.mobileMenu [role="menuitem"], .mobileMenu [role="group"] button { justify-content: flex-start; }
+.noteInformation > header button { border: 0; background: transparent; }

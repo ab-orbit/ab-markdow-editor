@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import manifest from './excalidraw-fonts.json';
 
 interface TextElement { type: string; fontFamily?: number; text?: string }
@@ -24,7 +25,7 @@ export async function ensureExcalidrawFonts(elements: readonly TextElement[]) {
   await Promise.all(usedFaces(elements).map(async item => {
     let face = faces.get(item.uri);
     if (!face) { face = new FontFace(item.family, `url("/excalidraw/0.18.1/${item.uri}")`, item.descriptors || {}); faces.set(item.uri, face); document.fonts.add(face); }
-    try { await face.load(); } catch { faces.delete(item.uri); document.fonts.delete(face); throw new Error('Não foi possível carregar uma fonte do desenho. Conecte o Scriba uma vez para concluir o cache offline.'); }
+    try { await face.load(); } catch { faces.delete(item.uri); document.fonts.delete(face); throw new Error(t("Não foi possível carregar uma fonte do desenho. Conecte o Scriba uma vez para concluir o cache offline.")); }
   }));
 }
 /** Portable SVG embeds the same complete Unicode subsets, without an eval/WASM/worker dependency. */
@@ -33,7 +34,7 @@ export async function excalidrawFontCss(elements: readonly TextElement[]) {
     let pending = data.get(item.uri);
     if (!pending) {
       pending = fetch(`/excalidraw/0.18.1/${item.uri}`).then(async response => {
-        if (!response.ok) throw new Error('Não foi possível incorporar a fonte no SVG.');
+        if (!response.ok) throw new Error(t("Não foi possível incorporar a fonte no SVG."));
         const bytes = new Uint8Array(await response.arrayBuffer()); let binary = '';
         for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
         return btoa(binary);

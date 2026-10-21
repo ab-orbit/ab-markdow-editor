@@ -21,11 +21,16 @@ final class ScribaTests: XCTestCase {
             try await Task.sleep(nanoseconds: 100_000_000)
         }
         XCTAssertNotNil(web)
+        // Bridge regression assertions use Portuguese; device-language behavior has separate UI coverage.
+        if (try? await js("return document.documentElement.lang")) as? String != "pt-BR" {
+            _ = try? await js("localStorage.setItem('scriba-language','pt');location.reload();return true")
+        }
         try await waitFor("!!document.querySelector('input[aria-label=\"Arquivo Markdown\"]') && !document.querySelector('input[aria-label=\"Arquivo Markdown\"]').disabled")
         fixture = FileManager.default.temporaryDirectory.appendingPathComponent("scriba-native-test-" + UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: fixture, withIntermediateDirectories: true)
     }
     override func tearDown() async throws {
+        _ = try? await js("localStorage.removeItem('scriba-language');return true")
         UserDefaults.standard.removeObject(forKey: "scriba.files.bookmark")
         if let fixture = fixture { try? FileManager.default.removeItem(at: fixture) }
     }

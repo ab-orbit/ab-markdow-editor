@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 /** Optional user-visible directory storage; never substitutes the browser-private filesystem. */
 import { isIosApp, iosBridge } from './ios';
 type Directory = FileSystemDirectoryHandle & {queryPermission(options:{mode:string}):Promise<string>;requestPermission(options:{mode:string}):Promise<string>};
@@ -10,20 +11,20 @@ export async function disconnectFolder() {if(isIosApp)return iosBridge.disconnec
 export async function chooseDeviceFolder() {
  if(isIosApp)return (await iosBridge.chooseFolder()).label;
  const picker=(window as unknown as {showDirectoryPicker(options:{mode:string}):Promise<Directory>}).showDirectoryPicker;
- if(!picker)throw new Error('Este navegador não permite gravar em uma pasta do Files. Use as notas no navegador e exporte ZIPs para Files.');
+ if(!picker)throw new Error(t("Este navegador não permite gravar em uma pasta do Files. Use as notas no navegador e exporte ZIPs para Files."));
  const parent=await picker.call(window,{mode:'readwrite'});
  const folder=await parent.getDirectoryHandle('scriba',{create:true}) as Directory;
  await setting('parent',parent);await setting('handle',folder);await setting('label',{label:`${parent.name}/scriba`});return `${parent.name}/scriba`;
 }
-export async function authorizeDeviceFolder() {if(isIosApp)return iosBridge.authorizeFolder();if(!await setting('parent'))throw new Error('Selecione novamente a pasta principal pelo botão Selecionar pasta em Files para carregar as notas existentes. A configuração anterior guardava apenas a subpasta scriba.');const folder=await setting<Directory>('handle');if(folder&&await folder.requestPermission({mode:'readwrite'})!=='granted')throw new Error('Permita o acesso à pasta para salvar nela.');}
-function safeParts(name:string) {const parts=name.split('/');if(!parts.length||parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\')||p.includes('\0')))throw new Error('Caminho inválido para salvar na pasta.');return parts;}
+export async function authorizeDeviceFolder() {if(isIosApp)return iosBridge.authorizeFolder();if(!await setting('parent'))throw new Error(t("Selecione novamente a pasta principal pelo botão Selecionar pasta em Files para carregar as notas existentes. A configuração anterior guardava apenas a subpasta scriba."));const folder=await setting<Directory>('handle');if(folder&&await folder.requestPermission({mode:'readwrite'})!=='granted')throw new Error(t("Permita o acesso à pasta para salvar nela."));}
+function safeParts(name:string) {const parts=name.split('/');if(!parts.length||parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\')||p.includes('\0')))throw new Error(t("Caminho inválido para salvar na pasta."));return parts;}
 async function digest(bytes:Uint8Array) {const hash=await crypto.subtle.digest('SHA-256',bytes as BufferSource);return Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('');}
 /** Reject external changes and collisions; a browser copy survives any permission/write failure. */
 async function write(folder:Directory,name:string,bytes:Uint8Array) {
  const parts=safeParts(name),leaf=parts.pop()!;let directory:FileSystemDirectoryHandle=folder;
  for(const part of parts)directory=await directory.getDirectoryHandle(part,{create:true});
  const key=`revision:${await folderLabel()}:${name}`;const expected=await setting<string>(key);const next=await digest(bytes);
- try {const handle=await directory.getFileHandle(leaf);const existing=await digest(new Uint8Array(await(await handle.getFile()).arrayBuffer()));if(existing!==next&&existing!==expected)throw new Error(`O arquivo ${name} já existe ou mudou fora do Scriba. Preserve-o ou escolha outra pasta antes de tentar novamente.`);}
+ try {const handle=await directory.getFileHandle(leaf);const existing=await digest(new Uint8Array(await(await handle.getFile()).arrayBuffer()));if(existing!==next&&existing!==expected)throw new Error(t("O arquivo {0} já existe ou mudou fora do Scriba. Preserve-o ou escolha outra pasta antes de tentar novamente.", name));}
  catch(error){if(!(error instanceof DOMException&&error.name==='NotFoundError'))throw error;}
  const handle=await directory.getFileHandle(leaf,{create:true});const stream=await handle.createWritable();try{await stream.write(bytes as BufferSource);await stream.close();}catch(error){await stream.abort().catch(()=>{});throw error;}
  await setting(key,next);
@@ -31,7 +32,7 @@ async function write(folder:Directory,name:string,bytes:Uint8Array) {
 export async function saveToDeviceFolder(note:{name:string;value:string;files:{path:string;data:string}[]}) {
  if(isIosApp){if((await iosBridge.folderStatus()).label)await iosBridge.saveNote(note);return;}
  const folder=await setting<Directory>('handle');if(!folder)return;
- if(await folder.queryPermission({mode:'readwrite'})!=='granted')throw new Error('Nota preservada no navegador. Nas configurações, toque em Autorizar pasta para voltar a salvar em Files.');
+ if(await folder.queryPermission({mode:'readwrite'})!=='granted')throw new Error(t("Nota preservada no navegador. Nas configurações, toque em Autorizar pasta para voltar a salvar em Files."));
  const prefix=note.name.includes('/')?note.name.slice(0,note.name.lastIndexOf('/')+1):'';
  for(const file of note.files)await write(folder,prefix+file.path,Uint8Array.from(atob(file.data),c=>c.charCodeAt(0)));
  await write(folder,note.name,new TextEncoder().encode(note.value));
@@ -65,15 +66,15 @@ export async function readDeviceNotes() {
 /** A single source read never creates directories or asks for permissions in the background. */
 async function locateDocument(name:string) {
  const parts=safeParts(name),folder=await setting<Directory>('handle'),parent=await setting<Directory>('parent');
- if(!folder)throw new Error('Selecione uma pasta nas configurações para recarregar do disco.');
- if(await folder.queryPermission({mode:'readwrite'})!=='granted')throw new Error('Autorize novamente a pasta nas configurações para recarregar do disco.');
+ if(!folder)throw new Error(t("Selecione uma pasta nas configurações para recarregar do disco."));
+ if(await folder.queryPermission({mode:'readwrite'})!=='granted')throw new Error(t("Autorize novamente a pasta nas configurações para recarregar do disco."));
  const hasSavedCopy=!!await setting(`revision:${await folderLabel()}:${name}`);
  for(const root of [folder,hasSavedCopy ? null : parent].filter(Boolean) as Directory[]) {
   try {
    let directory:FileSystemDirectoryHandle=root;
    for(const part of parts.slice(0,-1))directory=await directory.getDirectoryHandle(part);
    const file=await(await directory.getFileHandle(parts.at(-1)!)).getFile();
-   if(file.size>5*1024*1024)throw new Error('O Markdown excede 5 MB.');
+   if(file.size>5*1024*1024)throw new Error(t("O Markdown excede 5 MB."));
    return {file,directory,isSavedFolder:root===folder};
   }catch(error){if(!(error instanceof DOMException&&error.name==='NotFoundError'))throw error;}
  }
@@ -90,20 +91,20 @@ export async function deviceDocumentVersion(name:string) {
 export async function readDeviceDocument(name:string) {
  if(isIosApp)return {...await iosBridge.document({name}),warnings:[]};
  const source=await locateDocument(name);
- if(!source)throw new Error('O arquivo foi removido da pasta. Seu rascunho continua no editor.');
+ if(!source)throw new Error(t("O arquivo foi removido da pasta. Seu rascunho continua no editor."));
  const bytes=new Uint8Array(await source.file.arrayBuffer());
  const value=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes),version=await digest(bytes);
  const files:{path:string;data:string;mime:string}[]=[],warnings:string[]=[];let total=0;
  const label=await folderLabel(),prefix=name.includes('/')?name.slice(0,name.lastIndexOf('/')+1):'';
  for(const match of value.matchAll(/!\[[^\]]*\]\(<?([^\s)>]+)>?(?:\s+[^)]*)?\)/g)) {
-  let imagePath:string;try{imagePath=decodeURIComponent(match[1]);}catch{warnings.push('Referência de imagem inválida.');continue;}
+  let imagePath:string;try{imagePath=decodeURIComponent(match[1]);}catch{warnings.push(t("Referência de imagem inválida."));continue;}
   if(/^[a-z][a-z0-9+.-]*:/i.test(imagePath)||files.some(file=>file.path===imagePath))continue;
   try {
    const parts=safeParts(imagePath);let directory=source.directory;
    for(const part of parts.slice(0,-1))directory=await directory.getDirectoryHandle(part);
    const image=await(await directory.getFileHandle(parts.at(-1)!)).getFile();
    const mime=image.type||(/\.png$/i.test(imagePath)?'image/png':/\.webp$/i.test(imagePath)?'image/webp':/\.gif$/i.test(imagePath)?'image/gif':/\.jpe?g$/i.test(imagePath)?'image/jpeg':'');
-   if(image.size>10*1024*1024||total+image.size>40*1024*1024||files.length>=50||!/^image\/(png|jpeg|gif|webp)$/.test(mime))throw new Error('Imagem não suportada ou maior que o limite.');
+   if(image.size>10*1024*1024||total+image.size>40*1024*1024||files.length>=50||!/^image\/(png|jpeg|gif|webp)$/.test(mime))throw new Error(t("Imagem não suportada ou maior que o limite."));
    const bytes=new Uint8Array(await image.arrayBuffer());total+=bytes.length;
    let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
    files.push({path:imagePath,data:btoa(binary),mime});

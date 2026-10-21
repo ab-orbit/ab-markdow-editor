@@ -34,7 +34,7 @@ try {
   assert.ok(origin);
   const webKit = process.env.MARKDOWN_BROWSER === 'webkit';
   browser = webKit ? await webkit.launch({ headless: true }) : await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' });
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' });
   page = await context.newPage(); const errors = [], outsideRequests = [], reactErrors = [], measurements = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error' && /synchronously unmount|unmounted component|Each child|cannot appear/.test(message.text())) reactErrors.push(message.text()); });
@@ -144,7 +144,7 @@ try {
   }
   if (!webKit) {
     // Chromium's real touch input exercises pointer capture and dragging, not a mocked event.
-    const touchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
+    const touchContext = await browser.newContext({locale:'pt-BR', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
     const touchPage = await touchContext.newPage(); touchPage.on('pageerror', error => errors.push(error.message));
     await touchPage.goto(origin);
     await touchPage.locator('button[aria-label="Voltar às notas"]:visible, button[aria-label="Mostrar notas recentes"]:visible').first().tap();

@@ -13,7 +13,7 @@ const offline = process.env.SCRIBA_OFFLINE === '1';
 const browser = await (safari ? webkit.launch({ headless: true }) : chromium.launch({ channel: 'chrome', headless: true }));
 const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'scriba-pdf-'));
 try {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: offline ? 'allow' : 'block', acceptDownloads: true }), page = await context.newPage(), errors = [], external = [], writes = [], workers = [];
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: offline ? 'allow' : 'block', acceptDownloads: true }), page = await context.newPage(), errors = [], external = [], writes = [], workers = [];
   page.on('worker',worker=>workers.push(worker.url()));
   page.on('pageerror', error => errors.push(error.message)); page.on('request', request => { const url = new URL(request.url()); if (url.origin !== new URL(origin).origin && !['blob:', 'data:'].includes(url.protocol) && url.hostname !== 'static.cloudflareinsights.com') external.push(url.href); if (request.method() !== 'GET') writes.push(url.pathname); });
   await page.goto(origin); await expect(page.getByLabel('Arquivo Markdown', { exact: true })).toBeEnabled();

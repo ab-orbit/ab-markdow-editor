@@ -16,3 +16,7 @@ docs/app-store/local-release.private.json
 test-results/
 playwright-report/
 native/
+
+# Private workspace history and macOS metadata.
+.remember/
+.DS_Store

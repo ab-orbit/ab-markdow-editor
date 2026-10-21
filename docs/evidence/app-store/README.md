@@ -1,3 +1,5 @@
+> Update, 20 October 2026: the owner supplied an App Store Connect rejection for **iOS 1.13.0 (1)** under **2.1.0 App Completeness / Information Needed**. Apple requests a physical-device screen recording and six explanatory items. The earlier Waiting for Review entries below are historical. External TestFlight and DSA status have not been reverified. Preparation: [response and recording requirements](../../app-store/review-response-2.1.md).
+
 # Scriba 1.13 — native iOS and PWA release evidence
 
 Verified on 19 October 2026 with Xcode 27, iOS 18.6 simulators, Chrome and WebKit. The native app bundles its editor, reference notes, renderers and fonts; it does not load the production website as its application shell.

@@ -20,7 +20,7 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const safari = process.env.MARKDOWN_BROWSER === 'webkit';
 const browser = safari ? await webkit.launch({headless:true}) : await chromium.launch({channel:'chrome',headless:true});
 try {
-  const context = await browser.newContext({viewport:{width:1440,height:900},serviceWorkers:'block'});
+  const context = await browser.newContext({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:'block'});
   const page = await context.newPage(), errors = [];
   page.setDefaultTimeout(10000); page.on('pageerror', error => errors.push(error.message));
   await page.clock.install();

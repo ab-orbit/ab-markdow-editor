@@ -1,0 +1,27 @@
+{
+  "kind": "parser-boundary-experiment",
+  "scope": "Markdown parsing only; no diagram engine execution or performance measurement",
+  "results": [
+    {
+      "id": "lf",
+      "repoRegexMatches": 1,
+      "astMermaidBlocks": 1
+    },
+    {
+      "id": "crlf",
+      "repoRegexMatches": 0,
+      "astMermaidBlocks": 1
+    },
+    {
+      "id": "tilde",
+      "repoRegexMatches": 0,
+      "astMermaidBlocks": 1
+    },
+    {
+      "id": "documentation-example",
+      "repoRegexMatches": 1,
+      "astMermaidBlocks": 0
+    }
+  ],
+  "suppliedStructure": "<pre><div class=\"mermaid-chart\">diagram placeholder</div></pre>"
+}

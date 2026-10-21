@@ -1,10 +1,11 @@
+import { t } from '../i18n';
 import {browserMode, browserFetch} from './browserStore';
 let sessionRequest: Promise<void> | null = null;
 /** Obtain a fresh local capability after an offline launch or a backend restart. */
 async function refreshSession() {
   if (!sessionRequest) sessionRequest=(async()=>{
     const response=await fetch('/api/session',{headers:{'X-AB-Markdown-Client':'1'},cache:'no-store'});
-    if(!response.ok)throw new Error('Não foi possível conectar ao aplicativo local.');
+    if(!response.ok)throw new Error(t("Não foi possível conectar ao aplicativo local."));
     const session=await response.json();window.__MARKDOWN_TOKEN__=session.token;
   })().finally(()=>{sessionRequest=null;});
   await sessionRequest;

@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "checks": [
+    "All report artifact links resolve",
+    "All 13 installed artifact hashes match",
+    "Bear executable hash matches initial identity",
+    "Every cited REA Evidence ID is retained",
+    "TeX example backslashes preserved"
+  ],
+  "replay": [
+    {
+      "engine": "chromium",
+      "version": "155.0.8059.80",
+      "cases": 44,
+      "rendered": 41,
+      "rejected": [
+        "ed-typo",
+        "zenuml-not-registered",
+        "usecase-not-registered"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "version": "27.2",
+      "cases": 44,
+      "rendered": 41,
+      "rejected": [
+        "ed-typo",
+        "zenuml-not-registered",
+        "usecase-not-registered"
+      ]
+    }
+  ],
+  "own_probe_trashed": true
+}

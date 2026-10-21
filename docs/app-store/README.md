@@ -1,5 +1,7 @@
 # Scriba for iPhone and iPad
 
+Release preparation: **1.16.1 (13)** includes mandatory background autosave on desktop/mobile, the compact three-action mobile menu, Statistics/Outline information tabs and lighter navigation styling. Signed archive succeeded on 21 October 2026; upload and tester availability are tracked in [release evidence](../evidence/ios-1.16.1-build13/README.md).
+
 The iOS application bundles the editor, renderers, fonts and reference notes with Capacitor 8.5.3. It does not load the production website as its application shell. The web/PWA and local Mac application remain separate builds and separate private libraries.
 
 ## Build and test

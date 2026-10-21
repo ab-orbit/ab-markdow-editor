@@ -26,7 +26,7 @@ try {
     for (let attempt = 0; attempt < 100; attempt++) { try { origin = JSON.parse(await fs.readFile(runtime, 'utf8')).url; break; } catch { await new Promise(resolve => setTimeout(resolve, 50)); } }
   }
   assert.ok(origin); browser = safari ? await webkit.launch({ headless: true }) : await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), page = await context.newPage(), errors = [];
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' }), page = await context.newPage(), errors = [];
   page.on('pageerror', error => errors.push(error.message)); page.on('dialog', dialog => dialog.accept());
   await page.goto(origin); await page.getByLabel('Bancada Markdown').waitFor();
   if (root) await page.getByRole('button', { name: 'Outline.md', exact: true }).click();

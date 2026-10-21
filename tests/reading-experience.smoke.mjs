@@ -33,7 +33,7 @@ try {
     assert.ok(origin);
   }
   browser = safari ? await webkit.launch({ headless: true }) : await chromium.launch({ channel: 'chrome', headless: true });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, hasTouch: true, serviceWorkers: 'block', acceptDownloads: true });
+  const context = await browser.newContext({locale:'pt-BR', viewport: { width: 1440, height: 900 }, hasTouch: true, serviceWorkers: 'block', acceptDownloads: true });
   const page = await context.newPage(); page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => { if (request.url().includes('private-image.png')) externalImages.push(request.url()); });
   page.on('dialog', dialog => dialog.accept());

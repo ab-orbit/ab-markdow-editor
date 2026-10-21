@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import createDOMPurify from 'dompurify';
 import { c4Configuration, isC4, presentC4, type C4ElementStyle, type C4RelationStyle } from './c4';
 
@@ -9,7 +10,7 @@ export const DEFAULT_DIAGRAM_ENGINE: DiagramEngine = 'pele';
 export const diagramEngines = [
   { id: 'mermaid', label: 'Mermaid', version: '12.2.0' },
   { id: 'pele', label: 'Pele', version: '1.6.0' },
-  { id: 'beautiful', label: 'Beautiful Mermaid', version: '1.1.3' },
+  { id: 'beautiful', label: t("Beautiful Mermaid"), version: '1.1.3' },
   { id: 'zenuml', label: 'ZenUML', version: '4.7.2' },
 ] as const;
 
@@ -69,11 +70,11 @@ function svgPurifier() {
 
 /** Sanitize renderer output separately from ordinary Markdown HTML. */
 function cleanSvg(svg: string, c4 = false, present?: (root: SVGSVGElement) => void) {
-  if (svg.length > 4_000_000) throw new Error('O diagrama ficou muito grande. Divida-o em blocos menores.');
+  if (svg.length > 4_000_000) throw new Error(t("O diagrama ficou muito grande. Divida-o em blocos menores."));
   const clean = svgPurifier().sanitize(svg, { USE_PROFILES: { svg: true, svgFilters: true }, FORBID_TAGS: ['foreignObject', 'image', 'a', 'script', 'animate', 'set'] });
   const template = document.createElement('template'); template.innerHTML = clean;
   const root = template.content.querySelector('svg');
-  if (!root) throw new Error('O renderizador não produziu um diagrama SVG.');
+  if (!root) throw new Error(t("O renderizador não produziu um diagrama SVG."));
   if (!root.id) root.id = `scriba-svg-${++serial}`;
   // Inline SVG styles are document-wide unless scoped. Beautiful's generic
   // text/svg rules must never restyle another renderer or the editor's icons.
@@ -136,7 +137,7 @@ async function loadRenderer(engine: DiagramEngine) {
 /** Execute Mermaid jobs in order because initialize() changes shared configuration. */
 async function draw(engine: DiagramEngine, source: string, appearance: DiagramAppearance, width: number) {
   if (engine === 'beautiful' && !/^(?:graph|flowchart|stateDiagram(?:-v2)?|sequenceDiagram|classDiagram|erDiagram|xychart(?:-beta)?)$/i.test(source.trimStart().split(/\s+/)[0])) {
-    throw new Error('Beautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele.');
+    throw new Error(t("Beautiful Mermaid não suporta este tipo de diagrama. Experimente Mermaid ou Pele."));
   }
   const library = await loadRenderer(engine);
   await document.fonts?.ready;
@@ -207,7 +208,7 @@ async function draw(engine: DiagramEngine, source: string, appearance: DiagramAp
 
 /** Share bounded results and pending work; a failed renderer never becomes a cached success. */
 export async function renderDiagram(engine: DiagramEngine, source: string, appearance: DiagramAppearance, width: number): Promise<DiagramResult> {
-  if (source.length > 50_000) throw new Error('Este bloco excede 50 mil caracteres. Divida o diagrama em blocos menores.');
+  if (source.length > 50_000) throw new Error(t("Este bloco excede 50 mil caracteres. Divida o diagrama em blocos menores."));
   const safeWidth = Math.max(200, Math.min(1_600, Math.round(width / 8) * 8));
   const key = JSON.stringify([engine, source, engine === 'mermaid' ? appearance : {font: appearance.font}, safeWidth]);
   const cached = drawings.get(key);

@@ -1,0 +1,1 @@
+PASS: compact mobile header, optional floating tools, selection and caret preserved through rotation and keyboard-size viewport changes, formatting at original cursor.

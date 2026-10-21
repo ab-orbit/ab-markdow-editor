@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
@@ -53,7 +54,7 @@ export class WhiteboardSource {
     const value = this.value ?? '';
     const board = this.boards[index];
     if (!board) {
-      if (index !== this.boards.length) throw new Error('O quadro mudou. Abra-o novamente antes de editar.');
+      if (index !== this.boards.length) throw new Error(t("O quadro mudou. Abra-o novamente antes de editar."));
       return this.append(scene);
     }
     if (board.source.replace(/\r\n?/g, '\n').trimEnd() === scene.replace(/\r\n?/g, '\n').trimEnd()) return value;

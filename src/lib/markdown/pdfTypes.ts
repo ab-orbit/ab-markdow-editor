@@ -11,6 +11,7 @@ export interface PdfPalette {
   code: string;
 }
 export interface PdfJob {
+  language?: import("../../i18n").Language;
   /** Plain, serializable content; the worker never receives Markdown or asset handles. */
   content: Content[];
   /** Document metadata uses the first heading or the export filename. */

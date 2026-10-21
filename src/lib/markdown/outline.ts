@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import type { Root, RootContent } from 'mdast';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
@@ -8,8 +9,8 @@ export interface OutlineHeading {
   id: string;
   /** Visible inline text without Markdown delimiters. */
   label: string;
-  /** Only document heading levels one through three enter the outline. */
-  level: 1 | 2 | 3;
+  /** All six Markdown heading levels enter the navigable hierarchy. */
+  level: 1 | 2 | 3 | 4 | 5 | 6;
   /** Original UTF-16 source position and one-based line, before CRLF normalization. */
   from: number;
   line: number;
@@ -35,7 +36,7 @@ export function assignHeadingIds(tree: Root): OutlineHeading[] {
       for (let suffix = 1; used.has(id); suffix++) id = `${base}-${suffix}`;
       used.add(id);
       node.data = { ...node.data, hProperties: { ...node.data?.hProperties, id } };
-      if (node.depth <= 3) headings.push({ id, label: headingText(node, true).trim() || 'Seção sem título', level: node.depth as 1 | 2 | 3, from: node.position?.start.offset ?? 0, line: node.position?.start.line ?? 1, ordinal });
+      headings.push({ id, label: headingText(node, true).trim() || t("Seção sem título"), level: node.depth, from: node.position?.start.offset ?? 0, line: node.position?.start.line ?? 1, ordinal });
       ordinal++;
     }
     if ('children' in node) node.children.forEach(child => visit(child as RootContent));

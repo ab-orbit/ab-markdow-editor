@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useEffect, useImperativeHandle, useState, type Ref, type RefObject } from 'react';
 import styles from './MarkdownWorkbench.module.css';
 
@@ -34,7 +35,7 @@ export function SelectionStatistics({ ref, container, resetKey, words, character
       // hidden by live preview or virtualization, so its callback takes priority.
       const editor = anchorElement?.closest('.cm-editor');
       if (editor && documentArea.contains(editor) && editor.contains(focus) && !editor.closest('[hidden]')) return;
-      const reading = documentArea.querySelector('article[aria-label="Prévia Markdown"]');
+      const reading = documentArea.querySelector('article');
       setSelected(!selection.isCollapsed && reading?.contains(anchor) && reading.contains(focus) ? selection.toString().length : 0);
     }
     function schedule() { if (!frame) frame = requestAnimationFrame(readSelection); }
@@ -42,5 +43,5 @@ export function SelectionStatistics({ ref, container, resetKey, words, character
     return () => { cancelAnimationFrame(frame); document.removeEventListener('selectionchange', schedule); };
   }, [container, resetKey]);
 
-  return <span className={styles.statistics}>{words} palavras · {characters} caracteres{selected > 0 && <> · <span className={styles.selectionCount} data-selected-characters={selected} title={`${selected} ${selected === 1 ? 'caractere selecionado' : 'caracteres selecionados'}, incluindo espaços e quebras de linha`}>{selected} {selected === 1 ? 'selecionado' : 'selecionados'}</span></>}</span>;
+  return <span className={styles.statistics}>{words}{' '}{t("palavras ·")}{' '}{characters}{' '}{t("caracteres")}{selected > 0 && <> · <span className={styles.selectionCount} data-selected-characters={selected} title={t("{0} {1}, incluindo espaços e quebras de linha", selected, selected === 1 ? t("caractere selecionado") : t("caracteres selecionados"))}>{selected}{' '}{' '}{selected === 1 ? t("selecionado") : t("selecionados")}</span></>}</span>;
 }

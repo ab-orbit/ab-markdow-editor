@@ -1,3 +1,4 @@
+import { startService } from './local-service.mjs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -27,7 +28,14 @@ async function active() {
   } catch { return null; }
 }
 let url = await active();
-if (!url) {
+const supervised = !url && await startService();
+if (supervised) {
+  for (let attempt = 0; attempt < 200; attempt++) {
+    url = await active(); if (url) break;
+    await new Promise(resolve => setTimeout(resolve, 150));
+  }
+}
+if (!url && !supervised) {
   // Finder does not source shell profiles. Preserve install-time PATH for Git/SSH helpers.
   const installedPath = await fs.readFile(path.join(resources, 'runtime-path.txt'), 'utf8').catch(() => '');
   const log = await fs.open(path.join(state, 'server.log'), 'a', 0o600);

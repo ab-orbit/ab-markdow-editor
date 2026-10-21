@@ -6,7 +6,7 @@ import {zipSync,strToU8,unzipSync,strFromU8} from 'fflate';
 const safari=process.env.MARKDOWN_BROWSER==='webkit';
 const browser=safari?await webkit.launch({headless:true}):await chromium.launch({channel:'chrome',headless:true});
 try {
-  const page=await browser.newPage({viewport:{width:1440,height:900},serviceWorkers:'block'}),errors=[],writes=[];
+  const page=await browser.newPage({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:'block'}),errors=[],writes=[];
   page.setDefaultTimeout(15000);page.on('pageerror',error=>errors.push(error.message));
   page.on('request',request=>{if(request.method()==='POST'&&request.url().includes('/api/'))writes.push(request.url());});
   await page.addInitScript(({safari})=>{

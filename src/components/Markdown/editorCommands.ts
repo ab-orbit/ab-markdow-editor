@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { EditorSelection, type EditorState, type TransactionSpec } from '@codemirror/state';
 import { redo, undo } from '@codemirror/commands';
 import { syntaxTree } from '@codemirror/language';
@@ -26,7 +27,7 @@ export function formattingTransaction(state: EditorState, command: Exclude<Markd
   if (command === 'footnote') {
     const ids = [...state.doc.toString().matchAll(/\[\^(\d+)\]/g)].map(match => Number(match[1]));
     const id = ids.reduce((maximum, id) => Math.max(maximum, id), 0) + 1;
-    const marker = `[^${id}]`; const definition = `\n\n[^${id}]: ${selected || 'Descreva a fonte aqui.'}\n`;
+    const marker = `[^${id}]`; const definition = `\n\n[^${id}]: ${selected || t("Descreva a fonte aqui.")}\n`;
     return { changes: [{ from: to, insert: marker }, { from: state.doc.length, insert: definition }], selection: EditorSelection.cursor(to + marker.length), userEvent: 'input.format' };
   }
   const first = state.doc.lineAt(from); const last = state.doc.lineAt(to > from && state.doc.lineAt(to).from === to ? to - 1 : to);

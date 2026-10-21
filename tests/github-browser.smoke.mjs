@@ -134,7 +134,7 @@ const web = http.createServer(async (req, res) => {
 await new Promise((resolve) => web.listen(43650, "127.0.0.1", resolve));
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 try {
-  const context = await browser.newContext({
+  const context = await browser.newContext({locale:'pt-BR',
     viewport: { width: 390, height: 844 },
     serviceWorkers: "block",
   });

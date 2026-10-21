@@ -1,0 +1,3 @@
+// System permission explanations follow the iOS app language.
+"NSCameraUsageDescription" = "Nehmen Sie nur dann ein Foto auf, wenn Sie ein Bild in Ihre Notiz einfügen möchten.";
+"NSPhotoLibraryUsageDescription" = "Wählen Sie die Bilder aus, die Sie in Ihre Notiz einfügen möchten.";

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { Component, type ReactNode } from 'react';
 import styles from './MarkdownWorkbench.module.css';
 
@@ -7,6 +8,6 @@ export class VisualEditorBoundary extends Component<{ children: ReactNode; onRea
   static getDerivedStateFromError() { return { failed: true }; }
   render() {
     if (!this.state.failed) return this.props.children;
-    return <div className={styles.visualError} role="alert"><p>Não foi possível abrir a edição visual. Sua nota continua preservada.</p><div><button type="button" onClick={this.props.onRead}>Voltar à leitura</button><button type="button" onClick={this.props.onSource}>Editar fonte</button></div></div>;
+    return <div className={styles.visualError} role="alert"><p>{t("Não foi possível abrir a edição visual. Sua nota continua preservada.")}</p><div><button type="button" onClick={this.props.onRead}>{t("Voltar à leitura")}</button><button type="button" onClick={this.props.onSource}>{t("Editar fonte")}</button></div></div>;
   }
 }

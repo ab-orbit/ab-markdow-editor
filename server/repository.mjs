@@ -1,3 +1,4 @@
+import referenceTexts from './reference-texts.json' with {type:'json'};
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash, randomUUID } from 'node:crypto';
@@ -16,7 +17,14 @@ export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 /** Git is invoked without a shell and inherits the user's credential helpers/SSH agent. */
 async function git(cwd, args) {
   try {
-    const { stdout } = await exec('git', ['-C', cwd, ...args], {
+    // Explicit relative paths avoid background macOS directory discovery while
+    // retaining ordinary relative Git environment variables inside user hooks.
+    // Linked worktrees and clone/init destinations keep Git's normal discovery.
+    let explicit = false;
+    try { explicit = (await fs.stat(path.join(cwd, '.git'))).isDirectory(); }
+    catch { /* A clone or bare destination has no checkout metadata yet. */ }
+    const location = explicit ? ['-C', cwd, '--git-dir=.git', '--work-tree=.'] : ['-C', cwd];
+    const { stdout } = await exec('git', [...location, ...args], {
       env: { ...process.env, GIT_TERMINAL_PROMPT: '0' }, timeout: 120000, maxBuffer: 8 * 1024 * 1024,
     });
     return stdout.trim();
@@ -247,6 +255,9 @@ export class Repository {
       const sourcePins = (library[plan.source]?.pinned || []).filter(name=>included.has(name)).map(name=>plan.folder ? `${plan.folder}/${name}` : name);
       entry.pinned = [...new Set([...(entry.pinned || []), ...sourcePins])];
       const reference = library[plan.source];
+      for(const [language,name] of Object.entries(reference?.referenceTexts || {}))if(included.has(name)){
+        entry.referenceTexts ||= {};entry.referenceTexts[language]=plan.folder?`${plan.folder}/${name}`:name;
+      }
       if (reference?.diagramManualName && included.has(reference.diagramManualName)) {
         entry.diagramManualName = plan.folder ? `${plan.folder}/${reference.diagramManualName}` : reference.diagramManualName;
         entry.diagramManualVersion = reference.diagramManualVersion;
@@ -330,7 +341,7 @@ export class Repository {
           const plain = line => line.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[#*_`>~]/g, '').trim();
           const title = heading ? plain(heading).slice(0, 160) : name.split('/').at(-1);
           const preview = whiteboardPreview(text) ?? lines.filter(line => line !== heading && line.trim()).map(plain).filter(Boolean).join(' ').slice(0, 180);
-          return { name, modifiedAt: stat.mtime.toISOString(), title, preview, hasImage: !!this.localImage(text) };
+          return { name, modifiedAt: stat.mtime.toISOString(), createdAt: stat.birthtimeMs > 0 ? stat.birthtime.toISOString() : undefined, title, preview, hasImage: !!this.localImage(text) };
         } catch { return null; } // Deleted files and unsafe symlinks are not openable notes.
       }));
       notes.push(...batch.filter(Boolean));
@@ -361,13 +372,14 @@ export class Repository {
   }
 
   /** Seed editable reference notes once per checkout; never replace an existing user file. */
-  async initializeLibrary() {
+  async initializeLibrary({language} = {}) {
     const root = this.requireRoot();
     const state = await this.libraryState();
     let synchronization;
     const rememberSync = result => {
       if (synchronization?.synced !== false) synchronization = result;
     };
+    if(!state[root]&&Object.hasOwn(referenceTexts,language||'')){state[root]={pinned:[],welcomeImageVersion:1};await this.persistLibrary(state);}
     if (!state[root]) {
       let name = 'AB-Markdown-Guia.md';
       for (let suffix = 2; ; suffix++) {
@@ -398,6 +410,32 @@ export class Repository {
       }
       entry.welcomeImageVersion = 1;
       await this.persistLibrary(state);
+    }
+    // New clients request one independent reference per language. Older clients retain their legacy API behavior.
+    if (Object.hasOwn(referenceTexts, language || '')) {
+      entry.referenceTexts ||= {};
+      if (!Object.hasOwn(entry.referenceTexts,language)) {
+        const cover=await fs.readFile(new URL('../docs/reference-texts/assets/cover.jpg',import.meta.url));
+        let directory='';
+        for(let index=1;;index++) {
+          try { const existing=await fs.readFile(await safeFile(root,`${directory}assets/cover.jpg`)); if(existing.equals(cover))break; directory=`Scriba-References${index===1?'':` (${index})`}/`; }
+          catch(error){if(error.code==='ENOENT')break;throw error;}
+        }
+        const originalName=directory+referenceTexts[language]; let name=originalName,exists=false;
+        const value=await fs.readFile(new URL(`../docs/reference-texts/${referenceTexts[language]}`,import.meta.url),'utf8');
+        for(let suffix=2;;suffix++) {
+          try { const document=await this.read(name); if(document.value===value){exists=true;break;} name=originalName.replace(/\.md$/,` (${suffix}).md`); }
+          catch(error){if(error.code==='ENOENT')break;throw error;}
+        }
+        if(!exists){
+          const document={name,value,version:null,files:[{path:'assets/cover.jpg',data:cover.toString('base64')}],message:`Add Scriba reference (${language})`};
+          if(entry.referenceAutoSync===false)await this.save(document);else rememberSync(await this.saveAndSync(document));
+        }
+        entry.referenceTexts[language]=name;
+        if(!entry.pinned.includes(name))entry.pinned.unshift(name);
+        await this.persistLibrary(state);
+      }
+      return {...await this.library(),...(synchronization?{synchronization}:{})};
     }
     // A persisted marker respects later edits, deletion and unpinning. Filename
     // collisions select a new name; an already copied reference is adopted intact.

@@ -47,7 +47,8 @@ mkdir -p "$RESOURCES/scripts"
 cp -R dist server native "$RESOURCES/"
 mkdir -p "$RESOURCES/docs"
 cp docs/Scriba-Diagramas.md "$RESOURCES/docs/"
-cp scripts/launch.mjs scripts/stop.mjs "$RESOURCES/scripts/"
+cp -R docs/reference-texts "$RESOURCES/docs/"
+cp scripts/launch.mjs scripts/stop.mjs scripts/local-service.mjs "$RESOURCES/scripts/"
 cp -R "$NODE_HOME" "$RESOURCES/runtime"
 "$RESOURCES/runtime/bin/node" --version
 printf '%s\n' "${PATH#*:}" > "$RESOURCES/runtime-path.txt"
@@ -123,6 +124,7 @@ fi
 /usr/bin/osascript -l JavaScript "$SOURCE_DIR/scripts/create-desktop-alias.jxa.js" "$TARGET_APP" "$DESKTOP_LINK"
 touch "$TARGET_APP"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$TARGET_APP"
+"$TARGET_APP/Contents/Resources/runtime/bin/node" "$TARGET_APP/Contents/Resources/scripts/local-service.mjs" install
 echo "Instalado: $TARGET_APP"
 echo "Ícone na Mesa: $DESKTOP_LINK"
 if [[ "${MARKDOWN_NO_OPEN:-0}" != 1 ]]; then open "$TARGET_APP"; fi

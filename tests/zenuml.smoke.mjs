@@ -38,7 +38,7 @@ try {
     for(let n=0;n<150;n++){try{origin=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}
   }
   assert.ok(origin);browser=webKit?await webkit.launch({headless:true}):await chromium.launch({channel:'chrome',headless:true});
-  const context=await browser.newContext({viewport:{width:1440,height:900},serviceWorkers:publicMode?'allow':'block'}),page=await context.newPage(),errors=[],outside=[];
+  const context=await browser.newContext({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:publicMode?'allow':'block'}),page=await context.newPage(),errors=[],outside=[];
   page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{const url=new URL(request.url());if(url.origin!==origin&&!['data:','blob:'].includes(url.protocol)&&url.hostname!=='static.cloudflareinsights.com')outside.push(url.origin+url.pathname);});
   await page.goto(origin);await page.getByLabel('Bancada Markdown').waitFor();
   if(publicMode) {
