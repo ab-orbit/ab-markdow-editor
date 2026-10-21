@@ -1,0 +1,6 @@
+02ce8ed7ca2c37e9c49c9acec4d47db1c078c532db4a88bc3b469f5caae8b0d9  /var/www/scriba/releases/20261021T120200Z-public-1.16.1-build13/index.html
+2026/10/21 12:01:42 [warn] 546571#546571: protocol options redefined for 0.0.0.0:443 in /etc/nginx/sites-enabled/kids.aeonbridge.app:22
+2026/10/21 12:01:42 [warn] 546571#546571: protocol options redefined for [::]:443 in /etc/nginx/sites-enabled/kids.aeonbridge.app:23
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+/var/www/scriba/releases/20261021T120200Z-public-1.16.1-build13

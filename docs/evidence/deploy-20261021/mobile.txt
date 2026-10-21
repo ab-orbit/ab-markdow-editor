@@ -1,0 +1,1 @@
+PASS: mandatory background autosave with legacy opt-out and commit prompts, no mobile toolbar, three menu actions, two information tabs, settings access, cursor preserved through rotation and keyboard geometry.

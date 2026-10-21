@@ -1,0 +1,1 @@
+PASS: desktop autosaves despite legacy opt-out, bypasses commit prompts and preserves editing focus across repeated saves.
