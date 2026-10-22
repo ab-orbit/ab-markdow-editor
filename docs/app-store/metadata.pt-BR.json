@@ -76,8 +76,8 @@
     "archiveStatus": "SIGNED_ARCHIVE_SUCCEEDED",
     "simulatorStatus": "INSTALLED_AND_VERSION_VERIFIED_IPHONE_AND_IPAD",
     "uploadStatus": "BLOCKED_XCODE_ACCOUNT_ACCESS",
-    "uploadAttempts": 2,
-    "requiredAction": "Reauthenticate the existing Apple account in Xcode Settings > Accounts",
+    "uploadAttempts": 4,
+    "requiredAction": "Investigate Xcode command-line account-to-team resolution; account and Admin role verified in Xcode UI on 2026-10-22 at 12:19 Recife. Invalid credentials were not established.",
     "appStoreSubmission": "NOT_RESUBMITTED"
   }
 }
