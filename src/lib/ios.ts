@@ -16,6 +16,8 @@ export interface NativeNote {
   files: { path: string; data: string; mime: string }[];
 }
 interface IosBridge {
+  /** Accessibility material preferences come from UIKit, including WebKit's missing media query. */
+  accessibilityPreferences(): Promise<{reduceTransparency: boolean; increaseContrast: boolean}>;
   /** Fixed-origin update lookup; no notes, credentials or device identifiers are sent. */
   updateInfo(): Promise<NativeUpdateInfo>;
   /** Open only the known distribution channel, never a remotely supplied URL. */

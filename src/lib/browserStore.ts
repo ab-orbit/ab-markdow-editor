@@ -1,4 +1,4 @@
-import { referenceText } from './referenceTexts';
+import { referenceText, welcomeText } from './referenceTexts';
 import type { Language } from '../i18n';
 import { t } from '../i18n';
 import {githubSelection, githubRequest, libraryKey} from './github';
@@ -18,6 +18,8 @@ interface Note {
 interface State {
   /** Each locale is seeded once; edits, deletion and unpinning remain user decisions. */
   referenceTexts?: Partial<Record<Language,string>>;
+  /** Welcome notes follow the same one-time locale seeding and user-ownership rules. */
+  welcomeTexts?: Partial<Record<Language,string>>;
   notes: Record<string,Note>; pins: string[];
   /** Seed metadata persists user decisions to edit, unpin or remove a reference. */
   diagramManualVersion?: number;
@@ -106,10 +108,12 @@ async function prepareDiagramManual(database:IDBDatabase,key:string,remote:any,h
   throw new Error(t("Não foi possível escolher um nome livre para o manual de diagramas."));
 }
 /** Locale references are independent files; never overwrite an unrelated local or remote filename. */
-async function prepareLocalizedReference(database:IDBDatabase,key:string,remote:any,hasGitHub:boolean,language:Language):Promise<PreparedManual|undefined> {
+async function prepareLocalizedReference(database:IDBDatabase,key:string,remote:any,hasGitHub:boolean,language:Language,kind: "reference" | "welcome" = "reference", resourceName?: string):Promise<PreparedManual|undefined> {
   const state=await snapshot(database,key);
-  if(state.referenceTexts && Object.hasOwn(state.referenceTexts,language))return;
-  const bundled=await referenceText(language),known=new Set<string>((remote?.notes||[]).map((note:Note)=>note.name));
+  const markers=kind === "welcome" ? state.welcomeTexts : state.referenceTexts;
+  if(markers && Object.hasOwn(markers,language))return;
+  const bundled=kind === "welcome" ? await welcomeText(language, resourceName || state.referenceTexts?.[language]) : await referenceText(language);
+  const known=new Set<string>((remote?.notes||[]).map((note:Note)=>note.name));
   for(let suffix=1;suffix<1000;suffix++) {
     if(key!==libraryKey())throw new Error(t('O destino mudou. Reabra a biblioteca.'));
     const name=suffix===1?bundled.name:bundled.name.replace(/\.md$/,` (${suffix}).md`),local=state.notes[name];
@@ -120,7 +124,7 @@ async function prepareLocalizedReference(database:IDBDatabase,key:string,remote:
     }
     const note:Note={...bundled,name,version:hasGitHub?null:crypto.randomUUID(),cached:true,pending:hasGitHub,modifiedAt:new Date().toISOString()};
     if(hasGitHub)try{
-      const response=await githubRequest('save',{...note,scope:key,message:`Add Scriba reference (${language})`}),result=await response.json();
+      const response=await githubRequest('save',{...note,scope:key,message:`Add Scriba ${kind} (${language})`}),result=await response.json();
       if(response.ok){note.version=result.version;note.pending=false;}
       else if(response.status===409){known.add(name);continue;}
     }catch{/* The bundled file and cover remain available privately for a later explicit save. */}
@@ -165,6 +169,8 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
     if(guide && isIosApp)guide.value = '# Bem-vindo ao Scriba\n\n![Escriba egípcio](assets/boas-vindas.jpg)\n\nEscreva, organize e guarde suas notas Markdown neste aplicativo, mesmo sem internet.\n\n## Comece aqui\n\nCrie uma nota, escreva e toque em Salvar. Você pode editar diretamente no texto formatado ou abrir o código Markdown. Busque e fixe notas na lateral e use o outline para navegar pelos títulos.\n\n## Escolha onde guardar\n\nSuas notas começam no armazenamento privado do aplicativo. Nas configurações, use **Selecionar pasta em Files** para escolher uma pasta: o Scriba lê os Markdown existentes e cria uma subpasta scriba para as novas cópias. Os arquivos originais da pasta principal são preservados. Uma alteração externa bloqueia a sobrescrita; recarregue a nota ou salve uma cópia.\n\nVocê também pode conectar seu GitHub e escolher um repositório para compartilhar notas entre dispositivos. A sincronização exige conexão e acontece enquanto o aplicativo está aberto. Google Drive segue previsto, sem data.\n\n## Desenhe e compartilhe\n\nA nota fixada **Scriba — Manual contextual de diagramas** apresenta exemplos editáveis de Mermaid, ZenUML e Excalidraw. Os motores e as fontes já estão incluídos no aplicativo. Exporte Markdown, ZIP, SVG, PNG ou um desenho editável pelo menu de compartilhamento do sistema.\n\n## Cuide das suas notas\n\nDesinstalar o Scriba remove as cópias privadas e os rascunhos do aplicativo. Arquivos exportados para Files ou sincronizados com GitHub continuam no destino escolhido. Faça backups em ZIP. Repositórios públicos tornam públicos os arquivos enviados.\n\n[Privacidade](https://scriba.aeonbridge.app/privacy.html) · [Suporte](https://scriba.aeonbridge.app/support.html)\n\nPowered by **Aeon Bridge Co.** — offered to community.';
     const referenceLanguage=['pt','en','de','fr'].includes(body?.language)?body.language as Language:undefined;
     const reference=url.pathname==='/library/initialize' ? referenceLanguage ? await prepareLocalizedReference(database,key,remote,!!selection,referenceLanguage) : await prepareDiagramManual(database,key,remote,!!selection) : undefined;
+    const welcome=url.pathname==='/library/initialize' && referenceLanguage ? await prepareLocalizedReference(database,key,remote,!!selection,referenceLanguage,"welcome",reference?.note.name) : undefined;
+    let welcomeApplied=false;
     if(key!==libraryKey())return Response.json({error:t("O destino mudou. Reabra a biblioteca.")},{status:409});
     let referenceApplied=false;
     const response = await new Promise<Response>((resolve,reject)=>{
@@ -193,7 +199,17 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
                   referenceApplied=reference.created;
                 }
               }
-              result={...library(state),synchronization:reference?.note.pending||selection&&syncError?{synced:false,error:syncError||t('Manual disponível neste navegador; salve-o para enviar ao GitHub.')}:undefined};break;
+              state.welcomeTexts ||= {};
+              if(welcome&&!Object.hasOwn(state.welcomeTexts,referenceLanguage)) {
+                const existing=state.notes[welcome.note.name];
+                if(!existing||existing.value===welcome.note.value||!existing.cached&&!existing.value&&existing.version===welcome.note.version) {
+                  state.notes[welcome.note.name]=existing?.cached?existing:welcome.note;
+                  state.welcomeTexts[referenceLanguage]=welcome.note.name;
+                  if(!state.pins.includes(welcome.note.name))state.pins.unshift(welcome.note.name);
+                  welcomeApplied=welcome.created;
+                }
+              }
+              result={...library(state),welcomeName:state.welcomeTexts[referenceLanguage],synchronization:reference?.note.pending||welcome?.note.pending||selection&&syncError?{synced:false,error:syncError||t('Manual disponível neste navegador; salve-o para enviar ao GitHub.')}:undefined};break;
             }
             if(reference&&state.diagramManualVersion&&(!state.diagramManualZenUmlVersion||!state.diagramManualExcalidrawVersion)) {
               const existing=state.notes[reference.note.name];
@@ -235,8 +251,8 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
       };
       tx.oncomplete=()=>resolve(Response.json(result,{status}));tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
     });
-    if(!selection&&folder&&reference&&referenceApplied&&response.ok) {
-      try{await saveToDeviceFolder(reference.note);}
+    if(!selection&&folder&&response.ok&&(reference&&referenceApplied||welcome&&welcomeApplied)) {
+      try{if(reference&&referenceApplied)await saveToDeviceFolder(reference.note);if(welcome&&welcomeApplied)await saveToDeviceFolder(welcome.note);}
       catch(error){const result=await response.json();return Response.json({...result,synchronization:{synced:false,error:error instanceof Error?error.message:String(error)}});}
     }
     if(!selection&&url.pathname==='/save-sync'&&response.ok){const result=await response.json();try{await saveToDeviceFolder(body);}catch(error){return Response.json({...result,synced:false,error:error instanceof Error?error.message:String(error)});}return Response.json(result);}

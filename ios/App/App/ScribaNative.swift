@@ -36,7 +36,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     let jsName = "ScribaNative"
     let pluginMethods: [CAPPluginMethod] = [
         "folderStatus", "chooseFolder", "authorizeFolder", "disconnectFolder", "readNotes", "saveNote",
-        "document", "documentVersion", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance", "updateInfo", "openUpdate"
+        "document", "documentVersion", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance", "accessibilityPreferences", "updateInfo", "openUpdate"
     ].map { CAPPluginMethod(name: $0, returnType: CAPPluginReturnPromise) }
 
     private let defaults = UserDefaults.standard
@@ -47,6 +47,13 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     private let bookmarkKey = "scriba.files.bookmark"
     private var pickerCall: CAPPluginCall?
     private var authentication: ASWebAuthenticationSession?
+
+    @objc func accessibilityPreferences(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve(["reduceTransparency": UIAccessibility.isReduceTransparencyEnabled,
+                          "increaseContrast": UIAccessibility.isDarkerSystemColorsEnabled])
+        }
+    }
 
     @objc func appearance(_ call: CAPPluginCall) {
         DispatchQueue.main.async {

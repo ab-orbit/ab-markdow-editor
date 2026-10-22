@@ -1,0 +1,142 @@
+/* Application controls follow platform conventions; document renderers retain their own fonts. */
+.editor-app :is(.settings-page, .notes-menu-content, .toast, [data-ui]) { font-family: var(--font-ui); }
+.editor-app :is(.settings-page, [data-ui="dialog"], [data-ui="inspector"]) { font-size: var(--ui-body-size); line-height: 1.5; }
+.editor-app :is(.settings-page, [data-ui="dialog"]) :is(button, .settings-action) { min-height: var(--ui-control-height); border-radius: var(--ui-control-radius); padding: 10px 14px; font: inherit; line-height: 1.35; }
+.editor-app :is(.settings-page, [data-ui="dialog"]) :is(input:not([type="checkbox"]), select, textarea) { min-height: var(--ui-control-height); font-family: var(--font-ui); font-size: max(16px, var(--ui-body-size)); border: 1px solid var(--border-strong); border-radius: var(--ui-control-radius); color: var(--text-primary); background: var(--ui-control-bg); padding: 10px 12px; }
+.editor-app :is(.settings-page, [data-ui="dialog"]) button:not(.primary) { color: var(--text-primary); border-color: var(--ui-separator); background: var(--bg-input); }
+.editor-app :is(.settings-page, [data-ui="dialog"]) button.primary { background: var(--cyan); color: var(--ui-on-accent); border-color: transparent; }
+.editor-app :is(.settings-page, [data-ui="dialog"]) :is(button, input, select, textarea, a):focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.editor-app :is(.settings-page, [data-ui="dialog"]) button:disabled { color: var(--text-muted); cursor: default; }
+.editor-app [data-ui="dialog"] { border-radius: var(--ui-panel-radius); padding: var(--ui-space-6); border-color: var(--ui-separator); box-shadow: var(--shadow-panel); }
+.editor-app [data-ui="dialog"]::backdrop { background: var(--ui-scrim); }
+.editor-app [data-ui="dialog"] > header h2 { font-family: var(--font-ui); font-size: 20px; line-height: 1.3; margin: 0; }
+.editor-app [data-ui="dialog"] > header > button { flex: 0 0 44px; padding: 10px; border: 0; border-radius: 50%; background: var(--bg-input); color: var(--text-secondary); }
+.editor-app [data-ui="dialog"] footer { flex-wrap: wrap; gap: var(--ui-space-2); }
+/* Menus are command lists, never stacks of primary form buttons. */
+[data-ui="action-menu"], .editor-app .notes-menu-content { border: 1px solid var(--ui-separator); background: var(--ui-menu-bg); border-radius: var(--ui-menu-radius); box-shadow: var(--shadow-panel); padding: 6px; color: var(--text-primary); font: var(--ui-body-size)/1.35 var(--font-ui); }
+.editor-app dialog[data-ui="action-menu"] { width: min(300px, calc(100vw - 24px)); outline: none; }
+[data-ui="action-menu"] :is([role="menu"], [role="group"]) { display: flex; flex-direction: column; gap: 0; }
+[data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button), .editor-app .notes-menu-content [role="menuitem"] { display: flex; align-items: center; justify-content: flex-start; gap: 12px; width: 100%; min-height: 44px; padding: 10px 12px; margin: 0; border: 0; border-radius: var(--ui-row-radius); background: transparent; color: var(--text-primary); font: inherit; line-height: 1.35; text-align: start; white-space: normal; overflow-wrap: anywhere; box-shadow: none; -webkit-appearance: none; appearance: none; }
+[data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button) > svg { width: 18px; height: 18px; flex: 0 0 18px; color: var(--text-secondary); stroke-width: 1.75; }
+[data-ui="action-menu"] small { display: block; margin-top: 3px; font-size: var(--ui-caption-size); line-height: 1.35; color: var(--text-muted); }
+[data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button):not(:disabled):active { background: var(--ui-menu-hover); color: var(--text-primary); }
+[data-ui="action-menu"] [role="menuitem"]:last-child:not(:first-child) { border: 0; margin-top: 0; }
+[data-ui="action-menu"] [role="menuitem"]:last-child:nth-child(3) { margin-top: 6px; border-top: 1px solid var(--ui-separator); border-radius: 0 0 var(--ui-row-radius) var(--ui-row-radius); }
+@media (hover: hover) and (pointer: fine) {
+  [data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button):not(:disabled):hover, .editor-app .notes-menu-content [role="menuitem"]:hover { background: var(--ui-menu-hover); color: var(--text-primary); }
+  .editor-app :is(.settings-page, [data-ui="dialog"]) button:not(:disabled):not(.primary):hover { background: var(--bg-hover); color: var(--text-primary); }
+}
+@media (hover: none) {
+  [data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button):not(:active):not(:focus-visible) { background: transparent; color: var(--text-primary); }
+}
+@media (max-width: 899px) {
+  [data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button) { min-height: 48px; }
+  .editor-app [data-ui="dialog"] { max-height: calc(var(--workspace-height, 100dvh) - 32px); padding: 20px; }
+  .editor-app [data-ui="dialog"] footer > button { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editor-app :is(button, input, select, dialog, [role="menuitem"]) { animation: none; transition: none; scroll-behavior: auto; }
+}
+
+/* Keyboard focus takes precedence when the pointer happens to remain over the same row. */
+[data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button):not(:disabled):focus-visible,
+.editor-app .notes-menu-content [role="menuitem"]:focus-visible { background: var(--ui-focus); color: var(--ui-on-accent); outline: none; }
+[data-ui="action-menu"] :is([role="menuitem"], [data-menu-item], button):focus-visible :is(svg, small) { color: currentColor; }
+
+/* Navigation, drawing controls and editing tools share the same control geometry. */
+[data-ui="toolbar"] { font-family: var(--font-ui); font-size: var(--ui-body-size); }
+[data-ui="toolbar"] :is(button, summary), [data-ui="diagram"] > [class*="controls"] :is(button, select) { min-height: 44px; min-width: 44px; border-radius: var(--ui-control-radius); font-family: var(--font-ui); font-size: var(--ui-body-size); }
+[data-ui="toolbar"] button { border-color: transparent; }
+[data-ui="toolbar"] :is(button, summary):focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+[data-ui="toolbar"] button[aria-pressed="true"], .editor-app [data-ui="dialog"] button:is([aria-pressed="true"], [aria-selected="true"]) { color: var(--cyan); background: var(--ui-active-bg); border-color: var(--border-strong); }
+.editor-app [data-ui="dialog"] form footer button[type="submit"] { color: var(--ui-on-accent); background: var(--cyan); border-color: transparent; }
+.editor-app .notes-commandbar .notes-header-actions button { border: 0; border-radius: var(--ui-control-radius); background: transparent; }
+.editor-app .notes-commandbar .notes-header-actions button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: -2px; }
+.editor-app .settings-content .repository { border-radius: var(--ui-panel-radius); }
+.editor-app .settings-content h3 { font-size: calc(20px * var(--ui-font-scale, 1)); line-height: 1.3; }
+.editor-app .settings-content h4 { font-size: calc(18px * var(--ui-font-scale, 1)); line-height: 1.35; }
+.editor-app .settings-content label { font-weight: 500; }
+.editor-app .settings-content :is(input, select, textarea)::placeholder { color: var(--text-muted); opacity: 1; }
+.editor-app .toast, .editor-app .app-update-notice { font: var(--ui-body-size)/1.45 var(--font-ui); border-color: var(--ui-separator); border-radius: var(--ui-panel-radius); }
+.editor-app .settings-content p[role="alert"] { padding: 12px 14px; border-radius: var(--ui-control-radius); border: 1px solid var(--ui-separator); background: var(--status-alert-dim); color: var(--text-primary); }
+[data-ui="inspector"] { font: var(--ui-body-size)/1.45 var(--font-ui); border-color: var(--ui-separator); }
+[data-ui="inspector"] > header h2 { font-size: var(--ui-body-size); font-weight: 600; }
+[data-ui="inspector"] button { border-radius: var(--ui-row-radius); }
+@media (hover: hover) and (pointer: fine) {
+  [data-ui="toolbar"] button:not(:disabled):hover { background: var(--ui-menu-hover); color: var(--text-primary); }
+}
+
+[data-ui="toolbar"] button[data-prominent] { background: var(--cyan); color: var(--ui-on-accent); border-color: transparent; }
+[data-ui="action-menu"] button:disabled { color: var(--text-muted); cursor: default; opacity: .55; }
+@media (hover: none) {
+  [data-ui="toolbar"] button:not(:active):not([data-prominent]):not([aria-pressed="true"]):not([aria-expanded="true"]) { background: transparent; color: var(--text-secondary); }
+}
+@media (forced-colors: active) {
+  [data-ui="action-menu"] { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  [data-ui="action-menu"] button:focus-visible { background: Highlight; color: HighlightText; }
+}
+.editor-app { font-size: var(--ui-body-size); }
+.editor-app .notes-search input { min-height: 44px; border-radius: var(--ui-control-radius); font-size: var(--ui-body-size); }
+.editor-app .notes-sidebar :is(.note-preview, time), .editor-app .note-group h3 { font-size: var(--ui-caption-size); }
+.editor-app .source-change { font-size: var(--ui-body-size); }
+.editor-app .source-change button { min-height: 44px; border-radius: var(--ui-control-radius); font: inherit; }
+@media (pointer: coarse) {
+  .editor-app .notes-sidebar nav .pin-note { width: 44px; min-height: 44px; }
+  .editor-app .notes-sidebar nav .open-note { padding-right: 44px; }
+}
+
+/* Installation/help is secondary to the current storage destination and editing preferences. */
+.editor-app .pwa-settings > summary { min-height: 44px; padding-block: 10px; color: var(--text-primary); font-weight: 500; }
+.editor-app .pwa-settings[open] > summary { margin-bottom: 16px; }
+.editor-app .pwa-settings .pwa-brand { margin-top: 8px; }
+
+/* WebKit native selects need an explicit height to honor the shared hit region. */
+.editor-app :is(.settings-page, [data-ui="dialog"]) select { height: max(var(--ui-control-height), 2.75em); width: 100%; }
+
+.editor-app .desktop-git-help > summary { min-height: 44px; font-weight: 500; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+@media (max-width: 899px) { .editor-app .desktop-git-help { display: none; } }
+
+/* The functional layer floats above the document; a shared regular material keeps text legible. */
+.editor-app [aria-label="Bancada Markdown"] > header[data-ui="toolbar"],
+.editor-app [class*="mobileReadingBar"] > div,
+[data-ui="action-menu"],
+.editor-app dialog[data-ui="inspector"],
+.editor-app dialog[data-ui="dialog"] {
+  background: var(--ui-glass-fill);
+  -webkit-backdrop-filter: var(--ui-glass-blur);
+  backdrop-filter: var(--ui-glass-blur);
+  border: 1px solid var(--ui-glass-edge);
+  box-shadow: var(--ui-glass-shadow);
+}
+.editor-app [aria-label="Bancada Markdown"] > header[data-ui="toolbar"] {
+  margin: 8px 12px; border-radius: 22px; padding: 8px 12px;
+}
+.editor-app [data-ui="toolbar"] button { border-radius: 999px; }
+.editor-app [data-ui="toolbar"] button[aria-pressed="true"] {
+  color: var(--text-primary); background: var(--ui-glass-selected); border-color: var(--ui-glass-edge);
+}
+.editor-app [aria-label="Bancada Markdown"] > header [role="group"] { border: 0; border-radius: 999px; padding: 2px; }
+.editor-app [class*="mobileReadingBar"] { z-index: 6; background: transparent; }
+.editor-app [class*="mobileReadingBar"] > div { border-radius: 999px; padding: 3px; }
+.editor-app .notes-sidebar { background: var(--ui-glass-sidebar); }
+.editor-app dialog[data-ui] > header { background: transparent; }
+.editor-app [data-ui="action-menu"] { border-radius: 18px; }
+.editor-app .notes-menu-content { border-radius: 18px; }
+@supports not (backdrop-filter: blur(1px)) {
+  .editor-app, [data-ui="action-menu"] { --ui-glass-fill: var(--ui-menu-bg); --ui-glass-sidebar: var(--bg-surface); }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
+  :root, [data-theme="dark"], [data-theme="light"] {
+    --ui-glass-fill: var(--ui-menu-bg); --ui-glass-sidebar: var(--bg-surface);
+    --ui-glass-blur: none; --ui-glass-edge: var(--border-strong); --ui-glass-selected: var(--bg-hover);
+  }
+}
+html[data-reduce-transparency="true"] {
+  --ui-glass-fill: var(--ui-menu-bg); --ui-glass-sidebar: var(--bg-surface);
+  --ui-glass-blur: none; --ui-glass-edge: var(--border-strong); --ui-glass-selected: var(--bg-hover);
+}
+@media (max-width: 899px) {
+  .editor-app [class*="mobileReadingBar"] { position: relative; margin-bottom: -62px; min-height: 62px; padding-block: 7px; }
+  .editor-app [class*="mobileReadingBar"] ~ [class*="documentArea"] [data-document-scroll] { padding-top: 66px; }
+  .editor-app [class*="mobileReadingBar"] > button { background: var(--ui-glass-fill); border: 1px solid var(--ui-glass-edge); box-shadow: var(--ui-glass-shadow); -webkit-backdrop-filter: var(--ui-glass-blur); backdrop-filter: var(--ui-glass-blur); }
+}

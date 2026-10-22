@@ -1,3 +1,4 @@
+import welcomeTexts from './welcome-texts.json' with {type:'json'};
 import referenceTexts from './reference-texts.json' with {type:'json'};
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -435,7 +436,32 @@ export class Repository {
         if(!entry.pinned.includes(name))entry.pinned.unshift(name);
         await this.persistLibrary(state);
       }
-      return {...await this.library(),...(synchronization?{synchronization}:{})};
+      // Welcome files are normal editable notes, seeded once per locale beside the resource guide.
+      entry.welcomeTexts ||= {};
+      if (!Object.hasOwn(entry.welcomeTexts,language)) {
+        const image=await fs.readFile(new URL('../docs/welcome-texts/assets/boas-vindas.jpg',import.meta.url));
+        let directory=path.posix.dirname(entry.referenceTexts[language]);
+        directory=directory==='.'?'':directory+'/';
+        for(let index=1;;index++) {
+          try {const existing=await fs.readFile(await safeFile(root,`${directory}assets/boas-vindas.jpg`));if(existing.equals(image))break;directory=`Scriba-Welcome${index===1?'':` (${index})`}/`;}
+          catch(error){if(error.code==='ENOENT')break;throw error;}
+        }
+        const originalName=directory+welcomeTexts[language];let name=originalName,exists=false;
+        const authored=await fs.readFile(new URL(`../docs/welcome-texts/${welcomeTexts[language]}`,import.meta.url),'utf8');
+        const value=authored.replace(referenceTexts[language],entry.referenceTexts[language]);
+        for(let suffix=2;;suffix++) {
+          try {const document=await this.read(name);if(document.value===value){exists=true;break;}name=originalName.replace(/\.md$/,` (${suffix}).md`);}
+          catch(error){if(error.code==='ENOENT')break;throw error;}
+        }
+        if(!exists) {
+          const document={name,value,version:null,files:[{path:'assets/boas-vindas.jpg',data:image.toString('base64')}],message:`Add Scriba welcome (${language})`};
+          if(entry.referenceAutoSync===false)await this.save(document);else rememberSync(await this.saveAndSync(document));
+        }
+        entry.welcomeTexts[language]=name;
+        if(!entry.pinned.includes(name))entry.pinned.unshift(name);
+        await this.persistLibrary(state);
+      }
+      return {...await this.library(),welcomeName:entry.welcomeTexts[language],...(synchronization?{synchronization}:{})};
     }
     // A persisted marker respects later edits, deletion and unpinning. Filename
     // collisions select a new name; an already copied reference is adopted intact.

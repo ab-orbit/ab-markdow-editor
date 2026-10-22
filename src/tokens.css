@@ -984,3 +984,50 @@
 
 /* Desktop application chrome is independent from document typography. */
 :root { --desktop-ui-size: 15px; --desktop-ui-caption: 13px; --desktop-sidebar-width: 280px; }
+
+/* Shared application chrome: semantic roles, independent from document typography. */
+:root, [data-theme="dark"], [data-theme="light"] {
+  --ui-body-size: calc(15px * var(--ui-font-scale, 1));
+  --ui-caption-size: calc(13px * var(--ui-font-scale, 1));
+  --ui-control-radius: 10px;
+  --ui-panel-radius: 18px;
+  --ui-menu-radius: 14px;
+  --ui-row-radius: 8px;
+  --ui-control-height: 44px;
+  --ui-space-1: 4px; --ui-space-2: 8px; --ui-space-3: 12px; --ui-space-4: 16px; --ui-space-6: 24px;
+  --ui-control-bg: var(--bg-input); --ui-menu-bg: var(--bg-overlay);
+  --ui-menu-hover: var(--bg-hover); --ui-focus: var(--cyan);
+  --ui-separator: var(--border-panel); --ui-active-bg: var(--lime-trace);
+}
+:root, [data-theme="dark"] { --ui-on-accent: #102231; --ui-scrim: #00000080; }
+[data-theme="light"] { --ui-on-accent: #ffffff; --ui-scrim: #00000040; }
+@media (max-width: 899px) {
+  :root, [data-theme="dark"], [data-theme="light"] { --ui-body-size: calc(17px * var(--ui-font-scale, 1)); }
+}
+@media (prefers-contrast: more) {
+  :root, [data-theme="dark"], [data-theme="light"] { --ui-separator: var(--border-strong); }
+}
+
+/* The application UI scale is separate from the author-selected document sizes. */
+:root, [data-theme="dark"], [data-theme="light"] {
+  --text-xs: calc(13px * var(--ui-font-scale, 1)); --text-sm: calc(13px * var(--ui-font-scale, 1));
+  --text-base: var(--ui-body-size); --text-md: calc(16px * var(--ui-font-scale, 1));
+  --text-lg: calc(17px * var(--ui-font-scale, 1)); --text-xl: calc(20px * var(--ui-font-scale, 1));
+  --desktop-ui-size: calc(15px * var(--ui-font-scale, 1)); --desktop-ui-caption: calc(13px * var(--ui-font-scale, 1));
+}
+html[data-platform="ios"] { font: -apple-system-body; }
+html[data-platform="ios"] { --ui-body-size: calc(1rem * var(--ui-font-scale, 1)); --ui-caption-size: calc(.8125rem * var(--ui-font-scale, 1)); }
+
+/* Regular glass belongs to navigation and command surfaces, never authored content. */
+:root, [data-theme="dark"] {
+  --ui-glass-fill: #252729cc; --ui-glass-sidebar: #202224ed;
+  --ui-glass-edge: #ffffff26; --ui-glass-highlight: #ffffff14;
+  --ui-glass-shadow: 0 8px 28px #00000040, inset 0 1px 0 var(--ui-glass-highlight);
+  --ui-glass-selected: #ffffff1f; --ui-glass-blur: blur(28px) saturate(1.35);
+}
+[data-theme="light"] {
+  --ui-glass-fill: #fafaf9d9; --ui-glass-sidebar: #f4f4f2ed;
+  --ui-glass-edge: #00000024; --ui-glass-highlight: #ffffffcc;
+  --ui-glass-shadow: 0 8px 28px #18303d14, inset 0 1px 0 var(--ui-glass-highlight);
+  --ui-glass-selected: #ffffffc7;
+}

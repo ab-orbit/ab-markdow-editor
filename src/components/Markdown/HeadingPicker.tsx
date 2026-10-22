@@ -1,3 +1,4 @@
+import { navigateActionMenu } from '../ui/actionMenu';
 import { t } from '../../i18n';
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -27,14 +28,8 @@ export function HeadingPicker({ disabled, onCommand }: { disabled: boolean; onCo
       const rect = trigger.current!.getBoundingClientRect();
       setPosition({ left: Math.max(8, Math.min(rect.left, window.innerWidth - 286)), top: rect.bottom + 300 < window.innerHeight ? rect.bottom + 6 : Math.max(8, rect.top - 300) });
       setOpen(!open);
-    }}>{t("Título / texto")}<ChevronDown size={16}/></button>{open && createPortal(<div ref={menu} style={position} id={id} role="menu" aria-label={t("Estilo do parágrafo")} className={styles.headingMenu} onKeyDown={event => {
-      const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button'));
-      const index = items.indexOf(document.activeElement as HTMLButtonElement);
+    }}>{t("Título / texto")}<ChevronDown size={16}/></button>{open && createPortal(<div ref={menu} style={position} id={id} role="menu" data-ui="action-menu" aria-label={t("Estilo do parágrafo")} className={styles.headingMenu} onKeyDown={event => {
       if (event.key === 'Escape') { event.preventDefault(); setOpen(false); trigger.current?.focus(); }
-      if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-        event.preventDefault();
-        const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
-        items[next]?.focus();
-      }
+      else navigateActionMenu(event);
     }}>{choices.map(choice => <button key={choice.command} role="menuitem" type="button" className={styles.headingChoice} data-heading-level={choice.level} onMouseDown={event => event.preventDefault()} onClick={() => { onCommand(choice.command); setOpen(false); }}><span className={styles.headingBadge}>{choice.badge}</span><span><span className={styles.headingLabel}>{choice.label}</span><small>{choice.hint}</small></span></button>)}</div>, document.body)}</div>;
 }

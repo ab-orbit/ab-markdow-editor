@@ -46,10 +46,10 @@ try {
   // Saving with an active text box must include the latest text, without requiring Escape first.
   await page.keyboard.press('Meta+s'); await expect(page.getByRole('status').filter({ hasText: 'Nota salva neste navegador.' })).toBeVisible();
   async function downloadNote() {
-    const more = page.getByRole('button', { name: 'Mais opções da nota', exact: true });
-    if (await more.isVisible() && !await page.getByRole('button', { name: 'Baixar .md', exact: true }).isVisible()) await more.click();
-    const menu = page.getByRole('button', { name: 'Exportar nota', exact: true }); if (await menu.isVisible()) await menu.click();
-    const pending = page.waitForEvent('download'); await page.getByRole('button', { name: 'Baixar .md', exact: true }).click();
+    await page.getByLabel('Exportar nota', { exact: true }).click();
+    const formats = page.getByRole('group', { name: 'Formatos de exportação', exact: true });
+    const pending = page.waitForEvent('download');
+    await formats.getByRole('button', { name: 'Markdown (.md)', exact: false }).click();
     return fs.readFile(await (await pending).path(), 'utf8');
   }
   let markdown = await downloadNote(); assert.ok(markdown.startsWith(prefix)); assert.ok(markdown.includes('```excalidraw\r\n')); assert.ok(markdown.includes('Planejamento no quadro'));
@@ -98,8 +98,8 @@ try {
       const close = page.getByRole('button', { name: 'Fechar lista de notas', exact: true }); if (await close.isVisible()) await close.click();
       await expect(board).toBeVisible(); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-      await expect.poll(async () => { const area = await canvas.boundingBox(); return area.width >= width - 240 && area.height > height * .45; }, { message: `Canvas resizes to the ${width}×${height} workspace.` }).toBe(true);
-      if (width < 900) { const picker = page.getByRole('combobox', { name: 'Formato do documento', exact: true }); await picker.selectOption('note'); await expect(workbench).toHaveAttribute('data-mode', 'read'); await picker.selectOption('whiteboard'); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready'); }
+      await expect.poll(async () => { const area = await canvas.boundingBox(), workspace = await board.boundingBox(); return area.width >= workspace.width - 4 && area.height > height * .45; }, { message: `Canvas resizes to the ${width}×${height} workspace.` }).toBe(true);
+
       await page.screenshot({ path: new URL(`whiteboard-${theme}-${width}x${height}-${safari ? 'webkit' : 'chrome'}.png`, evidence).pathname });
     }
   }

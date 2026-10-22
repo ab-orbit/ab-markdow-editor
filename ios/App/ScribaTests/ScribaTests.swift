@@ -152,6 +152,35 @@ final class ScribaTests: XCTestCase {
         try await waitFor("document.body.textContent.includes('Nota salva neste aplicativo')")
     }
 
+    func testFirstLaunchWelcomeAndDraftRestoration() async throws {
+        // Only this isolated simulator's fixture databases are reset; no device or user library is used.
+        _ = try await js("""
+          for (const [name,store] of [['ab-markdown-drafts','drafts'],['scriba-private-notes','library']]) {
+            const db=await new Promise((resolve,reject)=>{const r=indexedDB.open(name);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+            if(db.objectStoreNames.contains(store))await new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).clear();tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close();
+          }
+          localStorage.setItem('scriba-language','en');localStorage.removeItem('scriba-welcome-opened');location.reload();return true;
+          """)
+        try await waitFor("document.querySelector('article h1')?.textContent==='Welcome to Scriba'")
+        try await waitFor("!!document.querySelector('input[aria-label=\"Markdown file\"]') && !document.querySelector('input[aria-label=\"Markdown file\"]').disabled")
+        try await expect("return document.documentElement.dataset.platform==='ios' && localStorage.getItem('scriba-welcome-opened')==='1'", equals: true)
+        try await waitFor("document.querySelector('article img')?.complete && document.querySelector('article img')?.naturalWidth>0")
+        try await expect("return !document.querySelector('#recent-notes')", equals: true)
+        try await waitFor("document.querySelectorAll('article [data-document-icon] svg').length===8")
+        _ = try await js("""
+          const db=await new Promise(resolve=>{const r=indexedDB.open('scriba-private-notes');r.onsuccess=()=>resolve(r.result)});
+          const state=await new Promise(resolve=>{const r=db.transaction('library').objectStore('library').get('state');r.onsuccess=()=>resolve(r.result)});db.close();
+          if(!state.pins.includes('Welcome_to_Scriba_EN.md'))throw new Error('Welcome is not pinned');return true;
+          """)
+        // A restored personal draft wins even when a migration has no welcome-opened marker.
+        _ = try await js("""
+          const db=await new Promise(resolve=>{const r=indexedDB.open('ab-markdown-drafts');r.onsuccess=()=>resolve(r.result)});
+          await new Promise((resolve,reject)=>{const tx=db.transaction('drafts','readwrite'),store=tx.objectStore('drafts'),r=store.index('updatedAt').openCursor(null,'prev');r.onsuccess=()=>{if(!r.result){reject(new Error('Missing initial draft'));return;}const draft=r.result.value;store.put({...draft,name:'Personal.md',loadedName:'Personal.md',value:'# Personal draft\\n\\nPreserved.',baseline:'',version:null,autoSavePaused:true,assets:[]});};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close();
+          localStorage.removeItem('scriba-welcome-opened');location.reload();return true;
+          """)
+        try await waitFor("document.querySelector('article h1')?.textContent==='Personal draft'")
+    }
+
     func testBundledEditorAndPrivatePersistence() async throws {
         XCTAssertEqual(web.url?.scheme,"capacitor")
         try await expect("return document.querySelector('meta[http-equiv=\"Content-Security-Policy\"]').content.includes(\"script-src 'self'\")", equals: true)
