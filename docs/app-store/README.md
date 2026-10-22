@@ -66,3 +66,7 @@ PWABuilder is optional for App Store distribution. The PWA already has a version
 - [Required-reason API declarations](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype)
 - [Screenshot dimensions](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/)
 - [Capacitor iOS](https://capacitorjs.com/docs/ios) and [native distribution](https://capacitorjs.com/docs/ios/deploying-to-app-store)
+
+## Product page creative templates
+
+[Creative assets and editable templates](creative-assets/README.md): three Scriba concepts in four locales, exported as opaque PNG and editable SVG at 5244×2950, 3840×2560 and 1920×1280. Includes current responsive-UI captures with fictional content, exact-size/alpha validation and a local gallery. These creative placements are separate from native device screenshots.

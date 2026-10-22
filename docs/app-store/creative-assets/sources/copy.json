@@ -1,0 +1,202 @@
+{
+  "pt-BR": {
+    "language": "pt",
+    "locale": "pt-BR",
+    "noteName": "Ideias.md",
+    "boardName": "Mapa.md",
+    "title": "Uma ideia merece espaço",
+    "intro": "Comece com uma linha. O restante pode nascer dela.",
+    "chapter": "Do rascunho ao próximo passo",
+    "tasks": [
+      "Reunir referências",
+      "Conectar as ideias",
+      "Compartilhar a primeira versão"
+    ],
+    "closing": "Escreva. Desenhe. Continue.",
+    "boardButton": "Abrir whiteboard",
+    "nodes": [
+      "Ideia",
+      "Conexões",
+      "Próximo\\npasso"
+    ],
+    "brand": [
+      "Suas ideias,",
+      "em Markdown."
+    ],
+    "write": [
+      "Comece com",
+      "uma ideia."
+    ],
+    "draw": [
+      "Dê forma às",
+      "suas ideias."
+    ],
+    "brandSub": [
+      "Um lugar para escrever,",
+      "organizar e desenhar."
+    ],
+    "writeSub": [
+      "Notas, listas e referências.",
+      "Espaço para o que vem a seguir."
+    ],
+    "drawSub": [
+      "Do texto ao quadro.",
+      "Tudo na mesma nota."
+    ],
+    "features": [
+      "Escrita",
+      "Organização",
+      "Desenho"
+    ]
+  },
+  "en-US": {
+    "language": "en",
+    "locale": "en-US",
+    "noteName": "Ideas.md",
+    "boardName": "Map.md",
+    "title": "An idea deserves room",
+    "intro": "Start with a line. The rest can grow from there.",
+    "chapter": "From a draft to the next step",
+    "tasks": [
+      "Gather references",
+      "Connect the ideas",
+      "Share the first version"
+    ],
+    "closing": "Write. Draw. Keep going.",
+    "boardButton": "Open whiteboard",
+    "nodes": [
+      "Idea",
+      "Connections",
+      "Next\\nstep"
+    ],
+    "brand": [
+      "Your ideas,",
+      "in Markdown."
+    ],
+    "write": [
+      "Start with",
+      "an idea."
+    ],
+    "draw": [
+      "Give your",
+      "ideas shape."
+    ],
+    "brandSub": [
+      "A place to write,",
+      "organize and draw."
+    ],
+    "writeSub": [
+      "Notes, lists and references.",
+      "Room for what comes next."
+    ],
+    "drawSub": [
+      "From text to canvas.",
+      "All in the same note."
+    ],
+    "features": [
+      "Writing",
+      "Organization",
+      "Drawing"
+    ]
+  },
+  "de-DE": {
+    "language": "de",
+    "locale": "de-DE",
+    "noteName": "Ideen.md",
+    "boardName": "Plan.md",
+    "title": "Eine Idee braucht Raum",
+    "intro": "Beginne mit einer Zeile. Der Rest kann daraus entstehen.",
+    "chapter": "Vom Entwurf zum nächsten Schritt",
+    "tasks": [
+      "Quellen sammeln",
+      "Ideen verbinden",
+      "Die erste Fassung teilen"
+    ],
+    "closing": "Schreiben. Zeichnen. Weiterdenken.",
+    "boardButton": "Whiteboard öffnen",
+    "nodes": [
+      "Idee",
+      "Verbindungen",
+      "Nächster\\nSchritt"
+    ],
+    "brand": [
+      "Deine Ideen,",
+      "in Markdown."
+    ],
+    "write": [
+      "Am Anfang",
+      "steht eine Idee."
+    ],
+    "draw": [
+      "Gib deinen",
+      "Ideen Form."
+    ],
+    "brandSub": [
+      "Ein Ort zum Schreiben,",
+      "Ordnen und Zeichnen."
+    ],
+    "writeSub": [
+      "Notizen, Listen und Quellen.",
+      "Raum für den nächsten Schritt."
+    ],
+    "drawSub": [
+      "Vom Text zur Zeichenfläche.",
+      "Alles in derselben Notiz."
+    ],
+    "features": [
+      "Schreiben",
+      "Ordnen",
+      "Zeichnen"
+    ]
+  },
+  "fr-FR": {
+    "language": "fr",
+    "locale": "fr-FR",
+    "noteName": "Idees.md",
+    "boardName": "Plan.md",
+    "title": "Une idée mérite sa place",
+    "intro": "Commencez par une ligne. La suite peut en naître.",
+    "chapter": "Du brouillon à la prochaine étape",
+    "tasks": [
+      "Rassembler les références",
+      "Relier les idées",
+      "Partager la première version"
+    ],
+    "closing": "Écrivez. Dessinez. Continuez.",
+    "boardButton": "Ouvrir le tableau blanc",
+    "nodes": [
+      "Idée",
+      "Liens",
+      "Prochaine\\nétape"
+    ],
+    "brand": [
+      "Vos idées,",
+      "en Markdown."
+    ],
+    "write": [
+      "Au début,",
+      "une idée."
+    ],
+    "draw": [
+      "Donnez forme",
+      "à vos idées."
+    ],
+    "brandSub": [
+      "Un espace pour écrire,",
+      "organiser et dessiner."
+    ],
+    "writeSub": [
+      "Notes, listes et références.",
+      "De la place pour la suite."
+    ],
+    "drawSub": [
+      "Du texte au tableau.",
+      "Tout dans la même note."
+    ],
+    "features": [
+      "Écriture",
+      "Organisation",
+      "Dessin"
+    ]
+  }
+}
