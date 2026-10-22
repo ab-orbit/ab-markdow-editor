@@ -166,8 +166,11 @@ final class ScribaTests: XCTestCase {
         XCTAssertEqual(persisted as? String,"conteúdo privado")
         _ = try await js("document.querySelector('button[aria-label=\"Configurações\"]').click();return true")
         try await waitFor("!!document.querySelector('#settings-page')")
-        try await expect("return [...document.querySelectorAll('button')].some(button=>button.textContent.includes('Selecionar pasta em Files'))", equals: true)
+        try await expect("return [...document.querySelectorAll('button')].some(button=>button.textContent.includes('Escolher pasta'))", equals: true)
         try await expect("return document.body.textContent.includes('Instalar no Mac')", equals: false)
-        try await expect("return !!document.querySelector('section[aria-label=\"GitHub remoto\"]')", equals: true)
+        // GitHub setup is intentionally hidden until the user chooses that destination.
+        try await expect("return !!document.querySelector('section[aria-label=\"GitHub remoto\"]')", equals: false)
+        _ = try await js("[...document.querySelectorAll('button')].find(button=>button.textContent==='Conectar GitHub').click();return true")
+        try await waitFor("!!document.querySelector('section[aria-label=\"GitHub remoto\"]')")
     }
 }

@@ -1,0 +1,1 @@
+PASS: one searchable picker, automatic activation, keyboard/pointer, safe failure/retry, default folder, change repository, responsive layout.
