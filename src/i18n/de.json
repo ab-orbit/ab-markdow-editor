@@ -98,7 +98,7 @@
   "Abra o aplicativo Scriba no Mac antes de conectar. No editor local, abra Configurações para selecionar a pasta ou clonar o repositório. As notas deste site continuam separadas; use Baixar pacote e importe no editor local para transferi-las.": "Öffnen Sie vor dem Verbinden die Scriba-App auf dem Mac. Wählen Sie im lokalen Editor unter Einstellungen einen Ordner oder klonen Sie das Repository. Die Notizen dieser Website bleiben getrennt; verwenden Sie „Paket herunterladen“ und importieren Sie das Paket im lokalen Editor, um sie zu übertragen.",
   "No celular e tablet, use a seção GitHub acima para conectar sua conta e selecionar um repositório. O armazenamento no navegador e a pasta do dispositivo continuam como alternativas.": "Verwenden Sie auf Mobilgeräten und Tablets den GitHub-Abschnitt oben, um Ihr Konto zu verbinden und ein Repository auszuwählen. Browser-Speicher und der Geräteordner bleiben Alternativen.",
   "O editor está aberto, mas o serviço de arquivos não respondeu. Seu rascunho está preservado. A reconexão é automática; se continuar indisponível, abra Scriba em Aplicativos.": "Der Editor ist geöffnet, aber der Dateidienst reagiert nicht. Ihr Entwurf bleibt erhalten. Die erneute Verbindung erfolgt automatisch; Wenn es weiterhin nicht verfügbar ist, öffnen Sie Scriba in den Anwendungen.",
-  "Trocar repositório": "Repository ändern",
+  "Trocar repositório": "Repository wechseln",
   "Desconectar": "Trennen",
   "Sem repositório conectado.": "Kein Repository verbunden.",
   "O documento aberto pode ser editado e exportado.": "Das geöffnete Dokument kann bearbeitet und exportiert werden.",
@@ -805,5 +805,10 @@
   "Leitura formatada": "Formatierte Leseansicht",
   "Markdown com blocos renderizados": "Markdown mit gerenderten Blöcken",
   "Blocos": "Blöcke",
-  "Conecte um destino para salvar a nota atual antes de importar outra.": "Verbinden Sie einen Speicherort, um die aktuelle Notiz vor dem Import einer anderen zu speichern."
+  "Conecte um destino para salvar a nota atual antes de importar outra.": "Verbinden Sie einen Speicherort, um die aktuelle Notiz vor dem Import einer anderen zu speichern.",
+  "Conecte sua conta e selecione onde guardar suas notas.": "Verbinden Sie Ihr Konto und wählen Sie den Speicherort Ihrer Notizen.",
+  "Ao selecionar, suas notas serão salvas automaticamente na pasta indicada.": "Wählen Sie ein Repository, um Ihre Notizen automatisch im angegebenen Ordner zu speichern.",
+  "Alterações offline ficam neste dispositivo e são sincronizadas automaticamente ao reconectar.": "Offline-Änderungen bleiben auf diesem Gerät und werden beim erneuten Verbinden automatisch synchronisiert.",
+  "Carregando…": "Wird geladen…",
+  "Opções avançadas": "Erweiterte Optionen"
 }

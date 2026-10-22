@@ -805,5 +805,10 @@
   "Leitura formatada": "Formatted reading",
   "Markdown com blocos renderizados": "Markdown with rendered blocks",
   "Blocos": "Blocks",
-  "Conecte um destino para salvar a nota atual antes de importar outra.": "Connect a storage destination to save the current note before importing another."
+  "Conecte um destino para salvar a nota atual antes de importar outra.": "Connect a storage destination to save the current note before importing another.",
+  "Conecte sua conta e selecione onde guardar suas notas.": "Connect your account and choose where to store your notes.",
+  "Ao selecionar, suas notas serão salvas automaticamente na pasta indicada.": "Select a repository to automatically save your notes in the specified folder.",
+  "Alterações offline ficam neste dispositivo e são sincronizadas automaticamente ao reconectar.": "Offline changes stay on this device and sync automatically when you reconnect.",
+  "Carregando…": "Loading…",
+  "Opções avançadas": "Advanced options"
 }

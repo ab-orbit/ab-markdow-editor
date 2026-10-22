@@ -1,0 +1,41 @@
+import {chromium, webkit, expect} from '@playwright/test';
+import {createServer} from 'vite';
+import {mkdir} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+process.env.VITE_STORAGE_MODE='browser';
+const server=await createServer({server:{host:'127.0.0.1',port:0}});await server.listen();
+const browser=await(process.env.MARKDOWN_BROWSER==='webkit'?webkit:chromium).launch();
+await mkdir('docs/evidence/github-picker',{recursive:true});
+try { for (const [width,height,theme] of [[1440,900,'dark'],[390,844,'light']]) {
+ const context=await browser.newContext({locale:'pt-BR',viewport:{width,height},serviceWorkers:'block'});
+ await context.addInitScript(theme=>localStorage.setItem('ab-markdown-theme',theme),theme);
+ const page=await context.newPage();let selection=null,fail=true;const requests=[];
+ await page.route('**/github/**', route=>{const path=new URL(route.request().url()).pathname;
+  if(path.endsWith('/select')){const body=route.request().postDataJSON();requests.push(body);if(fail)return route.fulfill({status:503,json:{error:'Temporary service failure'}});selection={...body,branch:'main'};return route.fulfill({json:selection});}
+  return route.fulfill({json:path.endsWith('/status')?{configured:true,connected:true,user:{login:'example'},selection,installUrl:'https://github.com/apps/example/installations/new'}:path.endsWith('/repositories')?[{fullName:'example/alpha',private:false},{fullName:'example/my-notes',private:true},{fullName:'another/beta',private:false}]:path.endsWith('/files')?[]:{}});
+ });
+ await page.goto(process.env.SCRIBA_URL || server.resolvedUrls.local[0]);
+ if(width<900){const close=page.getByRole('button',{name:'Fechar lista de notas',exact:true});if(await close.isVisible())await close.click();await page.getByRole('button',{name:'Mais opções da nota',exact:true}).click();await page.getByRole('menuitem',{name:'Configurações',exact:true}).click();}else await page.getByRole('button',{name:'Configurações',exact:true}).click();
+ await page.getByRole('button',{name:'Conectar GitHub',exact:true}).click();
+ const panel=page.getByRole('region',{name:'Armazenamento',exact:true});
+ const input=page.getByRole('searchbox',{name:'Buscar repositório',exact:true});
+ await expect(panel.getByRole('combobox')).toHaveCount(0);
+ await expect(panel.getByRole('button',{name:'Usar este repositório',exact:true})).toHaveCount(0);
+ await expect(panel.getByLabel('Pasta das notas',{exact:true})).not.toBeVisible();
+ await expect(panel.getByRole('button',{name:'Desconectar GitHub',exact:true})).not.toBeVisible();
+ await input.fill('notes');
+ const note=page.getByRole('button',{name:'example/my-notes Privado',exact:true});await expect(note).toBeVisible();
+ await expect(panel.getByRole('list').getByRole('button')).toHaveCount(1);
+ await panel.screenshot({path:`docs/evidence/github-picker/${theme}-${width}-select.png`});
+ await note.focus();await note.press('Enter');await expect(panel.getByRole('alert')).toHaveText('Temporary service failure');
+ await expect(note).toBeEnabled();fail=false;await note.click();
+ await expect(panel.getByText('Salvamento ativo no GitHub.',{exact:true})).toBeVisible();
+ assert.deepEqual(requests.at(-1),{fullName:'example/my-notes',folder:'scriba'});
+ await expect(panel.getByText('example/my-notes',{exact:true})).toBeVisible();
+ await panel.screenshot({path:`docs/evidence/github-picker/${theme}-${width}-connected.png`});
+ await panel.getByRole('button',{name:'Trocar repositório',exact:true}).click();await input.fill('BETA');
+ await page.getByRole('button',{name:'another/beta Público',exact:true}).click();await expect(panel.getByText('another/beta',{exact:true})).toBeVisible();
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await context.close();
+} console.log('PASS: one searchable picker, automatic activation, keyboard/pointer, safe failure/retry, default folder, change repository, responsive layout.');
+} finally {await browser.close();await server.close();}
