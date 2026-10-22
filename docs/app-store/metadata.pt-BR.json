@@ -37,11 +37,11 @@
   "externalBetaReviewStatus": "BUILD_17_TESTING_FOR_SCRIBA_BETA",
   "latestUploadedBuild": {
     "version": "1.16.1",
-    "build": "25",
-    "uploadedAt": "2026-10-22T14:10:33Z",
+    "build": "26",
+    "uploadedAt": "2026-10-22T14:34:10Z",
     "uploadStatus": "UPLOADED_TO_APPLE",
-    "processingStatus": "PENDING_UI_VERIFICATION",
-    "testFlightGroupAssignment": "PENDING_UI_VERIFICATION_AND_GROUP_DISTRIBUTION",
+    "processingStatus": "PROCESSING_OBSERVED_IN_APP_STORE_CONNECT",
+    "testFlightGroupAssignment": "PENDING_PROCESSING_AND_GROUP_DISTRIBUTION",
     "appStoreSubmission": "NOT_RESUBMITTED"
   },
   "macAvailability": {
@@ -69,5 +69,15 @@
     "releaseType": "MANUAL",
     "resubmitted": false,
     "blockingRequirement": "Guideline 2.1: physical-device QA and launch-to-use recording on the latest supported OS"
+  },
+  "latestPreparedBuild": {
+    "version": "1.16.1",
+    "build": "27",
+    "archiveStatus": "SIGNED_ARCHIVE_SUCCEEDED",
+    "simulatorStatus": "INSTALLED_AND_VERSION_VERIFIED_IPHONE_AND_IPAD",
+    "uploadStatus": "BLOCKED_XCODE_ACCOUNT_ACCESS",
+    "uploadAttempts": 2,
+    "requiredAction": "Reauthenticate the existing Apple account in Xcode Settings > Accounts",
+    "appStoreSubmission": "NOT_RESUBMITTED"
   }
 }
