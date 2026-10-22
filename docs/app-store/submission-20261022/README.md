@@ -27,9 +27,11 @@ The owner authorized entering localized privacy URLs, fixing submission errors, 
 - Update Review for build 17 showed “Newer Build Available”; canceled that confirmation to avoid submitting the older binary.
 - Read the actual Apple review message: physical-device testing and a recording on the latest OS starting at launch are expressly requested. Asked the owner for the recording path and device/OS/build details while continuing independent work.
 
+- Apple processing completed. Build 27 became Ready to Submit. Added Equipe Scriba and Scriba Beta, supplied the test plan and submitted the beta distribution with automatic tester notifications enabled. The resulting list showed build 27 **Testing**, assigned to both groups. This is TestFlight distribution, not official App Store approval.
+
 ## Pending verification
 
-Inspect the actual review message, determine all current validation errors, reconcile the selected native build with available uploads, and record the final submission result here. Do not treat clearing metadata validation as App Review approval.
+The official draft was updated from build 17 to build 27 using Delete (selection only) → Add Build → 27 → Done → Save. Manual release was preserved. The requested physical-device recording and QA details remain owner-supplied requirements; no such artifact has been provided. Do not treat clearing metadata validation or TestFlight Testing as App Review approval.
 
 ## Evidence
 
@@ -38,3 +40,28 @@ Inspect the actual review message, determine all current validation errors, reco
 - Saved privacy URLs: [Portuguese](privacy-pt-BR-saved.png), [English](privacy-en-US-saved.png), [French](privacy-fr-FR-saved.png), [German](privacy-de-DE-saved.png)
 - [Localized public pages and verification](../../privacy/README.md)
 - [Reusable deployment skill](../deploy-skill/app-store-deploy/SKILL.md), also installed in `~/.codex/skills/app-store-deploy/`. Skill frontmatter validation passed.
+
+- [Build 27 Testing in both groups](build27-testing-both-groups.png)
+
+## Metadata validation corrections
+
+With build 27 selected, Update Review returned “Unable to Add for Review” and a generic unexpected-error summary, followed by four specific required-field errors:
+
+1. German — Description.
+2. German — Keywords.
+3. German — Support URL.
+4. English (U.S.) — Support URL.
+
+Completed a German description equivalent to the factual Portuguese feature listing, added localized keywords (86 characters, within the 100-character limit) and the existing public support URL. Added the same verified support URL to the English localization. Saved both locales and repeated Update Review. German source is in `metadata.de-DE.json`. Do not interpret a generic summary as a backend outage before reading the locale-specific details.
+
+## Final observed state for this work session
+
+After the four metadata corrections, Update Review succeeded and opened the existing submission details. Its item is **iOS App 1.16.1 (27) — Ready for Review**. **Resubmit to App Review** is enabled. All reported missing-field validation errors are cleared.
+
+The submission still shows **Unresolved Issues** because the prior Guideline 2.1 information request has not been answered with its required physical-device recording and QA details. The final re-submission was not clicked: the requested evidence was not provided, and only simulated devices were available. This is an evidence prerequisite from Apple's actual review message, not a new approval requirement imposed by the skill.
+
+To finish: install 1.16.1 (27) from TestFlight on supported physical devices; complete QA; supply the launch-from-icon recording on the latest OS plus device model, OS version, build and test results. Attach the recording, update the existing Notes and send a complete reply to App Review. Then use the enabled Resubmit to App Review action and verify Waiting for Review and its timestamp. Do not claim those steps occurred until observed.
+
+[Ready for Review and the outstanding Apple request](build27-ready-for-review-recording-pending.png).
+
+The public application update manifest was not promoted from build 17 during this task. The policies were deployed independently as static pages. The native build remains the previously signed and tested build 27, not a new build incorporating later creative assets or incidental catalog edits.

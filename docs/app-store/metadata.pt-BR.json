@@ -16,7 +16,7 @@
   "description": "Scriba é um editor Markdown para escrever, ler e organizar suas ideias. Comece sem criar uma conta e mantenha suas notas no dispositivo.\n\nESCREVA E LEIA\nEdite diretamente no texto formatado ou abra o código Markdown. Use títulos, listas, tarefas, tabelas, links e imagens. Navegue pelo índice de títulos e confira palavras, caracteres e seleção.\n\nORGANIZE\nBusque nas notas recentes, fixe as mais importantes e acompanhe as alterações. Os guias incluídos apresentam exemplos editáveis para começar.\n\nDESENHE\nVisualize diagramas Mermaid e ZenUML, compare motores compatíveis e crie desenhos com Excalidraw. Amplie, inspecione o código e exporte SVG ou PNG transparente.\n\nESCOLHA O DESTINO\nTrabalhe offline, selecione uma pasta em Arquivos ou conecte opcionalmente seu GitHub. Importe Markdown e pacotes ZIP; compartilhe notas e imagens pelo menu do sistema. A sincronização GitHub ocorre enquanto o aplicativo está aberto e conectado.\n\nSEUS ARQUIVOS\nNotas privadas ficam no aplicativo até você escolher um destino. Exporte backups antes de remover o aplicativo. Um repositório GitHub público torna públicos os arquivos sincronizados.\n\nPowered by Aeon Bridge Co.",
   "reviewNotes": "The app works without registration. Launch and open the two pinned reference notes; all diagram engines, fonts and the visual drawing editor ship inside the binary and work offline on first launch. Settings > Onde guardar suas notas > Selecionar pasta em Files opens the native iOS directory picker and retains the security-scoped permission. Saves use coordinated atomic file writes and reject external conflicts. Export uses the native share sheet. GitHub is an optional client integration, not the primary account/login for Scriba; ASWebAuthenticationSession opens the official authorization flow. No purchases, ads, tracking, live drawing rooms or remote code updates. GitHub background synchronization is not claimed.",
   "releaseType": "MANUAL",
-  "submissionStatus": "APP_STORE_REJECTED_INFORMATION_NEEDED",
+  "submissionStatus": "READY_FOR_REVIEW_PENDING_REQUIRED_PHYSICAL_DEVICE_EVIDENCE",
   "submittedAt": "2026-10-19T21:38:20Z",
   "euDsaStatus": "TRADER_IN_REVIEW",
   "ownerInputRequired": [
@@ -31,17 +31,17 @@
   "reviewContactEmail": "contact@aeonbridge.com",
   "brandName": "Aeon Bridge Co.",
   "appStoreConnectId": "6824664840",
-  "appStoreReviewStatus": "REJECTED",
+  "appStoreReviewStatus": "READY_FOR_REVIEW",
   "reviewIssue": "2.1.0 Performance: App Completeness — additional information and physical-device recording requested",
-  "reviewStatusSource": "Verified in App Store Connect on 2026-10-22; official draft updated to 1.16.1, Guideline 2.1 physical-device evidence still pending",
-  "externalBetaReviewStatus": "BUILD_17_TESTING_FOR_SCRIBA_BETA",
+  "reviewStatusSource": "Verified in App Store Connect on 2026-10-22: build 27 Ready for Review, Resubmit to App Review enabled; submission remains Unresolved Issues until physical-device QA and requested recording are supplied and final resubmission is completed.",
+  "externalBetaReviewStatus": "BUILD_27_TESTING_FOR_SCRIBA_BETA",
   "latestUploadedBuild": {
     "version": "1.16.1",
     "build": "27",
     "uploadedAt": "2026-10-22T16:25:00Z",
     "uploadStatus": "UPLOADED_TO_APPLE_VIA_XCODE_ORGANIZER",
-    "processingStatus": "PROCESSING_OBSERVED_IN_APP_STORE_CONNECT",
-    "testFlightGroupAssignment": "PENDING_PROCESSING_AND_GROUP_DISTRIBUTION",
+    "processingStatus": "COMPLETE",
+    "testFlightGroupAssignment": "TESTING_IN_EQUIPE_SCRIBA_AND_SCRIBA_BETA",
     "appStoreSubmission": "NOT_RESUBMITTED"
   },
   "macAvailability": {
@@ -64,11 +64,14 @@
   "interfaceLanguagePreference": "PERSISTED_USER_OVERRIDE_OR_AUTOMATIC",
   "officialDraft": {
     "version": "1.16.1",
-    "build": "17",
+    "build": "27",
     "reviewNotesUpdated": true,
     "releaseType": "MANUAL",
     "resubmitted": false,
-    "blockingRequirement": "Guideline 2.1: physical-device QA and launch-to-use recording on the latest supported OS"
+    "blockingRequirement": "Guideline 2.1: physical-device QA and launch-to-use recording on the latest supported OS",
+    "buildSelectionVerifiedAt": "2026-10-22",
+    "reviewItemStatus": "READY_FOR_REVIEW",
+    "resubmitButtonEnabled": true
   },
   "latestPreparedBuild": {
     "version": "1.16.1",

@@ -17,3 +17,9 @@ Verified October 22, 2026. Recheck live state before acting.
 - Release mode was manual. Preserve it. Public web deployment and TestFlight promotion do not equal App Review submission.
 
 Detailed dated work: `docs/app-store/submission-20261022/README.md` in the Scriba repository. Avoid storing tokens, private account credentials or personal review-contact fields in the skill.
+
+- After selecting build 27, Update Review showed a generic unexpected error and four concrete missing metadata fields: German Description, Keywords, Support URL; English Support URL. Resolve the detailed locale errors before treating the generic summary as an infrastructure issue. All were filled and saved; German keywords used 86 of 100 characters. Re-run validation after saving.
+- Build 27 completed processing, then was assigned to Equipe Scriba and Scriba Beta with test notes and automatic notifications. The resulting state was Testing in both groups. The official App Store draft was separately changed to build 27. Neither operation alone establishes official review submission.
+
+- After correcting those four fields, Update Review succeeded. Official review item 1.16.1 (27) became Ready for Review and Resubmit to App Review was enabled. Final re-submission remained pending the explicit physical-device evidence request; the overall submission still showed Unresolved Issues. A green metadata validation is not evidence that Apple's information request was satisfied.
+- For TestFlight, adding the external group opened What to Test. Fill the notes, move focus out of the field to enable Submit for Review, keep the requested notification preference, submit and inspect the resulting state. In this session it became Testing immediately for both existing groups. Do not assume the same processing/review delay for future releases.

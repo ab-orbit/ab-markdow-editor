@@ -1,6 +1,6 @@
 # Scriba for iPhone and iPad
 
-Latest confirmed upload: **1.16.1 (17)** on 22 October 2026 at 07:21 Recife. Apple processing completed and build 17 is **Testing** in both Equipe Scriba (internal) and Scriba Beta (external), with tester notifications enabled. The public update manifest promotes build 17. [Release evidence](../evidence/ios-1.16.1-build17/README.md). Official version and review notes are prepared as 1.16.1, with manual release; the existing Guideline 2.1 request still needs physical-device QA and a launch-to-use recording before resubmission.
+Latest confirmed upload: **1.16.1 (27)** on 22 October 2026 at 13:25 Recife, through Xcode Organizer. Apple processing completed and build 27 is **Testing** in both Equipe Scriba (internal) and Scriba Beta (external), with automatic tester notifications enabled. [Current submission work and evidence](submission-20261022/README.md). The public update manifest still promotes build 17. Official App Review resubmission still requires the physical-device QA and launch-to-use recording requested under Guideline 2.1.
 
 The iOS application bundles the editor, renderers, fonts and reference notes with Capacitor 8.5.3. It does not load the production website as its application shell. The web/PWA and local Mac application remain separate builds and separate private libraries.
 
@@ -52,7 +52,7 @@ This creates an archive and exports an IPA; it does not silently submit an incom
 
 The signed ARM64 build 1.16.1 (24), including the updated brand, was uploaded successfully on 22 October 2026 at 13:25:27 UTC. Processing and beta-group assignment still require verification in App Store Connect; the public update manifest remains on the last verified Testing build. See [build 24 validation](../evidence/ios-1.16.1-build24/README.md).
 
-The previously distributed signed ARM64 build 1.16.1 (17) has completed Apple processing and is Testing in both existing TestFlight groups. It is also selected in the official App Store version draft, with updated review notes and manual release. The previous 1.13.0 (1) submission was rejected under Guideline 2.1 with a request for more information and a physical-device recording. Updating the draft does not resolve that request; no incomplete official resubmission has been made. See [current release evidence](../evidence/ios-1.16.1-build17/README.md). Historical submission details remain in [initial App Store evidence](../evidence/app-store/README.md).
+Build 1.16.1 (27) is now Testing in both existing TestFlight groups and selected in the official review item, which is Ready for Review with manual release preserved. Localized privacy and missing German/English metadata fields have been corrected. The submission still has the original Guideline 2.1 request for physical-device QA and a launch-to-use recording; final official resubmission awaits that evidence. See [current submission evidence](submission-20261022/README.md). Historical build 17 evidence remains in [the earlier release record](../evidence/ios-1.16.1-build17/README.md).
 
 ## PWA Builder
 
@@ -70,3 +70,7 @@ PWABuilder is optional for App Store distribution. The PWA already has a version
 ## Product page creative templates
 
 [Creative assets and editable templates](creative-assets/README.md): three Scriba concepts in four locales, exported as opaque PNG and editable SVG at 5244×2950, 3840×2560 and 1920×1280. Includes current responsive-UI captures with fictional content, exact-size/alpha validation and a local gallery. These creative placements are separate from native device screenshots.
+
+## Localized privacy and reusable deployment
+
+Four public privacy URLs are documented in [privacy pages](../privacy/README.md). The measured App Store workflow is available as [app-store-deploy](deploy-skill/app-store-deploy/SKILL.md), also installed in `~/.codex/skills/app-store-deploy/`. The skill distinguishes native upload, TestFlight distribution, App Review submission and public release.

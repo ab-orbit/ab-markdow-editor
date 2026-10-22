@@ -9,7 +9,7 @@ Complete the user's authorized release workflow and verify the resulting state i
 
 ## Establish the release
 
-Read the repository’s release instructions and existing rejection messages. Identify the bundle ID, developer team, App Store app ID, version, build and release mode from actual project/archive/store data. A brand name is not a developer team ID. Preserve manual release unless the user requests a change.
+Before Git mutations, verify `git rev-parse --show-toplevel` and `git remote -v`; the working directory can belong to a parent monorepo while the release checkout is elsewhere. Use an explicit verified checkout for add/commit/push. Read the repository’s release instructions and existing rejection messages. Identify the bundle ID, developer team, App Store app ID, version, build and release mode from actual project/archive/store data. A brand name is not a developer team ID. Preserve manual release unless the user requests a change.
 
 Identify the exact native binary being submitted. A web deployment, simulator install or changed source directory does not update an archived/uploaded binary. Record source commit, archive path, version/build, signing team, upload outcome and selected store build. Do not replace the user's unrelated local or device data while testing.
 
