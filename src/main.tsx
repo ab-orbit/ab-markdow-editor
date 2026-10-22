@@ -497,6 +497,7 @@ function App() {
   }
   const discard = () => !dirty || window.confirm(t("Há alterações não salvas. Deseja substituí-las?"));
   function resetDocument(text = "", fileName = t("documento.md"), hash: string | null = null, attached: {path: string; file: File}[] = []) {
+    lastAutoSaveAttempt.current=0;
     const extracted = extractedConversionMarkdown(text);
     if (extracted !== null) { text = extracted; fileName = conversionCopyName(fileName, files); hash = null; }
     automaticNoteName.current = false;
@@ -647,6 +648,7 @@ function App() {
     });
   }
   async function registerImport(source: string, fileName: string, reloaded = false) {
+    lastAutoSaveAttempt.current=0;
     await run(async () => {
       const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
       const originalVersion = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join("");
