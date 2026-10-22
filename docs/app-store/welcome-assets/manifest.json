@@ -1,0 +1,292 @@
+{
+  "assets": [
+    {
+      "locale": "pt-BR",
+      "width": 5244,
+      "height": 2950,
+      "png": "exports/pt-BR/welcome-5244x2950.png",
+      "svg": "templates/pt-BR/welcome-5244x2950.svg",
+      "sha256": "582520d1308913ccef0d3cc56e91bf2ec44f707253d214a2e37f774edad616d7",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 367.6813659667969,
+          "y": 64.27457427978516,
+          "width": 766.8948974609375,
+          "height": 91.11864471435547
+        },
+        {
+          "id": "description",
+          "x": 367.6813659667969,
+          "y": 1066.383056640625,
+          "width": 1210.3050537109375,
+          "height": 48.59661102294922
+        }
+      ]
+    },
+    {
+      "locale": "pt-BR",
+      "width": 3840,
+      "height": 2560,
+      "png": "exports/pt-BR/welcome-3840x2560.png",
+      "svg": "templates/pt-BR/welcome-3840x2560.svg",
+      "sha256": "2ae72f217aaf4c47e120afb4d3947c83043f1c88458f82e0e13a0762869da479",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64.5,
+          "width": 766.921875,
+          "height": 91
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1210.40625,
+          "height": 49
+        }
+      ]
+    },
+    {
+      "locale": "pt-BR",
+      "width": 1920,
+      "height": 1280,
+      "png": "exports/pt-BR/welcome-1920x1280.png",
+      "svg": "templates/pt-BR/welcome-1920x1280.svg",
+      "sha256": "60e37839a592658e3e963f568b153b0410b712d8147277bc854b31fd6fd290be",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64,
+          "width": 766.921875,
+          "height": 92
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1210.40625,
+          "height": 49
+        }
+      ]
+    },
+    {
+      "locale": "en-US",
+      "width": 5244,
+      "height": 2950,
+      "png": "exports/en-US/welcome-5244x2950.png",
+      "svg": "templates/en-US/welcome-5244x2950.svg",
+      "sha256": "da0ddaa4509b7f1ce118a8b319a9eaef1aeb6768728539b898867582cc3ce478",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 367.6813659667969,
+          "y": 64.27457427978516,
+          "width": 694.088134765625,
+          "height": 91.11864471435547
+        },
+        {
+          "id": "description",
+          "x": 367.6813659667969,
+          "y": 1066.383056640625,
+          "width": 1138.149169921875,
+          "height": 48.59661102294922
+        }
+      ]
+    },
+    {
+      "locale": "en-US",
+      "width": 3840,
+      "height": 2560,
+      "png": "exports/en-US/welcome-3840x2560.png",
+      "svg": "templates/en-US/welcome-3840x2560.svg",
+      "sha256": "40ef7c97a39c634c9577ef69e4a36a78ecad8413df3fced298635f1148f8a073",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64.5,
+          "width": 694.109375,
+          "height": 91
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1138.2421875,
+          "height": 49
+        }
+      ]
+    },
+    {
+      "locale": "en-US",
+      "width": 1920,
+      "height": 1280,
+      "png": "exports/en-US/welcome-1920x1280.png",
+      "svg": "templates/en-US/welcome-1920x1280.svg",
+      "sha256": "dc802c75cabbc8776fed3d04e25a6d621c3d93e14e3b281698b01c8a45bb1626",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64,
+          "width": 694.109375,
+          "height": 92
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1138.25,
+          "height": 49
+        }
+      ]
+    },
+    {
+      "locale": "de-DE",
+      "width": 5244,
+      "height": 2950,
+      "png": "exports/de-DE/welcome-5244x2950.png",
+      "svg": "templates/de-DE/welcome-5244x2950.svg",
+      "sha256": "389551233f968b6203dedaccf88af5a2e1d70a9900c309b8e7b70ba31fcfa072",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 367.6813659667969,
+          "y": 64.27457427978516,
+          "width": 852.1627197265625,
+          "height": 91.11864471435547
+        },
+        {
+          "id": "description",
+          "x": 367.6813659667969,
+          "y": 1066.383056640625,
+          "width": 1393.8101806640625,
+          "height": 106.5965576171875
+        }
+      ]
+    },
+    {
+      "locale": "de-DE",
+      "width": 3840,
+      "height": 2560,
+      "png": "exports/de-DE/welcome-3840x2560.png",
+      "svg": "templates/de-DE/welcome-3840x2560.svg",
+      "sha256": "aeabb2dceb094e1b87ec7d7051b37468646aa252ca39599d725baed4591db3ba",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64.5,
+          "width": 852.1953125,
+          "height": 91
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1393.921875,
+          "height": 107
+        }
+      ]
+    },
+    {
+      "locale": "de-DE",
+      "width": 1920,
+      "height": 1280,
+      "png": "exports/de-DE/welcome-1920x1280.png",
+      "svg": "templates/de-DE/welcome-1920x1280.svg",
+      "sha256": "47a8e1ba7ef39604e2a7b27bb42486de30a434568f8a01a0a1011bf3d222fde7",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64,
+          "width": 852.203125,
+          "height": 92
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1393.921875,
+          "height": 107
+        }
+      ]
+    },
+    {
+      "locale": "fr-FR",
+      "width": 5244,
+      "height": 2950,
+      "png": "exports/fr-FR/welcome-5244x2950.png",
+      "svg": "templates/fr-FR/welcome-5244x2950.svg",
+      "sha256": "14a7dfafcf4c33e1308e7c07ae9c7257e8c75d6bcf7e1490db8d030bb567b91f",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 367.6813659667969,
+          "y": 64.27457427978516,
+          "width": 846.9152221679688,
+          "height": 91.11864471435547
+        },
+        {
+          "id": "description",
+          "x": 367.6813659667969,
+          "y": 1066.383056640625,
+          "width": 1324.1356201171875,
+          "height": 48.59661102294922
+        }
+      ]
+    },
+    {
+      "locale": "fr-FR",
+      "width": 3840,
+      "height": 2560,
+      "png": "exports/fr-FR/welcome-3840x2560.png",
+      "svg": "templates/fr-FR/welcome-3840x2560.svg",
+      "sha256": "68de88f1f126492d783fda7f4b244145a900d69c098d700032082006485df457",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64.5,
+          "width": 846.9453125,
+          "height": 91
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1324.2421875,
+          "height": 49
+        }
+      ]
+    },
+    {
+      "locale": "fr-FR",
+      "width": 1920,
+      "height": 1280,
+      "png": "exports/fr-FR/welcome-1920x1280.png",
+      "svg": "templates/fr-FR/welcome-1920x1280.svg",
+      "sha256": "47946082a719b4b970fc5f8e2ddc3e5c0bb542eec42c7a30cfda517d3a38f558",
+      "bounds": [
+        {
+          "id": "heading",
+          "x": 190,
+          "y": 64,
+          "width": 846.953125,
+          "height": 92
+        },
+        {
+          "id": "description",
+          "x": 190,
+          "y": 1066,
+          "width": 1324.25,
+          "height": 49
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "pt-BR": {
+    "title": "Bem-vindo ao Scriba",
+    "body": "Escreva, organize e guarde suas notas Markdown neste navegador."
+  },
+  "en-US": {
+    "title": "Welcome to Scriba",
+    "body": "Write, organize and keep your Markdown notes in this browser."
+  },
+  "de-DE": {
+    "title": "Willkommen bei Scriba",
+    "body": "Schreiben, organisieren und speichern Sie Ihre Markdown-Notizen in diesem Browser."
+  },
+  "fr-FR": {
+    "title": "Bienvenue dans Scriba",
+    "body": "Rédigez, organisez et conservez vos notes Markdown dans ce navigateur."
+  }
+}
