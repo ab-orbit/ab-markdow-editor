@@ -1,0 +1,1 @@
+PASS: mobile editor and sidebar import show the imported note, close the sidebar and preserve the previous latest edits without a discard prompt.

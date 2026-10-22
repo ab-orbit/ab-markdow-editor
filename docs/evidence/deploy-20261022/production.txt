@@ -1,0 +1,1 @@
+PASS: public HTTPS, automatic save/reload, private context isolation, service-worker offline save, no local API traffic and compact mobile menu.
