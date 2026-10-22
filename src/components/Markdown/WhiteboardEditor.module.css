@@ -11,4 +11,4 @@
 .tools details > div { position: absolute; z-index: 10; top: calc(100% + 6px); right: 0; display: flex; flex-direction: column; min-width: 220px; }
 .tools details > div button { justify-content: flex-start; white-space: nowrap; }
 @media (max-width: 899px), (pointer: coarse) { .tools button, .tools summary { min-height: 44px; } .tools { padding-block: 0; } }
-@media (max-width: 600px) { .tools button > span { display: none; } .tools { gap: 6px; padding-inline: 8px; } .tools button, .tools summary { min-width: 44px; justify-content: center; } }
+@media (max-width: 600px) { .tools { gap: 6px; padding-inline: 8px; } .tools button, .tools summary { min-width: 44px; justify-content: center; } }

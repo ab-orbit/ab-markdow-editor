@@ -927,5 +927,20 @@
   "Canal de atualização inválido.": "Canal de mise à jour invalide.",
   "Não foi possível abrir o destino de atualização.": "Impossible d’ouvrir la destination de mise à jour.",
   "Arquivos preservados localmente. Envio pendente: {0}": "Fichiers préservés localement. Envoi en attente : {0}",
-  "{0}: {1}": "{0}: {1}"
+  "{0}: {1}": "{0}: {1}",
+  "Adicionar selecionados": "Ajouter la sélection",
+  "Aparência": "Apparence",
+  "Tema": "Thème",
+  "Claro": "Clair",
+  "Escuro": "Sombre",
+  "Automático (aparência do sistema)": "Automatique (apparence du système)",
+  "Importar desenho": "Importer un dessin",
+  "Escolha um desenho .excalidraw. Para importar notas Markdown, volte ao modo Nota.": "Choisissez un dessin .excalidraw. Pour importer des notes Markdown, revenez au mode Note.",
+  "Este arquivo é uma biblioteca de símbolos. Abra a biblioteca do quadro para importar símbolos; aqui, escolha um desenho .excalidraw.": "Ce fichier est une bibliothèque de symboles. Ouvrez la bibliothèque du tableau pour importer des symboles ; choisissez ici un dessin .excalidraw.",
+  "Este arquivo não contém um desenho Excalidraw válido. Escolha um arquivo .excalidraw exportado pelo editor.": "Ce fichier ne contient pas de dessin Excalidraw valide. Choisissez un fichier .excalidraw exporté par l’éditeur.",
+  "Criar uma cópia": "Créer une copie",
+  "Cópia de {0}": "Copie de {0}",
+  "Cópia criada e aberta. A nota original foi salva.": "Copie créée et ouverte. La note d’origine a été enregistrée.",
+  "Não foi possível salvar a nota original. A cópia não foi criada; suas edições continuam abertas.": "La note d’origine n’a pas pu être enregistrée. Aucune copie n’a été créée ; vos modifications restent ouvertes.",
+  "Não foi possível criar a cópia. A nota original continua aberta.": "Impossible de créer la copie. La note d’origine reste ouverte."
 }

@@ -14,7 +14,7 @@ try {for(const engine of [chromium,webkit]){
   await page.getByRole('button',{name:'Whiteboard',exact:true}).click();
   const board=page.locator('[data-whiteboard-state]');await expect(board).toHaveAttribute('data-whiteboard-state','ready',{timeout:60000});
   await page.setViewportSize({width,height:900});
-  if(width<900 && await page.getByRole("button",{name:"Close list of notes",exact:true}).isVisible())await page.getByRole("button",{name:"Close list of notes",exact:true}).click();
+  if(width<900)await expect(page.locator('#recent-notes')).toHaveCount(0);
   await page.screenshot({path:`/tmp/scriba-colors-layout-${width}.png`});
   await board.getByRole('radio',{name:/Rectangle/}).locator('..').click();
   if(width<900)await board.getByRole('button',{name:'Edit',exact:true}).click();

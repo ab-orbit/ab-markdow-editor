@@ -927,5 +927,20 @@
   "Canal de atualização inválido.": "Ungültiger Aktualisierungskanal.",
   "Não foi possível abrir o destino de atualização.": "Das Aktualisierungsziel konnte nicht geöffnet werden.",
   "Arquivos preservados localmente. Envio pendente: {0}": "Dateien lokal erhalten. Upload ausstehend: {0}",
-  "{0}: {1}": "{0}: {1}"
+  "{0}: {1}": "{0}: {1}",
+  "Adicionar selecionados": "Auswahl einfügen",
+  "Aparência": "Erscheinungsbild",
+  "Tema": "Design",
+  "Claro": "Hell",
+  "Escuro": "Dunkel",
+  "Automático (aparência do sistema)": "Automatisch (Systemdarstellung)",
+  "Importar desenho": "Zeichnung importieren",
+  "Escolha um desenho .excalidraw. Para importar notas Markdown, volte ao modo Nota.": "Wählen Sie eine .excalidraw-Zeichnung. Wechseln Sie zum Import von Markdown-Notizen in den Notizmodus.",
+  "Este arquivo é uma biblioteca de símbolos. Abra a biblioteca do quadro para importar símbolos; aqui, escolha um desenho .excalidraw.": "Diese Datei ist eine Symbolbibliothek. Öffnen Sie die Bibliothek der Zeichenfläche, um Symbole zu importieren; wählen Sie hier eine .excalidraw-Zeichnung.",
+  "Este arquivo não contém um desenho Excalidraw válido. Escolha um arquivo .excalidraw exportado pelo editor.": "Diese Datei enthält keine gültige Excalidraw-Zeichnung. Wählen Sie eine vom Editor exportierte .excalidraw-Datei.",
+  "Criar uma cópia": "Kopie erstellen",
+  "Cópia de {0}": "Kopie von {0}",
+  "Cópia criada e aberta. A nota original foi salva.": "Kopie erstellt und geöffnet. Die ursprüngliche Notiz wurde gespeichert.",
+  "Não foi possível salvar a nota original. A cópia não foi criada; suas edições continuam abertas.": "Die ursprüngliche Notiz konnte nicht gespeichert werden. Es wurde keine Kopie erstellt; Ihre Änderungen bleiben geöffnet.",
+  "Não foi possível criar a cópia. A nota original continua aberta.": "Die Kopie konnte nicht erstellt werden. Die ursprüngliche Notiz bleibt geöffnet."
 }

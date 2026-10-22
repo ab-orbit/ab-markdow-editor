@@ -18,7 +18,13 @@ try{for(const engine of [chromium,webkit]){
   await expect(page.locator('header button[aria-label="Rename file"]')).toHaveText('Project drawing.md');
   const stored=()=>page.evaluate(async()=>{const {browserFetch}=await import('/src/lib/browserStore.ts');return (await browserFetch('document?name=Project%20drawing.md')).json();});expect((await stored()).value).toContain('```excalidraw');
   await board.getByRole('radio',{name:'Rectangle',exact:true}).locator('..').click();const canvas=board.locator('canvas.interactive'),box=await canvas.boundingBox();await page.mouse.move(box.x+box.width*.4,box.y+box.height*.4);await page.mouse.down();await page.mouse.move(box.x+box.width*.7,box.y+box.height*.55,{steps:5});await page.mouse.up();
-  if(width<900)await page.getByRole('button',{name:'Back to note',exact:true}).click();else await page.getByRole('button',{name:'Note',exact:true}).click();
+  if(width<900){
+   const back=page.getByRole('button',{name:'Back to note',exact:true});
+   const geometry=await back.evaluate(button=>{const svg=button.querySelector('svg').getBoundingClientRect(),text=button.querySelector('span').getBoundingClientRect(),b=button.getBoundingClientRect();return {icon:svg.width,iconRight:svg.right,textLeft:text.left,textRight:text.right,right:b.right,width:b.width};});
+   expect(geometry.icon).toBeGreaterThanOrEqual(18);expect(geometry.iconRight).toBeLessThanOrEqual(geometry.textLeft);expect(geometry.textRight).toBeLessThanOrEqual(geometry.right);expect(geometry.width).toBeGreaterThan(44);
+   await page.screenshot({path:`docs/evidence/whiteboard-colors/${engine.name()}-${width}-back-to-note.png`});
+   await back.click();
+  }else await page.getByRole('button',{name:'Note',exact:true}).click();
   const editor=page.getByRole('textbox',{name:'Note text',exact:true});await expect(editor).toBeVisible({timeout:30000});
   await expect.poll(()=>editor.evaluate(element=>{const selection=window.getSelection();return !!selection?.anchorNode && element.contains(selection.anchorNode) && element.lastElementChild?.tagName==='P' && element.lastElementChild.contains(selection.anchorNode);})).toBe(true);
   await page.keyboard.type('Writing immediately after the drawing.');await expect(editor).toContainText('Writing immediately after the drawing.');

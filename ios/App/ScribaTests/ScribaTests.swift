@@ -48,6 +48,17 @@ final class ScribaTests: XCTestCase {
         let rejected = try await js("try { await window.Capacitor.nativePromise('ScribaNative','openUpdate',{channel:'untrusted'}); return false; } catch { return true; }")
         XCTAssertEqual(rejected as? Bool, true)
     }
+    /** Automatic appearance releases UIKit's override so system changes reach WKWebView. */
+    func testAutomaticAppearanceFollowsNativeSystem() async throws {
+        let controller = try XCTUnwrap(web.window?.rootViewController as? ScribaViewController)
+        _ = try await native("appearance", args:["dark":true,"automatic":false,"red":20,"green":20,"blue":20])
+        XCTAssertEqual(controller.overrideUserInterfaceStyle, .dark)
+        _ = try await native("appearance", args:["dark":false,"automatic":false,"red":255,"green":255,"blue":255])
+        XCTAssertEqual(controller.overrideUserInterfaceStyle, .light)
+        _ = try await native("appearance", args:["dark":false,"automatic":true,"red":255,"green":255,"blue":255])
+        XCTAssertEqual(controller.overrideUserInterfaceStyle, .unspecified)
+    }
+
     private func grantFixture() throws {
         let bookmark = try fixture.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
         UserDefaults.standard.set(bookmark, forKey: "scriba.files.bookmark")

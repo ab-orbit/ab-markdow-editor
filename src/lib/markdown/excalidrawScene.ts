@@ -33,7 +33,8 @@ export function parseExcalidrawScene(source: string): ExcalidrawScene {
   if (source.length > 8_000_000) throw new Error(t("O desenho excede 8 MB. Reduza as imagens antes de importar."));
   let value: any;
   try { value = JSON.parse(source); } catch { throw new Error(t("JSON inválido. Importe um arquivo .excalidraw ou corrija o código do desenho.")); }
-  if (!value || value.type !== 'excalidraw' || !Array.isArray(value.elements)) throw new Error(t("Use uma cena Excalidraw com type: \"excalidraw\" e uma lista elements."));
+  if (value?.type === 'excalidrawlib') throw new Error(t("Este arquivo é uma biblioteca de símbolos. Abra a biblioteca do quadro para importar símbolos; aqui, escolha um desenho .excalidraw."));
+  if (!value || value.type !== 'excalidraw' || !Array.isArray(value.elements)) throw new Error(t("Este arquivo não contém um desenho Excalidraw válido. Escolha um arquivo .excalidraw exportado pelo editor."));
   if (value.elements.length > 2_000) throw new Error(t("O desenho excede 2.000 elementos. Divida-o em cenas menores."));
   function inspect(item: any, depth = 0): void {
     if (depth > 32) throw new Error(t("A estrutura do desenho é muito profunda."));

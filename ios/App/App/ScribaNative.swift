@@ -62,7 +62,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
             let channel: (String) -> CGFloat = { min(255, max(0, CGFloat(call.getInt($0) ?? 0))) / 255 }
             let color = UIColor(red: channel("red"), green: channel("green"), blue: channel("blue"), alpha: 1)
             controller.view.backgroundColor = color; controller.webView?.backgroundColor = color
-            controller.overrideUserInterfaceStyle = controller.darkChrome ? .dark : .light
+            controller.overrideUserInterfaceStyle = call.getBool("automatic") == true ? .unspecified : (controller.darkChrome ? .dark : .light)
             controller.setNeedsStatusBarAppearanceUpdate(); call.resolve()
         }
     }

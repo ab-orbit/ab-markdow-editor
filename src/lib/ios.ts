@@ -23,7 +23,7 @@ interface IosBridge {
   /** Open only the known distribution channel, never a remotely supplied URL. */
   openUpdate(options: {channel: 'app-store' | 'testflight'}): Promise<void>;
   /** Native system bars inherit the actual reading-theme tokens instead of a separate palette. */
-  appearance(options: { dark: boolean; red: number; green: number; blue: number }): Promise<void>;
+  appearance(options: { dark: boolean; automatic?: boolean; red: number; green: number; blue: number }): Promise<void>;
   /** Return a display name; security-scoped bookmarks remain exclusively in native storage. */
   folderStatus(): Promise<{ label: string }>;
   chooseFolder(): Promise<{ label: string }>;

@@ -1,7 +1,7 @@
 import { handleDetailsMenu, closeOtherDetailsMenus } from '../ui/actionMenu';
 import { t } from '../../i18n';
 import { useEffect, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
-import { Download, FileUp } from 'lucide-react';
+import { Download, FileImage } from 'lucide-react';
 import type { AppState, BinaryFiles, ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import { downloadExcalidraw, loadExcalidraw, restoreExcalidraw, serializeExcalidraw } from '@/lib/markdown/excalidraw';
@@ -11,6 +11,8 @@ import canvasStyles from './ExcalidrawEditor.module.css';
 import styles from './WhiteboardEditor.module.css';
 
 export interface WhiteboardEditorHandle {
+  /** Open the drawing-only chooser from the host menu. */
+  openImport: () => void;
   /** Commit an active text box before saving, closing or changing presentation. */
   flush: () => Promise<boolean>;
   /** Unpublished invalid edits and SDK text input pause host saves and reloads. */
@@ -79,13 +81,14 @@ export default function WhiteboardEditor({ ref, source, disabled, onChange, onCo
       return !unpublished.current;
     } catch (cause) { unpublished.current = true; setError(cause instanceof Error ? t(cause.message) : t("Não foi possível salvar esta alteração. Desfaça a última mudança.")); return false; }
   }
-  useImperativeHandle(ref, () => ({ flush, isBusy: () => operation.current || unpublished.current || !!api.current?.getAppState().editingTextElement }));
+  useImperativeHandle(ref, () => ({ flush, openImport: () => input.current?.click(), isBusy: () => operation.current || unpublished.current || !!api.current?.getAppState().editingTextElement }));
 
   async function importFile(file?: File) {
     if (!file || !api.current || operation.current) return;
     const original = api.current;
     operation.current = true; setWorking(true); setError("");
     try {
+      if (!file.name.toLowerCase().endsWith('.excalidraw')) throw new Error(t("Escolha um desenho .excalidraw. Para importar notas Markdown, volte ao modo Nota."));
       if (file.size > 8_000_000) throw new Error(t("O arquivo excede 8 MB."));
       const scene = await restoreExcalidraw(await file.text()), module = await loadExcalidraw();
       if (!mounted.current || api.current !== original) return;
@@ -111,5 +114,5 @@ export default function WhiteboardEditor({ ref, source, disabled, onChange, onCo
     const action = event.key.toLowerCase();
     if (action === 'o') { if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); callbacks.current.onOpen(); }
     else void flush().then(ok => { if (ok) { if (action === 's') callbacks.current.onSave?.(); else callbacks.current.onClose?.(); } });
-  }}><div data-ui="toolbar" className={styles.tools}><div>{navigation || <span>{t("Tela infinita")}</span>}</div><div><button type="button" disabled={!ready || working || disabled} onClick={() => input.current?.click()} aria-label={t("Importar .excalidraw no whiteboard")} title={t("Importar arquivo .excalidraw")}><FileUp size={16} aria-hidden="true"/><span>{t("Importar")}</span></button><details data-ui-menu onKeyDown={handleDetailsMenu} onToggle={event=>closeOtherDetailsMenus(event.currentTarget)}><summary aria-label={t("Exportar whiteboard")} title={t("Exportar whiteboard")}><Download size={17} aria-hidden="true"/>{t("Exportar")}</summary><div data-ui="action-menu" role="group" aria-label={t("Formato do whiteboard")}>{([['svg', t("SVG vetorial")], ['png', t("PNG transparente")], ['excalidraw', t("Excalidraw editável")]] as const).map(([format, label]) => <button key={format} type="button" disabled={!ready || working} onClick={event => { event.currentTarget.closest('details')?.removeAttribute('open'); void exportFile(format); }}>{label}</button>)}</div></details></div><input ref={input} type="file" hidden aria-label={t("Arquivo do whiteboard")} accept=".excalidraw,application/vnd.excalidraw+json,application/json" onChange={event => { void importFile(event.target.files?.[0]); event.target.value = ""; }}/></div>{error && <p role="alert" className={canvasStyles.error}>{error}</p>}<div className={canvasStyles.canvas}><ExcalidrawCanvas source={initial.source} dark={dark} readOnly={disabled || invalidSource} onReady={instance => { api.current = instance; requestAnimationFrame(() => requestAnimationFrame(() => { if (mounted.current && api.current === instance) setReady(true); })); }} onChange={update} onError={setError}/></div></section>;
+  }}><div data-ui="toolbar" className={styles.tools}><div>{navigation || <span>{t("Tela infinita")}</span>}</div><div><button type="button" disabled={!ready || working || disabled} onClick={() => input.current?.click()} aria-label={t("Importar .excalidraw no whiteboard")} title={t("Importar arquivo .excalidraw")}><FileImage size={16} aria-hidden="true"/><span>{t("Importar desenho")}</span></button><details data-ui-menu onKeyDown={handleDetailsMenu} onToggle={event=>closeOtherDetailsMenus(event.currentTarget)}><summary aria-label={t("Exportar whiteboard")} title={t("Exportar whiteboard")}><Download size={17} aria-hidden="true"/>{t("Exportar")}</summary><div data-ui="action-menu" role="group" aria-label={t("Formato do whiteboard")}>{([['svg', t("SVG vetorial")], ['png', t("PNG transparente")], ['excalidraw', t("Excalidraw editável")]] as const).map(([format, label]) => <button key={format} type="button" disabled={!ready || working} onClick={event => { event.currentTarget.closest('details')?.removeAttribute('open'); void exportFile(format); }}>{label}</button>)}</div></details></div><input ref={input} type="file" hidden aria-label={t("Arquivo do whiteboard")} accept=".excalidraw,application/vnd.excalidraw+json" onChange={event => { void importFile(event.target.files?.[0]); event.target.value = ""; }}/></div>{error && <p role="alert" className={canvasStyles.error}>{error}</p>}<div className={canvasStyles.canvas}><ExcalidrawCanvas source={initial.source} dark={dark} readOnly={disabled || invalidSource} onReady={instance => { api.current = instance; requestAnimationFrame(() => requestAnimationFrame(() => { if (mounted.current && api.current === instance) setReady(true); })); }} onChange={update} onError={setError}/></div></section>;
 }
