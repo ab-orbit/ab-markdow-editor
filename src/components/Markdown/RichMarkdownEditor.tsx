@@ -274,7 +274,11 @@ export default function RichMarkdownEditor({ ref, value, onChange, assets, diagr
         const top = Math.max(bounds.top, viewport?.offsetTop || 0) + 8;
         let bottom = Math.min(bounds.bottom, (viewport?.offsetTop || 0) + (viewport?.height || innerHeight)) - 12;
         const tools = pane.closest('section')?.querySelector<HTMLElement>('[role="toolbar"]');
-        if (tools && tools.getClientRects().length) bottom = Math.min(bottom, tools.getBoundingClientRect().top - 8);
+        if (tools && tools.getClientRects().length) {
+          const toolBounds = tools.getBoundingClientRect();
+          // Only a floating strip below the caret reduces the usable bottom edge.
+          if (toolBounds.top > bounds.top) bottom = Math.min(bottom, toolBounds.top - 8);
+        }
         if (bottom <= top) return;
         const caret = editor.view.coordsAtPos(editor.state.selection.head);
         if (caret.bottom > bottom) pane.scrollTop += caret.bottom - bottom;
@@ -302,9 +306,9 @@ export default function RichMarkdownEditor({ ref, value, onChange, assets, diagr
       if(position===0){const before=paragraph.create();transaction.insert(0,before);position+=before.nodeSize;}
       const drawing=transaction.doc.nodeAt(position)!;
       const after=position+drawing.nodeSize;
-      if(transaction.doc.nodeAt(after)?.type.name!=='paragraph')transaction.insert(after,paragraph.create());
+      if(transaction.doc.nodeAt(after)?.type.name!=='paragraph' || transaction.doc.nodeAt(after)!.content.size>0)transaction.insert(after,paragraph.create());
       transaction.setSelection(TextSelection.create(transaction.doc,after+1));
-      editor.view.dispatch(transaction.scrollIntoView());editor.view.focus();diagramWritingPrepared.current=true;
+      editor.view.dispatch(transaction);editor.view.dom.focus({preventScroll:true});diagramWritingPrepared.current=true;
     });
     return()=>cancelAnimationFrame(frame);
   },[editor,disabled,writeAfterDiagram,value]);

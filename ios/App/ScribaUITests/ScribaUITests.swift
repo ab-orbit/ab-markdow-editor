@@ -67,6 +67,40 @@ final class ScribaUITests: XCTestCase {
     }
 
 
+    /** The native web frame must stay above the docked keyboard in both tablet orientations. */
+    func testTabletKeyboardResizesDocument() throws {
+        guard UIDevice.current.userInterfaceIdiom == .pad else { throw XCTSkip("Tablet geometry.") }
+        continueAfterFailure = false
+        let app = XCUIApplication(bundleIdentifier: "com.aeonbridge.scriba")
+        app.launchArguments += ["-AppleLanguages", "(pt-BR)", "-AppleLocale", "pt_BR"]
+        app.launch()
+        XCUIDevice.shared.orientation = .portrait
+        let notes = app.buttons["Voltar às notas"]
+        XCTAssertTrue(notes.waitForExistence(timeout: 20)); notes.tap()
+        let create = app.buttons["Nova nota"]
+        XCTAssertTrue(create.waitForExistence(timeout: 10)); create.tap()
+        let discard = app.buttons["Descartar e criar"]
+        if discard.waitForExistence(timeout: 2) { discard.tap() }
+        let text = app.webViews.textViews["Texto da nota"]
+        XCTAssertTrue(text.waitForExistence(timeout: 15)); text.tap()
+        text.typeText("Tablet keyboard writing\n" + (1...18).map { "Document line \($0)" }.joined(separator: "\n"))
+        for orientation in [UIDeviceOrientation.portrait, .landscapeLeft] {
+            XCUIDevice.shared.orientation = orientation
+            let keyboard = app.keyboards.firstMatch
+            XCTAssertTrue(keyboard.waitForExistence(timeout: 10))
+            let web = app.webViews.firstMatch
+            let fitted = NSPredicate { _, _ in
+                web.frame.minY >= 0 && web.frame.maxY <= keyboard.frame.minY + 2 && web.frame.height > 100
+            }
+            expectation(for: fitted, evaluatedWith: app); waitForExpectations(timeout: 10)
+            XCTAssertFalse(app.buttons["Fechar lista de notas"].exists)
+            app.typeText(" More visible text.")
+            let output = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            try capture(orientation == .portrait ? "tablet-writing-portrait.png" : "tablet-writing-landscape.png", to: output)
+        }
+        XCUIDevice.shared.orientation = .portrait
+    }
+
     /** Automatic language follows the device even when the content of a note is Portuguese. */
     func testEnglishDeviceLanguage() throws {
         XCUIDevice.shared.orientation = .portrait

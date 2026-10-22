@@ -19,7 +19,7 @@ class ScribaViewController: CAPBridgeViewController {
             view = container
             NSLayoutConstraint.activate([
                 web.topAnchor.constraint(equalTo: container.safeAreaLayoutGuide.topAnchor),
-                web.bottomAnchor.constraint(equalTo: container.safeAreaLayoutGuide.bottomAnchor),
+                web.bottomAnchor.constraint(equalTo: container.keyboardLayoutGuide.topAnchor),
                 web.leadingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.leadingAnchor),
                 web.trailingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.trailingAnchor)
             ])

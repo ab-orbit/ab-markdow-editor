@@ -376,3 +376,7 @@ button.source-reload-pending { color: var(--status-warn); border-color: var(--st
 .github-advanced label { display: flex; flex-direction: column; gap: 6px; }
 
 .repository-search > svg { flex-shrink: 0; }
+
+/* The workspace owns its scrolling; UIKit resizes its frame above the keyboard. */
+html[data-platform="ios"], html[data-platform="ios"] body, html[data-platform="ios"] #root { height: 100%; overflow: hidden; overscroll-behavior: none; }
+html[data-platform="ios"] .editor-app { height: 100%; }

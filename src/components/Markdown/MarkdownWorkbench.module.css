@@ -313,7 +313,7 @@
  .compact[data-mode="read"] .reading { padding-top: 16px; }
 }
 
-/* Keep desktop commands near the document tab instead of stretching to the far edge. */
+/* Keep document identity, view choices and commands in stable groups. */
 @media (min-width: 900px) {
  .compact .toolbar { justify-content: flex-start; gap: 8px; }
  .compact .filename { flex: 0 1 220px; max-width: 220px; font-size: var(--desktop-ui-size); }
@@ -371,6 +371,18 @@
 /* Let the browser defer offscreen book chapters while retaining searchable, navigable DOM. */
 .reading[data-large-document] > section { content-visibility: auto; contain-intrinsic-size: auto 800px; }
 /* The filename remains a single-line rename affordance even with timestamped names. */
-.filename > button[title] { display: block; min-width: 0; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: start; }
+.compact .filename { flex: 1 1 160px; min-width: 110px; max-width: min(28vw, 360px); gap: 6px; }
+.compact .filename > .renameButton { display: block; flex: 1 1 auto; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: start; }
+.compact .filename > button:not(.renameButton) { flex: 0 0 36px; }
+.compact .actions { margin-inline-start: auto; justify-content: flex-end; }
+.compact .formats, .compact .modes { flex-shrink: 0; }
+@media (min-width: 1400px) { .compact .filename { flex-basis: 240px; } }
 
 .mobileDocumentFormat { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; border: 0; border-radius: var(--ui-control-radius); padding: 8px 10px; background: var(--ui-glass-fill); color: var(--text-primary); font: var(--ui-body-size)/1.2 var(--font-ui); }
+
+/* Tablet rows are intentional: document and view choices above full-width commands. */
+@media (min-width: 900px) and (max-width: 1399px) {
+ .compact > .toolbar { display: grid; grid-template-columns: minmax(110px, 1fr) auto auto; }
+ .compact > .toolbar > .filename { max-width: 360px; width: 100%; min-width: 0; }
+ .compact > .toolbar > .actions { grid-column: 1 / -1; width: 100%; flex-wrap: nowrap; justify-content: flex-end; }
+}

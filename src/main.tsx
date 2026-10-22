@@ -244,7 +244,26 @@ function App() {
   const visibleNotes = recentNotes.filter(matchesNote);
   const visiblePinned = pinnedNotes.filter(matchesNote);
   const noteGroups = [{label:t("Fixadas"), notes:visiblePinned, pinned:true}, ...[t("Hoje"), t("Ontem"), t("Últimos 7 dias"), t("Mais antigas")].map(label => ({label, notes:visibleNotes.filter(note => noteGroup(note.modifiedAt, dateClock) === label), pinned:false}))].filter(group => group.notes.length);
-  const [notesOpen, setNotesOpen] = useState(() => window.matchMedia("(min-width: 900px)").matches);
+  const [notesOpen, setNotesOpen] = useState(() => window.matchMedia("(min-width: 900px) and (pointer: fine)").matches);
+  useEffect(() => {
+    // A touch device opens the library explicitly; the document always gets priority.
+    const compact = window.matchMedia('(max-width: 899px), (pointer: coarse)');
+    const closeOverlay = () => { if (compact.matches) setNotesOpen(false); };
+    const focusDocument = (event: Event) => {
+      const target = event.target as Element;
+      if (target?.closest?.('.workbench-container') && !target.closest('[aria-controls="recent-notes"]')) closeOverlay();
+    };
+    document.addEventListener('focusin', focusDocument);
+    document.addEventListener('pointerdown', focusDocument);
+    compact.addEventListener('change', closeOverlay);
+    window.addEventListener('orientationchange', closeOverlay);
+    return () => {
+      document.removeEventListener('focusin', focusDocument);
+      document.removeEventListener('pointerdown', focusDocument);
+      compact.removeEventListener('change', closeOverlay);
+      window.removeEventListener('orientationchange', closeOverlay);
+    };
+  }, []);
   const [selected, setSelected] = useState("");
   const workbenchRef = useRef<MarkdownWorkbenchHandle>(null);
   const [documentClosed, setDocumentClosed] = useState(false);
@@ -415,7 +434,7 @@ function App() {
             const attached=doc.files.map(file=>({path:file.path,file:new File([Uint8Array.from(atob(file.data),char=>char.charCodeAt(0))],file.path.split('/').at(-1)!,{type:file.mime})}));
             resetDocument(doc.value,library.welcomeName,doc.version,attached);
             setOpenedScope(browserMode?libraryKey():info.repository);setReloadMode('read');setSelected(library.welcomeName);setPendingSync(!!doc.pendingSync);
-            if (window.matchMedia('(max-width: 899px)').matches) setNotesOpen(false);
+            if (window.matchMedia('(max-width: 899px), (pointer: coarse)').matches) setNotesOpen(false);
             try { localStorage.setItem('scriba-welcome-opened','1'); } catch { /* A restored draft takes precedence on subsequent launches. */ }
           }
           if (!info.repository && !restored?.savedFileLocation) {setSettingsOpen(true);setSwitchRepositoryOpen(true);}
@@ -580,7 +599,7 @@ function App() {
       // Closing a note never deletes its saved file. Only this tab's working copy is reset.
       focusNewNote.current = action === 'new';
       resetDocument(initialSource, initialName); automaticNoteName.current = action === 'new'; newDocumentCreatedAt.current = createdAt; setReloadMode(action === 'whiteboard' ? 'whiteboard' : 'live'); setDocumentClosed(action === 'close'); setSelected(""); setDocumentConfirmation(null);
-      if (action !== 'close' && window.matchMedia("(max-width: 899px)").matches) setNotesOpen(false);
+      if (action !== 'close' && window.matchMedia("(max-width: 899px), (pointer: coarse)").matches) setNotesOpen(false);
       setAfterCommitAction(null); setNotice(action === 'close' ? t("Nota fechada.") : action === 'whiteboard' ? t("Novo whiteboard criado.") : t("Nova nota criada."));
     } catch {
       latestDraft.current = previous;
@@ -609,7 +628,7 @@ function App() {
       const doc = await api<LoadedDocument>(`document?name=${encodeURIComponent(fileName)}`);
       const attached = doc.files.map(file => ({ path: file.path, file: new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, { type: file.mime }) }));
       const extracted = resetDocument(doc.value, fileName, doc.version, attached); setReloadMode('read'); setPendingSync(extracted || !!doc.pendingSync); setSelected(fileName); setSettingsOpen(false);
-      if (window.matchMedia("(max-width: 899px)").matches) setNotesOpen(false);
+      if (window.matchMedia("(max-width: 899px), (pointer: coarse)").matches) setNotesOpen(false);
       setNotice(extracted ? t("Conteúdo Markdown extraído do JSON. O arquivo original foi preservado; a cópia usa outro nome.") : doc.warnings.length ? t("Aberto com avisos: {0}", doc.warnings.map(warning => t(warning)).join("; ")) : t("Documento aberto."));
     }); } finally { setOpeningDocument(false); }
   }
@@ -696,7 +715,7 @@ function App() {
       } finally {
         // Refresh even when a later file fails: earlier imports are already preserved.
         await refresh();
-        if(lastImported){resetDocument(lastImported.value,lastImported.name,lastImported.version);setPendingSync(lastImported.pending);setReloadMode('read');setSelected(lastImported.name);setSettingsOpen(false);if(window.matchMedia('(max-width: 899px)').matches)setNotesOpen(false);}
+        if(lastImported){resetDocument(lastImported.value,lastImported.name,lastImported.version);setPendingSync(lastImported.pending);setReloadMode('read');setSelected(lastImported.name);setSettingsOpen(false);if(window.matchMedia('(max-width: 899px), (pointer: coarse)').matches)setNotesOpen(false);}
         if (imported) setNotice(unsynced
           ? t("{0} notas importadas. {1} aguardam sincronização.", imported, unsynced)
           : t("{0} notas importadas.", imported));
@@ -710,7 +729,7 @@ function App() {
       const originalVersion = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join("");
       setDocumentClosed(false);setSettingsOpen(false);setFinderSourceId(null);setSavedFileLocation(null);setImportedVersion({ name: fileName, version: originalVersion });
       setBaseline(source); setLoadedName(fileName); setVersion(null); setPendingSync(true); setConflict(null);setSelected(fileName);
-      if(!reloaded && window.matchMedia('(max-width: 899px)').matches)setNotesOpen(false);
+      if(!reloaded && window.matchMedia('(max-width: 899px), (pointer: coarse)').matches)setNotesOpen(false);
       if (reloaded) setNotice(t("Arquivo relido do disco."));
     });
   }
