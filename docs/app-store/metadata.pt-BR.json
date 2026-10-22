@@ -37,11 +37,11 @@
   "externalBetaReviewStatus": "BUILD_17_TESTING_FOR_SCRIBA_BETA",
   "latestUploadedBuild": {
     "version": "1.16.1",
-    "build": "23",
-    "uploadedAt": "2026-10-22T12:17:27Z",
+    "build": "24",
+    "uploadedAt": "2026-10-22T13:25:27Z",
     "uploadStatus": "UPLOADED_TO_APPLE",
     "processingStatus": "PENDING_UI_VERIFICATION",
-    "testFlightGroupAssignment": "NOT_YET_ASSIGNED",
+    "testFlightGroupAssignment": "PENDING_UI_VERIFICATION_AND_GROUP_DISTRIBUTION",
     "appStoreSubmission": "NOT_RESUBMITTED"
   },
   "macAvailability": {
