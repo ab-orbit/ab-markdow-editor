@@ -12,7 +12,7 @@ if (process.env.SCRIBA_IOS_BUILD_NUMBER) {
   source = source.replace(/CURRENT_PROJECT_VERSION = \d+;/g, `CURRENT_PROJECT_VERSION = ${process.env.SCRIBA_IOS_BUILD_NUMBER};`);
 }
 await writeFile(project, source);
-await copyFile(new URL('public/icons/profile-v3/scribe-1024.png', root), new URL('ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', root));
+await copyFile(new URL('public/icons/profile-v4/scribe-store-1024.png', root), new URL('ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png', root));
 const entry = new URL('dist-ios/index.html', root);
 let html = await readFile(entry, 'utf8');
 html = html.replace('<script src="/register-sw.js" defer></script>', '').replace('<link rel="manifest" href="/manifest.webmanifest">', '');

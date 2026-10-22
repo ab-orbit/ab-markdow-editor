@@ -18,9 +18,9 @@
     {"src":"/screenshots/editor-mobile.png","sizes":"390x844","type":"image/png","form_factor":"narrow","label":"Leia e edite notas no celular"}
   ],
   "icons": [
-    {"src":"/icons/profile-v3/scribe-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"/icons/profile-v3/scribe-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
-    {"src":"/icons/profile-v3/scribe-maskable-192.png","sizes":"192x192","type":"image/png","purpose":"maskable"},
-    {"src":"/icons/profile-v3/scribe-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+    {"src":"/icons/profile-v4/scribe-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"/icons/profile-v4/scribe-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"/icons/profile-v4/scribe-maskable-192.png","sizes":"192x192","type":"image/png","purpose":"maskable"},
+    {"src":"/icons/profile-v4/scribe-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
   ]
 }

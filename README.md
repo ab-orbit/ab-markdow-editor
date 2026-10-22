@@ -1,6 +1,12 @@
-# AB Markdown
+<img src="public/icons/profile-v4/scribe-256.png" alt="Scriba" width="128" height="128">
 
-Powered by **Aeon Bridge Co.** — offered to community.
+# Scriba
+
+Suas ideias em Markdown.
+
+Powered by **Aeon Bridge Co.**
+
+[Arquivos da marca e ícones para cada plataforma](docs/BRAND-ASSETS.md).
 
 Scriba também tem uma versão pública em [scriba.aeonbridge.app](https://scriba.aeonbridge.app/), com notas privadas por navegador. A [versão nativa para iPhone e iPad](docs/app-store/README.md) inclui o editor offline, seleção de pasta em Arquivos, compartilhamento do sistema e GitHub opcional; a distribuição pela App Store está em preparação.
 

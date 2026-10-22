@@ -43,11 +43,11 @@ try {
   assert.equal(await page.getByLabel('Bancada Markdown').getAttribute('data-mode'), sourceBefore); assert.equal(writes.length, startWrites);
   if (!offline) {
     let release, started; const held = new Promise(resolve => { release = resolve; }), loading = new Promise(resolve => { started = resolve; });
-    await page.route('**/icons/profile-v3/scribe-64.png', async route => { started(); await held; try { await route.continue(); } catch { /* Cancellation already closed this request. */ } });
+    await page.route('**/icons/profile-v4/scribe-64.png', async route => { started(); await held; try { await route.continue(); } catch { /* Cancellation already closed this request. */ } });
     let extraDownloads = 0; const downloaded = () => { extraDownloads++; }; page.on('download', downloaded);
     await page.getByRole('button', { name: 'Exportar PDF', exact: true }).first().click(); await loading;
     await page.getByRole('button', { name: 'Cancelar exportação', exact: true }).click(); await expect(page.getByRole('button', { name: 'Cancelar exportação', exact: true })).toHaveCount(0); release();
-    await page.unroute('**/icons/profile-v3/scribe-64.png'); await expect(page.getByRole('button', { name: 'Exportar PDF', exact: true }).first()).toBeEnabled();
+    await page.unroute('**/icons/profile-v4/scribe-64.png'); await expect(page.getByRole('button', { name: 'Exportar PDF', exact: true }).first()).toBeEnabled();
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))); assert.equal(extraDownloads, 0); page.off('download', downloaded);
   }
   const noteDownload = page.waitForEvent('download'); await page.getByRole('button', { name: 'Baixar .md', exact: true }).click(); assert.equal(await fs.readFile(await (await noteDownload).path(), 'utf8'), markdown);

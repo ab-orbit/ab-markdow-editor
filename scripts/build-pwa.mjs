@@ -6,7 +6,7 @@ const dist=fileURLToPath(new URL('../dist/',import.meta.url));
 async function files(directory){const result=[];for(const entry of await fs.readdir(directory,{withFileTypes:true})){const name=path.join(directory,entry.name);if(entry.isDirectory())result.push(...await files(name));else result.push(name);}return result;}
 // The offline shell never contains the process-specific API capability injected into online HTML.
 await fs.copyFile(path.join(dist,'index.html'),path.join(dist,'app-shell.html'));
-const assets=(await files(dist)).filter(file=>!file.endsWith('/index.html')&&!file.endsWith('/sw.js')&&!file.endsWith('/icons/scribe-source.png'));
+const assets=(await files(dist)).filter(file=>!file.endsWith('/index.html')&&!file.endsWith('/sw.js')&&!file.endsWith('/icons/scribe-source.png')&&!file.endsWith('.icns'));
 const hash=createHash('sha256');for(const file of assets.sort())hash.update(await fs.readFile(file));
 const cache=`ab-markdown-shell-${hash.digest('hex').slice(0,16)}`;
 const urls=assets.map(file=>'/'+path.relative(dist,file).split(path.sep).join('/'));

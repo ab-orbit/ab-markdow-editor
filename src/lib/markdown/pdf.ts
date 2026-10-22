@@ -161,7 +161,7 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
       content.push({ text: 'Referências', style: 'h2', headlineLevel: 2 });
       for (const [id, number] of numbers) { const note = footnotes.get(id); if (note) content.push({ text: `[${number}]`, bold: true, fontSize: 9 }, { stack: await blocks(note.children), margin: [12, 0, 0, 6] }); }
     }
-    const response = await fetch('/icons/profile-v3/scribe-64.png', { signal }); if (!response.ok) throw new Error(t("Não foi possível carregar a logo do PDF."));
+    const response = await fetch('/icons/profile-v4/scribe-64.png', { signal }); if (!response.ok) throw new Error(t("Não foi possível carregar a logo do PDF."));
     const logo = `data:image/png;base64,${base64(new Uint8Array(await response.arrayBuffer()))}`;
     const titleNode = tree.children.find(node => node.type === 'heading'), title = titleNode?.type === 'heading' ? plain(titleNode.children) : fileName.replace(/\.[^.]+$/, '');
     cancelled(signal); onProgress(t("Finalizando páginas…"));
