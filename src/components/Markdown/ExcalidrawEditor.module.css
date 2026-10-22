@@ -15,12 +15,12 @@
 .loading { padding: 24px; font: var(--ui-body-size)/1.6 var(--font-ui); color: var(--text-muted); }
 .error { flex: 0 0 auto; margin: 0; max-height: 88px; overflow: auto; padding: 8px 16px; border-bottom: 1px solid var(--border-panel); color: var(--red); background: var(--bg-elevated); font: var(--ui-caption-size)/1.5 var(--font-ui); }
 /* Override SDK chrome at its root; authored drawing colors remain part of the document. */
-.canvas :global(.excalidraw.excalidraw) { --ui-font: var(--font-ui); --default-font-family: var(--font-ui); --color-primary: var(--cyan); --color-primary-darker: var(--cyan); --color-primary-light: var(--bg-hover); --color-primary-light-darker: var(--border-strong); --color-on-primary-container: var(--text-primary); --color-surface-primary-container: var(--bg-hover); --color-surface-high: var(--bg-elevated); --color-surface-low: var(--bg-surface); --color-surface-mid: var(--bg-subtle); --island-bg-color: var(--bg-elevated); --popup-bg-color: var(--bg-overlay); --default-bg-color: var(--bg-surface); --text-primary-color: var(--text-primary); --color-on-surface: var(--text-primary); --icon-fill-color: var(--text-secondary); --input-bg-color: var(--bg-surface); --input-border-color: var(--border-panel); --button-gray-1: var(--bg-subtle); --button-gray-2: var(--bg-hover); --button-gray-3: var(--border-panel); --button-special-active-bg-color: var(--bg-hover); --button-special-active-border-color: var(--cyan); }
+:global(.excalidraw.excalidraw.excalidraw) { --ui-font: var(--font-ui); --default-font-family: var(--font-ui); --color-primary: var(--cyan); --color-primary-darker: var(--cyan); --color-primary-light: var(--bg-hover); --color-primary-light-darker: var(--border-strong); --color-on-primary-container: var(--text-primary); --color-surface-primary-container: var(--bg-hover); --color-surface-high: var(--bg-elevated); --color-surface-low: var(--bg-surface); --color-surface-mid: var(--bg-subtle); --island-bg-color: var(--bg-elevated); --popup-bg-color: var(--bg-overlay); --default-bg-color: var(--bg-surface); --text-primary-color: var(--text-primary); --color-on-surface: var(--text-primary); --icon-fill-color: var(--text-secondary); --input-bg-color: var(--bg-surface); --input-border-color: var(--border-panel); --button-gray-1: var(--bg-subtle); --button-gray-2: var(--bg-hover); --button-gray-3: var(--border-panel); --button-special-active-bg-color: var(--bg-hover); --button-special-active-border-color: var(--cyan); }
 .canvas :global(.excalidraw-wysiwyg) { min-height: 0; padding: 0; resize: none; border: 0; background: transparent; }
 @media (max-width: 600px) { .header { flex-wrap: wrap; gap: 8px; padding-inline: max(10px, env(safe-area-inset-left)); } .title { flex: 1 1 auto; } .editor .header .title span { font-size: 11px; } .actions { gap: 4px; } .actions button { padding: 8px; } .actions button:not(.apply) span { display: none; } .actions button.apply span { font-size: var(--ui-caption-size); } }
 @media (max-width: 450px) { .title { width: 100%; } .title > div { display: flex; align-items: baseline; gap: 10px; } .actions { width: 100%; } .actions button.apply { margin-left: auto; } }
 @media (max-height: 500px) and (orientation: landscape) { .header { flex-wrap: nowrap; padding-top: 4px; padding-bottom: 4px; } .title { width: auto; } .editor .header .title span { display: none; } .actions { width: auto; } }
-@media (max-width: 1024px), (pointer: coarse) { .canvas :global(button), .canvas :global(.ToolIcon__icon) { min-width: 44px; min-height: 44px; } .canvas :global(input:not([type=radio]):not([type=checkbox])), .canvas :global(textarea), .canvas :global(select) { font-size: 16px; } }
+@media (max-width: 1024px), (pointer: coarse) { .canvas :global(input:not([type=radio]):not([type=checkbox])), .canvas :global(textarea), .canvas :global(select) { font-size: 16px; } }
 /* FontPicker's grid uses this SDK token; keep it consistent with our mobile touch targets. */
 @media (max-width: 1024px), (pointer: coarse) {
   .canvas :global(.FontPicker__container) { --default-button-size: 44px; }
@@ -51,9 +51,7 @@
 }
 .canvas :global(.excalidraw--mobile.excalidraw .properties-content > .Island) { width: 100% !important; box-sizing: border-box; }
 
-/* Enlarge desktop drawing controls without changing authored canvas text. */
-@media (min-width: 900px) {
- .canvas :global(.excalidraw:not(.excalidraw--mobile) button),
- .canvas :global(.excalidraw:not(.excalidraw--mobile) h3),
- .canvas :global(.excalidraw:not(.excalidraw--mobile) .dropdown-menu-item) { font-size: var(--desktop-ui-size); }
-}
+/* Materials belong to SDK chrome, never to authored shapes, swatches or canvas text. */
+:global(.excalidraw.excalidraw.excalidraw) { --island-bg-color: var(--ui-glass-fill); --popup-bg-color: var(--ui-glass-fill); }
+:global(.excalidraw .Island), :global(.excalidraw .popover) { border: 1px solid var(--ui-glass-edge); border-radius: var(--ui-menu-radius); box-shadow: var(--ui-glass-shadow); -webkit-backdrop-filter: var(--ui-glass-blur); backdrop-filter: var(--ui-glass-blur); }
+:global(.excalidraw .sidebar) { background: var(--ui-glass-sidebar); border-color: var(--ui-glass-edge); -webkit-backdrop-filter: var(--ui-glass-blur); backdrop-filter: var(--ui-glass-blur); }

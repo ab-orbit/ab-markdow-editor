@@ -522,6 +522,38 @@ export class Repository {
     return this.library();
   }
 
+  /** Move only a document basename; attachments stay beside it and unrelated Git work stays untouched. */
+  async renameDocument({name, newName, version, repository: expectedRepository}) {
+    const root = this.requireRoot();
+    if (expectedRepository && expectedRepository !== root) throw new Error('O repositório mudou. Reabra as configurações.');
+    markdownName(name); markdownName(newName);
+    if (path.posix.dirname(name) !== path.posix.dirname(newName)) throw new Error('Mantenha o arquivo na mesma pasta ao renomear.');
+    if (name === newName) return {name, version, synced:true};
+    const previous = await safeFile(root,name), next = await safeFile(root,newName);
+    const bytes = await fs.readFile(previous);
+    if (!version || digest(bytes) !== version) throw new Error('O arquivo mudou. Reabra a nota antes de renomear.');
+    const entries = await fs.readdir(path.dirname(next));
+    if (entries.some(entry => entry.normalize('NFC').toLowerCase() === path.basename(newName).normalize('NFC').toLowerCase())) throw new Error('Já existe um arquivo com esse nome na pasta.');
+    // Exclusive creation refuses collisions, including ones created after the directory listing.
+    await fs.link(previous,next);
+    if (digest(await fs.readFile(previous)) !== version) {
+      await fs.unlink(next);
+      throw new Error('O arquivo mudou. Reabra a nota antes de renomear.');
+    }
+    await fs.unlink(previous);
+    const state = await this.libraryState();
+    if(state[root]) {
+      state[root].pinned = (state[root].pinned || []).map(item => item === name ? newName : item);
+      if(state[root].diagramManualName===name)state[root].diagramManualName=newName;
+      for(const category of ['referenceTexts','welcomeTexts'])for(const language of Object.keys(state[root][category] || {}))if(state[root][category][language] === name)state[root][category][language] = newName;
+      await this.persistLibrary(state);
+    }
+    try {
+      await this.commit({name:newName,assets:[path.posix.basename(name)],message:`Rename ${name} to ${newName}`});
+      await this.push();return {name:newName,version,synced:true};
+    } catch(error) {return {name:newName,version,synced:false,error:error.message};}
+  }
+
   /** Lightweight source check: no image payloads and no Git mutation. */
   async documentVersion(name) {
     markdownName(name);

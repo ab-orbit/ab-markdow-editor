@@ -11,6 +11,7 @@ const catalogs: Record<string, Record<string, string>> = { en, de, fr };
 const listeners = new Set<() => void>();
 /** Native bridge errors contain filenames; translate their fixed text without altering the filename. */
 const nativeErrorTemplates = [
+  { pattern: /^Não foi possível integrar estes arquivos: ([\s\S]*?)\. Suas versões foram preservadas\. Continue editando ou exporte uma cópia; a sincronização será tentada novamente\.$/, key: 'Não foi possível integrar estes arquivos: {0}. Suas versões foram preservadas. Continue editando ou exporte uma cópia; a sincronização será tentada novamente.' },
   { pattern: /^Não foi possível autorizar esta pasta\. ([\s\S]*)$/, key: 'Não foi possível autorizar esta pasta. {0}' },
   { pattern: /^O arquivo ([\s\S]*) mudou fora do Scriba\. Recarregue ou salve uma cópia\.$/, key: 'O arquivo {0} mudou fora do Scriba. Recarregue ou salve uma cópia.' },
 ];
@@ -29,6 +30,9 @@ export function currentLanguage(): Language { return resolveLanguage(preference)
 export function currentLocale(): string { return {pt:'pt-BR',en:'en-US',de:'de-DE',fr:'fr-FR'}[currentLanguage()]; }
 export function t(source: string, ...values: unknown[]): string {
   if (!values.length && currentLanguage() !== 'pt' && !catalogs[currentLanguage()]?.[source]) {
+    // File-read warnings prefix a stable failure with a user filename; only translate known failures.
+    const separator=source.lastIndexOf(': '), suffix=source.slice(separator+2);
+    if(separator>=0 && catalogs[currentLanguage()]?.[suffix])return source.slice(0,separator+2)+t(suffix);
     for (const {pattern, key} of nativeErrorTemplates) { const match = source.match(pattern); if (match) return t(key, ...match.slice(1)); }
   }
   const translated = currentLanguage() === 'pt' ? source : catalogs[currentLanguage()]?.[source] || catalogs.en[source] || source;

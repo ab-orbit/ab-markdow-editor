@@ -245,3 +245,7 @@ The editor displays a dismissible update notice for a newer public App Store ver
 ## Large documents and opening feedback
 
 The Polis orange plume now accompanies file opening, library navigation and draft recovery. The document-loading fix also recovers explicit converter JSON exports into separate Markdown copies and prevents an incomplete math group from trapping the application in an infinite scan. [Investigation, measured results and source-preservation checks](docs/DOCUMENT-LOADING.md).
+
+### Bibliotecas de desenhos incluídas
+
+O whiteboard inclui 187 símbolos de arquitetura de software, desenho de sistemas, visualização de dados, algoritmos, ícones e notas adesivas. As sete bibliotecas ficam disponíveis offline e preservam seus símbolos pessoais. [Coleções, autores e licença MIT](public/excalidraw-libraries/README.md).

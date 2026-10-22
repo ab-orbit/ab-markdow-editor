@@ -36,7 +36,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     let jsName = "ScribaNative"
     let pluginMethods: [CAPPluginMethod] = [
         "folderStatus", "chooseFolder", "authorizeFolder", "disconnectFolder", "readNotes", "saveNote",
-        "document", "documentVersion", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance", "accessibilityPreferences", "updateInfo", "openUpdate"
+        "document", "documentVersion", "renameNote", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance", "accessibilityPreferences", "updateInfo", "openUpdate"
     ].map { CAPPluginMethod(name: $0, returnType: CAPPluginReturnPromise) }
 
     private let defaults = UserDefaults.standard
@@ -215,6 +215,38 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
             } catch { call.reject(error.localizedDescription) }
         }
     }
+    /** A coordinated move keeps Markdown assets in place and refuses an existing destination. */
+    @objc func renameNote(_ call: CAPPluginCall) {
+        worker.async {
+            do {
+                guard let name = call.getString("name"), let newName = call.getString("newName"), let version = call.getString("version"),
+                      newName.range(of: #"\.(md|markdown|mdown)$"#, options: [.regularExpression, .caseInsensitive]) != nil,
+                      (name as NSString).deletingLastPathComponent == (newName as NSString).deletingLastPathComponent else { throw self.problem("Mantenha o arquivo na mesma pasta ao renomear.") }
+                try self.withFolder { parent, folder in
+                    guard let source = try self.locate(name, parent: parent, folder: folder) else { throw self.problem("O arquivo foi removido. Seu rascunho continua preservado.") }
+                    let leaf = (newName as NSString).lastPathComponent
+                    let target = try self.child(leaf, in: source.deletingLastPathComponent())
+                    if source == target { return }
+                    var coordinationError: NSError?
+                    var moveError: Error?
+                    NSFileCoordinator().coordinate(writingItemAt: source, options: .forMoving, writingItemAt: target, options: [], error: &coordinationError) { oldURL, newURL in
+                        do {
+                            guard self.hash(try Data(contentsOf: oldURL)) == version else { throw self.problem("O arquivo mudou. Reabra a nota antes de renomear.") }
+                            let entries = try self.files.contentsOfDirectory(atPath: oldURL.deletingLastPathComponent().path)
+                            guard !entries.contains(where: { $0.precomposedStringWithCanonicalMapping.lowercased() == leaf.precomposedStringWithCanonicalMapping.lowercased() }) else { throw self.problem("Já existe um arquivo com esse nome na pasta.") }
+                            try self.files.moveItem(at: oldURL, to: newURL)
+                        } catch { moveError = error }
+                    }
+                    if let error = coordinationError { throw error }
+                    if let error = moveError { throw error }
+                    self.defaults.set(version, forKey: self.revisionKey(target))
+                    self.defaults.removeObject(forKey: self.revisionKey(source))
+                }
+                call.resolve()
+            } catch { call.reject(error.localizedDescription) }
+        }
+    }
+
     @objc func documentVersion(_ call: CAPPluginCall) {
         worker.async {
             do {
@@ -310,7 +342,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
         guard SecItemAdd(query as CFDictionary, nil) == errSecSuccess else { throw problem("Não foi possível proteger a sessão GitHub no dispositivo.") }
     }
     private func request(_ route: String, body: String? = nil) throws -> (Int, String) {
-        guard route.range(of: #"^(status|repositories|select|library|document|document-version|save|token|logout|native/start|native/complete)(\?[^\r\n#]*)?$"#, options: .regularExpression) != nil,
+        guard route.range(of: #"^(status|repositories|select|library|document|document-version|save|rename|token|logout|native/start|native/complete)(\?[^\r\n#]*)?$"#, options: .regularExpression) != nil,
               let url = URL(string: gateway + "/github/" + route), url.host == "scriba.aeonbridge.app" else { throw problem("Rota GitHub inválida.") }
         var request = URLRequest(url: url); request.timeoutInterval = 45; request.httpShouldHandleCookies = false
         request.setValue(gateway, forHTTPHeaderField: "Origin"); request.setValue("1", forHTTPHeaderField: "X-Scriba-Client")
@@ -414,12 +446,12 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     /** TestFlight users return to TestFlight; App Store users open the app's actual listing. */
     @objc func openUpdate(_ call: CAPPluginCall) {
         guard let channel = call.getString("channel"), ["testflight", "app-store"].contains(channel) else {
-            call.reject("Invalid update channel."); return
+            call.reject("Canal de atualização inválido."); return
         }
         let destination = URL(string: channel == "testflight" ? "itms-beta://" : "https://apps.apple.com/app/id6824664840")!
         DispatchQueue.main.async {
             UIApplication.shared.open(destination, options: [:]) { opened in
-                if opened { call.resolve() } else { call.reject("Unable to open the update destination.") }
+                if opened { call.resolve() } else { call.reject("Não foi possível abrir o destino de atualização.") }
             }
         }
     }

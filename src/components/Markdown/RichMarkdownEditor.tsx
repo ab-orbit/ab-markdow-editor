@@ -11,7 +11,7 @@ import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Image from '@tiptap/extension-image';
 import CodeBlock from '@tiptap/extension-code-block';
-import { NodeSelection, Plugin } from '@tiptap/pm/state';
+import { NodeSelection, TextSelection, Plugin } from '@tiptap/pm/state';
 import { Mapping } from '@tiptap/pm/transform';
 import { resolveAsset, type MarkdownAsset } from '@/lib/markdown/assets';
 import { diagramIdentity, diagramSourceKey, diagramLanguage } from '@/lib/markdown/diagrams';
@@ -49,6 +49,8 @@ interface RichMarkdownEditorProps {
   disabled?: boolean;
   /** Focus a freshly created heading after the lazy editor becomes ready. */
   autoFocus?: boolean;
+  /** Returning from the canvas supplies its ordinal and prepares adjacent writing paragraphs. */
+  writeAfterDiagram?: number;
   onEditDiagram: (range: SourceRange) => void;
   onImageFiles: (files: File[]) => void;
 }
@@ -223,7 +225,7 @@ const SourceIdentity = Extension.create({
 });
 
 /** A lazy, source-preserving visual editor. Markdown remains the host's only saved document. */
-export default function RichMarkdownEditor({ ref, value, onChange, assets, diagramScope, disabled, autoFocus, onEditDiagram, onImageFiles }: RichMarkdownEditorProps) {
+export default function RichMarkdownEditor({ ref, value, onChange, assets, diagramScope, disabled, autoFocus, writeAfterDiagram, onEditDiagram, onImageFiles }: RichMarkdownEditorProps) {
   const ledger = useRef(new ReadingSource());
   const echo = useRef<string | null>(null);
   const callbacks = useRef({ onChange, onImageFiles }); callbacks.current = { onChange, onImageFiles };
@@ -288,6 +290,24 @@ export default function RichMarkdownEditor({ ref, value, onChange, assets, diagr
     window.visualViewport?.addEventListener('scroll', revealCaret);
     return () => { cancelAnimationFrame(frame); resize.disconnect(); chrome.disconnect(); editor.off('selectionUpdate', revealCaret); editor.off('focus', revealCaret); window.visualViewport?.removeEventListener('resize', revealCaret); window.visualViewport?.removeEventListener('scroll', revealCaret); };
   }, [editor]);
+  const diagramWritingPrepared = useRef(false);
+  useEffect(()=>{
+    if(!editor || disabled || writeAfterDiagram===undefined || diagramWritingPrepared.current || echo.current!==value)return;
+    const frame=requestAnimationFrame(()=>{
+      if(editor.isDestroyed)return;
+      let ordinal=0,position:number|undefined;
+      editor.state.doc.forEach((node,offset)=>{if(node.type.name==='mermaidDiagram' && node.attrs.language==='excalidraw' && ordinal++===writeAfterDiagram)position=offset;});
+      if(position===undefined)return;
+      const paragraph=editor.schema.nodes.paragraph,transaction=editor.state.tr;
+      if(position===0){const before=paragraph.create();transaction.insert(0,before);position+=before.nodeSize;}
+      const drawing=transaction.doc.nodeAt(position)!;
+      const after=position+drawing.nodeSize;
+      if(transaction.doc.nodeAt(after)?.type.name!=='paragraph')transaction.insert(after,paragraph.create());
+      transaction.setSelection(TextSelection.create(transaction.doc,after+1));
+      editor.view.dispatch(transaction.scrollIntoView());editor.view.focus();diagramWritingPrepared.current=true;
+    });
+    return()=>cancelAnimationFrame(frame);
+  },[editor,disabled,writeAfterDiagram,value]);
   const initiallyFocused = useRef(false);
   useEffect(() => {
     if (editor && autoFocus && !disabled && !initiallyFocused.current) {

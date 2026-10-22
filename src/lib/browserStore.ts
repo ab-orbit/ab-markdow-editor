@@ -4,7 +4,7 @@ import { t } from '../i18n';
 import {githubSelection, githubRequest, libraryKey} from './github';
 import {isIosApp} from './ios';
 import {savedFileRequest} from './savedFile';
-import {saveToDeviceFolder, readDeviceNotes, folderLabel, deviceDocumentVersion, readDeviceDocument, textVersion} from './deviceFolder';
+import {saveToDeviceFolder, readDeviceNotes, folderLabel, deviceDocumentVersion, readDeviceDocument, textVersion, renameDeviceNote} from './deviceFolder';
 import diagramManual from '../../docs/Scriba-Diagramas.md?raw';
 import {extendDiagramManual} from '../../server/diagram-manual.mjs';
 import welcomeUrl from '../../server/assets/escriba-welcome-v1.jpg?url';
@@ -141,6 +141,36 @@ export async function browserFetch(route:string, body?:any):Promise<Response> {
     const selection=githubSelection();const key=libraryKey();
     const folder=!selection ? await folderLabel() : '';
     if(url.searchParams.has('scope') && url.searchParams.get('scope')!==key || url.searchParams.has('folder') && !selection && url.searchParams.get('folder')!==folder)return Response.json({error:t("O destino mudou. Reabra a nota.")},{status:409});
+    if(url.pathname==='/rename') {
+      if(body?.scope && body.scope!==key)throw new Error(t("O destino mudou. Reabra a nota."));
+      const {name,newName,version}=body || {};
+      const valid=(value:unknown):value is string=>typeof value==='string' && /\.(md|markdown|mdown)$/i.test(value) && value.split('/').every(part=>!!part && part!=='.' && part!=='..' && !/[<>:"\\|?*\u0000-\u001f]/.test(part));
+      if(!valid(name)||!valid(newName)||name.split('/').slice(0,-1).join('/')!==newName.split('/').slice(0,-1).join('/'))throw new Error(t("Mantenha o arquivo na mesma pasta ao renomear."));
+      const before=await snapshot(database,key);
+      const check=(state:State)=>{
+        if(!state.notes[name] || !version || state.notes[name].version!==version)throw new Error(t("O arquivo mudou. Reabra a nota antes de renomear."));
+        if(name!==newName && Object.keys(state.notes).some(item=>item.normalize('NFC').toLowerCase()===newName.normalize('NFC').toLowerCase()))throw new Error(t("Já existe um arquivo com esse nome na pasta."));
+      };
+      check(before);
+      if(name!==newName) {
+        if(selection){const response=await githubRequest('rename',{...body,scope:key});if(!response.ok)return response;}
+        else if(folder)await renameDeviceNote(body);
+      }
+      if(key!==libraryKey() || folder!==(!githubSelection()?await folderLabel():''))throw new Error(t("O destino mudou. Reabra a nota."));
+      await new Promise<void>((resolve,reject)=>{
+        const tx=database.transaction('library','readwrite'),store=tx.objectStore('library'),request=store.get(key);
+        request.onsuccess=()=>{try{
+          const state:State=request.result || initial();check(state);
+          const note=state.notes[name];delete state.notes[name];state.notes[newName]={...note,name:newName};
+          state.pins=state.pins.map(item=>item===name?newName:item);
+          for(const map of [state.referenceTexts,state.welcomeTexts])if(map)for(const language of Object.keys(map) as Language[])if(map[language]===name)map[language]=newName;
+          if(state.diagramManualName===name)state.diagramManualName=newName;
+          store.put(state,key);
+        }catch(error){tx.abort();reject(error);}};
+        tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+      });
+      return Response.json({name:newName,version,synced:true});
+    }
     let disk:any=null;
     if(folder && (url.pathname==='/document-version'||url.pathname==='/document'&&url.searchParams.get('fresh')==='1')) {
       try {disk=await (url.pathname==='/document-version' ? deviceDocumentVersion(url.searchParams.get('name')||'') : readDeviceDocument(url.searchParams.get('name')||''));}

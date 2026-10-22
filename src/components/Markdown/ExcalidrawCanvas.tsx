@@ -4,7 +4,7 @@ import { Excalidraw, MainMenu } from '@excalidraw/excalidraw';
 import type { AppState, BinaryFiles, ExcalidrawImperativeAPI, LibraryItems } from '@excalidraw/excalidraw/types';
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import { restoreExcalidraw } from '@/lib/markdown/excalidraw';
-import { readCanvasState, writeCanvasState } from '@/lib/markdown/excalidrawStore';
+import { initialCanvasLibrary, writeCanvasState } from '@/lib/markdown/excalidrawStore';
 import { EMPTY_EXCALIDRAW } from '@/lib/markdown/excalidrawScene';
 import '@excalidraw/excalidraw/index.css';
 import styles from './ExcalidrawEditor.module.css';
@@ -22,7 +22,7 @@ interface Props {
 export default function ExcalidrawCanvas({ source, dark, readOnly, onReady, onChange, onError }: Props) {
   useLanguage();
   const [initial, setInitial] = useState<Awaited<ReturnType<typeof restoreExcalidraw>> & { libraryItems?: LibraryItems }>();
-  const api = useRef<ExcalidrawImperativeAPI>(null), fitted = useRef(false);
+  const api = useRef<ExcalidrawImperativeAPI>(null), fitted = useRef(false), libraryReady = useRef(false);
   useEffect(() => {
     let abandoned = false;
     const scene = restoreExcalidraw(source).catch(cause => {
@@ -31,7 +31,7 @@ export default function ExcalidrawCanvas({ source, dark, readOnly, onReady, onCh
       // Import available so a valid .excalidraw file can repair it visually.
       return restoreExcalidraw(EMPTY_EXCALIDRAW);
     });
-    void Promise.all([scene, readCanvasState<LibraryItems>('library').catch(() => undefined)]).then(([scene, libraryItems]) => {
+    void Promise.all([scene, initialCanvasLibrary().then(items => { libraryReady.current=true; return items; }).catch(() => { if(!abandoned)onError(t("Não foi possível preparar as bibliotecas de desenhos. Seus símbolos pessoais foram preservados.")); return undefined; })]).then(([scene, libraryItems]) => {
       if (!abandoned) setInitial({ ...scene, libraryItems });
     }).catch(cause => { if (!abandoned) onError(cause instanceof Error ? t(cause.message) : t("Não foi possível abrir o desenho.")); });
     return () => { abandoned = true; };
@@ -42,7 +42,7 @@ export default function ExcalidrawCanvas({ source, dark, readOnly, onReady, onCh
     onChange(elements, appState, files);
   }} langCode={currentLocale().replace("en-US", "en")} theme={dark ? 'dark' : 'light'} viewModeEnabled={readOnly} name={t("Desenho Scriba")} autoFocus handleKeyboardGlobally={false} aiEnabled={false} validateEmbeddable={false}
     UIOptions={{ canvasActions: { loadScene: false, saveToActiveFile: false, export: false, saveAsImage: false, toggleTheme: false } }}
-    onLibraryChange={items => { void writeCanvasState('library', items).catch(() => onError(t("Não foi possível guardar a biblioteca neste navegador. Exporte os símbolos antes de fechar."))); }}
+    onLibraryChange={items => { if(!libraryReady.current)return; void writeCanvasState('library', items).catch(() => onError(t("Não foi possível guardar a biblioteca neste navegador. Exporte os símbolos antes de fechar."))); }}
     onLinkOpen={(element, event) => { if (element.link && !/^(?:https?:\/\/|mailto:|#)/i.test(element.link)) event.preventDefault(); }}
     onPaste={data => { if (data.files && Object.values(data.files).some(file => !['image/png', 'image/jpeg', 'image/gif', 'image/webp'].includes(file.mimeType))) { onError(t("Cole imagens PNG, JPEG, GIF ou WebP.")); return false; } return true; }}><MainMenu><MainMenu.DefaultItems.CommandPalette/><MainMenu.DefaultItems.SearchMenu/><MainMenu.DefaultItems.ClearCanvas/><MainMenu.DefaultItems.ChangeCanvasBackground/><MainMenu.DefaultItems.Help/></MainMenu></Excalidraw>;
 }

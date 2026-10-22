@@ -31,6 +31,8 @@ interface IosBridge {
   disconnectFolder(): Promise<void>;
   readNotes(): Promise<{ notes: NativeNote[] }>;
   saveNote(note: { name: string; value: string; files: { path: string; data: string }[] }): Promise<void>;
+  /** Move a version-checked note within its authorized folder, preserving relative attachments. */
+  renameNote(options: {name:string;newName:string;version:string}): Promise<void>;
   document(options: { name: string }): Promise<NativeNote>;
   documentVersion(options: { name: string }): Promise<{ version: string | null }>;
   /** Present the system share sheet, including Save to Files, for an explicitly exported artifact. */

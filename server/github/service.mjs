@@ -325,6 +325,23 @@ export function createGitHubService({
     libraryCache.set(cacheKey, result);
     return result;
   }
+  /** One Git tree commit moves the Markdown blob; relative image paths do not change. */
+  async function renameDocument(session, body, attempt = 0) {
+    const {name,newName,version} = body;
+    if(typeof name !== 'string' || typeof newName !== 'string' || !/\.(md|markdown|mdown)$/i.test(newName) || name.split('/').slice(0,-1).join('/') !== newName.split('/').slice(0,-1).join('/')) throw fail('Mantenha o arquivo na mesma pasta ao renomear.');
+    const source = filePath(session,name), target = filePath(session,newName);
+    const current = await snapshot(session);
+    const previous = current.tree.tree.find(entry => entry.path === source);
+    if(!version || !previous || previous.sha !== version) throw fail('O arquivo mudou. Reabra a nota antes de renomear.',409);
+    if(source === target)return {name:newName,version,synced:true};
+    if(current.tree.tree.some(entry => entry.path.normalize('NFC').toLowerCase() === target.normalize('NFC').toLowerCase())) throw fail('Já existe um arquivo com esse nome na pasta.',409);
+    const tree = await api(session,`${repository(session)}/git/trees`,{base_tree:current.commit.tree.sha,tree:[{path:source,mode:'100644',type:'blob',sha:null},{path:target,mode:'100644',type:'blob',sha:previous.sha}]});
+    const commit = await api(session,`${repository(session)}/git/commits`,{message:`Rename ${name} to ${newName}`,tree:tree.sha,parents:[current.sha]});
+    try {
+      await request(`${apiOrigin}${repository(session)}/git/refs/heads/${encoded(session.selection.branch)}`,{method:'PATCH',headers:{Authorization:`Bearer ${await token(session)}`,'Content-Type':'application/json'},body:JSON.stringify({sha:commit.sha,force:false})});
+    } catch(error) {if(!attempt && [409,422].includes(error.status))return renameDocument(session,body,attempt+1);throw error;}
+    return {name:newName,version,synced:true};
+  }
   async function save(session, body, attempt = 0) {
     const name = body.name;
     if (
@@ -694,6 +711,7 @@ export function createGitHubService({
           "/github/document",
           "/github/document-version",
           "/github/save",
+          "/github/rename",
         ].includes(url.pathname)
       )
         await token(session);
@@ -770,14 +788,14 @@ export function createGitHubService({
         persist();
         return send(200, result);
       }
-      if (req.method === "POST" && url.pathname === "/github/save") {
+      if (req.method === "POST" && ["/github/save","/github/rename"].includes(url.pathname)) {
         const result = await serialize(
           session.selection?.fullName + "/" + session.selection?.branch,
           () => {
             const scope = session.selection ? `github:${session.selection.fullName}:${session.selection.branch}:${session.selection.folder}` : "state";
             if (body.scope && body.scope !== scope) throw fail("O repositório mudou. Reabra a biblioteca no destino selecionado.", 409);
             // Each request owns a decrypted session snapshot, including its destination.
-            return save(session, body);
+            return url.pathname === "/github/rename" ? renameDocument(session,body) : save(session, body);
           },
         );
         persist();

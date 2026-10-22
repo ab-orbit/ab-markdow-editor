@@ -109,8 +109,25 @@ export async function readDeviceDocument(name:string) {
    let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
    files.push({path:imagePath,data:btoa(binary),mime});
    if(source.isSavedFolder)await setting(`revision:${label}:${prefix}${imagePath}`,await digest(bytes));
-  }catch{warnings.push(`Imagem indisponível: ${imagePath}`);}
+  }catch{warnings.push(t("Imagem indisponível: {0}", imagePath));}
  }
  if(source.isSavedFolder)await setting(`revision:${label}:${name}`,version);
  return {name,value,version,files,warnings,modifiedAt:new Date(source.file.lastModified).toISOString()};
+}
+
+/** Native/browser moves never relocate image directories or overwrite an existing note. */
+export async function renameDeviceNote(body:{name:string;newName:string;version:string}) {
+ if(isIosApp)return iosBridge.renameNote(body);
+ const source=await locateDocument(body.name);
+ if(!source)throw new Error(t("O arquivo mudou. Reabra a nota antes de renomear."));
+ const oldLeaf=safeParts(body.name).at(-1)!,newLeaf=safeParts(body.newName).at(-1)!;
+ if(body.name===body.newName)return;
+ if(body.name.split('/').slice(0,-1).join('/')!==body.newName.split('/').slice(0,-1).join('/'))throw new Error(t("Mantenha o arquivo na mesma pasta ao renomear."));
+ const handle=await source.directory.getFileHandle(oldLeaf) as FileSystemFileHandle & {move?:(name:string)=>Promise<void>};
+ if(await digest(new Uint8Array(await(await handle.getFile()).arrayBuffer()))!==body.version)throw new Error(t("O arquivo mudou. Reabra a nota antes de renomear."));
+ try {await source.directory.getFileHandle(newLeaf);throw new Error(t("Já existe um arquivo com esse nome na pasta."));}catch(error){if(!(error instanceof DOMException && error.name==='NotFoundError'))throw error;}
+ // A directory capability alone cannot guarantee exclusive copy-and-delete; use an actual move.
+ if(!handle.move)throw new Error(t("Este navegador não permite renomear arquivos nesta pasta. Renomeie pelo aplicativo Files e atualize as notas."));
+ await handle.move(newLeaf);
+ await setting(`revision:${await folderLabel()}:${body.newName}`,body.version);
 }

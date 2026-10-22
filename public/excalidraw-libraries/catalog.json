@@ -1,0 +1,58 @@
+[
+  {
+    "id": "youritjang/software-architecture",
+    "url": "https://libraries.excalidraw.com/libraries/youritjang/software-architecture.excalidrawlib",
+    "file": "youritjang--software-architecture.excalidrawlib",
+    "items": 7,
+    "sha256": "5dead109b7569066a5fd3c2bcfe5f045c156f27a391eed71e6dd640b4317ce65",
+    "bytes": 44591
+  },
+  {
+    "id": "rohanp/system-design",
+    "url": "https://libraries.excalidraw.com/libraries/rohanp/system-design.excalidrawlib",
+    "file": "rohanp--system-design.excalidrawlib",
+    "items": 24,
+    "sha256": "4042532130ed87478388d28d4177177423c52ef7953c570822d60695a0b74bf7",
+    "bytes": 218048
+  },
+  {
+    "id": "dbssticky/data-viz",
+    "url": "https://libraries.excalidraw.com/libraries/dbssticky/data-viz.excalidrawlib",
+    "file": "dbssticky--data-viz.excalidrawlib",
+    "items": 32,
+    "sha256": "9918f5610092592970728a0f07aa3371712da51c7fd73ee7425975255a11c986",
+    "bytes": 942311
+  },
+  {
+    "id": "ferminrp/awesome-icons",
+    "url": "https://libraries.excalidraw.com/libraries/ferminrp/awesome-icons.excalidrawlib",
+    "file": "ferminrp--awesome-icons.excalidrawlib",
+    "items": 24,
+    "sha256": "02a2a249da93305990109af4665ce8f3b3d8a60fedd085ea1fce90b21cf6c8e1",
+    "bytes": 107023
+  },
+  {
+    "id": "intradeus/algorithms-and-data-structures-arrays-matrices-trees",
+    "url": "https://libraries.excalidraw.com/libraries/intradeus/algorithms-and-data-structures-arrays-matrices-trees.excalidrawlib",
+    "file": "intradeus--algorithms-and-data-structures-arrays-matrices-trees.excalidrawlib",
+    "items": 22,
+    "sha256": "3af6a2c6978b37322efc6b8649d45df30cfba6df5e0ff586889075666f92e6c4",
+    "bytes": 428409
+  },
+  {
+    "id": "xxxdeveloper/icons",
+    "url": "https://libraries.excalidraw.com/libraries/xxxdeveloper/icons.excalidrawlib",
+    "file": "xxxdeveloper--icons.excalidrawlib",
+    "items": 65,
+    "sha256": "578d04493eb2bedaf8e7e96f574ae8cce348e528ac6fb5f991bdc17bc8535a17",
+    "bytes": 715143
+  },
+  {
+    "id": "ferminrp/post-it",
+    "url": "https://libraries.excalidraw.com/libraries/ferminrp/post-it.excalidrawlib",
+    "file": "ferminrp--post-it.excalidrawlib",
+    "items": 13,
+    "sha256": "a1ded7f6b7cf1a9a038b7c8ceff06bb951bf13ba643cc0f83b2e735f6df856cc",
+    "bytes": 34090
+  }
+]

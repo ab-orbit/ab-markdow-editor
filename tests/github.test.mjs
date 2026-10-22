@@ -124,13 +124,15 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
             })
           ).stdout.trim();
         await indexed("read-tree", body.base_tree);
-        for (const entry of body.tree)
+        for (const entry of body.tree) {
+          if(entry.sha === null){await indexed('update-index','--force-remove','--',entry.path);continue;}
           await indexed(
             "update-index",
             "--add",
             "--cacheinfo",
             `${entry.mode},${entry.sha},${entry.path}`,
           );
+        }
         return reply({ sha: await indexed("write-tree") });
       }
       if (url.pathname.endsWith("/git/commits") && req.method === "POST") {
@@ -143,10 +145,10 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
           body.message,
         );
         if (forceRace) {
-          const sameNote = forceRace === 'same-note';
+          const sameNote = forceRace === 'same-note', renameRace=forceRace === 'rename';
           forceRace = false;
           await git("read-tree", "HEAD");
-          const racePath = sameNote ? 'scriba/note.md' : 'parallel.md';
+          const racePath = sameNote ? 'scriba/note.md' : renameRace ? 'parallel-rename.md' : 'parallel.md';
           await fs.writeFile(path.join(repo, racePath), sameNote ? '# Other device edit' : 'Concurrent');
           await git("add", racePath);
           await git("commit", "-m", "Concurrent");
@@ -321,6 +323,19 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
     assert.equal(sameNoteRace.status,409);
     assert.equal(sameNoteRace.data.conflict.name,'note.md');
     assert.equal(await git('show','HEAD:scriba/note.md'),'# Other device edit');
+    const renameVersion=(await request('document?name=note.md')).data.version;
+    const moved=await request('rename',{name:'note.md',newName:'Renamed.md',version:renameVersion});
+    assert.equal(moved.status,200,JSON.stringify(moved.data));
+    assert.equal(await git('show','HEAD:scriba/Renamed.md'),'# Other device edit');
+    await assert.rejects(git('show','HEAD:scriba/note.md'));
+    assert.equal((await request('rename',{name:'Renamed.md',newName:'Image.md',version:'stale'})).status,409);
+    const target=await request('save',{name:'Existing.md',value:'# Keep',version:null,files:[]});assert.equal(target.status,200);
+    assert.equal((await request('rename',{name:'Renamed.md',newName:'Existing.md',version:renameVersion})).status,409);
+    assert.equal(await git('show','HEAD:scriba/Existing.md'),'# Keep');
+    forceRace='rename';
+    assert.equal((await request('rename',{name:'Renamed.md',newName:'After-race.md',version:renameVersion})).status,200);
+    assert.equal(await git('show','HEAD:scriba/After-race.md'),'# Other device edit');
+    assert.equal(await git('show','HEAD:parallel.md'),'Concurrent');
     const database = await fs.readFile(
       path.join(temporary, "state/sessions.sqlite"),
     );

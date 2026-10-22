@@ -356,7 +356,7 @@ async function referenceCheckout(label, files, pins=[]) {
   const repo=path.join(temporary,label),upstream=path.join(temporary,`${label}.git`);
   await fs.mkdir(repo);await fs.mkdir(upstream);await git(repo,'init','-b','main');await git(upstream,'init','--bare','-b','main');
   for(const [key,value] of [['user.name','Reference Test'],['user.email','test@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])await git(repo,'config',key,value);
-  for(const [name,value] of Object.entries(files))await fs.writeFile(path.join(repo,name),value);
+  for(const [name,value] of Object.entries(files)){await fs.mkdir(path.dirname(path.join(repo,name)),{recursive:true});await fs.writeFile(path.join(repo,name),value);}
   await git(repo,'add','.');await git(repo,'commit','-m','Existing notes');await git(repo,'remote','add','origin',upstream);await git(repo,'push','-u','origin','main');
   const connected=await request('connect',{directory:repo});assert.equal(connected.status,200);
   const file=path.join(temporary,'state','library.json'),state=JSON.parse(await fs.readFile(file,'utf8'));state[connected.body.repository]={pinned:pins,welcomeImageVersion:1};await fs.writeFile(file,JSON.stringify(state));
@@ -420,4 +420,28 @@ test('Excalidraw extends an annotated manual once without restoring a deliberate
   const head = await git(repo, 'rev-parse', 'HEAD'); await request('library/initialize', {}); assert.equal(await git(repo, 'rev-parse', 'HEAD'), head);
   await fs.writeFile(path.join(repo, name), value); await request('library/initialize', {}); assert.equal(await fs.readFile(path.join(repo, name), 'utf8'), value);
   await fs.rm(path.join(repo, name)); await request('library/initialize', {}); await assert.rejects(fs.access(path.join(repo, name)));
+});
+
+test('HTTP rename preserves Markdown bytes, images and pins, commits only the move and refuses stale or occupied targets',async()=>{
+ const source='\uFEFF# Diagram\r\n\r\n![pixel](assets/pixel.png)\r\n\r\n```excalidraw\r\n{"type":"excalidraw","version":2,"elements":[],"files":{}}\r\n```\r\n';
+ const {repo,upstream}=await referenceCheckout('rename-documents',{'notes/whiteboard.md':source,'unrelated.md':'# Initial'},['notes/whiteboard.md']);
+ const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII=','base64');
+ await fs.mkdir(path.join(repo,'notes/assets'),{recursive:true});await fs.writeFile(path.join(repo,'notes/assets/pixel.png'),png);await git(repo,'add','.');await git(repo,'commit','-m','Add image');await git(repo,'push');
+ await request('pin',{name:'notes/whiteboard.md',pinned:true});
+ const doc=(await request('document?name=notes/whiteboard.md')).body;
+ await fs.writeFile(path.join(repo,'unrelated.md'),'# Unrelated staged work');await git(repo,'add','unrelated.md');
+ const renamed=await request('rename',{name:'notes/whiteboard.md',newName:'notes/Project.md',version:doc.version,repository:await fs.realpath(repo)});
+ assert.equal(renamed.status,200,JSON.stringify(renamed.body));assert.equal(renamed.body.synced,true,JSON.stringify(renamed.body));
+ assert.equal(await fs.readFile(path.join(repo,'notes/Project.md'),'utf8'),source);await assert.rejects(fs.access(path.join(repo,'notes/whiteboard.md')));
+ assert.deepEqual(await fs.readFile(path.join(repo,'notes/assets/pixel.png')),png);
+ assert.equal(await git(upstream,'show','main:notes/Project.md'),source.replace(/\r\n/g,'\n').trim());
+ assert.equal(await git(repo,'diff','--cached','--name-only'),'unrelated.md');assert.equal(await git(repo,'show','HEAD:unrelated.md'),'# Initial');
+ assert.ok((await request('library')).body.pinned.some(note=>note.name==='notes/Project.md'));
+ await fs.writeFile(path.join(repo,'notes/Occupied.md'),'# Keep');
+ assert.notEqual((await request('rename',{name:'notes/Project.md',newName:'notes/Occupied.md',version:doc.version})).status,200);
+ assert.equal(await fs.readFile(path.join(repo,'notes/Occupied.md'),'utf8'),'# Keep');
+ await fs.writeFile(path.join(repo,'notes/Project.md'),'# External edit');
+ assert.notEqual((await request('rename',{name:'notes/Project.md',newName:'notes/Other.md',version:doc.version})).status,200);
+ assert.equal(await fs.readFile(path.join(repo,'notes/Project.md'),'utf8'),'# External edit');await assert.rejects(fs.access(path.join(repo,'notes/Other.md')));
+ assert.notEqual((await request('rename',{name:'notes/Project.md',newName:'../escape.md',version:doc.version})).status,200);
 });

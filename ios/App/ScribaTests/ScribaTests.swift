@@ -64,6 +64,31 @@ final class ScribaTests: XCTestCase {
         XCTFail("Native editor did not become ready: " + expression)
     }
 
+    func testNativeRenamePreservesContentImagesAndRejectsConflicts() async throws {
+        try grantFixture()
+        _ = try await native("authorizeFolder")
+        let original = "\u{feff}# Whiteboard\r\n\r\n![pixel](assets/pixel.png)\r\n\r\n```excalidraw\r\n{\"type\":\"excalidraw\",\"elements\":[],\"files\":{}}\r\n```\r\n"
+        let pixel = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVf0AAAAASUVORK5CYII="
+        _ = try await native("saveNote", args:["name":"boards/whiteboard.md","value":original,"files":[["path":"assets/pixel.png","data":pixel]]])
+        let note = try await native("document",args:["name":"boards/whiteboard.md"]) as! [String:Any]
+        let version = note["version"] as! String
+        _ = try await native("renameNote",args:["name":"boards/whiteboard.md","newName":"boards/Project.md","version":version])
+        let directory=fixture.appendingPathComponent("scriba/boards",isDirectory:true)
+        let moved=directory.appendingPathComponent("Project.md")
+        XCTAssertEqual(try String(contentsOf:moved,encoding:.utf8),original)
+        XCTAssertFalse(FileManager.default.fileExists(atPath:directory.appendingPathComponent("whiteboard.md").path))
+        XCTAssertEqual(try Data(contentsOf:directory.appendingPathComponent("assets/pixel.png")),Data(base64Encoded:pixel))
+        try Data("# Keep".utf8).write(to:directory.appendingPathComponent("Existing.md"))
+        let occupied=try await js("try {await Capacitor.nativePromise('ScribaNative','renameNote',options);return false}catch{return true}",args:["options":["name":"boards/Project.md","newName":"boards/Existing.md","version":version]])
+        XCTAssertEqual(occupied as? Bool,true)
+        XCTAssertEqual(try String(contentsOf:directory.appendingPathComponent("Existing.md"),encoding:.utf8),"# Keep")
+        try Data("# External edit".utf8).write(to:moved)
+        let stale=try await js("try {await Capacitor.nativePromise('ScribaNative','renameNote',options);return false}catch{return true}",args:["options":["name":"boards/Project.md","newName":"boards/Other.md","version":version]])
+        XCTAssertEqual(stale as? Bool,true)
+        XCTAssertEqual(try String(contentsOf:moved,encoding:.utf8),"# External edit")
+        XCTAssertFalse(FileManager.default.fileExists(atPath:directory.appendingPathComponent("Other.md").path))
+    }
+
     func testNativeFilesRoundTripConflictsAndReload() async throws {
         try grantFixture()
         let initial = "\u{feff}# Arquivo do Files\r\n\r\nConteúdo original.\r\n"

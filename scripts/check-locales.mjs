@@ -7,6 +7,16 @@ for(const file of readdirSync('src',{recursive:true}).filter(file=>/\.tsx?$/.tes
  const source=ts.createSourceFile(file,readFileSync('src/'+file,'utf8'),ts.ScriptTarget.Latest,true,file.endsWith('.tsx')?ts.ScriptKind.TSX:ts.ScriptKind.TS);
  const visit=node=>{if(ts.isCallExpression(node)&&node.expression.getText(source)==='t'&&node.arguments[0]&&ts.isStringLiteral(node.arguments[0]))keys.add(node.arguments[0].text);ts.forEachChild(node,visit);};visit(source);
 }
+// Backend and native failures reach t(message) dynamically, outside literal frontend call scanning.
+for(const file of ['server/repository.mjs','server/index.mjs','server/github/service.mjs']) {
+ const source=ts.createSourceFile(file,readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
+ const visit=node=>{
+  if((ts.isNewExpression(node)&&node.expression.getText(source)==='Error'||ts.isCallExpression(node)&&node.expression.getText(source)==='fail')&&node.arguments?.[0]&&ts.isStringLiteral(node.arguments[0]))keys.add(node.arguments[0].text);
+  if(ts.isPropertyAssignment(node)&&node.name.getText(source)==='error'&&ts.isStringLiteral(node.initializer))keys.add(node.initializer.text);
+  ts.forEachChild(node,visit);
+ };visit(source);
+}
+for(const [,message]of readFileSync('ios/App/App/ScribaNative.swift','utf8').matchAll(/(?:problem|reject)\("([^"\n]+)"/g))if(!message.includes('\\('))keys.add(message);
 const placeholders=value=>[...value.matchAll(/\{\d+\}/g)].map(match=>match[0]).sort();
 for(const [language,catalog]of Object.entries(catalogs)){
  for(const glyph of ['B','I','U'])assert.equal(catalog[glyph],glyph,`${language}: formatting glyphs stay literal`);

@@ -370,3 +370,7 @@
 .noteInformation > header button { border: 0; background: transparent; }
 /* Let the browser defer offscreen book chapters while retaining searchable, navigable DOM. */
 .reading[data-large-document] > section { content-visibility: auto; contain-intrinsic-size: auto 800px; }
+/* The filename remains a single-line rename affordance even with timestamped names. */
+.filename > button[title] { display: block; min-width: 0; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: start; }
+
+.mobileDocumentFormat { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; border: 0; border-radius: var(--ui-control-radius); padding: 8px 10px; background: var(--ui-glass-fill); color: var(--text-primary); font: var(--ui-body-size)/1.2 var(--font-ui); }

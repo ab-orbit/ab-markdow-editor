@@ -71,6 +71,7 @@ const server = http.createServer(async (req, res) => {
       const actions = {
         '/api/library/initialize': () => repository.initializeLibrary(body),
         '/api/pin': () => repository.pin(body),
+        '/api/rename': () => repository.renameDocument(body),
         '/api/pick-folder': () => pickFolder(),
         '/api/pick-save-as': async () => {
           const previous = body.id ? await selectedFile(body.id) : null;
