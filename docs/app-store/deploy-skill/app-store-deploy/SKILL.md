@@ -33,6 +33,8 @@ Screenshots must show the app in use and match the device slot’s dimensions. M
 
 Open the actual review message and satisfy its specific requests. If Apple requests a physical-device recording, use a real supported device and the requested OS. Start at app launch when requested; match the recording to the selected build. Ask for the missing recording/device details early and continue independent metadata work. Never manufacture QA, attachments, credentials, rights or device evidence.
 
+For review video attachments, inspect the recording and preserve the original. If introductory screens expose unnecessary device identifiers, prepare a separate copy starting before app launch without altering the demonstrated workflow; document any edits. Do not publish review-only footage as a public asset. Wait for Apple’s attachment processing and verify the sent message contains the video. Copy the complete requested response to App Review Information Notes when Apple asks; a saved draft or sent reply is not final resubmission.
+
 For a rejected submission, distinguish “Update Review” from final “Resubmit to App Review”. Inspect the returned validation messages, resolve each verified issue, then verify the submission status and timestamp. User authorization to submit covers the ordinary submission action; respect any separately required confirmation for new legal agreements, credential changes or financial commitments. Preserve release mode.
 
 If a required owner-supplied artifact, device or Apple processing blocks completion, finish independent work, document the precise blocker and provide the smallest next action. Do not claim submission succeeded or bypass an Apple requirement.

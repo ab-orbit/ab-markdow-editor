@@ -1,6 +1,6 @@
 # Scriba for iPhone and iPad
 
-Latest confirmed upload: **1.16.1 (27)** on 22 October 2026 at 13:25 Recife, through Xcode Organizer. Apple processing completed and build 27 is **Testing** in both Equipe Scriba (internal) and Scriba Beta (external), with automatic tester notifications enabled. [Current submission work and evidence](submission-20261022/README.md). The public update manifest still promotes build 17. Official App Review resubmission still requires the physical-device QA and launch-to-use recording requested under Guideline 2.1.
+Latest confirmed upload: **1.16.1 (27)** on 22 October 2026 at 13:25 Recife, through Xcode Organizer. Apple processing completed and build 27 is **Testing** in both Equipe Scriba (internal) and Scriba Beta (external), with automatic tester notifications enabled. [Current submission work and evidence](submission-20261022/README.md). The public update manifest still promotes build 17. The owner then supplied a physical-iPhone recording; the complete reply and attachment were sent, Notes updated and the official build **1.16.1 (27) resubmitted at 13:55 Recife**. Both submission and item are **Waiting for Review**. Release remains manual.
 
 The iOS application bundles the editor, renderers, fonts and reference notes with Capacitor 8.5.3. It does not load the production website as its application shell. The web/PWA and local Mac application remain separate builds and separate private libraries.
 
@@ -52,7 +52,7 @@ This creates an archive and exports an IPA; it does not silently submit an incom
 
 The signed ARM64 build 1.16.1 (24), including the updated brand, was uploaded successfully on 22 October 2026 at 13:25:27 UTC. Processing and beta-group assignment still require verification in App Store Connect; the public update manifest remains on the last verified Testing build. See [build 24 validation](../evidence/ios-1.16.1-build24/README.md).
 
-Build 1.16.1 (27) is now Testing in both existing TestFlight groups and selected in the official review item, which is Ready for Review with manual release preserved. Localized privacy and missing German/English metadata fields have been corrected. The submission still has the original Guideline 2.1 request for physical-device QA and a launch-to-use recording; final official resubmission awaits that evidence. See [current submission evidence](submission-20261022/README.md). Historical build 17 evidence remains in [the earlier release record](../evidence/ios-1.16.1-build17/README.md).
+Build 1.16.1 (27) is now Testing in both existing TestFlight groups and selected in the official review item, which is Ready for Review with manual release preserved. Localized privacy and missing German/English metadata fields have been corrected. The owner supplied a physical-iPhone demonstration, which was attached to the complete App Review reply and referenced in Notes. The official submission is now Waiting for Review (22 October, 13:55 Recife). See [current submission evidence](submission-20261022/README.md). Historical build 17 evidence remains in [the earlier release record](../evidence/ios-1.16.1-build17/README.md).
 
 ## PWA Builder
 

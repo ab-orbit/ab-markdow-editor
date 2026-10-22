@@ -1,0 +1,23 @@
+Hello App Review Team,
+
+Thank you for your message under Guideline 2.1. We have updated the submission to Scriba 1.16.1 (27) and corrected the localized privacy policy URLs and required listing metadata.
+
+1. Physical-device demonstration
+The attached owner-provided recording demonstrates Scriba on a physical iPhone 17 Pro Max running iOS 26.3. It begins on the Home Screen immediately before opening Scriba and shows the normal workflow: reference notes, diagrams, creating and editing a note, whiteboard shapes and colors, returning to the note, and appearance settings. The recording was supplied for this release. Only the introductory Settings screen showing device identifiers was removed; the subsequent workflow remains continuous.
+
+2. Purpose and audience
+Scriba is a general-purpose Markdown editor for the public, including students, writers, researchers and professionals. It is not restricted to employees or a particular organization.
+
+3. Access and features
+No Scriba account, registration, subscription or purchase is required. Launch the app and open the bundled reference notes, or create a note. Core editing and diagram libraries are bundled for offline use. Settings offers a native Files folder picker; import and export use native system interfaces. Optional GitHub connects the user’s own repository through official authorization. It is a repository integration, not a Scriba identity account. The core editor requires no credentials.
+
+4. External services
+Bundled components include Capacitor, CodeMirror, TipTap, Mermaid, Beautiful Mermaid, Pele, ZenUML and Excalidraw. Optional GitHub synchronization uses GitHub and our HTTPS gateway, with Cloudflare network infrastructure. Files access uses Apple’s picker and the user-selected storage provider. There are no ads, purchases, AI services or remote executable code updates.
+
+5. Regional availability
+Core features and included content are consistent across regions. Optional GitHub and Files providers depend on their availability and the user’s permissions. There are no region-specific paid features.
+
+6. Content and business model
+Users create and manage their own private documents and drawings. There is no public feed, messaging service or third-party media catalog. Scriba does not provide regulated financial, medical or other professional services.
+
+The same information is included in App Review Information. Thank you for reviewing the updated build.

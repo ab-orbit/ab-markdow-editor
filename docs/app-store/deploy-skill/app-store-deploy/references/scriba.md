@@ -23,3 +23,13 @@ Detailed dated work: `docs/app-store/submission-20261022/README.md` in the Scrib
 
 - After correcting those four fields, Update Review succeeded. Official review item 1.16.1 (27) became Ready for Review and Resubmit to App Review was enabled. Final re-submission remained pending the explicit physical-device evidence request; the overall submission still showed Unresolved Issues. A green metadata validation is not evidence that Apple's information request was satisfied.
 - For TestFlight, adding the external group opened What to Test. Fill the notes, move focus out of the field to enable Submit for Review, keep the requested notification preference, submit and inspect the resulting state. In this session it became Testing immediately for both existing groups. Do not assume the same processing/review delay for future releases.
+
+## Final resubmission measured at 13:55 Recife
+
+The owner supplied a ReplayKit video showing a physical iPhone 17 Pro Max with iOS 26.3. The first 3.3 seconds showed Settings and device identifiers; a separate export removed only that introduction and began on Home Screen before opening Scriba. Subsequent workflow remained continuous. Original preserved. Do not infer an exact build number, full physical-device QA or latest-OS compliance from footage that does not establish them.
+
+Homebrew ffprobe failed to load an obsolete jpeg-xl dylib. Native Swift AVFoundation read duration, dimensions and frames and exported an MP4 without repairing global packages. AVAssetExportPreset1920x1080 preserved portrait aspect ratio at 884×1920. The 144.5-second, ~133.5 MB video was accepted as an App Review message attachment; this is an observed accepted size, not a universal maximum.
+
+Reply to App Review → Attach File opens a native picker. Wait for Processing to finish; a filename and Download action establish attachment availability. Save Draft can preserve the reply while Apple processes video. Continue Draft → Reply sends it; verify the new message and its attachment rather than relying on the retained draft entry. Update the version’s App Review Information Notes with the same complete response, as requested by Apple. A reply alone does not resubmit the app.
+
+After the reply and Notes were saved, Resubmit to App Review changed both the submission and item 1.16.1 (27) to Waiting for Review, dated Oct 22, 2026 at 1:55 PM. Manual release preserved. Detailed evidence and final submitted text are in `docs/app-store/submission-20261022/`.

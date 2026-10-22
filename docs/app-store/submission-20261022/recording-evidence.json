@@ -1,0 +1,15 @@
+{
+  "sourceFile": "ScreenRecording_10-22-2026 13-41-45_1.MP4",
+  "sourceDurationSeconds": 147.7968707482993,
+  "sourceDimensions": [1320, 2868],
+  "observedDevice": "iPhone 17 Pro Max",
+  "observedOperatingSystem": "iOS 26.3",
+  "source": "Owner-provided ReplayKit recording",
+  "preparedFile": "artifacts/app-store/review/Scriba-1.16.1-review-physical-iPhone.mp4",
+  "preparedDurationSeconds": 144.49666666666667,
+  "preparedDimensions": [884, 1920],
+  "preparedSha256": "b8b30a8fc164d8ec5ad8344ab9732ab4d664c2c3431147cf71e6981d5f81db6b",
+  "edit": "Removed the first 3.3 seconds containing Settings and device identifiers; starts on Home Screen before opening Scriba. Subsequent demonstration continuous. Native AVFoundation H.264-compatible MP4 export at 1920x1080 preset, preserving portrait aspect ratio.",
+  "observedFlows": ["Home Screen launch", "Bundled notes and diagrams", "New note and text entry", "Whiteboard shapes and colors", "Return to note", "Appearance settings"],
+  "notIndependentlyVerifiedFromRecording": ["Exact app build number", "Whether OS is latest public release", "Full iPad physical QA", "Offline, Files and GitHub test results"]
+}

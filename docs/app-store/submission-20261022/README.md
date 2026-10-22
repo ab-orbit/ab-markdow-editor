@@ -54,7 +54,7 @@ With build 27 selected, Update Review returned “Unable to Add for Review” an
 
 Completed a German description equivalent to the factual Portuguese feature listing, added localized keywords (86 characters, within the 100-character limit) and the existing public support URL. Added the same verified support URL to the English localization. Saved both locales and repeated Update Review. German source is in `metadata.de-DE.json`. Do not interpret a generic summary as a backend outage before reading the locale-specific details.
 
-## Final observed state for this work session
+## State before the owner supplied the recording
 
 After the four metadata corrections, Update Review succeeded and opened the existing submission details. Its item is **iOS App 1.16.1 (27) — Ready for Review**. **Resubmit to App Review** is enabled. All reported missing-field validation errors are cleared.
 
@@ -65,3 +65,25 @@ To finish: install 1.16.1 (27) from TestFlight on supported physical devices; co
 [Ready for Review and the outstanding Apple request](build27-ready-for-review-recording-pending.png).
 
 The public application update manifest was not promoted from build 17 during this task. The policies were deployed independently as static pages. The native build remains the previously signed and tested build 27, not a new build incorporating later creative assets or incidental catalog edits.
+
+## Owner recording supplied at 13:46 Recife
+
+The owner supplied a 147.8-second ReplayKit recording. Its initial Settings screen identifies an iPhone 17 Pro Max running iOS 26.3. The rest shows Home Screen launch, reference notes and diagrams, creation and editing of a note, whiteboard shapes and colors, returning to the note and appearance settings. These are observations from the recording, not a claim that the agent independently tested every native feature on physical hardware.
+
+Prepared a separate MP4 with native AVFoundation: removed only the first 3.3 seconds containing Settings/device identifiers, preserving the continuous Home Screen launch and subsequent workflow; exported to 884×1920, 144.50 seconds, approximately 133.5 MB decimal. Original remains untouched. [Recording details and checksum](recording-evidence.json). The video is an App Review artifact, not a public marketing asset, and is not committed to Git or published on the website.
+
+FFmpeg/ffprobe could not run because a Homebrew jpeg-xl dynamic library dependency was missing. AVFoundation provided local duration, dimensions, frame inspection and export without altering system packages.
+
+Prepared the [complete review reply](review-reply-final.txt), uploaded the video attachment, and saved the response as a draft while Apple processes the video. Replaced the previous pending-evidence note in the official version’s App Review Information with the complete response and recording reference; saved successfully. Final message and submission outcomes are recorded below once verified.
+
+## Completed official resubmission — 13:55 Recife / 16:55 UTC
+
+- The uploaded MP4 finished processing; the saved draft displayed its filename and Download action. Continued the draft and sent the complete reply. The new message at **Today 1:55 PM** contained the video attachment, verified by expanding that specific sent message. The saved draft entry alone was not considered proof of sending.
+- App Review Information Notes contains the same complete response, with device/OS and the recording filename. Save completed successfully. No claim was added that the agent independently tested all features on physical hardware, that the recording itself displayed the exact build number, or that iOS 26.3 was independently verified as the latest public OS.
+- Clicked **Resubmit to App Review** for the existing submission and selected build **1.16.1 (27)**.
+- Verified both the overall submission and app item changed to **Waiting for Review**. The page records **Date Submitted Oct 22, 2026 at 1:55 PM** and submission ID `e2881f7b-04d9-4724-b777-338abc713a70`.
+- Manual release was preserved. Waiting for Review means successfully submitted, not approved or publicly released. Both existing TestFlight groups continue with build 27 Testing.
+
+Evidence: [sent reply with video](physical-recording-reply-sent.png), [official Waiting for Review](build27-waiting-for-review.png), [submitted reply text](review-reply-final.txt), [recording provenance and checksum](recording-evidence.json).
+
+During attachment preparation, two native Chrome accessibility calls timed out. An inventory check succeeded; reacquiring the existing Chrome app by display name then restored access to the unchanged reply modal. No alternate browser session, credential extraction or hidden website API was used. Recording upload, draft saving, sent reply and final resubmission were each verified separately.
