@@ -10,6 +10,7 @@ All screenshots use isolated libraries with Scriba's bundled welcome content; no
 | Statistics | [390×844](light-390x844-1x-statistics.png) | [390×844](dark-390x844-1x-statistics.png) |
 | Outline | [390×844](light-390x844-1x-outline.png) | [390×844](dark-390x844-1x-outline.png) |
 | Settings | [390×844](light-390x844-1x-settings.png) | [390×844](dark-390x844-1x-settings.png) |
+| About / brand signature | [Desktop](light-1440-about.png) | [Desktop](dark-1440-about.png) |
 | Link dialog | [Desktop](light-1440-link-dialog.png) | [Desktop](dark-1440-link-dialog.png) |
 | Reading / outline | [Desktop](light-1440-reading-outline.png) | [Desktop](dark-1440-reading-outline.png) |
 

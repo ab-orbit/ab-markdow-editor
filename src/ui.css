@@ -142,3 +142,9 @@ html[data-reduce-transparency="true"] {
 }
 
 @media (max-width: 899px) { .editor-app .notes-sidebar { z-index: var(--ui-layer-sidebar); } }
+
+.editor-app a.powered-by { display: flex; align-items: center; gap: 2px; width: fit-content; min-height: 44px; color: var(--text-secondary); text-decoration: none; font: var(--ui-caption-size)/1.4 var(--font-ui); }
+.editor-app .powered-by img { flex: 0 0 44px; width: 44px; height: 44px; object-fit: contain; }
+.editor-app .github-source { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: 50%; }
+.editor-app .github-source:hover { background: var(--bg-hover); }
+[data-theme="dark"] :is(.github-source, .powered-by) img { filter: invert(1); }

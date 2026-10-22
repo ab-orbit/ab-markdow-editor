@@ -41,4 +41,4 @@ Commencez par une ligne. La suite peut en naître.
 
 [Confidentialité](https://scriba.aeonbridge.app/privacy.html) · [Assistance](https://scriba.aeonbridge.app/support.html)
 
-**Scriba · Aeon Bridge Co.**
+Powered by **Aeon Bridge Co.**

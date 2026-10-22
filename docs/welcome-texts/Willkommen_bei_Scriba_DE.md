@@ -41,4 +41,4 @@ Beginnen Sie mit einer Zeile. Daraus kann mehr entstehen.
 
 [Datenschutz](https://scriba.aeonbridge.app/privacy.html) · [Support](https://scriba.aeonbridge.app/support.html)
 
-**Scriba · Aeon Bridge Co.**
+Powered by **Aeon Bridge Co.**

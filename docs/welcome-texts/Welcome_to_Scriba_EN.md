@@ -41,4 +41,4 @@ Start with a line. The rest can grow from there.
 
 [Privacy](https://scriba.aeonbridge.app/privacy.html) · [Support](https://scriba.aeonbridge.app/support.html)
 
-**Scriba · Aeon Bridge Co.**
+Powered by **Aeon Bridge Co.**

@@ -70,7 +70,6 @@
   "Edição": "Édition",
   "Desenvolvido por": "Développé par",
   "Aeon Bridge Co.": "Aeon Bridge Co.",
-  "Powered by Aeon Bridge Co. — offered to community.": "Propulsé par Aeon Bridge Co. – offert à la communauté.",
   "Código-fonte e documentação": "Code source et documentation",
   "Privacidade": "Confidentialité",
   "Suporte": "Assistance",
@@ -810,5 +809,7 @@
   "Ao selecionar, suas notas serão salvas automaticamente na pasta indicada.": "Sélectionnez un dépôt pour enregistrer automatiquement vos notes dans le dossier indiqué.",
   "Alterações offline ficam neste dispositivo e são sincronizadas automaticamente ao reconectar.": "Les modifications hors ligne restent sur cet appareil et sont synchronisées automatiquement à la reconnexion.",
   "Carregando…": "Chargement…",
-  "Opções avançadas": "Options avancées"
+  "Opções avançadas": "Options avancées",
+  "Suas ideias em Markdown": "Vos idées en Markdown",
+  "Scriba · Suas ideias em Markdown": "Scriba · Vos idées en Markdown"
 }

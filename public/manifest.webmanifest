@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "Scriba — AB Markdown Editor",
+  "name": "Scriba — Suas ideias em Markdown",
   "short_name": "Scriba",
-  "description": "Editor Markdown local com rascunhos offline e sincronização Git. Powered by Aeon Bridge Co. — offered to community.",
+  "description": "Editor Markdown local com rascunhos offline e sincronização Git. Powered by Aeon Bridge Co. ",
   "lang": "pt-BR",
   "start_url": "/?source=pwa",
   "scope": "/",
