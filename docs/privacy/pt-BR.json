@@ -1,0 +1,42 @@
+{
+  "title": "Privacidade do Scriba",
+  "date": "Atualizada em 22 de outubro de 2026. Scriba — Suas ideias em Markdown, desenvolvido pela Aeon Bridge Co.",
+  "support": "Suporte",
+  "language": "Idioma",
+  "sections": [
+    [
+      "Suas notas",
+      [
+        "Você pode usar o editor sem criar uma conta. Notas, imagens, desenhos, preferências e rascunhos ficam no dispositivo. Na web, ficam no armazenamento privado do navegador. No aplicativo para iPhone e iPad, ficam no armazenamento privado do aplicativo. Eles não são publicados automaticamente.",
+        "Escolher uma pasta permite ao Scriba ler os Markdown existentes e salvar notas e imagens na subpasta <code>scriba</code>. O aplicativo iOS conserva a autorização da pasta fornecida pelo Files. Você pode desconectar a pasta nas configurações. Exportar um arquivo compartilha somente o conteúdo escolhido com o destino que você selecionar."
+      ]
+    ],
+    [
+      "GitHub opcional",
+      [
+        "Quando você conecta o GitHub, o serviço de sincronização do Scriba recebe seu identificador de conta e a autorização necessária para acessar os repositórios permitidos. A sessão e as credenciais são criptografadas no servidor. No aplicativo iOS, o identificador opaco dessa sessão fica no Keychain; as credenciais do OAuth não retornam ao editor. Se você escolher informar um token pessoal, ele será enviado ao serviço de conexão, sem ser conservado no armazenamento web.",
+        "Ao sincronizar, Markdown e imagens passam pelo serviço do Scriba para serem lidos ou gravados no seu repositório GitHub. O serviço não conserva uma biblioteca de documentos no servidor. O GitHub conserva os arquivos e o histórico de commits conforme as suas permissões e a <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">política de privacidade do GitHub</a>. Repositórios públicos tornam públicos os arquivos enviados.",
+        "Desconectar o GitHub remove a sessão do serviço; não apaga seu repositório. Autorizações também podem ser revogadas nas configurações da sua conta GitHub. Sessões inativas expiram após sete dias. A remoção de uma nota no dispositivo não elimina commits antigos do GitHub."
+      ]
+    ],
+    [
+      "Infraestrutura",
+      [
+        "O site e o serviço de sincronização usam HTTPS e Cloudflare. Esses serviços processam dados técnicos de conexão, como endereço IP, horário e rota solicitada, para entregar e proteger o serviço. A versão web pode utilizar as métricas técnicas fornecidas pela Cloudflare. O pacote nativo iOS não inclui um SDK de publicidade, rastreamento ou análise de uso.",
+        "O Scriba não solicita contatos, localização ou microfone e não lê sua biblioteca de fotos em segundo plano. Imagens e arquivos são escolhidos por você nos seletores do sistema; a câmera só é usada se você escolher tirar uma foto para inserir na nota. Não vendemos suas notas, não usamos seu conteúdo para publicidade e não enviamos desenhos aos servidores do Excalidraw ou do Mermaid para renderizá-los."
+      ]
+    ],
+    [
+      "Controle e exclusão",
+      [
+        "Exporte suas notas e imagens antes de limpar os dados do site ou remover o aplicativo. Essas ações removem as cópias privadas do dispositivo. Arquivos que você salvou em Files, GitHub ou outro destino continuam nesse destino. Preferências, rascunhos de desenhos e bibliotecas privadas de símbolos permanecem no dispositivo até a limpeza dos dados do aplicativo."
+      ]
+    ],
+    [
+      "Contato",
+      [
+        "Para dúvidas ou solicitações sobre seus dados, use o <a href=\"mailto:contact@aeonbridge.com\">contact@aeonbridge.com</a>. Não inclua tokens, documentos privados ou dados sensíveis em uma solicitação pública."
+      ]
+    ]
+  ]
+}

@@ -8,7 +8,7 @@
   "primaryLocale": "pt-BR",
   "price": "FREE",
   "supportUrl": "https://scriba.aeonbridge.app/support.html",
-  "privacyPolicyUrl": "https://scriba.aeonbridge.app/privacy.html",
+  "privacyPolicyUrl": "https://scriba.aeonbridge.app/privacy/pt-BR.html",
   "marketingUrl": "https://scriba.aeonbridge.app/",
   "copyright": "2026 Aeon Bridge Co.",
   "keywords": "markdown,notas,editor,diagramas,mermaid,excalidraw,github,offline,escrita,desenho",
@@ -37,9 +37,9 @@
   "externalBetaReviewStatus": "BUILD_17_TESTING_FOR_SCRIBA_BETA",
   "latestUploadedBuild": {
     "version": "1.16.1",
-    "build": "26",
-    "uploadedAt": "2026-10-22T14:34:10Z",
-    "uploadStatus": "UPLOADED_TO_APPLE",
+    "build": "27",
+    "uploadedAt": "2026-10-22T16:25:00Z",
+    "uploadStatus": "UPLOADED_TO_APPLE_VIA_XCODE_ORGANIZER",
     "processingStatus": "PROCESSING_OBSERVED_IN_APP_STORE_CONNECT",
     "testFlightGroupAssignment": "PENDING_PROCESSING_AND_GROUP_DISTRIBUTION",
     "appStoreSubmission": "NOT_RESUBMITTED"
@@ -75,9 +75,15 @@
     "build": "27",
     "archiveStatus": "SIGNED_ARCHIVE_SUCCEEDED",
     "simulatorStatus": "INSTALLED_AND_VERSION_VERIFIED_IPHONE_AND_IPAD",
-    "uploadStatus": "BLOCKED_XCODE_ACCOUNT_ACCESS",
+    "uploadStatus": "UPLOADED_TO_APPLE_VIA_XCODE_ORGANIZER",
     "uploadAttempts": 4,
-    "requiredAction": "Investigate Xcode command-line account-to-team resolution; account and Admin role verified in Xcode UI on 2026-10-22 at 12:19 Recife. Invalid credentials were not established.",
-    "appStoreSubmission": "NOT_RESUBMITTED"
+    "appStoreSubmission": "NOT_RESUBMITTED",
+    "uploadResolution": "Xcode Organizer > Distribute App > App Store Connect succeeded at 13:25 Recife on 2026-10-22; CLI account-to-team resolution failure did not establish invalid credentials."
+  },
+  "privacyPolicyUrls": {
+    "pt-BR": "https://scriba.aeonbridge.app/privacy/pt-BR.html",
+    "en-US": "https://scriba.aeonbridge.app/privacy/en-US.html",
+    "de-DE": "https://scriba.aeonbridge.app/privacy/de-DE.html",
+    "fr-FR": "https://scriba.aeonbridge.app/privacy/fr-FR.html"
   }
 }
