@@ -81,8 +81,25 @@ export function GitHubSettings({
   useEffect(() => {
     void run(refresh);
   }, []);
+  const active = githubSelection();
+  async function disconnect() {
+    if (!canSwitch()) return;
+    await run(async () => {
+      await githubJson("logout", {});
+      setGitHubSelection(null);
+      await onChange();
+      await refresh();
+    });
+  }
+  if (active) return <div className="storage-github-active">
+    <div className="storage-current"><FolderGit2 size={22} aria-hidden="true"/><div><strong>GitHub</strong><p className="storage-path">{active.fullName}</p></div></div>
+    <dl className="storage-details"><div><dt>{t('Branch')}</dt><dd>{active.branch}</dd></div><div><dt>{t('Pasta das notas')}</dt><dd>{active.folder || '/'}</dd></div></dl>
+    <p>{t('Salvamento ativo no GitHub.')}</p>
+    {error && <p role="alert">{error}</p>}
+    <button className="storage-disconnect" disabled={busy} onClick={() => void disconnect()}>{t('Desconectar GitHub')}</button>
+  </div>;
   return (
-    <section className="repository" aria-label={t("GitHub remoto")}><h3><FolderGit2 size={20} />{t("GitHub · todos os dispositivos")}</h3><p>{t("Conecte sua conta e escolha um repositório para ler e salvar notas no iPhone, iPad e computador. Cada salvamento cria um commit com o Markdown e suas imagens.")}</p>{error && <p role="alert">{error}</p>}{!status && <p>{t("Verificando conexão GitHub…")}</p>}{status && !status.connected && (
+    <section className="repository" aria-label={t("GitHub remoto")}><h3><FolderGit2 size={20} />{t("GitHub · todos os dispositivos")}</h3><p>{t("Conecte sua conta e escolha um repositório para ler e salvar notas no iPhone, iPad e computador. Cada salvamento cria um commit com o Markdown e suas imagens.")}</p>{error && <p role="alert">{error}</p>}{!status && !error && <p>{t("Verificando conexão GitHub…")}</p>}{status && !status.connected && (
         <>{status.configured ? (
             <a className="settings-action" href="/github/login" onClick={isIosApp ? event => {event.preventDefault();void run(async()=>{await iosBridge.githubLogin();await refresh();});} : undefined}>{t("Conectar GitHub")}</a>
           ) : (
@@ -179,7 +196,7 @@ export function GitHubSettings({
                 await refresh();
               });
             }}
-          >{t("Desconectar e usar navegador")}</button></>
+          >{t("Desconectar GitHub")}</button></>
       )}<p>{t("Alterações offline ficam neste dispositivo. Ao reconectar, salve a nota pendente ou aguarde o salvamento automático enquanto ela estiver aberta. Se uma nota mudar em outro dispositivo, o editor pede para reabrir ou salvar uma cópia.")}</p></section>
   );
 }

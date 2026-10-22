@@ -325,7 +325,7 @@ export function createGitHubService({
     libraryCache.set(cacheKey, result);
     return result;
   }
-  async function save(session, body) {
+  async function save(session, body, attempt = 0) {
     const name = body.name;
     if (
       !/\.(md|markdown|mdown)$/i.test(name) ||
@@ -427,6 +427,7 @@ export function createGitHubService({
       parents: snapshotNow.sha ? [snapshotNow.sha] : [],
     });
     // Never force a branch update: a concurrent commit must be retried against a fresh tree.
+    try {
     if (!snapshotNow.sha)
       await api(session, `${repository(session)}/git/refs`, {
         ref: `refs/heads/${session.selection.branch}`,
@@ -444,6 +445,15 @@ export function createGitHubService({
           body: JSON.stringify({ sha: commit.sha, force: false }),
         },
       );
+    } catch (error) {
+      // A different device may advance the branch after our snapshot. Rebuild once;
+      // the fresh document SHA check still protects same-note concurrent changes.
+      if (!attempt && error.status === 409) {
+        const result = await save(session, body, attempt + 1);
+        return {...result, integrated:!result.conflict};
+      }
+      throw error;
+    }
     return { version: created.sha, synced: true };
   }
   const server = http.createServer(async (req, res) => {

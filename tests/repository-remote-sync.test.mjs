@@ -70,18 +70,22 @@ test('sync downloads a remote-only update without creating a commit', async t =>
   assert.equal(await fs.readFile(path.join(f.checkout, 'phone.md'), 'utf8'), '# Written on the phone\n');
 });
 
-test('conflicting note edits stop synchronization without changing either version or leaving a merge active', async t => {
+test('conflicting note edits integrate automatically while preserving a readable copy of each version', async t => {
   const f = await fixture(t);
   const remoteHead = await f.remoteChange('README.md', '# Phone version\n');
   await fs.writeFile(path.join(f.checkout, 'README.md'), '# Mac version\n');
   const result = await f.sync();
-  assert.equal(result.body.synced, false);
+  assert.equal(result.body.synced, true, result.body.error);
   assert.equal(result.body.committed, true);
-  assert.match(result.body.error, /conflito/i);
-  assert.match(result.body.error, /README\.md/);
-  assert.equal(await fs.readFile(path.join(f.checkout, 'README.md'), 'utf8'), '# Mac version\n');
-  assert.equal(await git(f.remote, 'rev-parse', 'main'), remoteHead);
+  assert.equal(result.body.integrated, true);
+  assert.equal(result.body.copies.length, 1);
+  const copy = result.body.copies[0];
+  assert.equal(copy.source, 'README.md');
+  assert.equal(await fs.readFile(path.join(f.checkout, copy.name), 'utf8'), '# Mac version\n');
+  assert.equal(await fs.readFile(path.join(f.checkout, 'README.md'), 'utf8'), '# Phone version\n');
+  assert.equal(await git(f.remote, 'show', `main:${copy.name}`), '# Mac version');
   assert.equal(await git(f.remote, 'show', 'main:README.md'), '# Phone version');
+  await git(f.checkout, 'merge-base', '--is-ancestor', remoteHead, 'HEAD');
   assert.equal(await git(f.checkout, 'status', '--porcelain'), '');
   await assert.rejects(git(f.checkout, 'rev-parse', '--verify', 'MERGE_HEAD'));
 });
@@ -92,12 +96,14 @@ test('saving one note preserves unrelated uncommitted work when remote changes n
   await fs.writeFile(path.join(f.checkout, 'README.md'), '# Uncommitted external edit\n');
   const result = await f.post('/api/save-sync', {repository:f.checkout, name:'saved.md', value:'# Saved safely\n', version:null});
   assert.equal(result.status, 200);
-  assert.equal(result.body.synced, false);
+  assert.equal(result.body.synced, true, result.body.error);
   assert.equal(result.body.committed, true);
-  assert.match(result.body.error, /alteraç|sincronizar/i);
+  assert.equal(result.body.integrated, true);
   assert.equal(await fs.readFile(path.join(f.checkout, 'README.md'), 'utf8'), '# Uncommitted external edit\n');
   assert.equal(await git(f.checkout, 'show', 'HEAD:saved.md'), '# Saved safely');
-  assert.equal(await git(f.remote, 'rev-parse', 'main'), remoteHead);
+  assert.equal(await git(f.remote, 'show', 'main:README.md'), '# Original');
+  assert.equal(await git(f.remote, 'show', 'main:phone.md'), '# Phone note');
+  await git(f.checkout, 'merge-base', '--is-ancestor', remoteHead, 'HEAD');
   assert.equal(await git(f.checkout, 'diff', '--cached', '--name-only'), '');
   assert.equal(await git(f.checkout, 'stash', 'list'), '');
 });
@@ -146,4 +152,57 @@ test('first synchronization can merge an existing remote before establishing its
   assert.equal(await git(f.checkout, 'rev-parse', '--abbrev-ref', '@{upstream}'), 'origin/main');
   assert.equal(await git(f.remote, 'show', 'main:mac.md'), '# Mac note');
   assert.equal(await fs.readFile(path.join(f.checkout, 'phone.md'), 'utf8'), '# Phone note\n');
+});
+
+
+test('automatic note synchronization preserves another tool staged changes and index', async t => {
+  const f = await fixture(t);
+  await f.remoteChange('phone.md', '# Phone note\n');
+  await fs.writeFile(path.join(f.checkout, 'README.md'), '# Staged external edit\n');
+  await git(f.checkout, 'add', 'README.md');
+  const staged = await git(f.checkout, 'diff', '--cached', '--binary');
+  const result = await f.post('/api/save-sync', {repository:f.checkout,name:'saved.md',value:'# Automatic note\n',version:null});
+  assert.equal(result.body.synced, true, result.body.error);
+  assert.equal(await git(f.checkout, 'diff', '--cached', '--binary'), staged);
+  assert.equal(await git(f.remote, 'show', 'main:README.md'), '# Original');
+  assert.equal(await git(f.remote, 'show', 'main:saved.md'), '# Automatic note');
+  assert.equal(await git(f.checkout, 'stash', 'list'), '');
+});
+
+test('saving a conflicted open note returns the preserved local copy as its destination', async t => {
+  const f = await fixture(t);
+  await f.remoteChange('README.md', '# Incoming version\n');
+  const current = await fs.readFile(path.join(f.checkout, 'README.md'));
+  const {createHash} = await import('node:crypto');
+  const version=createHash('sha256').update(current).digest('hex');
+  const result=await f.post('/api/save-sync',{repository:f.checkout,name:'README.md',value:'# Local version\n',version});
+  assert.equal(result.body.synced,true,result.body.error);
+  assert.notEqual(result.body.name,'README.md');
+  assert.equal(await fs.readFile(path.join(f.checkout,result.body.name),'utf8'),'# Local version\n');
+  assert.equal(await fs.readFile(path.join(f.checkout,'README.md'),'utf8'),'# Incoming version\n');
+});
+
+test('overlapping external dirty work is never overwritten or published', async t => {
+  const f=await fixture(t);
+  const remoteHead=await f.remoteChange('README.md','# Remote original\n');
+  await fs.writeFile(path.join(f.checkout,'README.md'),'# Unsaved external work\n');
+  const result=await f.post('/api/save-sync',{repository:f.checkout,name:'saved.md',value:'# Saved note\n',version:null});
+  assert.equal(result.body.synced,false);
+  assert.equal(await fs.readFile(path.join(f.checkout,'README.md'),'utf8'),'# Unsaved external work\n');
+  assert.equal(await git(f.remote,'rev-parse','main'),remoteHead);
+  assert.equal(await git(f.checkout,'show','HEAD:saved.md'),'# Saved note');
+  assert.equal((await git(f.checkout,'worktree','list','--porcelain')).split('\n').filter(line=>line.startsWith('worktree ')).length,1);
+});
+
+test('non-Markdown conflicts abort isolated integration without requiring a live merge', async t => {
+  const f=await fixture(t);
+  await fs.writeFile(path.join(f.checkout,'data.txt'),'base\n');await git(f.checkout,'add','data.txt');await git(f.checkout,'commit','-m','Base file');await git(f.checkout,'push');await git(f.other,'pull','--ff-only');
+  const remoteHead=await f.remoteChange('data.txt','remote\n');
+  await fs.writeFile(path.join(f.checkout,'data.txt'),'local\n');
+  const result=await f.sync();assert.equal(result.body.synced,false);
+  assert.match(result.body.error,/versões foram preservadas/);
+  assert.doesNotMatch(result.body.error,/Resolva.*pasta local/);
+  assert.equal(await fs.readFile(path.join(f.checkout,'data.txt'),'utf8'),'local\n');
+  assert.equal(await git(f.remote,'rev-parse','main'),remoteHead);
+  await assert.rejects(git(f.checkout,'rev-parse','--verify','MERGE_HEAD'));
 });

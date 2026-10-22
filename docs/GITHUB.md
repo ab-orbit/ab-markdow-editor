@@ -18,9 +18,9 @@ Production environment: `/etc/scriba-github.env`; service: `scriba-github`; stat
 
 ## Saving and conflicts
 
-Each save creates the Markdown and new image blobs, one tree and one commit, then updates the branch reference with `force: false`. Existing unrelated files remain in the base tree. Saves include the browser destination scope; the gateway rejects a stale repository/branch/folder selection before creating any blobs. Document blob revisions reject stale writes. A concurrent branch change refuses the reference update, preserving both the current remote branch and local draft. Identical retries create no extra commit. Existing images with different bytes require a new filename.
+Each save creates the Markdown and new image blobs, one tree and one commit, then updates the branch reference with `force: false`. Existing unrelated files remain in the base tree. Saves include the browser destination scope; the gateway rejects a stale repository/branch/folder selection before creating any blobs. Document blob revisions reject stale writes. A concurrent branch change retries once against a fresh tree without forcing the reference. A same-note change still triggers a revision conflict; autosave preserves the local version as a separate named note while keeping the incoming remote note. Identical retries create no extra commit. Existing images with different bytes require a new filename.
 
-Offline saves retain the note and its original remote revision in the browser. Reopening a pending local note does not replace it with older remote content. Once online, save the pending note or keep it open with automatic saving enabled. Pending notes are not synchronized in a closed/backgrounded PWA; iOS can suspend it. Repository protection rules and GitHub permission/rate limits can refuse saves; the browser copy remains available for export or retry.
+Offline saves retain the note and its original remote revision in the browser. Reopening a pending local note does not replace it with older remote content. Once online, keep the pending note open for automatic saving or save it explicitly. Pending notes are not synchronized in a closed/backgrounded PWA; iOS can suspend it. Repository protection rules and GitHub permission/rate limits can refuse saves; the browser copy remains available for export or retry.
 
 The sidebar reads Markdown files within the selected prefix, fetches their latest per-file commit timestamps, and displays the latest 100. Up to 1000 candidates are supported; choose a smaller dedicated repository/folder above that limit. Metadata is cached per authorized account and branch head; no note bodies are cached on the server.
 
@@ -33,3 +33,5 @@ The active note's blob revision is checked every minute and when the foreground 
 - `npm test`: HTTP security/session/OAuth tests, real local Git commit trees, atomic note/image commits, idempotent writes, stale versions and concurrent branch updates. GitHub endpoints are represented by a local HTTP fixture.
 - `node tests/github-browser.smoke.mjs`: real mobile browser and gateway HTTP navigation with a simulated GitHub API; login by token, repository/folder selection, listing, editing, commit, offline save/retry, and disconnection with library isolation.
 - A real GitHub account authorization and installation must be verified after App activation; automated fixtures do not constitute that verification.
+
+Automatic local Git integration and recovery details: [Automatic integration](AUTOMATIC-INTEGRATION.md).

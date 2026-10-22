@@ -591,15 +591,15 @@ export class Repository {
     if (typeof message !== 'string' || !message.trim() || message.length > 1000) throw new Error('Informe uma mensagem de commit de até 1000 caracteres.');
     const root = this.requireRoot();
     // Never accidentally commit unrelated changes that were staged by another tool.
-    if (await git(root, ['diff', '--cached', '--name-only'])) throw new Error('Há alterações já preparadas no Git. Faça o commit delas ou retire-as do stage antes de continuar.');
+    // A path-limited commit leaves another tool's staged files out of this note commit.
     const paths = [name, ...assets.map(asset => `${path.posix.dirname(name)}/${asset}`.replace(/^\.\//, ''))];
     for (const relative of paths) await safeFile(root, relative);
     await git(root, ['--literal-pathspecs', 'add', '--', ...paths]);
-    if (!await git(root, ['diff', '--cached', '--name-only'])) return { commit: null, ...await this.info() };
+    if (!await git(root, ['--literal-pathspecs', 'diff', '--cached', '--name-only', '--', ...paths])) return { commit: null, ...await this.info() };
     try {
       await git(root, ['var', 'GIT_AUTHOR_IDENT']);
       await git(root, ['var', 'GIT_COMMITTER_IDENT']);
-      return { commit: await git(root, ['commit', '-m', message]), ...await this.info() };
+      return { commit: await git(root, ['--literal-pathspecs', 'commit', '--only', '-m', message, '--', ...paths]), ...await this.info() };
     } catch (error) {
       // Only our paths were staged. Release them so a failed hook/identity can be retried.
       await git(root, ['--literal-pathspecs', 'reset', '--quiet', '--', ...paths]).catch(() => {});
@@ -618,11 +618,13 @@ export class Repository {
       const result = await this.commit({ name: body.name, message, assets: (body.files || []).map(file => file.path) });
       committed = !!result.commit;
       stage = 'push';
-      await this.push();
-      return { ...saved, synced: true, committed };
+      const integration = await this.push();
+      const recovery = integration.copies.find(copy => copy.source === body.name);
+      return { ...saved, name: recovery?.name || body.name, synced: true, committed, integrated: integration.integrated, copies: integration.copies };
     } catch (error) {
       // HTTP 200 reports the saved content version as well as the pending Git stage.
-      return { ...saved, synced: false, committed, stage, error: error.message };
+      const recovery = error.integration?.copies?.find(copy => copy.source === body.name);
+      return { ...saved, name:recovery?.name || body.name, synced: false, committed, stage, error: error.message, integrated:!!error.integration?.integrated, copies:error.integration?.copies || [] };
     }
   }
 
@@ -651,8 +653,8 @@ export class Repository {
         }
       }
       stage = 'push';
-      await this.push();
-      return { synced: true, committed };
+      const integration = await this.push();
+      return { synced: true, committed, integrated: integration.integrated, copies: integration.copies };
     } catch (error) {
       // Files and completed commits remain available for the next retry.
       if (staged && !committed) await git(root, ['reset', '--quiet']).catch(() => {});
@@ -677,23 +679,76 @@ export class Repository {
       const exists = await fs.access(filename).then(() => true, error => { if (error.code === 'ENOENT') return false; throw error; });
       if (exists) throw new Error('Há uma integração do Git em andamento. Finalize ou cancele essa operação antes de sincronizar.');
     }
-    if (await git(root, ['status', '--porcelain'])) throw new Error('Há outras alterações locais ainda sem commit. Sua nota foi preservada. Use Sincronizar nas configurações para incluir essas alterações antes de receber as atualizações do GitHub.');
+    // Git preserves unrelated dirty files itself and rejects only paths it would overwrite.
+    // Do not require a clean checkout merely because another document/tool has edits.
     try { await git(root, ['merge-base', 'HEAD', remoteHead]); }
     catch { throw new Error('Os históricos local e remoto não têm uma origem comum. Selecione outro repositório nas configurações para transferir as notas com segurança.'); }
+    const directory = await fs.mkdtemp(path.join(this.stateDir, 'integration-'));
+    const workspace = path.join(directory, 'checkout');
+    let attached = false;
+    try {
+      // Merge in a detached worktree so another tool's index and dirty files stay intact.
+      await git(root, ['worktree', 'add', '--detach', workspace, 'HEAD']);
+      attached = true;
+      const result = await this.mergeRemoteInto(workspace, remoteHead);
+      const head = await git(workspace, ['rev-parse', 'HEAD']);
+      // Fast-forward only: Git refuses any overwrite of dirty/untracked checkout files.
+      await git(root, ['merge', '--ff-only', '--no-edit', head]);
+      return result;
+    } finally {
+      if (attached) await git(root, ['worktree', 'remove', '--force', workspace]).catch(() => {});
+      await fs.rm(directory, {recursive:true, force:true});
+    }
+  }
+
+  /** Integrate a remote commit only inside the disposable, detached merge workspace. */
+  async mergeRemoteInto(root, remoteHead) {
+    const copies = [];
     try {
       await git(root, ['merge', '--no-edit', '--ff', '-m', 'Merge remote notes with Scriba', remoteHead]);
     } catch (error) {
       const conflicts = await git(root, ['-c', 'core.quotepath=false', 'diff', '--name-only', '--diff-filter=U']);
       const merging = await git(root, ['rev-parse', '--verify', 'MERGE_HEAD']).then(() => true, () => false);
+      // Conflicting Markdown versions are kept as two ordinary notes, never conflict markers.
+      // Other file types remain untouched and the merge is aborted below.
+      if (merging && conflicts && conflicts.split('\n').every(name => /\.(md|markdown|mdown)$/i.test(name))) {
+        try {
+          const entries = (await git(root, ['ls-files', '--unmerged', '-z'])).split('\0').filter(Boolean);
+          if (entries.some(entry => !/^100(644|755) /.test(entry))) throw new Error('Unsupported conflict entry');
+          const tag = `${new Date().toISOString().slice(0,10)}-${randomUUID().slice(0,8)}`;
+          for (const name of conflicts.split('\n')) {
+            await safeFile(root, name);
+            const local = entries.some(entry => entry.split('\t')[0].endsWith(' 2') && entry.slice(entry.indexOf('\t')+1) === name);
+            const incoming = entries.some(entry => entry.split('\t')[0].endsWith(' 3') && entry.slice(entry.indexOf('\t')+1) === name);
+            if (local) {
+              // execFile's Buffer preserves every byte, including trailing newlines and Unicode.
+              const {stdout} = await exec('git', ['-C', root, 'show', `:2:${name}`], {encoding:'buffer', maxBuffer:MAX_TEXT, timeout:120000});
+              const copy = name.replace(/(\.(?:md|markdown|mdown))$/i, ` (local ${tag})$1`);
+              const filename = await safeFile(root, copy, true);
+              await fs.writeFile(filename, stdout, {flag:'wx'});
+              await git(root, ['--literal-pathspecs', 'add', '--', copy]);
+              copies.push({source:name,name:copy});
+            }
+            if (incoming) {
+              await git(root, ['--literal-pathspecs', 'checkout', '--theirs', '--', name]);
+              await git(root, ['--literal-pathspecs', 'add', '--', name]);
+            } else await git(root, ['--literal-pathspecs', 'rm', '--', name]);
+          }
+          await git(root, ['commit', '--no-edit']);
+          return {copies};
+        } catch {
+          // Both original commits remain intact if finishing the merge fails; abort only our merge.
+        }
+      }
       // Only abort the merge started above. Never reset the checkout or discard either commit.
       if (merging) {
         try { await git(root, ['merge', '--abort']); }
         catch { throw new Error('A integração do Git foi interrompida e precisa ser revisada na pasta local. Os commits dos dois lados continuam preservados.'); }
       }
-      if (conflicts) throw new Error(`Conflito entre as alterações locais e as do GitHub: ${conflicts.split('\n').join(', ')}. A integração foi cancelada e as duas versões estão preservadas nos seus commits. Resolva o conflito na pasta local antes de sincronizar novamente.`);
+      if (conflicts) throw new Error(`Não foi possível integrar estes arquivos: ${conflicts.split('\n').join(', ')}. Suas versões foram preservadas. Continue editando ou exporte uma cópia; a sincronização será tentada novamente.`);
       throw error;
     }
-    return true;
+    return {copies};
   }
 
   async push() {
@@ -702,14 +757,24 @@ export class Repository {
     if (!branch) throw new Error('Selecione uma branch antes de enviar ao remoto.');
     let upstream = false;
     try { upstream = !!await git(root, ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}']); } catch { /* First push creates the upstream on origin. */ }
-    await this.integrateRemote(branch, upstream);
+    let integration = await this.integrateRemote(branch, upstream);
+    const copies = [...(integration?.copies || [])];
     const args = upstream ? ['push'] : ['push', '-u', 'origin', branch];
+    try {
     try { await git(root, args); }
     catch (error) {
       // Another device may publish between fetch and push. Retry once only if new commits arrived.
-      if (!await this.integrateRemote(branch, upstream)) throw error;
+      const retry = await this.integrateRemote(branch, upstream);
+      if (!retry) throw error;
+      integration = retry;copies.push(...retry.copies);
       await git(root, args);
     }
-    return this.info();
+    } catch (error) {
+      // Local integration may have succeeded before transport failed. Keep the editor
+      // attached to its preserved copy rather than to the incoming canonical document.
+      error.integration = {integrated:!!integration,copies};
+      throw error;
+    }
+    return {...await this.info(), integrated:!!integration, copies};
   }
 }

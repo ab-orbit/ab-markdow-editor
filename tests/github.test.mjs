@@ -143,9 +143,12 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
           body.message,
         );
         if (forceRace) {
+          const sameNote = forceRace === 'same-note';
+          forceRace = false;
           await git("read-tree", "HEAD");
-          await fs.writeFile(path.join(repo, "parallel.md"), "Concurrent");
-          await git("add", "parallel.md");
+          const racePath = sameNote ? 'scriba/note.md' : 'parallel.md';
+          await fs.writeFile(path.join(repo, racePath), sameNote ? '# Other device edit' : 'Concurrent');
+          await git("add", racePath);
           await git("commit", "-m", "Concurrent");
         }
         return reply({ sha: next });
@@ -308,11 +311,16 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
       version: before.version,
       files: [],
     });
-    assert.equal(concurrent.status, 409);
-    assert.equal(
-      await git("show", "HEAD:scriba/note.md"),
-      "# Updated\n\n![Image](assets/image.png)",
-    );
+    assert.equal(concurrent.status, 200);
+    assert.equal(concurrent.data.integrated, true);
+    assert.equal(await git("show", "HEAD:scriba/note.md"), "# Concurrent overwrite");
+    assert.equal(await git("show", "HEAD:parallel.md"), "Concurrent");
+    forceRace = 'same-note';
+    const sameNoteVersion = (await request("document?name=note.md")).data.version;
+    const sameNoteRace = await request("save", {name:'note.md',value:'# Local simultaneous edit',version:sameNoteVersion,files:[]});
+    assert.equal(sameNoteRace.status,409);
+    assert.equal(sameNoteRace.data.conflict.name,'note.md');
+    assert.equal(await git('show','HEAD:scriba/note.md'),'# Other device edit');
     const database = await fs.readFile(
       path.join(temporary, "state/sessions.sqlite"),
     );

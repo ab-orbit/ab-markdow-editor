@@ -88,9 +88,9 @@ test('commits only document and assets, pushes to real bare remote', async () =>
   assert.equal(await git(checkout, 'rev-parse', 'HEAD'), await git(remote, 'rev-parse', 'main'));
   assert.equal(await git(remote, 'show', 'main:notes/test.md'), '# Saved\n\n![pixel](assets/pixel.png)');
 });
-test('refuses a commit when unrelated changes are already staged', async () => {
+test('a note commit preserves unrelated changes already staged', async () => {
   await git(checkout, 'add', 'README.md');
-  const result = await request('commit', { name: 'notes/test.md', message: 'Do not mix changes' }); assert.equal(result.status, 400); assert.match(result.body.error, /preparadas/);
+  const result = await request('commit', { name: 'notes/test.md', message: 'Do not mix changes' }); assert.equal(result.status, 200); assert.equal(result.body.commit, null);
   assert.equal(await git(checkout, 'diff', '--cached', '--name-only'), 'README.md');
 });
 test('rejects embedded HTTPS credentials before attempting a network clone', async () => {
@@ -379,10 +379,10 @@ test('already copied diagram references retain annotations and receive the ZenUM
   const {repo}=await referenceCheckout('reference-adopt',{'Scriba-Diagramas.md':value});const head=await git(repo,'rev-parse','HEAD');
   const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.pinned[0].name,'Scriba-Diagramas.md');const extended=await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8');assert.ok(extended.startsWith(value));assert.match(extended,/scriba-extension:zenuml-v1:start/);assert.notEqual(await git(repo,'rev-parse','HEAD'),head);const next=await git(repo,'rev-parse','HEAD');await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),next);assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),extended);
 });
-test('failed reference synchronization preserves the full file and seed marker for explicit retry',async()=>{
+test('reference synchronization preserves unrelated staged work and seeds the full manual only once',async()=>{
   const {repo}=await referenceCheckout('reference-pending',{'User.md':'# Existing'});
   await fs.writeFile(path.join(repo,'User.md'),'# Staged user work');await git(repo,'add','User.md');
-  const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.synchronization.synced,false);assert.equal(result.body.synchronization.stage,'commit');
+  const result=await request('library/initialize',{});assert.equal(result.status,200);assert.equal(result.body.synchronization.synced,true);
   assert.equal(await git(repo,'diff','--cached','--name-only'),'User.md');
   const head=await git(repo,'rev-parse','HEAD');const value=await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8');assert.match(value,/scriba-reference:diagram-manual/);
   await request('library/initialize',{});assert.equal(await git(repo,'rev-parse','HEAD'),head);assert.equal(await fs.readFile(path.join(repo,'Scriba-Diagramas.md'),'utf8'),value);await assert.rejects(fs.access(path.join(repo,'Scriba-Diagramas-2.md')));
