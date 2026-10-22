@@ -8,7 +8,7 @@ const browser=await(process.env.MARKDOWN_BROWSER==='webkit'?webkit:chromium).lau
 const evidence='docs/evidence/apple-design';await mkdir(evidence,{recursive:true});
 try {for(const [width,height,theme] of [[1440,900,'light'],[1440,900,'dark'],[1024,768,'dark']]) {
  const context=await browser.newContext({locale:'pt-BR',viewport:{width,height},serviceWorkers:'block'});await context.addInitScript(theme=>localStorage.setItem('ab-markdown-theme',theme),theme);
- const page=await context.newPage();await page.goto(server.resolvedUrls.local[0]);await expect(page.locator('article h1').first()).toHaveText('Bem-vindo ao Scriba');
+ const page=await context.newPage();await page.goto(process.env.SCRIBA_URL||server.resolvedUrls.local[0]);await expect(page.locator('article h1').first()).toHaveText('Bem-vindo ao Scriba');
  const modes=page.getByRole('group',{name:'Modo de edição',exact:true});await expect(modes.getByRole('button')).toHaveCount(5);
  // A single reusable command surface serves the sidebar and export menus.
  await page.locator('.notes-menu > summary').click();const notes=page.locator('.notes-menu-content');await expect(notes).toHaveAttribute('data-ui','action-menu');await notes.press('ArrowDown');await expect(notes.getByRole('button').first()).toBeFocused();await page.keyboard.press('Escape');

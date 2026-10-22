@@ -13,7 +13,7 @@
   "copyright": "2026 Aeon Bridge Co.",
   "keywords": "markdown,notas,editor,diagramas,mermaid,excalidraw,github,offline,escrita,desenho",
   "promotionalText": "Escreva em Markdown, organize suas notas e transforme ideias em diagramas. Trabalhe offline e escolha onde guardar seus arquivos.",
-  "description": "Scriba é um editor Markdown para escrever, ler e organizar suas ideias. Comece sem criar uma conta e mantenha suas notas no dispositivo.\n\nESCREVA E LEIA\nEdite diretamente no texto formatado ou abra o código Markdown. Use títulos, listas, tarefas, tabelas, links e imagens. Navegue pelo índice de títulos e confira palavras, caracteres e seleção.\n\nORGANIZE\nBusque nas notas recentes, fixe as mais importantes e acompanhe as alterações. Os guias incluídos apresentam exemplos editáveis para começar.\n\nDESENHE\nVisualize diagramas Mermaid e ZenUML, compare motores compatíveis e crie desenhos com Excalidraw. Amplie, inspecione o código e exporte SVG ou PNG transparente.\n\nESCOLHA O DESTINO\nTrabalhe offline, selecione uma pasta em Arquivos ou conecte opcionalmente seu GitHub. Importe Markdown e pacotes ZIP; compartilhe notas e imagens pelo menu do sistema. A sincronização GitHub ocorre enquanto o aplicativo está aberto e conectado.\n\nSEUS ARQUIVOS\nNotas privadas ficam no aplicativo até você escolher um destino. Exporte backups antes de remover o aplicativo. Um repositório GitHub público torna públicos os arquivos sincronizados.\n\nAB Markdown Editor, por Aeon Bridge Co.",
+  "description": "Scriba é um editor Markdown para escrever, ler e organizar suas ideias. Comece sem criar uma conta e mantenha suas notas no dispositivo.\n\nESCREVA E LEIA\nEdite diretamente no texto formatado ou abra o código Markdown. Use títulos, listas, tarefas, tabelas, links e imagens. Navegue pelo índice de títulos e confira palavras, caracteres e seleção.\n\nORGANIZE\nBusque nas notas recentes, fixe as mais importantes e acompanhe as alterações. Os guias incluídos apresentam exemplos editáveis para começar.\n\nDESENHE\nVisualize diagramas Mermaid e ZenUML, compare motores compatíveis e crie desenhos com Excalidraw. Amplie, inspecione o código e exporte SVG ou PNG transparente.\n\nESCOLHA O DESTINO\nTrabalhe offline, selecione uma pasta em Arquivos ou conecte opcionalmente seu GitHub. Importe Markdown e pacotes ZIP; compartilhe notas e imagens pelo menu do sistema. A sincronização GitHub ocorre enquanto o aplicativo está aberto e conectado.\n\nSEUS ARQUIVOS\nNotas privadas ficam no aplicativo até você escolher um destino. Exporte backups antes de remover o aplicativo. Um repositório GitHub público torna públicos os arquivos sincronizados.\n\nPowered by Aeon Bridge Co.",
   "reviewNotes": "The app works without registration. Launch and open the two pinned reference notes; all diagram engines, fonts and the visual drawing editor ship inside the binary and work offline on first launch. Settings > Onde guardar suas notas > Selecionar pasta em Files opens the native iOS directory picker and retains the security-scoped permission. Saves use coordinated atomic file writes and reject external conflicts. Export uses the native share sheet. GitHub is an optional client integration, not the primary account/login for Scriba; ASWebAuthenticationSession opens the official authorization flow. No purchases, ads, tracking, live drawing rooms or remote code updates. GitHub background synchronization is not claimed.",
   "releaseType": "MANUAL",
   "submissionStatus": "APP_STORE_REJECTED_INFORMATION_NEEDED",
@@ -37,11 +37,11 @@
   "externalBetaReviewStatus": "BUILD_17_TESTING_FOR_SCRIBA_BETA",
   "latestUploadedBuild": {
     "version": "1.16.1",
-    "build": "17",
-    "uploadedAt": "2026-10-22T10:21:57Z",
+    "build": "23",
+    "uploadedAt": "2026-10-22T12:17:27Z",
     "uploadStatus": "UPLOADED_TO_APPLE",
-    "processingStatus": "COMPLETE",
-    "testFlightGroupAssignment": "TESTING_EQUIPE_SCRIBA_AND_SCRIBA_BETA",
+    "processingStatus": "PENDING_UI_VERIFICATION",
+    "testFlightGroupAssignment": "NOT_YET_ASSIGNED",
     "appStoreSubmission": "NOT_RESUBMITTED"
   },
   "macAvailability": {
