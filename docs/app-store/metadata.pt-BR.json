@@ -24,8 +24,8 @@
     "Physical-device QA results and device/OS/build details"
   ],
   "pendingAppleReviews": [
-    "External TestFlight status requires verification",
-    "EU DSA trader status requires verification"
+    "Official App Review resubmission requires physical-device QA and recording",
+    "EU DSA account verification status requires separate verification"
   ],
   "developerTeamName": "Jefferson Cunha",
   "reviewContactEmail": "contact@aeonbridge.com",
@@ -33,15 +33,15 @@
   "appStoreConnectId": "6824664840",
   "appStoreReviewStatus": "REJECTED",
   "reviewIssue": "2.1.0 Performance: App Completeness — additional information and physical-device recording requested",
-  "reviewStatusSource": "Owner-provided App Store Connect message, 2026-10-20",
-  "externalBetaReviewStatus": "UNVERIFIED_SINCE_2026-10-19",
+  "reviewStatusSource": "Verified in App Store Connect on 2026-10-22; official draft updated to 1.16.1, Guideline 2.1 physical-device evidence still pending",
+  "externalBetaReviewStatus": "BUILD_17_TESTING_FOR_SCRIBA_BETA",
   "latestUploadedBuild": {
     "version": "1.16.1",
-    "build": "12",
-    "uploadedAt": "2026-10-20T18:10:07Z",
+    "build": "17",
+    "uploadedAt": "2026-10-22T10:21:57Z",
     "uploadStatus": "UPLOADED_TO_APPLE",
-    "processingStatus": "PROCESSING",
-    "testFlightGroupAssignment": "NOT_YET_VERIFIED",
+    "processingStatus": "COMPLETE",
+    "testFlightGroupAssignment": "TESTING_EQUIPE_SCRIBA_AND_SCRIBA_BETA",
     "appStoreSubmission": "NOT_RESUBMITTED"
   },
   "macAvailability": {
@@ -61,5 +61,13 @@
     "fr"
   ],
   "interfaceLanguageDefault": "PRIMARY_DEVICE_LANGUAGE_WITH_ENGLISH_FALLBACK",
-  "interfaceLanguagePreference": "PERSISTED_USER_OVERRIDE_OR_AUTOMATIC"
+  "interfaceLanguagePreference": "PERSISTED_USER_OVERRIDE_OR_AUTOMATIC",
+  "officialDraft": {
+    "version": "1.16.1",
+    "build": "17",
+    "reviewNotesUpdated": true,
+    "releaseType": "MANUAL",
+    "resubmitted": false,
+    "blockingRequirement": "Guideline 2.1: physical-device QA and launch-to-use recording on the latest supported OS"
+  }
 }

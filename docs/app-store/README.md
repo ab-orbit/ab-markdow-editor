@@ -1,6 +1,6 @@
 # Scriba for iPhone and iPad
 
-Latest confirmed upload: **1.16.1 (13)** on 21 October 2026 at 09:01 Recife. Xcode confirmed successful upload. This build adds mandatory background autosave on desktop/mobile, compact mobile actions and lighter Statistics/Outline navigation. Apple processing completed and build 13 is assigned to the existing internal **Equipe Scriba** group, where App Store Connect confirms **Testing**. [Release evidence](../evidence/ios-1.16.1-build13/README.md).
+Latest confirmed upload: **1.16.1 (17)** on 22 October 2026 at 07:21 Recife. Apple processing completed and build 17 is **Testing** in both Equipe Scriba (internal) and Scriba Beta (external), with tester notifications enabled. The public update manifest promotes build 17. [Release evidence](../evidence/ios-1.16.1-build17/README.md). Official version and review notes are prepared as 1.16.1, with manual release; the existing Guideline 2.1 request still needs physical-device QA and a launch-to-use recording before resubmission.
 
 The iOS application bundles the editor, renderers, fonts and reference notes with Capacitor 8.5.3. It does not load the production website as its application shell. The web/PWA and local Mac application remain separate builds and separate private libraries.
 
@@ -50,7 +50,7 @@ SCRIBA_APPLE_TEAM_ID=ABCDEFGHIJ npm run ios:archive
 
 This creates an archive and exports an IPA; it does not silently submit an incomplete app or accept new legal agreements. App Store distribution requires a valid distribution signature, an App Store Connect record and the required listing, review-contact, age/privacy and screenshot fields. Physical-device and TestFlight checks complement simulator verification, especially for third-party Files providers. An unsigned simulator build cannot be uploaded as an App Store binary.
 
-Release preparation includes a signed ARM64 archive and an exported App Store IPA, six normalized store screenshots, five native tests on each original simulator family, two additional iPhone 16 Pro checks, 54 HTTP/Git tests and offline Chrome/WebKit checks. The App Store Connect record is `6824664840`; Apple has processed build 1 and an internal TestFlight invitation has been sent. Version 1.13.0 (1) was submitted to both App Store Review and external Beta App Review on 19 October 2026; both show **Waiting for Review**. The owner's EU DSA trader declaration, verified email/phone and supporting company documentation were submitted and show **In Review**. See [release evidence and pending Apple decisions](../evidence/app-store/README.md) for the current listing, invitation and review status; submission and public release are separate states.
+The signed ARM64 build 1.16.1 (17) has completed Apple processing and is Testing in both existing TestFlight groups. It is also selected in the official App Store version draft, with updated review notes and manual release. The previous 1.13.0 (1) submission was rejected under Guideline 2.1 with a request for more information and a physical-device recording. Updating the draft does not resolve that request; no incomplete official resubmission has been made. See [current release evidence](../evidence/ios-1.16.1-build17/README.md). Historical submission details remain in [initial App Store evidence](../evidence/app-store/README.md).
 
 ## PWA Builder
 
