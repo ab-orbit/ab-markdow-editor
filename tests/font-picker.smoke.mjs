@@ -3,7 +3,7 @@ import http from 'node:http';
 import {readFile,mkdir} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const server=http.createServer(async(request,response)=>{
- try{const path=new URL(request.url,'http://localhost').pathname;const file=new URL('../'+(process.env.SCRIBA_TEST_DIST || 'dist')+'/' +(path==='/'?'index.html':path.slice(1)),import.meta.url);response.setHeader('Content-Type',path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':path==='/'?'text/html':'application/octet-stream');response.end(await readFile(file));}catch{response.writeHead(404).end();}
+ try{const path=new URL(request.url,'http://localhost').pathname;const file=new URL(path==='/'?'index.html':path.slice(1),new URL(process.env.SCRIBA_TEST_DIST || '../dist/',import.meta.url));response.setHeader('Content-Type',path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':path==='/'?'text/html':'application/octet-stream');response.end(await readFile(file));}catch{response.writeHead(404).end();}
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const safari=process.env.MARKDOWN_BROWSER==='webkit';

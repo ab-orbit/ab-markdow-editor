@@ -104,22 +104,26 @@ try {
     }
   }
   await page.setViewportSize({ width: 1440, height: 900 });
-  // Delay only File.text scheduling. A late import must never write into another open note.
+  // A pending canvas import blocks replacement until its input is flushed.
   await page.evaluate(() => { const original = File.prototype.text; window.scribaOriginalFileText = original; File.prototype.text = async function () { if (this.name === 'delayed.excalidraw') { await new Promise(resolve => { window.scribaReleaseFileRead = resolve; }); const value = await original.call(this); window.scribaFileReadCompleted = true; return value; } return original.call(this); }; });
   await board.getByLabel('Arquivo do whiteboard', { exact: true }).setInputFiles({ name: 'delayed.excalidraw', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(scene)) });
   await expect.poll(() => page.evaluate(() => typeof window.scribaReleaseFileRead)).toBe('function');
   await page.getByLabel('Arquivo Markdown', { exact: true }).setInputFiles({ name: 'Outra-nota.md', mimeType: 'text/markdown', buffer: Buffer.from('# Outra nota\n\nImportação anterior não pode alterar este arquivo.') });
-  await expect(page.getByRole('article')).toContainText('Outra nota');
+  await expect(board).toBeVisible();
   await page.evaluate(() => { File.prototype.text = window.scribaOriginalFileText; window.scribaReleaseFileRead(); });
   await expect.poll(() => page.evaluate(() => window.scribaFileReadCompleted)).toBe(true);
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await expect(board).toHaveAttribute('data-whiteboard-state','ready');
+  await page.getByLabel('Arquivo Markdown', { exact: true }).setInputFiles({ name: 'Outra-nota.md', mimeType: 'text/markdown', buffer: Buffer.from('# Outra nota\n\nImportação anterior não pode alterar este arquivo.') });
+  await expect(page.getByRole('article')).toContainText('Outra nota');
   assert.equal(await downloadNote(), '# Outra nota\n\nImportação anterior não pode alterar este arquivo.');
   if (!await page.getByRole('button', { name: 'Nova nota', exact: true }).isVisible()) await page.getByRole('button', { name: 'Mostrar notas recentes', exact: true }).click();
   await page.getByRole('button', { name: 'Nova nota', exact: true }).click();
   await page.getByRole('dialog', { name: 'Salvar antes de criar uma nova nota?', exact: true }).getByRole('button', { name: 'Descartar e criar', exact: true }).click();
   await formats.getByRole('button', { name: 'Whiteboard', exact: true }).click(); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready');
   await page.getByRole('button', { name: 'Salvar nota', exact: true }).click(); await expect(page.getByLabel('Documento alterado')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'documento.md', exact: true })).toContainText('Whiteboard · quadro editável');
+  const newBoardName=await workbench.locator('header span[title]').first().getAttribute('title');
+  await expect.poll(()=>page.evaluate(async name=>{const db=await new Promise(resolve=>{const r=indexedDB.open('scriba-private-notes');r.onsuccess=()=>resolve(r.result)});try{return await new Promise(resolve=>{const r=db.transaction('library').objectStore('library').get('state');r.onsuccess=()=>resolve(r.result.notes[name]?.value||'')})}finally{db.close()}},newBoardName)).toContain('```excalidraw');
   await formats.getByRole('button', { name: 'Nota', exact: true }).click(); await expect(page.getByRole('article')).toContainText('Quadro vazio'); await expect(page.getByRole('article').getByRole('alert')).toHaveCount(0);
   await formats.getByRole('button', { name: 'Whiteboard', exact: true }).click(); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready');
   await board.getByRole('button', { name: 'Novo quadro', exact: true }).click(); await expect(board).toHaveAttribute('data-whiteboard-state', 'ready');

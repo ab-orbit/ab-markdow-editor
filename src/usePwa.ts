@@ -35,10 +35,16 @@ export function usePwa() {
   async function install(){if(!installEvent)return;void navigator.storage?.persist?.().catch(()=>false);await installEvent.prompt();await installEvent.userChoice;setInstallEvent(null);}
   async function applyUpdate() {
     const waiting=registrationRef.current?.waiting;
-    if(!waiting)throw new Error('No installed update is waiting');
+    // Another tab may already have activated the shared worker after this notice appeared.
+    // The caller has persisted the current draft, so reloading is safe in that state too.
+    if(!waiting || waiting.state==='activated'){setUpdateAvailable(false);location.reload();return;}
     await new Promise<void>((resolve,reject)=>{
       const changed=()=>{clearTimeout(timer);resolve();location.reload();};
-      const timer=window.setTimeout(()=>{navigator.serviceWorker.removeEventListener('controllerchange',changed);reject(new Error('Update activation timed out'));},15000);
+      const timer=window.setTimeout(()=>{
+        navigator.serviceWorker.removeEventListener('controllerchange',changed);
+        if(!registrationRef.current?.waiting || waiting.state==='activated'){setUpdateAvailable(false);resolve();location.reload();}
+        else reject(new Error('Update activation timed out'));
+      },15000);
       navigator.serviceWorker.addEventListener('controllerchange',changed,{once:true});
       waiting.postMessage({type:'SCRIBA_APPLY_UPDATE'});
     });

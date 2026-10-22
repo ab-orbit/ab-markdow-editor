@@ -3,7 +3,7 @@ import {createServer} from 'vite';
 process.env.VITE_STORAGE_MODE='browser';
 const server=await createServer({server:{host:'127.0.0.1',port:0}});await server.listen();
 const browser=await chromium.launch({headless:true});
-try{
+try{for(const alreadyActivated of [false,true]){
  const context=await browser.newContext({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:'block'});
  await context.addInitScript(()=>{
   localStorage.setItem('scriba-language','pt');
@@ -16,9 +16,11 @@ try{
  await page.getByLabel('Arquivo Markdown',{exact:true}).setInputFiles({name:'web-update.md',mimeType:'text/markdown',buffer:Buffer.from('# Web update\n\nOriginal paragraph.\n')});
  await page.getByRole('button',{name:'Escrever',exact:true}).click();await page.locator('.tiptap p').first().fill('DRAFT-PRESERVED-BEFORE-RELOAD');
  await expect(page.getByRole('complementary',{name:'Atualização do Scriba',exact:true})).toBeVisible();
+ if(alreadyActivated)await page.evaluate(async()=>{(await window.scribaPwaRegistration).waiting=null;localStorage.setItem('test-update-applied','true');});
  await page.getByRole('link',{name:'Atualizar agora',exact:true}).click();
  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('test-update-applied'))).toBe('true');
  await expect(page.locator('.tiptap,article').filter({hasText:'DRAFT-PRESERVED-BEFORE-RELOAD'}).first()).toBeVisible();
  await expect(page.getByRole('complementary',{name:'Atualização do Scriba',exact:true})).toHaveCount(0);
- console.log('PASS: explicit web update persists and restores the latest edit before activating/reloading, with no forced refresh.');
+ await context.close();}
+ console.log('PASS: explicit web update persists and restores the latest edit before activating/reloading, including a worker already activated by another tab, with no forced refresh.');
 }finally{await browser.close();await server.close();}

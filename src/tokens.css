@@ -1031,3 +1031,5 @@ html[data-platform="ios"] { --ui-body-size: calc(1rem * var(--ui-font-scale, 1))
   --ui-glass-shadow: 0 8px 28px #18303d14, inset 0 1px 0 var(--ui-glass-highlight);
   --ui-glass-selected: #ffffffc7;
 }
+
+:root { --ui-layer-controls: 2; --ui-layer-sidebar: 10; }

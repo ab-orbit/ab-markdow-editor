@@ -116,7 +116,7 @@
   color: var(--text-primary); background: var(--ui-glass-selected); border-color: var(--ui-glass-edge);
 }
 .editor-app [aria-label="Bancada Markdown"] > header [role="group"] { border: 0; border-radius: 999px; padding: 2px; }
-.editor-app [class*="mobileReadingBar"] { z-index: 6; background: transparent; }
+.editor-app [class*="mobileReadingBar"] { z-index: var(--ui-layer-controls); background: transparent; }
 .editor-app [class*="mobileReadingBar"] > div { border-radius: 999px; padding: 3px; }
 .editor-app .notes-sidebar { background: var(--ui-glass-sidebar); }
 .editor-app dialog[data-ui] > header { background: transparent; }
@@ -136,7 +136,9 @@ html[data-reduce-transparency="true"] {
   --ui-glass-blur: none; --ui-glass-edge: var(--border-strong); --ui-glass-selected: var(--bg-hover);
 }
 @media (max-width: 899px) {
-  .editor-app [class*="mobileReadingBar"] { position: relative; margin-bottom: -62px; min-height: 62px; padding-block: 7px; }
-  .editor-app [class*="mobileReadingBar"] ~ [class*="documentArea"] [data-document-scroll] { padding-top: 66px; }
+  .editor-app [data-mode="read"] > [class*="mobileReadingBar"] { position: relative; margin-bottom: -62px; min-height: 62px; padding-block: 7px; }
+  .editor-app [data-mode="read"] > [class*="mobileReadingBar"] ~ [class*="documentArea"] [data-document-scroll] { padding-top: 66px; }
   .editor-app [class*="mobileReadingBar"] > button { background: var(--ui-glass-fill); border: 1px solid var(--ui-glass-edge); box-shadow: var(--ui-glass-shadow); -webkit-backdrop-filter: var(--ui-glass-blur); backdrop-filter: var(--ui-glass-blur); }
 }
+
+@media (max-width: 899px) { .editor-app .notes-sidebar { z-index: var(--ui-layer-sidebar); } }
