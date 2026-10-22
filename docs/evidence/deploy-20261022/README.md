@@ -13,3 +13,5 @@ Verification: 82 Node tests pass. [Actual HTTPS production smoke](production.txt
 Visual evidence: [storage](../storage-settings/README.md), [editing modes](../editing-modes/README.md), [error feedback](../feedback/README.md).
 
 ![Offline mobile smoke](offline-mobile.png)
+
+TestFlight 1.16.1 (16) is Testing for Equipe Scriba and Scriba Beta. [Publication verification](../ios-1.16.1-build16/README.md). The public update manifest promotes this available build.
