@@ -942,5 +942,6 @@
   "Cópia de {0}": "Copie de {0}",
   "Cópia criada e aberta. A nota original foi salva.": "Copie créée et ouverte. La note d’origine a été enregistrée.",
   "Não foi possível salvar a nota original. A cópia não foi criada; suas edições continuam abertas.": "La note d’origine n’a pas pu être enregistrée. Aucune copie n’a été créée ; vos modifications restent ouvertes.",
-  "Não foi possível criar a cópia. A nota original continua aberta.": "Impossible de créer la copie. La note d’origine reste ouverte."
+  "Não foi possível criar a cópia. A nota original continua aberta.": "Impossible de créer la copie. La note d’origine reste ouverte.",
+  "O arquivo mudou durante a sincronização. Sua cópia foi preservada.": "Le fichier a changé pendant la synchronisation. Votre copie a été conservée."
 }

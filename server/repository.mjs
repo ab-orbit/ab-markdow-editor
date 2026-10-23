@@ -750,8 +750,31 @@ export class Repository {
       attached = true;
       const result = await this.mergeRemoteInto(workspace, remoteHead);
       const head = await git(workspace, ['rev-parse', 'HEAD']);
-      // Fast-forward only: Git refuses any overwrite of dirty/untracked checkout files.
-      await git(root, ['merge', '--ff-only', '--no-edit', head]);
+      // Preserve identical untracked incoming files outside the checkout before Git's
+      // fast-forward. Never stage unrelated edits or remove a differing local file.
+      const preserved = [];
+      try {
+        const untracked = (await git(root, ['ls-files', '--others', '--exclude-standard', '-z'])).split('\0').filter(Boolean);
+        for (const name of untracked) {
+          const filename = await safeFile(root, name);
+          if (!(await fs.lstat(filename)).isFile()) continue;
+          const incoming = await git(workspace, ['rev-parse', '--verify', `${head}:${name}`]).catch(() => null);
+          if (!incoming || await git(root, ['hash-object', '--no-filters', '--', name]) !== incoming) continue;
+          const backup = path.join(this.stateDir, 'untracked-backups', randomUUID(), name);
+          await fs.mkdir(path.dirname(backup), {recursive:true});
+          await fs.rename(filename, backup);
+          preserved.push({filename, backup});
+          if (await git(root, ['hash-object', '--no-filters', '--', backup]) !== incoming) throw new Error('O arquivo mudou durante a sincronização. Sua cópia foi preservada.');
+        }
+        // Git still refuses any overwrite of differing or dirty checkout files.
+        await git(root, ['merge', '--ff-only', '--no-edit', head]);
+      } catch (error) {
+        for (const {filename, backup} of preserved) {
+          // Exclusive copy protects any edit created by another tool in the meantime.
+          await fs.copyFile(backup, filename, 1).catch(restoreError => { if (restoreError.code !== 'EEXIST') throw restoreError; });
+        }
+        throw error;
+      }
       return result;
     } finally {
       if (attached) await git(root, ['worktree', 'remove', '--force', workspace]).catch(() => {});

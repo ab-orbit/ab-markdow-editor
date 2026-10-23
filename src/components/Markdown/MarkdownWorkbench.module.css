@@ -384,13 +384,24 @@
 
 .mobileDocumentFormat { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; border: 0; border-radius: var(--ui-control-radius); padding: 8px 10px; background: var(--ui-glass-fill); color: var(--text-primary); font: var(--ui-body-size)/1.2 var(--font-ui); }
 
-/* Tablet rows are intentional: document and view choices above full-width commands. */
+/* Let format and command controls share the available tablet width. */
 @media (min-width: 900px) and (max-width: 1399px) {
- .compact > .toolbar { display: grid; grid-template-columns: minmax(110px, 1fr) auto auto; }
- .compact > .toolbar > .filename { max-width: 360px; width: 100%; min-width: 0; }
- .compact > .toolbar > .actions { grid-column: 1 / -1; width: 100%; flex-wrap: nowrap; justify-content: flex-end; }
+ .compact > .toolbar > .filename { flex: 1 1 160px; min-width: 110px; }
+ .compact > .toolbar > .actions { width: auto; flex-wrap: wrap; }
+}
+
+/* Whiteboard has three groups; reserve commands and truncate only the filename. */
+@media (min-width: 900px) {
+ .compact[data-mode="whiteboard"] > .toolbar { display: grid; grid-template-columns: minmax(110px, 1fr) auto auto; }
+ .compact[data-mode="whiteboard"] > .toolbar > .filename { min-width: 0; max-width: 100%; }
+ .compact[data-mode="whiteboard"] > .toolbar > .actions { width: auto; flex-wrap: nowrap; }
 }
 
 /* A labeled format action must not inherit the 44px square icon-button width. */
 .compact.workbench .mobileReadingBar > .mobileDocumentFormat { width: auto; min-width: 0; flex: 0 1 auto; padding-inline: 10px; white-space: nowrap; }
 .compact.workbench .mobileReadingBar > .mobileDocumentFormat svg { display: block; flex: 0 0 18px; width: 18px; height: 18px; }
+
+/* Pointer controls can stay compact while touch devices retain 44px targets. */
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+ .compact[data-mode="whiteboard"] > .toolbar > .actions button { min-width: 36px; min-height: 36px; padding-inline: 6px; }
+}

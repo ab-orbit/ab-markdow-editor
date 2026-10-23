@@ -206,3 +206,32 @@ test('non-Markdown conflicts abort isolated integration without requiring a live
   assert.equal(await git(f.remote,'rev-parse','main'),remoteHead);
   await assert.rejects(git(f.checkout,'rev-parse','--verify','MERGE_HEAD'));
 });
+
+test('saving one note integrates identical untracked incoming files without committing unrelated edits', async t => {
+  const f=await fixture(t);
+  const incoming='# Seeded independently\n';
+  await f.remoteChange('phone.md',incoming);
+  await fs.writeFile(path.join(f.checkout,'phone.md'),incoming);
+  await fs.writeFile(path.join(f.checkout,'README.md'),'# Unrelated unsaved local edit\n');
+  const result=await f.post('/api/save-sync',{name:'mine.md',value:'# My note\n',version:null,files:[]});
+  assert.equal(result.body.synced,true,result.body.error);
+  assert.equal(await fs.readFile(path.join(f.checkout,'phone.md'),'utf8'),incoming);
+  assert.equal(await fs.readFile(path.join(f.checkout,'README.md'),'utf8'),'# Unrelated unsaved local edit\n');
+  assert.equal(await git(f.checkout,'show','HEAD:README.md'),'# Original');
+  assert.equal(await git(f.checkout,'diff','--cached','--name-only'),'');
+  assert.equal(await git(f.remote,'show','main:mine.md'),'# My note');
+});
+
+test('differing untracked incoming files stay untouched when integrating existing commits', async t => {
+  const f=await fixture(t);
+  await f.remoteChange('a-identical.md','# Same\n');
+  await fs.writeFile(path.join(f.checkout,'a-identical.md'),'# Same\n');
+  await f.remoteChange('phone.md','# Remote\n');
+  await fs.writeFile(path.join(f.checkout,'phone.md'),'# Local untracked\n');
+  const result=await f.post('/api/sync',{repository:f.checkout,paths:[]});
+  assert.equal(result.body.synced,false);
+  assert.equal(await fs.readFile(path.join(f.checkout,'phone.md'),'utf8'),'# Local untracked\n');
+  assert.match(await git(f.checkout,'status','--short'),/\?\? phone.md/);
+  assert.equal(await fs.readFile(path.join(f.checkout,'a-identical.md'),'utf8'),'# Same\n');
+  assert.match(await git(f.checkout,'status','--short'),/\?\? a-identical.md/);
+});
