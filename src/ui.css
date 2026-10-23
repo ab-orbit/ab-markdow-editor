@@ -178,3 +178,8 @@ html[data-reduce-transparency="true"] {
 .editor-app .source-change > button { padding: 8px 12px; border: 1px solid var(--ui-separator); border-radius: var(--radius-full); background: transparent; color: var(--text-primary); }
 .editor-app .source-change > button:hover { background: var(--ui-menu-hover); }
 .editor-app .source-change > button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+@media (max-width: 600px) {
+  .editor-app .source-change { display: grid; grid-template-columns: 18px minmax(0, 1fr); align-items: start; gap: 8px 12px; }
+  .editor-app .source-change > svg { margin-top: 3px; }
+  .editor-app .source-change > button { grid-column: 2; justify-self: start; margin-left: 0; }
+}
