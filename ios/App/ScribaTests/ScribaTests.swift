@@ -59,6 +59,19 @@ final class ScribaTests: XCTestCase {
         XCTAssertEqual(controller.overrideUserInterfaceStyle, .unspecified)
     }
 
+    /** Reproduce the Mac bookmark path without the incompatible minimal flag. */
+    func testFolderBookmarkOptionsAndRoundTrip() throws {
+        XCTAssertEqual(ScribaNative.folderBookmarkOptions(isIOSAppOnMac: true), [])
+        XCTAssertEqual(ScribaNative.folderBookmarkOptions(isIOSAppOnMac: false), .minimalBookmark)
+        for onMac in [true, false] {
+            let data = try fixture.bookmarkData(options: ScribaNative.folderBookmarkOptions(isIOSAppOnMac: onMac), includingResourceValuesForKeys: nil, relativeTo: nil)
+            var stale = false
+            let restored = try URL(resolvingBookmarkData: data, options: .withoutUI, relativeTo: nil, bookmarkDataIsStale: &stale)
+            XCTAssertEqual(restored.standardizedFileURL.path, fixture.standardizedFileURL.path)
+            XCTAssertFalse(stale)
+        }
+    }
+
     private func grantFixture() throws {
         let bookmark = try fixture.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
         UserDefaults.standard.set(bookmark, forKey: "scriba.files.bookmark")

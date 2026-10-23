@@ -71,6 +71,11 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     private func hash(_ bytes: Data) -> String { SHA256.hash(data: bytes).map { String(format: "%02x", $0) }.joined() }
     private func base64url(_ data: Data) -> String { data.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "") }
 
+    /** iOS-on-Mac adds security scope itself, which conflicts with minimalBookmark. */
+    static func folderBookmarkOptions(isIOSAppOnMac: Bool = ProcessInfo.processInfo.isiOSAppOnMac) -> URL.BookmarkCreationOptions {
+        isIOSAppOnMac ? [] : .minimalBookmark
+    }
+
     private func selectedParent() throws -> URL? {
         guard let bookmark = defaults.data(forKey: bookmarkKey) else { return nil }
         var stale = false
@@ -78,7 +83,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
         if stale {
             let accessed = url.startAccessingSecurityScopedResource()
             defer { if accessed { url.stopAccessingSecurityScopedResource() } }
-            defaults.set(try url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil), forKey: bookmarkKey)
+            defaults.set(try url.bookmarkData(options: Self.folderBookmarkOptions(), includingResourceValuesForKeys: nil, relativeTo: nil), forKey: bookmarkKey)
         }
         return url
     }
@@ -167,7 +172,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
             do {
                 let folder = url.appendingPathComponent("scriba", isDirectory: true)
                 try self.files.createDirectory(at: folder, withIntermediateDirectories: true)
-                let bookmark = try url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
+                let bookmark = try url.bookmarkData(options: Self.folderBookmarkOptions(), includingResourceValuesForKeys: nil, relativeTo: nil)
                 self.defaults.set(bookmark, forKey: self.bookmarkKey)
                 call.resolve(["label": url.lastPathComponent + "/scriba"])
             } catch { call.reject("Não foi possível autorizar esta pasta. \(error.localizedDescription)") }
