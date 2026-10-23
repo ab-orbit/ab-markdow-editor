@@ -23,7 +23,7 @@ try {
  await expect(page.getByRole('dialog',{name:'Statistics',exact:true})).toBeVisible();
  for(const close of await page.locator('button[data-ui="dismiss"]:visible').all()){const style=await close.evaluate(el=>({name:el.getAttribute('aria-label'),border:getComputedStyle(el).borderTopWidth,shadow:getComputedStyle(el).boxShadow,radius:parseFloat(getComputedStyle(el).borderRadius)}));if(style.border!=='0px'||style.shadow!=='none'||style.radius<22)throw Error('Framed dismissal button: '+JSON.stringify(style));}
  await page.screenshot({path:'docs/evidence/document-context-menu/desktop-info.png'});await page.keyboard.press('Escape');
- await header.getByRole('button',{name:'Formatting',exact:true}).click();await expect(page.getByRole('toolbar',{name:'Editing tools',exact:true})).toBeVisible();
+ await header.getByRole('button',{name:'Formatting',exact:true}).click();await expect(page.getByRole('toolbar',{name:'Editing tools',exact:true})).toBeVisible();if((await page.getByRole('toolbar',{name:'Editing tools',exact:true}).boundingBox()).height>60)throw Error('Desktop formatting toolbar wraps');
  const editor=page.getByRole('textbox',{name:'Note text',exact:true});await expect(editor).toBeVisible({timeout:30000});await editor.click();await editor.press('Meta+A');await page.getByRole('toolbar',{name:'Editing tools',exact:true}).getByRole('button',{name:'Bold',exact:true}).click();await expect(editor.locator('strong').first()).toBeVisible();
  await page.getByRole('toolbar',{name:'Editing tools',exact:true}).getByRole('button',{name:'More formatting options',exact:true}).click();
  await expect(page.getByRole('menu',{name:'More formatting options',exact:true})).toBeVisible();

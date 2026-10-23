@@ -442,3 +442,6 @@
 @media (max-width: 480px) {
  .compact.workbench[data-formatting-open="true"] > .cleanFormatting { flex-wrap: wrap; overflow-x: hidden; }
 }
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+ .compact.workbench > .cleanFormatting button { min-width: 36px; min-height: 36px; }
+}
