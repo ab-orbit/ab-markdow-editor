@@ -11,3 +11,12 @@ Validated with the actual component in Chromium on desktop and mobile: secondary
 ![Mobile menu](mobile-menu.png)
 
 No App Store Connect submission was performed.
+
+## Formatting and dismissal refinement
+
+The formatting strip now keeps paragraph style, tasks, lists, bold, italic and common insertion actions on one row. Additional commands and Hide formatting are in the anchored overflow menu. On narrow screens table/image insertion remains available in that menu. Portal geometry stays inside the viewport and mobile reading controls reserve a separate row while formatting is expanded.
+
+Every application-owned X dismissal button uses the shared `data-ui="dismiss"` hook: no border, no shadow, transparent default background, circular keyboard focus and preserved hit area. The smoke verifies those computed styles across visible sidebar, note and information-panel close buttons; it also applies Bold to selected text, hides/reopens formatting, and opens the mobile overflow menu without wrapping the strip.
+
+![Formatting menu](formatting-more-desktop.png)
+![Mobile formatting menu](formatting-more-mobile.png)

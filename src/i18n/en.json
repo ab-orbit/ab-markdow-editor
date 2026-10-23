@@ -943,5 +943,7 @@
   "Cópia criada e aberta. A nota original foi salva.": "Copy created and opened. The original note was saved.",
   "Não foi possível salvar a nota original. A cópia não foi criada; suas edições continuam abertas.": "The original note could not be saved. No copy was created; your edits remain open.",
   "Não foi possível criar a cópia. A nota original continua aberta.": "Could not create the copy. The original note remains open.",
-  "O arquivo mudou durante a sincronização. Sua cópia foi preservada.": "The file changed during synchronization. Your copy was preserved."
+  "O arquivo mudou durante a sincronização. Sua cópia foi preservada.": "The file changed during synchronization. Your copy was preserved.",
+  "Listas": "Lists",
+  "Mais opções de formatação": "More formatting options"
 }

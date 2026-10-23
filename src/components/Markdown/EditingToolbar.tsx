@@ -1,18 +1,33 @@
-import { t } from '../../i18n';
-import { Bold, Italic, Strikethrough, Code, Braces, Quote, List, ListOrdered, ListChecks, Minus, Table2, Link, ImagePlus, Undo2, Redo2, IndentIncrease, IndentDecrease, Superscript, SquareCode, Check, PenTool, Shapes } from 'lucide-react';
-import { HeadingPicker } from './HeadingPicker';
-import type { MarkdownCommand } from './editorCommands';
+import {t} from '../../i18n';
+import {Bold,Italic,Strikethrough,Code,Braces,Quote,List,ListOrdered,ListChecks,Minus,Table2,Link,ImagePlus,Undo2,Redo2,IndentIncrease,IndentDecrease,Superscript,SquareCode,Check,PenTool,Shapes,MoreVertical,ChevronDown,EyeOff} from 'lucide-react';
+import {HeadingPicker} from './HeadingPicker';
+import {FormattingMenu} from './FormattingMenu';
+import type {MarkdownCommand} from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
 
-
-
-export function EditingToolbar({ disabled, onCommand, onLink, onImage, onExcalidraw, onIcon, onEditBlock, blockEditing = false }: { onIcon?: () => void; onExcalidraw?: () => void; onEditBlock?: () => void; blockEditing?: boolean; disabled: boolean; onCommand: (command: MarkdownCommand) => void; onLink: () => void; onImage: () => void }) {
-  const groups = [
-  [{ command: 'undo', label: t("Desfazer"), Icon: Undo2 }, { command: 'redo', label: t("Refazer"), Icon: Redo2 }],
-  [{ command: 'bold', label: t("Negrito"), Icon: Bold }, { command: 'italic', label: t("Itálico"), Icon: Italic }, { command: 'strike', label: t("Tachado"), Icon: Strikethrough }],
-  [{ command: 'bullet', label: t("Lista"), Icon: List }, { command: 'ordered', label: t("Lista numerada"), Icon: ListOrdered }, { command: 'task', label: t("Tarefas"), Icon: ListChecks }, { command: 'quote', label: t("Citação"), Icon: Quote }],
-  [{ command: 'indent', label: t("Aumentar recuo"), Icon: IndentIncrease }, { command: 'outdent', label: t("Diminuir recuo"), Icon: IndentDecrease }],
-  [{ command: 'code', label: t("Código inline"), Icon: Code }, { command: 'codeblock', label: t("Bloco de código"), Icon: Braces }, { command: 'rule', label: t("Separador"), Icon: Minus }],
-] as const;
-  return <div className={styles.editingToolbar} data-ui="toolbar" role="toolbar" aria-label={t("Ferramentas de edição")}>{onEditBlock && <button type="button" disabled={disabled} onMouseDown={event=>event.preventDefault()} onClick={onEditBlock} aria-pressed={blockEditing} aria-label={blockEditing?t("Concluir edição do bloco"):t("Editar bloco como Markdown")} title={blockEditing?t("Concluir edição do bloco (Esc)"):t("Editar bloco como Markdown (⌘/Ctrl+Enter)")}>{blockEditing?<Check size={16} aria-hidden="true"/>:<SquareCode size={16} aria-hidden="true"/>}</button>}<HeadingPicker disabled={disabled} onCommand={onCommand}/>{groups.map((group, index) => <div className={styles.toolGroup} key={index}>{group.map(({ command, label, Icon }) => <button type="button" key={command} title={label} aria-label={label} disabled={disabled} onMouseDown={event => event.preventDefault()} onClick={() => onCommand(command)}><Icon size={16} aria-hidden="true"/></button>)}</div>)}<div className={styles.toolGroup}><button type="button" disabled={disabled} onClick={onLink} title={t("Inserir link")} aria-label={t("Inserir link")}><Link size={16} aria-hidden="true"/></button><button type="button" disabled={disabled} onClick={() => onCommand('footnote')} title={t("Inserir referência")} aria-label={t("Inserir referência")}><Superscript size={16} aria-hidden="true"/></button><button type="button" disabled={disabled} onClick={() => onCommand('table')} title={t("Inserir tabela")} aria-label={t("Inserir tabela")}><Table2 size={16} aria-hidden="true"/></button>{onExcalidraw && <button type="button" disabled={disabled} onClick={onExcalidraw} title={t("Inserir desenho Excalidraw")} aria-label={t("Inserir desenho Excalidraw")}><PenTool size={16} aria-hidden="true"/></button>}{onIcon && <button type="button" disabled={disabled} onMouseDown={event => event.preventDefault()} onClick={onIcon} title={t("Galeria de ícones")} aria-label={t("Galeria de ícones")}><Shapes size={16} aria-hidden="true"/>{t("Ícones")}</button>}<button type="button" disabled={disabled} onClick={onImage} className={styles.imageTool}><ImagePlus size={16} aria-hidden="true"/>{t("Imagem")}</button></div></div>;
+/** Frequent writing actions share one quiet row; less frequent actions retain labeled menus. */
+export function EditingToolbar({disabled,onCommand,onLink,onImage,onExcalidraw,onIcon,onEditBlock,onHide,blockEditing=false}:{onHide?:()=>void;onIcon?:()=>void;onExcalidraw?:()=>void;onEditBlock?:()=>void;blockEditing?:boolean;disabled:boolean;onCommand:(command:MarkdownCommand)=>void;onLink:()=>void;onImage:()=>void}) {
+ const lists=[{command:'bullet',label:t('Lista'),Icon:List},{command:'ordered',label:t('Lista numerada'),Icon:ListOrdered},{command:'indent',label:t('Aumentar recuo'),Icon:IndentIncrease},{command:'outdent',label:t('Diminuir recuo'),Icon:IndentDecrease}] as const;
+ const more=[{command:'strike',label:t('Tachado'),Icon:Strikethrough},{command:'footnote',label:t('Inserir referência'),Icon:Superscript},{command:'code',label:t('Código inline'),Icon:Code},{command:'codeblock',label:t('Bloco de código'),Icon:Braces},{command:'quote',label:t('Citação'),Icon:Quote},{command:'rule',label:t('Separador'),Icon:Minus},{command:'undo',label:t('Desfazer'),Icon:Undo2},{command:'redo',label:t('Refazer'),Icon:Redo2}] as const;
+ const item=({command,label,Icon}:(typeof lists)[number]|(typeof more)[number])=><button key={command} data-menu-item role="menuitem" type="button" disabled={disabled} onClick={()=>onCommand(command)}><Icon size={17}/><span>{label}</span></button>;
+ const action=(label:string,Icon:typeof Bold,run:()=>void,secondary=false)=><button className={secondary?styles.secondaryFormatAction:undefined} type="button" disabled={disabled} aria-label={label} title={label} onMouseDown={event=>event.preventDefault()} onClick={run}><Icon size={17}/></button>;
+ return <div className={`${styles.editingToolbar} ${styles.cleanFormatting}`} data-ui="toolbar" role="toolbar" aria-label={t('Ferramentas de edição')}>
+  <HeadingPicker compact disabled={disabled} onCommand={onCommand}/>
+  {action(t('Tarefas'),ListChecks,()=>onCommand('task'))}
+  <FormattingMenu label={t('Listas')} icon={<><List size={17}/><ChevronDown size={12}/></>} disabled={disabled}>{lists.map(item)}</FormattingMenu>
+  <span className={styles.formatSeparator} aria-hidden="true"/>
+  {action(t('Negrito'),Bold,()=>onCommand('bold'))}{action(t('Itálico'),Italic,()=>onCommand('italic'))}
+  {action(t('Inserir link'),Link,onLink)}{action(t('Inserir tabela'),Table2,()=>onCommand('table'),true)}{action(t('Imagem'),ImagePlus,onImage,true)}
+  <FormattingMenu label={t('Mais opções de formatação')} icon={<MoreVertical size={18}/>} disabled={disabled}>
+   {more.map(item)}
+   <div className={styles.formatMenuSection}>
+    <button data-menu-item role="menuitem" type="button" disabled={disabled} onClick={()=>onCommand('table')}><Table2 size={17}/>{t('Inserir tabela')}</button>
+    <button data-menu-item role="menuitem" type="button" disabled={disabled} onClick={onImage}><ImagePlus size={17}/>{t('Imagem')}</button>
+    {onExcalidraw&&<button data-menu-item role="menuitem" type="button" onClick={onExcalidraw}><PenTool size={17}/>{t('Inserir desenho Excalidraw')}</button>}
+    {onIcon&&<button data-menu-item role="menuitem" type="button" onClick={onIcon}><Shapes size={17}/>{t('Galeria de ícones')}</button>}
+    {onEditBlock&&<button data-menu-item role="menuitem" type="button" onClick={onEditBlock}>{blockEditing?<Check size={17}/>:<SquareCode size={17}/>} {blockEditing?t('Concluir edição do bloco'):t('Editar bloco como Markdown')}</button>}
+   </div>
+   {onHide&&<div className={styles.formatMenuSection}><button data-menu-item role="menuitem" type="button" onClick={onHide}><EyeOff size={17}/>{t('Ocultar formatação')}</button></div>}
+  </FormattingMenu>
+ </div>;
 }

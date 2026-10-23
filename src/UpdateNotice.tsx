@@ -41,6 +41,6 @@ export function UpdateNotice({webUpdate, applyWebUpdate, beforeUpdate}: {webUpda
     <Download size={19} aria-hidden="true"/>
     <div role="status"><strong>{t('Nova versão disponível')}</strong><span>{update ? t('Scriba {0} está disponível para atualizar.', update.build ? `${update.version} (${update.build})` : update.version) : t('Uma atualização do Scriba está pronta.')}</span>{failed && <span>{t('Não foi possível abrir a atualização. Tente novamente.')}</span>}</div>
     <a href={update?.channel === 'testflight' ? TESTFLIGHT_URL : update ? APP_STORE_URL : '#atualizar'} aria-disabled={busy} onClick={activate}>{action}</a>
-    <button type="button" disabled={busy} aria-label={t('Lembrar depois')} title={t('Lembrar depois')} onClick={() => setDismissed(key)}><X size={18}/></button>
+    <button data-ui="dismiss" type="button" disabled={busy} aria-label={t('Lembrar depois')} title={t('Lembrar depois')} onClick={() => setDismissed(key)}><X size={18}/></button>
   </aside>;
 }

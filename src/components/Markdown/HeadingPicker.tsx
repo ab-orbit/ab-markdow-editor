@@ -8,7 +8,7 @@ import styles from './MarkdownWorkbench.module.css';
 
 
 /** Custom menu keeps heading previews consistent in Safari, which ignores option typography. */
-export function HeadingPicker({ disabled, onCommand }: { disabled: boolean; onCommand: (command: MarkdownCommand) => void }) {
+export function HeadingPicker({ disabled, onCommand, compact = false }: { compact?: boolean; disabled: boolean; onCommand: (command: MarkdownCommand) => void }) {
   const choices = [
   { command: 'paragraph', label: t("Texto"), hint: t("Parágrafo"), badge: '¶', level: 0 },
   { command: 'heading1', label: t("Título 1"), hint: t("Seção principal"), badge: 'H1', level: 1 },
@@ -28,7 +28,7 @@ export function HeadingPicker({ disabled, onCommand }: { disabled: boolean; onCo
       const rect = trigger.current!.getBoundingClientRect();
       setPosition({ left: Math.max(8, Math.min(rect.left, window.innerWidth - 286)), top: rect.bottom + 300 < window.innerHeight ? rect.bottom + 6 : Math.max(8, rect.top - 300) });
       setOpen(!open);
-    }}>{t("Título / texto")}<ChevronDown size={16}/></button>{open && createPortal(<div ref={menu} style={position} id={id} role="menu" data-ui="action-menu" aria-label={t("Estilo do parágrafo")} className={styles.headingMenu} onKeyDown={event => {
+    }}>{compact ? 'H' : t("Título / texto")}<ChevronDown size={16}/></button>{open && createPortal(<div ref={menu} style={position} id={id} role="menu" data-ui="action-menu" aria-label={t("Estilo do parágrafo")} className={styles.headingMenu} onKeyDown={event => {
       if (event.key === 'Escape') { event.preventDefault(); setOpen(false); trigger.current?.focus(); }
       else navigateActionMenu(event);
     }}>{choices.map(choice => <button key={choice.command} role="menuitem" type="button" className={styles.headingChoice} data-heading-level={choice.level} onMouseDown={event => event.preventDefault()} onClick={() => { onCommand(choice.command); setOpen(false); }}><span className={styles.headingBadge}>{choice.badge}</span><span><span className={styles.headingLabel}>{choice.label}</span><small>{choice.hint}</small></span></button>)}</div>, document.body)}</div>;

@@ -152,3 +152,22 @@ html[data-reduce-transparency="true"] {
 /* Format selection uses stable hooks so localization cannot change its geometry. */
 .editor-app [data-ui="toolbar"] [data-ui="format-segments"] { padding: 3px; background: var(--ui-control-bg); border-radius: var(--radius-full); }
 .editor-app [data-ui="format-segments"] button[aria-pressed="true"] { background: var(--ui-active-bg); color: var(--text-primary); border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+
+/* Dismissal is an unframed icon action across notes, panels and dialogs. */
+.editor-app button[data-ui="dismiss"][aria-label],
+.editor-app [data-ui="toolbar"] button[data-ui="dismiss"],
+.editor-app [data-ui="dialog"] button[data-ui="dismiss"] {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px; padding: 8px;
+  border: 0; border-radius: var(--radius-full); background: transparent;
+  box-shadow: none; color: var(--text-secondary);
+}
+.editor-app button[data-ui="dismiss"][aria-label]:hover { background: var(--ui-menu-hover); color: var(--text-primary); }
+.editor-app button[data-ui="dismiss"][aria-label]:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: -2px; }
+@media (max-width: 899px), (max-height: 600px) and (pointer: coarse) {
+  /* Expanded formatting needs its own row below the floating reading controls. */
+  .editor-app [data-mode="read"][data-formatting-open="true"] > [class*="mobileReadingBar"] { margin-bottom: 0; }
+}
+@media (max-width: 899px) {
+  .editor-app [data-mode="read"][data-formatting-open="true"] > [class*="mobileReadingBar"] ~ [class*="documentArea"] [data-document-scroll] { padding-top: 0; }
+}

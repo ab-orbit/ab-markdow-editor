@@ -423,3 +423,16 @@
  .compact.workbench[data-formatting-open="true"] > .editingToolbar { display: flex !important; flex-wrap: wrap; max-height: 180px; overflow: auto; position: static; margin: 4px 12px; border-radius: var(--ui-control-radius); }
 }
 .compact[data-mode="whiteboard"] > .toolbar { display: flex; }
+
+/* A single restrained formatting row; compact screens move secondary tools into More. */
+.compact.workbench > .cleanFormatting { flex-wrap: nowrap; justify-content: flex-start; gap: 2px; padding: 4px 12px; min-height: 44px; background: transparent; }
+.cleanFormatting > * { flex: 0 0 auto; }
+.cleanFormatting button { gap: 4px; }
+.formatSeparator { height: 18px; border-inline-start: 1px solid var(--ui-separator); margin-inline: 4px; }
+.formatMenuTrigger { display: inline-flex; }
+.formatMenu { max-height: min(600px,calc(100dvh - 80px)); padding: 6px; }
+.formatMenuSection { border-top: 1px solid var(--ui-separator); margin-top: 6px; padding-top: 6px; }
+@media (max-width: 480px) {
+ .cleanFormatting .secondaryFormatAction { display: none; }
+ .compact.workbench[data-formatting-open="true"] > .cleanFormatting { flex-wrap: nowrap; padding: 4px; margin-inline: 8px; min-width: 0; overflow-x: auto; }
+}
