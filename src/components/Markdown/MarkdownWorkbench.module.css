@@ -436,3 +436,9 @@
  .cleanFormatting .secondaryFormatAction { display: none; }
  .compact.workbench[data-formatting-open="true"] > .cleanFormatting { flex-wrap: nowrap; padding: 4px; margin-inline: 8px; min-width: 0; overflow-x: auto; }
 }
+
+/* Keep the requested frequent actions directly available, wrapping on narrow viewports. */
+.compact.workbench > .cleanFormatting { flex-wrap: wrap; max-height: 180px; }
+@media (max-width: 480px) {
+ .compact.workbench[data-formatting-open="true"] > .cleanFormatting { flex-wrap: wrap; overflow-x: hidden; }
+}

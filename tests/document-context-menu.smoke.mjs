@@ -31,7 +31,7 @@ try {
  await page.getByRole('menuitem',{name:'Hide formatting',exact:true}).click();await expect(page.getByRole('toolbar',{name:'Editing tools',exact:true})).toHaveCount(0);
  await page.setViewportSize({width:390,height:844});
  const mobile=page.locator('[class*="mobileReadingBar"]');await expect(mobile).toBeVisible();
- await mobile.getByRole('button',{name:'Formatting',exact:true}).click();const strip=page.getByRole('toolbar',{name:'Editing tools',exact:true});await expect(strip).toBeVisible();if((await strip.boundingBox()).height>60)throw Error('Formatting toolbar wraps on mobile');await strip.getByRole('button',{name:'More formatting options',exact:true}).click();await page.screenshot({path:'docs/evidence/document-context-menu/formatting-more-mobile.png'});await page.keyboard.press('Escape');
+ await mobile.getByRole('button',{name:'Formatting',exact:true}).click();const strip=page.getByRole('toolbar',{name:'Editing tools',exact:true});await expect(strip).toBeVisible();if((await strip.boundingBox()).height>112)throw Error('Formatting toolbar exceeds two mobile rows');for(const name of ['Divider','Undo','Redo','Icon Gallery','Strikethrough','Insert reference'])await expect(strip.getByRole('button',{name,exact:true})).toBeVisible();await strip.getByRole('button',{name:'More formatting options',exact:true}).click();await page.screenshot({path:'docs/evidence/document-context-menu/formatting-more-mobile.png'});await page.keyboard.press('Escape');
  await mobile.getByRole('button',{name:'More options',exact:true}).click();await expect(menu).toBeVisible();
  await page.screenshot({path:'docs/evidence/document-context-menu/mobile-menu.png'});
  console.log('Desktop/mobile context menu, source mode, information and formatting passed');

@@ -20,3 +20,7 @@ Every application-owned X dismissal button uses the shared `data-ui="dismiss"` h
 
 ![Formatting menu](formatting-more-desktop.png)
 ![Mobile formatting menu](formatting-more-mobile.png)
+
+## Frequently used actions — 2026-10-23
+
+Divider, Undo, Redo, Icon Gallery, Strikethrough and Insert reference are direct toolbar actions. Their duplicates were removed from More. Narrow screens wrap the direct controls rather than hiding these requested actions; the 390px smoke verifies all six are visible and the strip stays within two rows.
