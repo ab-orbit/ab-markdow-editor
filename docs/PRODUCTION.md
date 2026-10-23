@@ -2,7 +2,7 @@
 
 Production: https://scriba.aeonbridge.app/
 
-Latest deployment: [22 October 2026 — one-step GitHub destination selection](evidence/deploy-20261022-build17/README.md).
+Latest deployment: [23 October 2026 — compact menus, outline and recent notes](evidence/deploy-20261023/README.md).
 
 The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves `dist/` and proxies `/github/` to the isolated synchronization gateway. No local filesystem API or server Git checkout is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups or configure the optional GitHub destination for file synchronization between devices.
 
@@ -10,7 +10,7 @@ The default local build (`npm run build`, `./install.sh`) retains the local Git 
 
 ## VPS
 
-Uses the existing Amara VPS. Configuration: `deploy/scriba.nginx.conf`. Cloudflare proxies the domain; the existing wildcard Origin CA certificate covers it. Releases are directories under `/var/www/scriba/releases/`; `/var/www/scriba/current` points to the active static release. Switch the symlink atomically, validate `nginx -t`, and reload nginx. Rollback by switching the link to a previous public release. Do not publish a local-mode build.
+Uses the existing Amara VPS (`concilia@179.197.238.31`, SSH key `~/.ssh/id_ed25519_concilia_vps`). Configuration: `deploy/scriba.nginx.conf`. Cloudflare proxies the domain; the existing wildcard Origin CA certificate covers it. Releases are directories under `/var/www/scriba/releases/`; `/var/www/scriba/current` points to the active static release. Switch the symlink atomically, validate `nginx -t`, and reload nginx. Rollback by switching the link to a previous public release. Do not publish a local-mode build.
 
 Deploy only built static files. Do not copy application state, notes, credentials, `node_modules`, or the local server into the public document root.
 

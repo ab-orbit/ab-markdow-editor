@@ -1,0 +1,1 @@
+PASS: production HTTPS, imported note persisted in IndexedDB, reload, private-context isolation, no local API traffic, no page errors, desktop layout.

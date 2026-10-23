@@ -1,0 +1,1 @@
+Mobile recent notes survives menu focus restoration, reopens, and dismisses on document interaction
