@@ -61,3 +61,15 @@
 /* Global folding sits beside the sheet's close action, without an extra toolbar row. */
 .embedded .header { position: absolute; inset: 16px 64px auto auto; min-height: 44px; margin: 0; padding: 0; }
 .embedded .header { z-index: 3; }
+
+/* An embedded outline is one navigation list, not a form with boxed controls. */
+.embedded .list li { border-radius: var(--ui-row-radius); }
+.embedded .list li:hover, .embedded .list li:has(a[aria-current="location"]) { background: var(--ui-menu-hover); }
+.embedded .list li[data-level] a { border: 0; background: transparent; }
+.embedded .foldToggle { flex: 0 0 32px; width: 32px; min-height: 44px; padding: 0; border: 0; background: transparent; }
+.embedded .foldToggle svg { flex: 0 0 14px; width: 14px; height: 14px; }
+.embedded .foldSpacer { flex: 0 0 32px; width: 32px; }
+@media (pointer: coarse) {
+ .embedded .foldToggle, .embedded .foldSpacer { flex-basis: 44px; width: 44px; }
+}
+.panel .header .headerActions button { border-radius: var(--radius-full); }

@@ -84,8 +84,8 @@
 .dialog header, .dialog footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .dialog header { margin-bottom: 16px; } .dialog h2 { color: var(--text-primary); font-size: var(--text-xl); }
 .dialog footer { margin-top: 20px; justify-content: flex-end; }
-.dialog:not([data-ui="action-menu"]) button, .dialog select, .dialog input { min-height: 44px; border: 1px solid var(--border-panel); background: var(--bg-input); color: var(--text-secondary); padding: 8px 12px; font: inherit; border-radius: var(--radius-sm); }
-.dialog button { cursor: pointer; } .dialog:not([data-ui="action-menu"]) button:hover { color: var(--lime); border-color: var(--lime); }
+.dialog[data-ui="dialog"] button, .dialog select, .dialog input { min-height: 44px; border: 1px solid var(--border-panel); background: var(--bg-input); color: var(--text-secondary); padding: 8px 12px; font: inherit; border-radius: var(--radius-sm); }
+.dialog button { cursor: pointer; } .dialog[data-ui="dialog"] button:hover { color: var(--lime); border-color: var(--lime); }
 .dialog button:disabled { opacity: .4; cursor: default; }
 .dialog form > label { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; }
 .dialog label input { min-width: 0; width: 100%; }
@@ -349,9 +349,9 @@
 .noteInformation, .mobileMenu { position: fixed; inset: max(64px, env(safe-area-inset-top)) 12px auto auto; width: min(340px, calc(100vw - 24px)); max-height: calc(100dvh - 96px); padding: 16px; border-radius: var(--radius-lg); overflow: auto; font-family: var(--font-ui); }
 .noteInformation > header h2 { font-size: 15px; }
 .noteInformation > header { margin-bottom: 8px; }
-.informationTabs { display: flex; border-radius: var(--radius-sm); padding: 3px; background: var(--bg-elevated); margin-bottom: 16px; }
-.informationTabs button { flex: 1; min-height: 44px; display: flex; justify-content: center; align-items: center; border: 0; border-radius: var(--radius-sm); color: var(--text-secondary); background: transparent; }
-.informationTabs button[aria-selected="true"] { background: var(--bg-hover); color: var(--text-primary); }
+.informationTabs { display: flex; gap: 3px; border-radius: var(--ui-control-radius); padding: 3px; background: var(--ui-control-bg); margin-bottom: 16px; }
+.informationTabs button { padding: 8px; flex: 1; min-height: 44px; display: flex; justify-content: center; align-items: center; border: 0; border-radius: var(--radius-sm); color: var(--text-secondary); background: transparent; }
+.informationTabs button[aria-selected="true"] { background: var(--ui-active-bg); color: var(--text-primary); }
 .informationCards { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,8em),1fr)); gap: 8px; }
 .informationCards > div { position: relative; display: flex; flex-direction: column; gap: 18px; padding: 12px; border-radius: var(--radius-md); background: var(--bg-elevated); }
 .informationCards strong { font-size: calc(24px * var(--ui-font-scale, 1)); line-height: 1.2; color: var(--text-primary); }
@@ -362,7 +362,7 @@
 .informationDates > div + div { border-top: 1px solid var(--border-panel); }
 .informationDates dd { margin: 0 24px 6px 0; color: var(--text-primary); font-weight: 600; font-size: var(--ui-body-size); }
 .informationDates svg { position: absolute; right: 12px; top: 14px; color: var(--text-secondary); }
-.informationOutline { display: flex; min-height: 0; height: min(60dvh,560px); }
+.informationOutline { display: flex; min-height: 0; height: auto; max-height: min(60dvh,560px); }
 .noteInformation :focus-visible, .mobileMenu :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
 /* Small anchored popovers share the application's surface and subtle elevation. */
@@ -445,3 +445,4 @@
 @media (min-width: 900px) and (hover: hover) and (pointer: fine) {
  .compact.workbench > .cleanFormatting button { min-width: 36px; min-height: 36px; }
 }
+.mobileDocumentFormat > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }

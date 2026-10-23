@@ -51,3 +51,10 @@ export function documentOutline(source: string) {
   const headings = assignHeadingIds(parser.parse(source));
   return source.startsWith('\uFEFF') ? headings.map(heading => ({ ...heading, from: heading.from + 1 })) : headings;
 }
+
+/** A sole H1 is the document title; global folding keeps its H2 section index visible. */
+export function collapsedOutlineIds(headings: readonly OutlineHeading[]): Set<string> {
+  const titles = headings.filter(heading => heading.level === 1);
+  const retainedTitle = titles.length === 1 ? titles[0].id : null;
+  return new Set(headings.filter(heading => heading.id !== retainedTitle).map(heading => heading.id));
+}

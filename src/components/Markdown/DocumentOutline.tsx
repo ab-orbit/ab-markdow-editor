@@ -60,7 +60,7 @@ export function DocumentOutline({ embedded = false, collapsed, onToggle, onExpan
   }, [active]);
 
   const parents = new Set(headings.filter((heading, index) => headings[index + 1]?.level > heading.level).map(heading => heading.id));
-  const hasCollapsed = headings.some(heading => parents.has(heading.id) && collapsed.has(heading.id));
+  const hasCollapsed = headings.some(heading => collapsed.has(heading.id));
   const toggleAllLabel = hasCollapsed ? t("Expandir todos os níveis") : t("Recolher todos os níveis");
   const ancestors: OutlineHeading[] = [];
   const visible = headings.filter(heading => {
