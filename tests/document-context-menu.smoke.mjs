@@ -1,0 +1,31 @@
+import {chromium,expect} from '@playwright/test';
+import {createServer} from 'vite';
+import {mkdir} from 'node:fs/promises';
+process.env.VITE_STORAGE_MODE='browser';
+const server=await createServer({server:{host:'127.0.0.1',port:0}});await server.listen();const browser=await chromium.launch();
+try {
+ const page=await browser.newPage({viewport:{width:1008,height:900}});
+ await page.addInitScript(()=>{localStorage.setItem('scriba-language','en');localStorage.setItem('scriba-welcome-opened','1');});
+ await page.goto(server.resolvedUrls.local[0]);
+ const header=page.locator('header[data-ui="toolbar"]');
+ await expect(header.getByRole('button',{name:'More options',exact:true})).toBeEnabled({timeout:30000});
+ await expect(header.getByRole('group',{name:'Edit mode',exact:true})).toHaveCount(0);
+ await expect(header.getByRole('button',{name:'Open .md/ZIP',exact:true})).toHaveCount(0);
+ await expect(page.getByRole('toolbar',{name:'Editing tools',exact:true})).toHaveCount(0);
+ await header.getByRole('button',{name:'More options',exact:true}).click();
+ const menu=page.getByRole('dialog',{name:'More options',exact:true});await expect(menu).toBeVisible();
+ await expect(menu.getByRole('menuitemradio',{name:'Source',exact:true})).toBeVisible();
+ await mkdir('docs/evidence/document-context-menu',{recursive:true});
+ await page.screenshot({path:'docs/evidence/document-context-menu/desktop-menu.png'});
+ await menu.getByRole('menuitemradio',{name:'Source',exact:true}).click();
+ await expect(page.locator('[data-mode="source"]')).toBeVisible();await expect(menu).toHaveCount(0);
+ await header.getByRole('button',{name:'Note information',exact:true}).click();
+ await expect(page.getByRole('dialog',{name:'Statistics',exact:true})).toBeVisible();
+ await page.screenshot({path:'docs/evidence/document-context-menu/desktop-info.png'});await page.keyboard.press('Escape');
+ await header.getByRole('button',{name:'Formatting',exact:true}).click();await expect(page.getByRole('toolbar',{name:'Editing tools',exact:true})).toBeVisible();
+ await page.setViewportSize({width:390,height:844});
+ const mobile=page.locator('[class*="mobileReadingBar"]');await expect(mobile).toBeVisible();
+ await mobile.getByRole('button',{name:'More options',exact:true}).click();await expect(menu).toBeVisible();
+ await page.screenshot({path:'docs/evidence/document-context-menu/mobile-menu.png'});
+ console.log('Desktop/mobile context menu, source mode, information and formatting passed');
+}finally{await browser.close();await server.close();}

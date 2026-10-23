@@ -10,15 +10,15 @@ try{
  await input.setInputFiles({name:'excalidraw-regression.md',mimeType:'text/markdown',buffer:Buffer.from('# Test\n\n```excalidraw\n'+scene+'\n```\n\nAfter\n')});
  await expect(page.locator('[data-excalidraw-state="ready"]')).toBeVisible({timeout:60000});console.log('Initial drawing ready; scene length',scene.length);
  
- await page.getByRole('button',{name:'Ler',exact:true}).click();
+ await page.locator('header[data-ui="toolbar"]').getByRole('button',{name:'Mais opções da nota',exact:true}).click();await page.getByRole('menuitemradio',{name:'Ler',exact:true}).click();
  await page.getByRole('button',{name:'Ver código do desenho',exact:true}).click();
  await page.getByRole('button',{name:'Editar JSON',exact:true}).click();
  await expect(page.locator('[data-mode]')).toHaveAttribute('data-mode','live');
- await page.getByRole('button',{name:'Visão',exact:true}).click();
+ await page.locator('header[data-ui="toolbar"]').getByRole('button',{name:'Mais opções da nota',exact:true}).click();await page.getByRole('menuitemradio',{name:'Visão',exact:true}).click();
  await expect(page.locator('[data-mode]')).toHaveAttribute('data-mode','split');
  await expect(page.locator('[data-inline-block-editor]')).toHaveCount(0);
  await expect(page.locator('article [data-excalidraw-state="ready"]')).toBeVisible({timeout:30000});
- await page.getByRole('button',{name:'Salvar como',exact:true}).click();
+ await page.locator('header[data-ui="toolbar"]').getByRole('button',{name:'Mais opções da nota',exact:true}).click();await page.getByRole('menuitem',{name:'Salvar como…',exact:true}).click();
  const dialog=page.getByRole('dialog',{name:'Salvar uma cópia',exact:true});await expect(dialog).toBeVisible();
  const {mkdir}=await import('node:fs/promises');await mkdir('docs/evidence/save-copy-layout',{recursive:true});
  for(const [width,height,label]of [[1440,900,'desktop'],[390,844,'mobile']]){
