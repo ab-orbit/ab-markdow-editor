@@ -168,8 +168,8 @@
 
 /* Mobile reading follows a quiet document layout, with controls outside the text. */
 .mobileReadingBar { display: none; }
-.formats { display: flex; flex: 0 0 auto; align-items: center; padding: 2px; border: 1px solid var(--border-panel); border-radius: var(--radius-md); }
-.toolbar .formats button { gap: 6px; border-radius: var(--radius-sm); }
+.formats { display: grid; grid-template-columns: repeat(2, minmax(max-content, 1fr)); width: max-content; min-width: max-content; flex: 0 0 auto; align-items: stretch; gap: 2px; padding: 3px; border: 0; background: var(--bg-input); border-radius: var(--radius-full); }
+.toolbar .formats button { gap: 6px; border-radius: var(--radius-full); white-space: nowrap; }
 .toolbar .formats button[aria-pressed="true"] { color: var(--cyan); border-color: var(--border-strong); background: var(--bg-elevated); }
 .documentArea > .pages[hidden] { display: none; }
 .whiteboardLoading { flex: 1; min-width: 0; padding: 24px; color: var(--text-muted); font: 14px/1.6 var(--font-ui); }

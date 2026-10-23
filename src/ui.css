@@ -115,7 +115,7 @@
 .editor-app [data-ui="toolbar"] button[aria-pressed="true"] {
   color: var(--text-primary); background: var(--ui-glass-selected); border-color: var(--ui-glass-edge);
 }
-.editor-app [aria-label="Bancada Markdown"] > header [role="group"] { border: 0; border-radius: 999px; padding: 2px; }
+.editor-app [data-ui="toolbar"] [role="group"] { border: 0; border-radius: 999px; padding: 2px; }
 .editor-app [class*="mobileReadingBar"] { z-index: var(--ui-layer-controls); background: transparent; }
 .editor-app [class*="mobileReadingBar"] > div { border-radius: 999px; padding: 3px; }
 .editor-app .notes-sidebar { background: var(--ui-glass-sidebar); }
@@ -148,3 +148,7 @@ html[data-reduce-transparency="true"] {
 .editor-app .github-source { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: 50%; }
 .editor-app .github-source:hover { background: var(--bg-hover); }
 [data-theme="dark"] :is(.github-source, .powered-by) img { filter: invert(1); }
+
+/* Format selection uses stable hooks so localization cannot change its geometry. */
+.editor-app [data-ui="toolbar"] [data-ui="format-segments"] { padding: 3px; background: var(--ui-control-bg); border-radius: var(--radius-full); }
+.editor-app [data-ui="format-segments"] button[aria-pressed="true"] { background: var(--ui-active-bg); color: var(--text-primary); border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
