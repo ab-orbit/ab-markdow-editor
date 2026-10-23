@@ -89,6 +89,10 @@
 .dialog button:disabled { opacity: .4; cursor: default; }
 .dialog form > label { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; }
 .dialog label input { min-width: 0; width: 100%; }
+/* Copy actions occupy their own row instead of inheriting the application-wide inline form layout. */
+.dialog .saveCopyForm { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: stretch; margin: 0; }
+.dialog .saveCopyForm > label { min-width: 0; margin: 0; }
+.dialog .saveCopyForm > footer { flex-wrap: wrap; margin: 0; }
 .tableActions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
 .tableActions label { display: flex; align-items: center; gap: 8px; }
 .cellEditor { width: 100%; border-collapse: collapse; }
