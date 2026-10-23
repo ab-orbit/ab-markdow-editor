@@ -381,3 +381,5 @@ button.source-reload-pending { color: var(--status-warn); border-color: var(--st
 /* The workspace owns its scrolling; UIKit resizes its frame above the keyboard. */
 html[data-platform="ios"], html[data-platform="ios"] body, html[data-platform="ios"] #root { height: 100%; overflow: hidden; overscroll-behavior: none; }
 html[data-platform="ios"] .editor-app { height: 100%; }
+.about-scriba .about-links { display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
+.about-scriba .about-links .github-source { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; margin: 0; }
