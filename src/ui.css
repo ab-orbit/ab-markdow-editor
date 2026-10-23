@@ -171,3 +171,10 @@ html[data-reduce-transparency="true"] {
 @media (max-width: 899px) {
   .editor-app [data-mode="read"][data-formatting-open="true"] > [class*="mobileReadingBar"] ~ [class*="documentArea"] [data-document-scroll] { padding-top: 0; }
 }
+
+/* External revisions are a quiet, actionable notice rather than a full-width alarm. */
+.editor-app .source-change { margin: 8px 12px; padding: 10px 12px; gap: 12px; border: 1px solid var(--ui-separator); border-radius: var(--ui-control-radius); background: var(--ui-control-bg); color: var(--text-primary); }
+.editor-app .source-change > svg { color: var(--text-secondary); }
+.editor-app .source-change > button { padding: 8px 12px; border: 1px solid var(--ui-separator); border-radius: var(--radius-full); background: transparent; color: var(--text-primary); }
+.editor-app .source-change > button:hover { background: var(--ui-menu-hover); }
+.editor-app .source-change > button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }

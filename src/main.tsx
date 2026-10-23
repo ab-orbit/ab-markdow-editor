@@ -664,7 +664,8 @@ function App() {
     identity: JSON.stringify([sourceScope,deviceFolder,loadedName,version,documentId,finderSourceId]),
     enabled: draftReady && !documentClosed && name === loadedName && !autoSavePaused && (!!finderSourceId || !!version && !!repository.repository && sourceScope === openedScope),
     blocked: busy || settingsOpen || commitNoteOpen || !!documentConfirmation || !!conflict || aboutOpen,
-    isBlocked: () => !!document.querySelector('dialog[open]') || !!workbenchRef.current?.isBusy(),
+    // Background saves hold the synchronous lock without setting the visible busy state.
+    isBlocked: () => operationLock.current || !!document.querySelector('dialog[open]') || !!workbenchRef.current?.isBusy(),
     dirty, pending: pendingSync && !finderSourceId,
     version: finderSourceId ? importedVersion?.version || null : version,
     interval: !savedFileLocation && browserMode && githubSelection() ? 60000 : 5000,
