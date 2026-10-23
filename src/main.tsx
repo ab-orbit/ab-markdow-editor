@@ -251,6 +251,8 @@ function App() {
     const closeOverlay = () => { if (compact.matches) setNotesOpen(false); };
     const focusDocument = (event: Event) => {
       const target = event.target as Element;
+      // Restoring a menu invoker's focus must not undo an explicit library command.
+      if (event.type === 'focusin' && target?.closest?.('[data-ui="toolbar"]')) return;
       if (target?.closest?.('.workbench-container') && !target.closest('[aria-controls="recent-notes"]')) closeOverlay();
     };
     document.addEventListener('focusin', focusDocument);
