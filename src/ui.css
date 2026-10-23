@@ -111,11 +111,11 @@
 .editor-app [aria-label="Bancada Markdown"] > header[data-ui="toolbar"] {
   margin: 8px 12px; border-radius: 22px; padding: 8px 12px;
 }
-.editor-app [data-ui="toolbar"] button { border-radius: 999px; }
+.editor-app [data-ui="toolbar"] button:not(:where([data-ui="action-menu"] *)) { border-radius: var(--radius-full); }
 .editor-app [data-ui="toolbar"] button[aria-pressed="true"] {
   color: var(--text-primary); background: var(--ui-glass-selected); border-color: var(--ui-glass-edge);
 }
-.editor-app [data-ui="toolbar"] [role="group"] { border: 0; border-radius: 999px; padding: 2px; }
+.editor-app [data-ui="toolbar"] [data-ui="format-segments"] { border: 0; border-radius: var(--radius-full); padding: 2px; }
 .editor-app [class*="mobileReadingBar"] { z-index: var(--ui-layer-controls); background: transparent; }
 .editor-app [class*="mobileReadingBar"] > div { border-radius: 999px; padding: 3px; }
 .editor-app .notes-sidebar { background: var(--ui-glass-sidebar); }
@@ -183,3 +183,6 @@ html[data-reduce-transparency="true"] {
   .editor-app .source-change > svg { margin-top: 3px; }
   .editor-app .source-change > button { grid-column: 2; justify-self: start; margin-left: 0; }
 }
+
+/* Embedded command menus retain row geometry instead of inheriting toolbar capsules. */
+.editor-app [data-ui="action-menu"] button { border: 0; border-radius: var(--ui-row-radius); box-shadow: none; }
