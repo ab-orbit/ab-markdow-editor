@@ -335,6 +335,7 @@ button.source-reload-pending { color: var(--status-warn); border-color: var(--st
 .storage-destination .storage-choices { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .storage-destination button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; max-width: 100%; white-space: normal; }
 .storage-destination .storage-disconnect, .storage-destination .storage-back { background: transparent; border-color: var(--border-panel); margin-top: 8px; }
+.storage-destination .storage-choices .storage-disconnect { margin-top: 0; }
 .storage-destination .repository { border: 0; padding: 0; margin: 20px 0 0; }
 .storage-details { margin: 16px 0; font-size: 14px; }
 .storage-details > div { display: grid; grid-template-columns: minmax(80px, 1fr) minmax(0, 2fr); gap: 12px; padding: 6px 0; }

@@ -85,8 +85,8 @@ export function GitHubSettings({
     <dl className="storage-details"><div><dt>{t('Branch')}</dt><dd>{active.branch}</dd></div><div><dt>{t('Pasta das notas')}</dt><dd>{active.folder || '/'}</dd></div></dl>
     <p>{t('Salvamento ativo no GitHub.')}</p>
     {error && <p role="alert">{error}</p>}
-    <button disabled={busy} onClick={() => {setRepositoryQuery(""); setChoosing(true); void run(refresh);}}>{t("Trocar repositório")}</button>
-    <button className="storage-disconnect" disabled={busy} onClick={() => void disconnect()}>{t('Desconectar GitHub')}</button>
+    <div className="storage-choices"><button type="button" disabled={busy} onClick={() => {setRepositoryQuery(""); setChoosing(true); void run(refresh);}}>{t("Trocar repositório")}</button>
+    <button className="storage-disconnect" disabled={busy} onClick={() => void disconnect()}>{t('Desconectar GitHub')}</button></div>
   </div>;
   return (
     <section className="repository" aria-label={t("GitHub remoto")}><h3><FolderGit2 size={20} />{t("GitHub · todos os dispositivos")}</h3><p>{t("Conecte sua conta e selecione onde guardar suas notas.")}</p>{error && <p role="alert">{error}</p>}{!status && !error && <p>{t("Verificando conexão GitHub…")}</p>}{status && !status.connected && (
