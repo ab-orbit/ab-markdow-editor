@@ -29,8 +29,13 @@ export function DocumentOutline({ embedded = false, collapsed, onToggle, onExpan
   const modal = useRef<HTMLDialogElement>(null), list = useRef<HTMLElement>(null);
   const readCurrent = useRef(currentHeading); readCurrent.current = currentHeading;
   useEffect(() => {
-    const media = matchMedia("(max-width: 899px)"), update = () => setSmall(media.matches);
-    media.addEventListener('change', update); return () => media.removeEventListener('change', update);
+    // The note pane, rather than the whole screen, determines whether an inspector fits.
+    const area=scrollContainer.current?.closest<HTMLElement>('[aria-label]');
+    const media = matchMedia("(max-width: 899px)");
+    const update = () => setSmall(document.documentElement.dataset.nativeChrome==='true' && area ? area.clientWidth<780 : media.matches);
+    const observer=new ResizeObserver(update);if(area)observer.observe(area);
+    media.addEventListener('change', update);update();
+    return () => {media.removeEventListener('change', update);observer.disconnect();};
   }, []);
   useEffect(() => {
     if (!small || embedded) return;

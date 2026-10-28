@@ -97,7 +97,7 @@
 @media (max-width: 899px) { .editor-app .desktop-git-help { display: none; } }
 
 /* The functional layer floats above the document; a shared regular material keeps text legible. */
-.editor-app [aria-label="Bancada Markdown"] > header[data-ui="toolbar"],
+.editor-app [data-markdown-workbench] > header[data-ui="toolbar"],
 .editor-app [class*="mobileReadingBar"] > div,
 [data-ui="action-menu"],
 .editor-app dialog[data-ui="inspector"],
@@ -108,7 +108,7 @@
   border: 1px solid var(--ui-glass-edge);
   box-shadow: var(--ui-glass-shadow);
 }
-.editor-app [aria-label="Bancada Markdown"] > header[data-ui="toolbar"] {
+.editor-app [data-markdown-workbench] > header[data-ui="toolbar"] {
   margin: 8px 12px; border-radius: 22px; padding: 8px 12px;
 }
 .editor-app [data-ui="toolbar"] button:not(:where([data-ui="action-menu"] *)) { border-radius: var(--radius-full); }

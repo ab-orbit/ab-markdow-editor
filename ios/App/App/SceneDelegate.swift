@@ -8,7 +8,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = ScribaViewController()
+        let editor = ScribaViewController()
+        if #available(iOS 27.1, *) {
+            window?.rootViewController = ScribaNavigationController(rootViewController: editor)
+        } else {
+            window?.rootViewController = editor
+        }
         window?.makeKeyAndVisible()
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)

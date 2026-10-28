@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 import type { MarkdownCommand } from './editorCommands';
 import styles from './MarkdownWorkbench.module.css';
+import {useFloatingMenu} from './useFloatingMenu';
 
 
 /** Custom menu keeps heading previews consistent in Safari, which ignores option typography. */
@@ -16,7 +17,7 @@ export function HeadingPicker({ disabled, onCommand, compact = false }: { compac
   { command: 'heading3', label: t("Título 3"), hint: t("Detalhamento"), badge: 'H3', level: 3 },
 ] as const;
   const [open, setOpen] = useState(false), root = useRef<HTMLDivElement>(null), trigger = useRef<HTMLButtonElement>(null), menu = useRef<HTMLDivElement>(null), id = useId();
-  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const {position,place}=useFloatingMenu(trigger,open,278,300);
   useEffect(() => {
     if (!open) return;
     menu.current?.querySelector<HTMLButtonElement>('[role=menuitem]')?.focus();
@@ -25,8 +26,7 @@ export function HeadingPicker({ disabled, onCommand, compact = false }: { compac
     return () => document.removeEventListener('pointerdown', outside);
   }, [open]);
   return <div ref={root} className={styles.headingPicker}><button ref={trigger} type="button" disabled={disabled} aria-label={t("Estilo do parágrafo")} aria-haspopup="menu" aria-expanded={open} aria-controls={id} onMouseDown={event => event.preventDefault()} onClick={() => {
-      const rect = trigger.current!.getBoundingClientRect();
-      setPosition({ left: Math.max(8, Math.min(rect.left, window.innerWidth - 286)), top: rect.bottom + 300 < window.innerHeight ? rect.bottom + 6 : Math.max(8, rect.top - 300) });
+      place();
       setOpen(!open);
     }}>{compact ? 'H' : t("Título / texto")}<ChevronDown size={16}/></button>{open && createPortal(<div ref={menu} style={position} id={id} role="menu" data-ui="action-menu" aria-label={t("Estilo do parágrafo")} className={styles.headingMenu} onKeyDown={event => {
       if (event.key === 'Escape') { event.preventDefault(); setOpen(false); trigger.current?.focus(); }

@@ -446,3 +446,37 @@
  .compact.workbench > .cleanFormatting button { min-width: 36px; min-height: 36px; }
 }
 .mobileDocumentFormat > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* Native document bars automatically follow the system's horizontal/vertical placement. */
+:global(html[data-native-chrome="true"]) .compact.workbench > .toolbar,
+:global(html[data-native-chrome="true"]) .compact.workbench .mobileReadingBar { display: none !important; }
+:global(html[data-native-chrome="true"]) .compact.workbench > .modeHint { display: none; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-mode="read"] [data-document-scroll] { padding-top: 0; }
+:global(html[data-native-chrome="true"]) .compact.workbench > .footer { display: flex; min-height: 24px; padding: 3px 12px; gap: 4px 12px; font-size: var(--ui-caption-size); }
+:global(html[data-native-chrome="true"]) .compact.workbench > .footer > span:not(:first-child) { display: none; }
+:global(html[data-native-chrome="true"]) .compact.workbench > .footer > span.documentSaveStatus { display: inline; margin-inline-start: auto; color: var(--text-secondary); }
+:global(html[data-native-chrome="true"]) .compact.workbench { container-type: inline-size; }
+@container (max-width: 520px) {
+  :global(html[data-native-chrome="true"]) .compact.workbench > .footer > .statistics:not(:has(.selectionCount)) { display: none; }
+  :global(html[data-native-chrome="true"]) .compact.workbench > .footer:has(.selectionCount) > .documentSaveStatus { display: none; }
+}
+:global(html[data-native-chrome="true"]) .compact .reading { max-width: 760px; padding: 24px clamp(20px,4vw,48px) 64px; font-size: calc(var(--reading-size) * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
+:global(html[data-native-chrome="true"]) .compact[data-reading-editable="true"] .richReading { font-size: calc(max(16px,var(--reading-size)) * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
+:global(html[data-native-chrome="true"]) .compact[data-mode="read"] .reading h1 { font-size: 1.8em; }
+:global(html[data-native-chrome="true"]) .compact[data-mode="read"] .reading h2 { font-size: 1.4em; }
+:global(html[data-native-chrome="true"]) .compact[data-mode="read"] .reading h3 { font-size: 1.15em; }
+:global(html[data-native-chrome="true"]) .compact .source :global(.cm-content) { font-size: calc(16px * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
+/* Preserve a 44-point task hit area with a quiet, readable 18-point checkbox mark. */
+:global(html[data-native-chrome="true"]) .reading input[type="checkbox"] { position: relative; appearance: none; -webkit-appearance: none; display: inline-block; width: 44px; height: 44px; min-width: 44px; min-height: 44px; margin: -7px 2px -7px -10px; padding: 0; border: 0; background: transparent; vertical-align: middle; }
+:global(html[data-native-chrome="true"]) .reading input[type="checkbox"]::before { content: ''; position: absolute; inset: 13px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--bg-input); }
+:global(html[data-native-chrome="true"]) .reading input[type="checkbox"]:checked::before { background: var(--cyan); border-color: var(--cyan); }
+:global(html[data-native-chrome="true"]) .reading input[type="checkbox"]:checked::after { content: '\2713'; position: absolute; inset: 9px; color: var(--ui-on-accent); text-align: center; font: 700 17px/26px var(--font-ui); }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-formatting-open="true"] > .cleanFormatting { position: relative; flex: 0 0 auto; margin: 0; padding: 4px 8px; min-height: 52px; max-height: 112px; border-radius: 0; border-bottom: 1px solid var(--border-panel); box-shadow: none; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-low-height="true"][data-formatting-open="true"] > .cleanFormatting { flex-wrap: nowrap; max-height: 52px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-mode="split"][data-split-axis="column"][data-formatting-open="true"] > .cleanFormatting { width: var(--duo-split-first,50%); flex-wrap: nowrap; overflow-x: auto; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-low-height="true"] .assetHint { display: none; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-low-height="true"] .reading { padding-top: 12px; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-split-axis="column"] .split { grid-template-columns: var(--duo-split-first,minmax(0,1fr)) minmax(0,1fr); grid-template-rows: minmax(0,1fr); column-gap: var(--duo-split-gap,0px); }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-split-axis="row"] .split { grid-template-columns: minmax(0,1fr); grid-template-rows: var(--duo-split-first,minmax(0,1fr)) minmax(0,1fr); row-gap: var(--duo-split-gap,0px); }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-split-axis] .split > .source,
+:global(html[data-native-chrome="true"]) .compact.workbench[data-split-axis] .split > .reading { padding: 16px 20px 48px; margin: 0; max-width: none; }

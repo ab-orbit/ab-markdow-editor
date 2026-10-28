@@ -1,0 +1,16 @@
+{
+  "appId": "6824664840",
+  "bundleId": "com.aeonbridge.scriba",
+  "version": "1.16.1",
+  "build": "27",
+  "buildId": "1daf7e40-7491-4751-a622-5faf5f4d5b47",
+  "submissionId": "e2881f7b-04d9-4724-b777-338abc713a70",
+  "submissionStatus": "Waiting for Review",
+  "itemStatus": "Waiting for Review",
+  "submittedAtLocal": "2026-10-27T20:23:00-03:00",
+  "timestampPrecision": "minute as displayed by App Store Connect",
+  "publicRelease": "manual",
+  "newBinaryUploaded": false,
+  "additionalPreparedBuild": "28",
+  "additionalPreparedBuildSubmitted": false
+}

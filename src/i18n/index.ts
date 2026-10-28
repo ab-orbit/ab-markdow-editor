@@ -11,6 +11,7 @@ const catalogs: Record<string, Record<string, string>> = { en, de, fr };
 const listeners = new Set<() => void>();
 /** Native bridge errors contain filenames; translate their fixed text without altering the filename. */
 const nativeErrorTemplates = [
+  { pattern: /^Não foi possível abrir o arquivo selecionado\. ([\s\S]*)$/, key: 'Não foi possível abrir o arquivo selecionado. {0}' },
   { pattern: /^Não foi possível integrar estes arquivos: ([\s\S]*?)\. Suas versões foram preservadas\. Continue editando ou exporte uma cópia; a sincronização será tentada novamente\.$/, key: 'Não foi possível integrar estes arquivos: {0}. Suas versões foram preservadas. Continue editando ou exporte uma cópia; a sincronização será tentada novamente.' },
   { pattern: /^Não foi possível autorizar esta pasta\. ([\s\S]*)$/, key: 'Não foi possível autorizar esta pasta. {0}' },
   { pattern: /^O arquivo ([\s\S]*) mudou fora do Scriba\. Recarregue ou salve uma cópia\.$/, key: 'O arquivo {0} mudou fora do Scriba. Recarregue ou salve uma cópia.' },

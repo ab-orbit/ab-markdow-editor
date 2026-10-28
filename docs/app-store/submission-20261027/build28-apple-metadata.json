@@ -1,0 +1,27 @@
+{
+  "observedVia": "App Store Connect CUA accessibility tree",
+  "appId": "6824664840",
+  "buildId": "9276a5ea-7cc4-43c9-be8f-3b0ea774755c",
+  "version": "1.16.1",
+  "build": "28",
+  "bundleId": "com.aeonbridge.scriba",
+  "binaryState": "Validated",
+  "testFlightState": "Ready to Submit",
+  "appleUploadDateDisplayed": "Oct 27, 2026 at 8:38 PM",
+  "xcodeUploadDateDisplayed": "Today at 8:36 PM",
+  "sdk": "24A94232",
+  "architecture": "arm64",
+  "deviceFamily": [
+    "iPhone",
+    "iPad"
+  ],
+  "minimumIOSVersion": "15.0",
+  "nonExemptEncryption": false,
+  "localizations": [
+    "English",
+    "French",
+    "German",
+    "Portuguese (Brazil)"
+  ],
+  "officialReviewSelected": false
+}

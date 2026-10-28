@@ -1,0 +1,46 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "508D496D-1605-493A-AB0C-EBD4CFA06795",
+        "deviceName": "Scriba Review Build 28",
+        "modelName": "iPhone 17 Pro Max",
+        "osBuildNumber": "24A434",
+        "osVersion": "27.0",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "passedTests": 1,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "Scriba \u00b7 Built with macOS 26.6.2",
+  "expectedFailures": 0,
+  "failedTests": 1,
+  "finishTime": 1793144640.401,
+  "passedTests": 1,
+  "result": "Failed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1793144527.588,
+  "statistics": [],
+  "testFailures": [
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "ScribaUITests",
+      "testIdentifier": 2,
+      "testIdentifierString": "ScribaUITests/testWritingLandscapeTools()",
+      "testIdentifierURL": "test://com.apple.xcode/App/ScribaUITests/ScribaUITests/testWritingLandscapeTools",
+      "testName": "testWritingLandscapeTools()"
+    }
+  ],
+  "title": "Test - Scriba",
+  "topInsights": [],
+  "totalTestCount": 2
+}

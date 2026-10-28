@@ -1,0 +1,76 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "508D496D-1605-493A-AB0C-EBD4CFA06795",
+        "deviceName" : "Scriba Review Build 28",
+        "modelName" : "iPhone 17 Pro Max",
+        "osBuildNumber" : "24A434",
+        "osVersion" : "27.0",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 4,
+      "passedTests" : 5,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "Scriba · Built with macOS 26.6.2",
+  "expectedFailures" : 0,
+  "failedTests" : 4,
+  "finishTime" : 1793143184.452,
+  "passedTests" : 5,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1793143029.2,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertEqual failed: (\"Optional(false)\") is not equal to (\"Optional(true)\") - return !!document.querySelector('button[aria-label=\"Configurações\"]')",
+      "targetName" : "ScribaTests",
+      "testIdentifier" : 2,
+      "testIdentifierString" : "ScribaTests/testBundledEditorAndPrivatePersistence()",
+      "testIdentifierURL" : "test://com.apple.xcode/App/ScribaTests/ScribaTests/testBundledEditorAndPrivatePersistence",
+      "testName" : "testBundledEditorAndPrivatePersistence()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"Optional(false)\") is not equal to (\"Optional(true)\") - return document.documentElement.scrollWidth<=innerWidth+1",
+      "targetName" : "ScribaTests",
+      "testIdentifier" : 5,
+      "testIdentifierString" : "ScribaTests/testLandscapeAndPortraitLayout()",
+      "testIdentifierURL" : "test://com.apple.xcode/App/ScribaTests/ScribaTests/testLandscapeAndPortraitLayout",
+      "testName" : "testLandscapeAndPortraitLayout()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"Optional(\"# Arquivo do Files\\r\\n\\r\\nConteúdo original.\\r\\n\")\") is not equal to (\"Optional(\"﻿# Arquivo do Files\\r\\n\\r\\nConteúdo original.\\r\\n\")\")",
+      "targetName" : "ScribaTests",
+      "testIdentifier" : 6,
+      "testIdentifierString" : "ScribaTests/testNativeFilesRoundTripConflictsAndReload()",
+      "testIdentifierURL" : "test://com.apple.xcode/App/ScribaTests/ScribaTests/testNativeFilesRoundTripConflictsAndReload",
+      "testName" : "testNativeFilesRoundTripConflictsAndReload()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"# Whiteboard\r\n\r\n![pixel](assets/pixel.png)\r\n\r\n```excalidraw\r\n{\"type\":\"excalidraw\",\"elements\":[],\"files\":{}}\r\n```\r\n\") is not equal to (\"﻿# Whiteboard\r\n\r\n![pixel](assets/pixel.png)\r\n\r\n```excalidraw\r\n{\"type\":\"excalidraw\",\"elements\":[],\"files\":{}}\r\n```\r\n\")",
+      "targetName" : "ScribaTests",
+      "testIdentifier" : 7,
+      "testIdentifierString" : "ScribaTests/testNativeRenamePreservesContentImagesAndRejectsConflicts()",
+      "testIdentifierURL" : "test://com.apple.xcode/App/ScribaTests/ScribaTests/testNativeRenamePreservesContentImagesAndRejectsConflicts",
+      "testName" : "testNativeRenamePreservesContentImagesAndRejectsConflicts()"
+    }
+  ],
+  "title" : "Test - Scriba",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 9
+}

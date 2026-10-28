@@ -381,5 +381,36 @@ button.source-reload-pending { color: var(--status-warn); border-color: var(--st
 /* The workspace owns its scrolling; UIKit resizes its frame above the keyboard. */
 html[data-platform="ios"], html[data-platform="ios"] body, html[data-platform="ios"] #root { height: 100%; overflow: hidden; overscroll-behavior: none; }
 html[data-platform="ios"] .editor-app { height: 100%; }
+
+/* UIKit owns bars and safe areas on iOS 27.1; the workspace uses its current view geometry.
+ * Flat: 248px library + remaining note width. Fold: primary + reserved gap + remaining pane.
+ * No screen model, orientation or assumed symmetric inset participates in this grid. */
+html[data-native-chrome="true"] .editor-app { padding: 0; }
+html[data-native-chrome="true"] .editor-app .editor-layout { min-height: 0; padding: var(--workspace-inset-top,0px) var(--workspace-inset-right,0px) var(--workspace-inset-bottom,0px) var(--workspace-inset-left,0px); }
+html[data-native-chrome="true"] .editor-app[data-workspace-arrangement="column"][data-workspace-library="true"] .editor-layout { display: grid; grid-template-columns: var(--workspace-primary) minmax(0,1fr); column-gap: var(--workspace-gap); }
+html[data-native-chrome="true"] .editor-app[data-workspace-arrangement="stack"][data-workspace-library="true"] .editor-layout { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: var(--workspace-primary) minmax(0,1fr); row-gap: var(--workspace-gap); }
+html[data-native-chrome="true"] .editor-app[data-workspace-arrangement="stack"][data-workspace-library="true"] .editor-container { grid-row: 1; grid-column: 1; }
+html[data-native-chrome="true"] .editor-app[data-workspace-arrangement="stack"][data-workspace-library="true"] .notes-sidebar { grid-row: 2; grid-column: 1; border-inline-end: 0; }
+html[data-native-chrome="true"] .editor-app[data-workspace-library="true"] .notes-sidebar { position: relative; inset: auto; width: 100%; height: 100%; min-height: 0; flex: none; background: var(--bg-surface); border-inline-end: 1px solid var(--border-panel); }
+html[data-native-chrome="true"] .editor-app[data-workspace-arrangement="overlay"] .notes-sidebar { position: absolute; inset: var(--workspace-inset-top,0px) var(--workspace-inset-right,0px) var(--workspace-inset-bottom,0px) var(--workspace-inset-left,0px); z-index: var(--ui-layer-sidebar); width: auto; height: auto; border: 0; }
+html[data-native-chrome="true"] .editor-app .notes-heading h2 { font-size: var(--ui-body-size); }
+html[data-native-chrome="true"] .editor-app .notes-heading .close-notes { display: inline-flex; }
+html[data-native-chrome="true"] .editor-app[data-workspace-arrangement="column"] .notes-heading .close-notes { display: none; }
+html[data-native-chrome="true"] .editor-app .notes-menu summary { white-space: nowrap; overflow-wrap: normal; }
+html[data-native-chrome="true"] .editor-app .notes-sidebar nav strong { font-size: var(--ui-body-size); }
+html[data-native-chrome="true"] .editor-app .notes-sidebar nav .pin-note { opacity: 1; width: 44px; min-height: 44px; }
+html[data-native-chrome="true"] .editor-app .notes-sidebar nav .open-note { padding-inline-end: 44px; }
+html[data-native-chrome="true"] .editor-app .settings-page > header, html[data-native-chrome="true"] .empty-document-toolbar { display: none; }
+html[data-native-chrome="true"] .editor-app .editor-layout[hidden] { display: none !important; }
+html[data-native-chrome="true"] .editor-app .settings-page { padding: var(--workspace-inset-top,0px) var(--workspace-inset-right,0px) var(--workspace-inset-bottom,0px) var(--workspace-inset-left,0px); }
+html[data-native-chrome="true"] .editor-app[data-workspace-divided="true"][data-workspace-library="false"][data-workspace-split="false"] .editor-layout > .editor-container { position: absolute; left: var(--workspace-focus-x); top: var(--workspace-focus-y); width: var(--workspace-focus-width); height: var(--workspace-focus-height); }
+html[data-native-chrome="true"] .editor-app[data-workspace-divided="true"] { position: relative; }
+/* Single-pane utilities remain on one side of an active system division too. */
+html[data-native-chrome="true"] .editor-app[data-workspace-divided="true"] .settings-page,
+html[data-native-chrome="true"] .editor-app[data-workspace-divided="true"][data-workspace-arrangement="overlay"] .notes-sidebar { position: absolute; inset: auto; left: var(--workspace-focus-x); top: var(--workspace-focus-y); width: var(--workspace-focus-width); height: var(--workspace-focus-height); padding: 0; }
+html[data-native-chrome="true"] .editor-app[data-workspace-divided="true"] > .toast { inset: auto; left: calc(var(--workspace-focus-x) + 12px); bottom: calc(100% - var(--workspace-focus-y) - var(--workspace-focus-height) + 12px); margin: 0; max-width: calc(var(--workspace-focus-width) - 24px); }
+html[data-native-chrome="true"] .editor-app[data-workspace-divided="true"] dialog[open] { inset: auto; margin: 0; left: calc(var(--workspace-focus-x) + 12px); top: calc(var(--workspace-focus-y) + 12px); max-width: calc(var(--workspace-focus-width) - 24px); max-height: calc(var(--workspace-focus-height) - 24px); }
+/* Portaled canvas/dialogs share the same safe region as in-app dialogs. */
+html[data-native-chrome="true"][data-workspace-divided="true"] body > dialog[open] { inset: auto; margin: 0; left: calc(var(--workspace-focus-x) + 12px); top: calc(var(--workspace-focus-y) + 12px); max-width: calc(var(--workspace-focus-width) - 24px); max-height: calc(var(--workspace-focus-height) - 24px); }
 .about-scriba .about-links { display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
 .about-scriba .about-links .github-source { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; margin: 0; }

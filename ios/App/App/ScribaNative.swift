@@ -5,10 +5,49 @@ import Security
 import UIKit
 import UniformTypeIdentifiers
 
+/** The native container delegates status-bar appearance to the current document. */
+class ScribaNavigationController: UINavigationController {
+    override var childForStatusBarStyle: UIViewController? { topViewController }
+    override var childForStatusBarHidden: UIViewController? { topViewController }
+}
+
+/** Bar descriptors contain presentation and command identifiers, never executable JavaScript. */
+private struct WorkspaceChromeDescriptor {
+    let id: String
+    let title: String
+    let symbol: String
+    let enabled: Bool
+    let selected: Bool
+    let priority: String
+    let children: [WorkspaceChromeDescriptor]
+
+    init?(_ value: [String: Any], depth: Int = 0) {
+        guard depth < 4, let id = value["id"] as? String, !id.isEmpty,
+              let title = value["title"] as? String, !title.isEmpty else { return nil }
+        self.id = String(id.prefix(128))
+        self.title = String(title.prefix(256))
+        symbol = String((value["symbol"] as? String ?? "").prefix(128))
+        enabled = value["enabled"] as? Bool ?? true
+        selected = value["selected"] as? Bool ?? false
+        priority = value["priority"] as? String ?? "standard"
+        children = (value["children"] as? [[String: Any]] ?? []).prefix(40).compactMap {
+            WorkspaceChromeDescriptor($0, depth: depth + 1)
+        }
+    }
+}
+
 /** Native capabilities are registered only in the bundled editor, never in a remote web view. */
 @objc(ScribaViewController)
 class ScribaViewController: CAPBridgeViewController {
     var darkChrome = true
+    private weak var workspacePlugin: ScribaNative?
+    private var lastWorkspaceLayout: NSDictionary?
+    private var lastWorkspaceChrome: NSDictionary?
+    private var workspacePosture = "unavailable"
+    private var workspaceItems: [String: UIBarButtonItem] = [:]
+    private var workspaceOverflow: [WorkspaceChromeDescriptor] = []
+    private var workspaceCommandID: String?
+
     override var preferredStatusBarStyle: UIStatusBarStyle { darkChrome ? .lightContent : .darkContent }
     override func capacitorDidLoad() {
         // Capacitor makes WKWebView the root view. A separate container can reserve
@@ -17,15 +56,228 @@ class ScribaViewController: CAPBridgeViewController {
             let container = UIView()
             container.addSubview(web); web.translatesAutoresizingMaskIntoConstraints = false
             view = container
+            let contentGuide: UILayoutGuide
+            if #available(iOS 26.0, *) {
+                contentGuide = container.layoutGuide(for: .safeArea(cornerAdaptation: .horizontal))
+            } else {
+                contentGuide = container.safeAreaLayoutGuide
+            }
             NSLayoutConstraint.activate([
-                web.topAnchor.constraint(equalTo: container.safeAreaLayoutGuide.topAnchor),
+                web.topAnchor.constraint(equalTo: contentGuide.topAnchor),
                 web.bottomAnchor.constraint(equalTo: container.keyboardLayoutGuide.topAnchor),
-                web.leadingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.leadingAnchor),
-                web.trailingAnchor.constraint(equalTo: container.safeAreaLayoutGuide.trailingAnchor)
+                web.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor),
+                web.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor)
             ])
+            if #available(iOS 27.1, *) {
+                container.addInteraction(UIHingeInteraction { [weak self] _, update in
+                    guard let self else { return }
+                    switch update.hinge?.status {
+                    case .unknown?: self.workspacePosture = "unknown"
+                    case .closed?: self.workspacePosture = "closed"
+                    case .partiallyOpen?: self.workspacePosture = "partiallyOpen"
+                    case .fullyOpen?: self.workspacePosture = "fullyOpen"
+                    case nil: self.workspacePosture = "unavailable"
+                    @unknown default: self.workspacePosture = "unknown"
+                    }
+                    // Hinge updates and safe-area changes may arrive before final layout.
+                    self.view.setNeedsLayout()
+                })
+                registerForTraitChanges(UITraitCollection.systemTraitsAffectingVerticalBarEdge) { (self: ScribaViewController, _) in
+                    self.view.setNeedsLayout()
+                }
+                navigationItem.style = .editor
+                navigationItem.largeTitleDisplayMode = .never
+                navigationItem.verticalBarCompressionBehavior = .prefersBarItems
+            }
+            if #available(iOS 17.0, *) {
+                registerForTraitChanges([UITraitPreferredContentSizeCategory.self, UITraitLayoutDirection.self]) { (self: ScribaViewController, _) in
+                    self.view.setNeedsLayout()
+                }
+            }
         }
-        bridge?.registerPluginInstance(ScribaNative())
+        let plugin = ScribaNative()
+        workspacePlugin = plugin
+        bridge?.registerPluginInstance(plugin)
         webView?.allowsBackForwardNavigationGestures = false
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        publishWorkspaceLayout()
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        view.setNeedsLayout()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        // Older supported releases do not provide automatic trait tracking.
+        if #unavailable(iOS 17.0) { view.setNeedsLayout() }
+    }
+
+    /** Geometry is always read from this web view, after constraints have adapted to the scene. */
+    func currentWorkspaceLayout() -> [String: Any] {
+        guard let web = webView else { return ["nativeChrome": false, "width": 0, "height": 0,
+            "verticalBarEdge": "none", "posture": "unavailable", "occlusions": [],
+            "keyboardVisible": false, "textScale": 1] }
+        var payload: [String: Any] = [
+            "nativeChrome": false, "width": Double(web.bounds.width), "height": Double(web.bounds.height),
+            "verticalBarEdge": "none", "posture": workspacePosture, "occlusions": [],
+            "keyboardVisible": view.keyboardLayoutGuide.layoutFrame.minY < view.safeAreaLayoutGuide.layoutFrame.maxY - 1,
+            "textScale": Double(UIFontMetrics(forTextStyle: .body).scaledValue(for: 17, compatibleWith: traitCollection) / 17)
+        ]
+        if #available(iOS 27.1, *) {
+            payload["nativeChrome"] = navigationController is ScribaNavigationController
+            let leadingIsLeft = view.effectiveUserInterfaceLayoutDirection == .leftToRight
+            switch traitCollection.verticalBarEdge {
+            case .leading: payload["verticalBarEdge"] = leadingIsLeft ? "left" : "right"
+            case .trailing: payload["verticalBarEdge"] = leadingIsLeft ? "right" : "left"
+            case .unspecified: break
+            @unknown default: break
+            }
+            payload["occlusions"] = web.reservedRegions(kind: .occlusion).compactMap { region -> [String: Double]? in
+                guard region.isActive else { return nil }
+                return workspaceRect(region.frame.intersection(web.bounds))
+            }
+            let divisions = web.reservedRegions(kind: .division).compactMap { region -> [String: Double]? in
+                guard region.isActive else { return nil }
+                return workspaceRect(region.frame.intersection(web.bounds), allowLine: true)
+            }
+            if let rect = divisions.first {
+                payload["division"] = rect
+            }
+        }
+        return payload
+    }
+
+    private func workspaceRect(_ rect: CGRect, allowLine: Bool = false) -> [String: Double]? {
+        // A division may be a line rather than an occluding strip; preserve its position.
+        guard !rect.isNull, !rect.isInfinite, (allowLine ? max(rect.width, rect.height) > 0 : !rect.isEmpty),
+              rect.minX.isFinite, rect.minY.isFinite, rect.width.isFinite, rect.height.isFinite else { return nil }
+        return ["x": Double(rect.minX), "y": Double(rect.minY), "width": Double(rect.width), "height": Double(rect.height)]
+    }
+
+    /** Resize notifications preserve the editor instance and coalesce identical native layout passes. */
+    func publishWorkspaceLayout() {
+        guard let web = webView, web.bounds.width > 0, web.bounds.height > 0 else { return }
+        let payload = currentWorkspaceLayout()
+        let comparable = payload as NSDictionary
+        guard lastWorkspaceLayout?.isEqual(comparable) != true else { return }
+        lastWorkspaceLayout = comparable
+        workspacePlugin?.publishWorkspaceLayout(payload)
+    }
+
+    /** Native menus send identifiers back to the existing document actions. */
+    private func sendWorkspaceCommand(_ id: String) {
+        workspaceCommandID = id
+        workspacePlugin?.notifyListeners("workspaceCommand", data: ["id": id])
+    }
+
+    @available(iOS 27.1, *)
+    private func workspaceMenuElement(_ descriptor: WorkspaceChromeDescriptor, ancestorEnabled: Bool = true) -> UIMenuElement {
+        let enabled = ancestorEnabled && descriptor.enabled
+        let image = descriptor.symbol.isEmpty ? nil : UIImage(systemName: descriptor.symbol)
+        if !descriptor.children.isEmpty {
+            return UIMenu(title: descriptor.title, image: image, children: descriptor.children.map {
+                workspaceMenuElement($0, ancestorEnabled: enabled)
+            })
+        }
+        return UIAction(title: descriptor.title, image: image, identifier: UIAction.Identifier(descriptor.id),
+                        attributes: enabled ? [] : [.disabled], state: descriptor.selected ? .on : .off) { [weak self] _ in
+            self?.sendWorkspaceCommand(descriptor.id)
+        }
+    }
+
+    @available(iOS 27.1, *)
+    private func workspaceBarItem(_ descriptor: WorkspaceChromeDescriptor) -> UIBarButtonItem {
+        let representation = workspaceMenuElement(descriptor)
+        let item: UIBarButtonItem
+        if let menu = representation as? UIMenu {
+            item = UIBarButtonItem(image: menu.image, menu: menu)
+            item.title = descriptor.title
+        } else {
+            item = UIBarButtonItem(primaryAction: representation as? UIAction)
+        }
+        item.accessibilityLabel = descriptor.title
+        item.accessibilityIdentifier = "scriba.command." + descriptor.id
+        item.isEnabled = descriptor.enabled
+        item.isSelected = descriptor.selected
+        item.axisBehavior = .verticalPreferred
+        item.visibilityPriority = descriptor.priority == "high" ? .high : (descriptor.priority == "low" ? .low : .standard)
+        item.menuRepresentation = representation
+        registerWorkspaceItem(descriptor, item: item)
+        return item
+    }
+
+    /** Descendant commands resolve to the current parent item after asynchronous chrome updates. */
+    private func registerWorkspaceItem(_ descriptor: WorkspaceChromeDescriptor, item: UIBarButtonItem) {
+        workspaceItems[descriptor.id] = item
+        descriptor.children.forEach { registerWorkspaceItem($0, item: item) }
+    }
+
+    /** UIKit owns placement and overflow; no native bar dimensions are inferred from device names. */
+    func updateWorkspaceChrome(_ options: [String: Any]) {
+        guard #available(iOS 27.1, *), navigationController is ScribaNavigationController else { return }
+        let comparable = options as NSDictionary
+        guard lastWorkspaceChrome?.isEqual(comparable) != true else { return }
+        lastWorkspaceChrome = comparable
+        navigationItem.title = String((options["title"] as? String ?? "Scriba").prefix(256))
+        let descriptors: (String) -> [WorkspaceChromeDescriptor] = { key in
+            (options[key] as? [[String: Any]] ?? []).prefix(40).compactMap { WorkspaceChromeDescriptor($0) }
+        }
+        workspaceItems.removeAll()
+        navigationItem.leadingItemGroups = descriptors("navigation").map { workspaceBarItem($0).creatingFixedGroup() }
+        let tools = descriptors("toolbar").map { workspaceBarItem($0) }
+        setToolbarItems(tools, animated: false)
+        navigationController?.setToolbarHidden(tools.isEmpty, animated: false)
+        workspaceOverflow = descriptors("overflow")
+        navigationItem.additionalOverflowItems = workspaceOverflow.isEmpty ? nil : UIDeferredMenuElement.uncached { [weak self] completion in
+            guard let self else { completion([]); return }
+            completion(self.workspaceOverflow.map { self.workspaceMenuElement($0) })
+        }
+        view.setNeedsLayout()
+    }
+
+    /** Theme changes update both the document and the system-owned chrome. */
+    func applyWorkspaceAppearance(color: UIColor, style: UIUserInterfaceStyle) {
+        view.backgroundColor = color
+        webView?.backgroundColor = color
+        overrideUserInterfaceStyle = style
+        if let navigation = navigationController {
+            navigation.overrideUserInterfaceStyle = style
+            navigation.view.backgroundColor = color
+            let barAppearance = UINavigationBarAppearance()
+            barAppearance.configureWithDefaultBackground()
+            navigation.navigationBar.standardAppearance = barAppearance
+            navigation.navigationBar.scrollEdgeAppearance = barAppearance
+            navigation.navigationBar.compactAppearance = barAppearance
+            let toolbarAppearance = UIToolbarAppearance()
+            toolbarAppearance.configureWithDefaultBackground()
+            navigation.toolbar.standardAppearance = toolbarAppearance
+            navigation.toolbar.scrollEdgeAppearance = toolbarAppearance
+            navigation.toolbar.compactAppearance = toolbarAppearance
+            navigation.setNeedsStatusBarAppearanceUpdate()
+        }
+        setNeedsStatusBarAppearanceUpdate()
+    }
+
+    /** System sheets track their actual command item while a Duo bar changes axis. */
+    func configureWorkspacePopover(_ popover: UIPopoverPresentationController?) {
+        guard let popover else { return }
+        if #available(iOS 27.1, *), navigationController is ScribaNavigationController {
+            if let command = workspaceCommandID, let source = workspaceItems[command] {
+                popover.sourceItem = source
+                return
+            }
+            if let source = navigationItem.overflowPresentationSource {
+                popover.sourceItem = source
+                return
+            }
+        }
+        popover.sourceView = webView ?? view
+        popover.sourceRect = .null
     }
 }
 
@@ -36,7 +288,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     let jsName = "ScribaNative"
     let pluginMethods: [CAPPluginMethod] = [
         "folderStatus", "chooseFolder", "authorizeFolder", "disconnectFolder", "readNotes", "saveNote",
-        "document", "documentVersion", "renameNote", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance", "accessibilityPreferences", "updateInfo", "openUpdate"
+        "document", "documentVersion", "renameNote", "shareFile", "githubRequest", "githubLogin", "openExternal", "appearance", "accessibilityPreferences", "updateInfo", "openUpdate", "workspaceLayout", "workspaceChrome", "openNote"
     ].map { CAPPluginMethod(name: $0, returnType: CAPPluginReturnPromise) }
 
     private let defaults = UserDefaults.standard
@@ -46,7 +298,33 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     private let gateway = "https://scriba.aeonbridge.app"
     private let bookmarkKey = "scriba.files.bookmark"
     private var pickerCall: CAPPluginCall?
+    private var notePickerCall: CAPPluginCall?
+    private weak var notePickerController: UIDocumentPickerViewController?
     private var authentication: ASWebAuthenticationSession?
+
+    @objc func workspaceLayout(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let controller = self.bridge?.viewController as? ScribaViewController else {
+                call.reject("Os controles nativos estão indisponíveis.")
+                return
+            }
+            controller.view.layoutIfNeeded()
+            call.resolve(controller.currentWorkspaceLayout())
+        }
+    }
+
+    @objc func workspaceChrome(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? ScribaViewController)?.updateWorkspaceChrome(call.options as? [String: Any] ?? [:])
+            call.resolve()
+        }
+    }
+
+    /** Retain only the newest geometry until JavaScript subscribes, not every resize frame. */
+    func publishWorkspaceLayout(_ payload: [String: Any]) {
+        retainedEventArguments?.removeObject(forKey: "workspaceLayout")
+        notifyListeners("workspaceLayout", data: payload, retainUntilConsumed: true)
+    }
 
     @objc func accessibilityPreferences(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
@@ -61,9 +339,9 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
             controller.darkChrome = call.getBool("dark") ?? true
             let channel: (String) -> CGFloat = { min(255, max(0, CGFloat(call.getInt($0) ?? 0))) / 255 }
             let color = UIColor(red: channel("red"), green: channel("green"), blue: channel("blue"), alpha: 1)
-            controller.view.backgroundColor = color; controller.webView?.backgroundColor = color
-            controller.overrideUserInterfaceStyle = call.getBool("automatic") == true ? .unspecified : (controller.darkChrome ? .dark : .light)
-            controller.setNeedsStatusBarAppearanceUpdate(); call.resolve()
+            let style: UIUserInterfaceStyle = call.getBool("automatic") == true ? .unspecified : (controller.darkChrome ? .dark : .light)
+            controller.applyWorkspaceAppearance(color: color, style: style)
+            call.resolve()
         }
     }
 
@@ -155,6 +433,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
     }
     @objc func chooseFolder(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
+            guard self.notePickerCall == nil else { call.reject("Feche a seleção de arquivo antes de escolher uma pasta."); return }
             guard self.pickerCall == nil else { call.reject("A seleção de pasta já está aberta."); return }
             self.pickerCall = call
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder], asCopy: false)
@@ -162,8 +441,100 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
             self.bridge?.viewController?.present(picker, animated: true)
         }
     }
-    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) { pickerCall?.reject("Seleção de pasta cancelada."); pickerCall = nil }
+
+    /** A native Files picker preserves user activation for toolbar and keyboard Open commands. */
+    @objc func openNote(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard self.notePickerCall == nil, self.pickerCall == nil else {
+                call.reject("Já existe uma seleção de arquivo ou pasta aberta.")
+                return
+            }
+            guard let presenter = self.bridge?.viewController, presenter.viewIfLoaded?.window != nil,
+                  presenter.presentedViewController == nil else {
+                call.reject("Feche a janela atual antes de abrir um arquivo.")
+                return
+            }
+            let textTypes = ["md", "markdown", "mdown"].compactMap { UTType(filenameExtension: $0, conformingTo: .plainText) }
+            let bearTypes = ["bear"].compactMap { UTType(filenameExtension: $0, conformingTo: .archive) }
+            let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.plainText, .zip] + textTypes + bearTypes, asCopy: true)
+            picker.allowsMultipleSelection = false
+            picker.shouldShowFileExtensions = true
+            picker.delegate = self
+            self.notePickerCall = call
+            self.notePickerController = picker
+            presenter.present(picker, animated: true)
+        }
+    }
+
+    /** Import reads are coordinated and bounded even if the selected file grows after metadata lookup. */
+    private func readPickedNote(_ url: URL) throws -> [String: Any] {
+        guard url.isFileURL else { throw problem("Selecione um arquivo local no Files.") }
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer { if accessed { url.stopAccessingSecurityScopedResource() } }
+        var coordinationError: NSError?
+        var result: Result<[String: Any], Error>?
+        NSFileCoordinator().coordinate(readingItemAt: url, options: .withoutChanges, error: &coordinationError) { selected in
+            result = Result {
+                let metadata = try selected.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .fileSizeKey, .contentTypeKey])
+                let maximumSize = 64 * 1024 * 1024
+                guard metadata.isRegularFile == true, metadata.isSymbolicLink != true else {
+                    throw problem("Selecione um arquivo Markdown ou pacote ZIP/Bear válido.")
+                }
+                guard ["md", "markdown", "mdown", "zip", "bear"].contains(selected.pathExtension.lowercased())
+                        || metadata.contentType?.conforms(to: .plainText) == true else {
+                    throw problem("Selecione um arquivo Markdown ou pacote ZIP/Bear válido.")
+                }
+                guard (metadata.fileSize ?? 0) <= maximumSize else {
+                    throw problem("O arquivo selecionado excede o limite de 64 MB.")
+                }
+                let input = try FileHandle(forReadingFrom: selected)
+                defer { try? input.close() }
+                var bytes = Data()
+                while let chunk = try input.read(upToCount: min(1024 * 1024, maximumSize - bytes.count + 1)), !chunk.isEmpty {
+                    guard chunk.count <= maximumSize - bytes.count else {
+                        throw problem("O arquivo selecionado excede o limite de 64 MB.")
+                    }
+                    bytes.append(chunk)
+                }
+                return ["name": url.lastPathComponent, "data": bytes.base64EncodedString()]
+            }
+        }
+        if let coordinationError { throw coordinationError }
+        guard let result else { throw problem("Não foi possível ler o arquivo selecionado.") }
+        return try result.get()
+    }
+
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        if controller === notePickerController {
+            notePickerCall?.resolve(["cancelled": true])
+            notePickerCall = nil
+            notePickerController = nil
+            return
+        }
+        pickerCall?.reject("Seleção de pasta cancelada."); pickerCall = nil
+    }
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        if controller === notePickerController {
+            guard let call = notePickerCall else { return }
+            guard let url = urls.first else {
+                notePickerCall = nil
+                notePickerController = nil
+                call.resolve(["cancelled": true])
+                return
+            }
+            worker.async {
+                let result = Result { try self.readPickedNote(url) }
+                DispatchQueue.main.async {
+                    self.notePickerCall = nil
+                    self.notePickerController = nil
+                    switch result {
+                    case .success(let note): call.resolve(note)
+                    case .failure(let error): call.reject("Não foi possível abrir o arquivo selecionado. \(error.localizedDescription)")
+                    }
+                }
+            }
+            return
+        }
         guard let call = pickerCall, let url = urls.first else { return }
         pickerCall = nil
         worker.async {
@@ -320,8 +691,7 @@ class ScribaNative: CAPPlugin, CAPBridgedPlugin, UIDocumentPickerDelegate, ASWeb
             let url = folder.appendingPathComponent(name); try data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
             DispatchQueue.main.async {
                 let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                controller.popoverPresentationController?.sourceView = self.bridge?.viewController?.view
-                controller.popoverPresentationController?.sourceRect = CGRect(x: 20, y: 20, width: 1, height: 1)
+                (self.bridge?.viewController as? ScribaViewController)?.configureWorkspacePopover(controller.popoverPresentationController)
                 controller.completionWithItemsHandler = { _, _, _, error in
                     try? self.files.removeItem(at: folder)
                     if let error = error { call.reject(error.localizedDescription) } else { call.resolve() }

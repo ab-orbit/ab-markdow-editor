@@ -945,5 +945,20 @@
   "Não foi possível criar a cópia. A nota original continua aberta.": "Die Kopie konnte nicht erstellt werden. Die ursprüngliche Notiz bleibt geöffnet.",
   "O arquivo mudou durante a sincronização. Sua cópia foi preservada.": "Die Datei wurde während der Synchronisierung geändert. Ihre Kopie wurde aufbewahrt.",
   "Listas": "Listen",
-  "Mais opções de formatação": "Weitere Formatierungsoptionen"
+  "Mais opções de formatação": "Weitere Formatierungsoptionen",
+  "Concluir": "Fertig",
+  "Editar": "Bearbeiten",
+  "Os controles nativos estão indisponíveis.": "Native Steuerelemente sind nicht verfügbar.",
+  "Feche a seleção de arquivo antes de escolher uma pasta.": "Schließen Sie die Dateiauswahl, bevor Sie einen Ordner auswählen.",
+  "Já existe uma seleção de arquivo ou pasta aberta.": "Eine Datei- oder Ordnerauswahl ist bereits geöffnet.",
+  "Feche a janela atual antes de abrir um arquivo.": "Schließen Sie das aktuelle Fenster, bevor Sie eine Datei öffnen.",
+  "Selecione um arquivo local no Files.": "Wählen Sie eine lokale Datei in Dateien.",
+  "Selecione um arquivo Markdown ou pacote ZIP/Bear válido.": "Wählen Sie eine gültige Markdown-Datei oder ein ZIP/Bear-Paket.",
+  "O arquivo selecionado excede o limite de 64 MB.": "Die ausgewählte Datei überschreitet das Limit von 64 MB.",
+  "Não foi possível ler o arquivo selecionado.": "Die ausgewählte Datei konnte nicht gelesen werden.",
+  "Não foi possível abrir o arquivo selecionado. {0}": "Die ausgewählte Datei konnte nicht geöffnet werden. {0}",
+  "Processando…": "Wird verarbeitet…",
+  "Alterações não salvas": "Ungespeicherte Änderungen",
+  "Salvo no dispositivo · sincronização pendente": "Auf Gerät gespeichert · Synchronisierung ausstehend",
+  "Tudo salvo": "Alle Änderungen gespeichert"
 }

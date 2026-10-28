@@ -1,0 +1,114 @@
+[
+  {
+    "native" : {
+      "height" : 544,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+        {
+          "height" : 8,
+          "width" : 200,
+          "x" : 266,
+          "y" : 0
+        }
+      ],
+      "posture" : "closed",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 480
+    },
+    "phase" : 0,
+    "web" : {
+      "arrangement" : "overlay",
+      "height" : 544,
+      "library" : false,
+      "mode" : "read",
+      "title" : "Acervo Aurora",
+      "width" : 480
+    }
+  },
+  {
+    "native" : {
+      "height" : 494,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+        {
+          "height" : 8,
+          "width" : 200,
+          "x" : 266,
+          "y" : 0
+        }
+      ],
+      "posture" : "closed",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 950
+    },
+    "phase" : 1,
+    "web" : {
+      "arrangement" : "column",
+      "height" : 494,
+      "library" : true,
+      "mode" : "read",
+      "title" : "Acervo Aurora",
+      "width" : 950
+    }
+  },
+  {
+    "native" : {
+      "height" : 784,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+        {
+          "height" : 8,
+          "width" : 200,
+          "x" : 266,
+          "y" : 0
+        }
+      ],
+      "posture" : "closed",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 650
+    },
+    "phase" : 2,
+    "web" : {
+      "arrangement" : "column",
+      "height" : 784,
+      "library" : true,
+      "mode" : "read",
+      "title" : "Acervo Aurora",
+      "width" : 650
+    }
+  },
+  {
+    "native" : {
+      "height" : 544,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+        {
+          "height" : 8,
+          "width" : 200,
+          "x" : 266,
+          "y" : 0
+        }
+      ],
+      "posture" : "closed",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 480
+    },
+    "phase" : 3,
+    "web" : {
+      "arrangement" : "overlay",
+      "height" : 544,
+      "library" : false,
+      "mode" : "read",
+      "title" : "Acervo Aurora",
+      "width" : 480
+    }
+  }
+]

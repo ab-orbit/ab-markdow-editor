@@ -8,7 +8,9 @@ import { lazy, Suspense, useEffect, useId, useImperativeHandle, useRef, useState
 import { Download, Copy, FileImage, FileUp, FileText, FileDown, Type, ArrowLeft, Info, Settings, MoreVertical, Pencil, Check, SquareCode, Code2, Columns2, BookOpen, X, ListTree, PenTool, Sun, Plus, Save, SaveAll } from 'lucide-react';
 import {authorizedFetch} from '@/lib/session';
 import type {SavedFileTarget} from '@/lib/savedFile';
-import {isIosApp, shareNativeBlob} from '@/lib/ios';
+import {isIosApp, iosBridge, shareNativeBlob, type NativeWorkspaceCommand} from '@/lib/ios';
+import {useNativeWorkspace, useNativeWorkspaceCommands} from '@/lib/useNativeWorkspace';
+import {useReadingContinuity} from './useReadingContinuity';
 import { readMarkdownFile, downloadMarkdown, downloadBlob } from '@/lib/markdown/files';
 import { createMarkdownPackage, prepareImages, readMarkdownPackage } from '@/lib/markdown/assets';
 import { parseEditableTable, type EditableTable } from '@/lib/markdown/tables';
@@ -51,6 +53,12 @@ export interface MarkdownWorkbenchHandle {
   focus: () => void;
 }
 export interface MarkdownWorkbenchProps {
+  /** UIKit owns document chrome only while this workbench is the active screen. */
+  nativeChromeActive?: boolean;
+  nativeLibraryOpen?: boolean;
+  nativeReloadLabel?: string;
+  nativeReloadEnabled?: boolean;
+  nativeDocumentStatus?: string;
   /** Storage destination and filename namespace diagram presentation preferences. */
   diagramScope?: string;
   /** Host commands reuse the workbench's file input and operation guards. */
@@ -121,7 +129,8 @@ export interface MarkdownWorkbenchProps {
 
 
 /** File operations and presentation around the reusable controlled editor. */
-export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFileNames = [], onFileNameChange, onImport, onBeforeImport, initialMode = 'live', initialScrollTop = 0, actions, saveAction, onOpenSettings, createdAt, modifiedAt, appearanceActions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, onSave, onSaveAs, onRename, onDuplicate, sourceId, savedFileLocation, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
+export function MarkdownWorkbench({ ref, nativeChromeActive = true, nativeLibraryOpen = false, nativeReloadLabel, nativeReloadEnabled = false, nativeDocumentStatus, value, onChange, fileName, existingFileNames = [], onFileNameChange, onImport, onBeforeImport, initialMode = 'live', initialScrollTop = 0, actions, saveAction, onOpenSettings, createdAt, modifiedAt, appearanceActions, sourceStatus, onModeChange, compact = false, readOnly = false, warnBeforeUnload = true, onClose, onSave, onSaveAs, onRename, onDuplicate, sourceId, savedFileLocation, doubleClickToEdit = true, initialAssets, onAssetsChange, saveRevision = 0, diagramScope = fileName }: MarkdownWorkbenchProps) {
+  const nativeWorkspace = useNativeWorkspace();
   const modes = [
     ['live', t("Escrever"), Pencil, t("Edição visual")],
     ['source', t("Fonte"), Code2, t("Código Markdown completo")],
@@ -149,6 +158,29 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
   useEffect(() => { if (!readOnly && mode === 'whiteboard') try { localStorage.setItem(`scriba-whiteboard-scene:${diagramScope}`, String(selectedBoard)); } catch { /* Scene navigation remains available without persistent preferences. */ } }, [selectedBoard,mode,diagramScope,readOnly]);
   const workbench = useRef<HTMLElement>(null);
   const pages = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!nativeWorkspace.nativeChrome || !workbench.current) return;
+    const root=workbench.current;
+    const update=()=>{
+      root.dataset.lowHeight=String(root.clientHeight<420);
+      const area=pages.current;
+      if (!area || mode!=='split') return;
+      const box=area.getBoundingClientRect(), fold=nativeWorkspace.division;
+      root.dataset.splitAxis=box.width>=660?'column':'row';
+      root.style.removeProperty('--duo-split-first');root.style.setProperty('--duo-split-gap','0px');
+      if (fold && fold.height>=nativeWorkspace.height*.6) {
+        root.dataset.splitAxis='column';
+        root.style.setProperty('--duo-split-first',`${Math.max(0,Math.min(box.width,fold.x-box.left))}px`);
+        root.style.setProperty('--duo-split-gap',`${Math.max(12,fold.width)}px`);
+      } else if (fold && fold.width>=nativeWorkspace.width*.6) {
+        root.dataset.splitAxis='row';
+        root.style.setProperty('--duo-split-first',`${Math.max(0,Math.min(box.height,fold.y-box.top))}px`);
+        root.style.setProperty('--duo-split-gap',`${Math.max(12,fold.height)}px`);
+      }
+    };
+    const observer=new ResizeObserver(update);observer.observe(root);if(pages.current)observer.observe(pages.current);update();
+    return()=>observer.disconnect();
+  }, [nativeWorkspace, mode]);
   useEffect(() => {const frame=requestAnimationFrame(()=>{if(pages.current)pages.current.scrollTop=initialScrollTop;});return()=>cancelAnimationFrame(frame);}, []);
   const [activeBlock,setActiveBlock] = useState<SourceRange|null>(null);
   const pendingBlock = useRef<SourceRange|null>(null);
@@ -161,6 +193,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
   const [copyNotice,setCopyNotice] = useState("");
   const [error, setError] = useState("");
   const [documentId, setDocumentId] = useState(0);
+  useReadingContinuity(pages, nativeWorkspace.nativeChrome && mode === 'read', documentId);
   const documentContext = useRef({ id: documentId, scope: diagramScope });
   documentContext.current = { id: documentId, scope: diagramScope };
   const mounted = useRef(true);
@@ -175,6 +208,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
   const input = useRef<HTMLInputElement>(null);
   const reloadImport = useRef(false);
   const imageInput = useRef<HTMLInputElement>(null);
+  const nativePickerOpen = useRef(false);
   const [iconsOpen, setIconsOpen] = useState(false);
   const iconRange = useRef<SourceRange>({ from: 0, to: 0 });
   const [collapsedHeadings, setCollapsedHeadings] = useState<Set<string>>(() => new Set());
@@ -184,8 +218,16 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
   const editor = useRef<MarkdownEditorHandle>(null);
   const statistics = useRef<SelectionStatisticsHandle>(null);
   function chooseFile(reloadOriginal = false) {
-    if (readOnly || busy || saveAsOperation.current) return;
-    reloadImport.current = reloadOriginal;setError("");input.current?.click();
+    if (readOnly || busy || saveAsOperation.current || nativePickerOpen.current) return;
+    reloadImport.current = reloadOriginal;setError("");
+    if (!nativeWorkspace.nativeChrome) { input.current?.click(); return; }
+    const original=documentContext.current;nativePickerOpen.current=true;setBusy(true);
+    void iosBridge.openNote().then(async result=>{
+      nativePickerOpen.current=false;setBusy(false);
+      if ('cancelled' in result || !sameDocument(original)) return;
+      const bytes=Uint8Array.from(atob(result.data),character=>character.charCodeAt(0));
+      await open(new File([bytes],result.name,{type:/\.(zip|bear)$/i.test(result.name)?'application/zip':'text/markdown'}));
+    }).catch(cause=>{if(sameDocument(original))setError(cause instanceof Error?t(cause.message):t('Não foi possível abrir o arquivo.'));}).finally(()=>{nativePickerOpen.current=false;if(mounted.current)setBusy(false);});
   }
   const [renameName,setRenameName]=useState<string|null>(null),[renameError,setRenameError]=useState(""),[renaming,setRenaming]=useState(false);
   async function requestRename() {
@@ -204,7 +246,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
   }
   useImperativeHandle(ref, () => ({
     openFile: chooseFile,
-    isBusy: () => busy || saveAsOperation.current || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]'),
+    isBusy: () => busy || nativePickerOpen.current || saveAsOperation.current || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]'),
     flushInput: async () => {
       if (readOnly || busy || document.querySelector('dialog[open]')) return false;
       if (mode === 'whiteboard') return whiteboard.current ? whiteboard.current.flush() : false;
@@ -235,32 +277,39 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
   async function open(file?: File) {
     const reloadOriginal = reloadImport.current;reloadImport.current = false;
     if (!file || readOnly || busy) return;
+    // A native file read can finish after the user selects another library note.
+    const importingDocument = documentContext.current;
     const importedName = file.name.replace(/\.(zip|bear)$/i, '.md');
     const expectedName = fileName.split(/[\\/]/).at(-1);
     if (reloadOriginal && importedName !== expectedName) {setError(t("Selecione o arquivo original {0} para recarregar esta nota.", expectedName));return;}
     if (dirty && (reloadOriginal || !onBeforeImport) && !window.confirm(reloadOriginal ? t("Recarregar substituirá as alterações não salvas desta nota. Continuar?") : t("Abrir outro arquivo substituirá as alterações desta sessão. Continuar?"))) return;
     if (!reloadOriginal && mode === 'whiteboard' && !await whiteboard.current?.flush()) return;
+    if (!sameDocument(importingDocument)) return;
     setError(""); setBusy(true); setOpeningFile(true);
     await afterPaint();
     try {
       const packaged = /\.(zip|bear)$/i.test(file.name) ? await readMarkdownPackage(file) : null;
       const original = packaged?.value ?? await readMarkdownFile(file);
+      if (!sameDocument(importingDocument)) return;
       const extracted = extractedConversionMarkdown(original);
       const source = extracted ?? original;
       if (!reloadOriginal && onBeforeImport && !await onBeforeImport()) return;
+      if (!sameDocument(importingDocument)) return;
       replaceAssets(packaged?.files ?? []);
       const name = extracted !== null ? conversionCopyName(importedName, existingFileNames) : importedName;
       blockFromReading.current=false;setReadingEditable(false);
       if (!reloadOriginal) setMode('read');
+      if (!reloadOriginal) {whiteboardSource.current.read(source);setSelectedBoard(0);setMode(whiteboardSource.current.standalone ? 'whiteboard' : 'read');setReadingActionsOpen(false);}
       onChange(source); onFileNameChange(name); setBaseline(source); setDocumentId(id => id + 1);
       await onImport?.(source, name, reloadOriginal);
+      if (!mounted.current) return;
+      if (!reloadOriginal) requestAnimationFrame(() => { if(mounted.current && pages.current)pages.current.scrollTop=0; });
       if (extracted !== null) setCopyNotice(t("Conteúdo Markdown extraído do JSON. O arquivo original foi preservado; a cópia usa outro nome."));
       blockFromReading.current=false;
       setReadingEditable(false);
-      if (!reloadOriginal) {whiteboardSource.current.read(source);setSelectedBoard(0);setMode(whiteboardSource.current.standalone ? 'whiteboard' : 'read');setReadingActionsOpen(false);}
     } catch (cause) {
-      setError(cause instanceof Error ? t(cause.message) : t("Não foi possível abrir o arquivo."));
-    } finally { setBusy(false); setOpeningFile(false); }
+      if (sameDocument(importingDocument)) setError(cause instanceof Error ? t(cause.message) : t("Não foi possível abrir o arquivo."));
+    } finally { if (mounted.current) {setBusy(false); setOpeningFile(false);} }
   }
 
   function command(action: MarkdownCommand) {
@@ -392,11 +441,11 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
     if (next !== value) onChange(next);
   }
   async function selectFormat(format: 'note' | 'whiteboard') {
-    if (busy || readOnly) return;
+    if (busy || readOnly) return false;
     const snapshot = documentContext.current;
     const applied = mode !== 'whiteboard' || format !== 'note' || !whiteboard.current || await whiteboard.current.flush();
-    if (!sameDocument(snapshot)) return;
-    if (!applied && !window.confirm(t("Há alterações no quadro que não puderam ser aplicadas. Voltar à nota e descartar essas alterações do quadro?"))) return;
+    if (!sameDocument(snapshot)) return false;
+    if (!applied && !window.confirm(t("Há alterações no quadro que não puderam ser aplicadas. Voltar à nota e descartar essas alterações do quadro?"))) return false;
     if (format === 'whiteboard') {
       const current = whiteboardSource.current.read(value);
       if (!current.length) { onChange(whiteboardSource.current.append()); setSelectedBoard(0); }
@@ -404,6 +453,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
     }
     blockFromReading.current = false; setReadingEditable(format === 'note' && mode === 'whiteboard'); setWriteAfterBoard(format === 'note' && mode === 'whiteboard' ? selectedBoard : undefined); setOutlineOpen(false); setReadingActionsOpen(false);
     setMode(format === 'whiteboard' ? 'whiteboard' : 'read');
+    return true;
   }
   async function selectWhiteboard(index: number) {
     const snapshot = documentContext.current;
@@ -502,7 +552,51 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
     const top = viewport.getBoundingClientRect().top + 36;
     return headings.filter(heading => { const element = headingElement(heading); return element && element.getClientRects().length > 0 && element.getBoundingClientRect().top <= top; }).at(-1)?.id;
   }
-  return <section ref={workbench} className={`${styles.workbench} ${compact ? styles.compact : ""}`} data-mode={mode} data-reading-editable={readingEditable} data-mobile-formatting={mobileFormattingOpen} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label={t("Bancada Markdown")} aria-busy={busy}>{openingFile && <DocumentLoading label={t("Abrindo documento…")}/>}{compact && <div data-ui="toolbar" className={styles.mobileReadingBar}><button type="button" aria-label={t("Voltar às notas")} onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><button className={styles.mobileDocumentFormat} type="button" disabled={readOnly||busy} aria-label={mode==='whiteboard'?t("Voltar à nota"):t("Abrir whiteboard")} onClick={()=>void selectFormat(mode==='whiteboard'?'note':'whiteboard')}>{mode==='whiteboard'?<FileText size={18}/>:<PenTool size={18}/>}<span>{mode==='whiteboard'?t("Nota"):t("Whiteboard")}</span></button><div>{mode !== 'whiteboard' && <button className={styles.formattingToggle} type="button" disabled={readOnly||busy} aria-label={t('Formatação')} aria-expanded={formattingOpen} onClick={()=>{setFormattingOpen(open=>!open);if(!readingEditable)startVisualEditing();}}><span><b>B</b><i>I</i><u>U</u></span></button>}<button type="button" aria-label={t('Informações da nota')} aria-expanded={noteInfoOpen} onClick={()=>setNoteInfoOpen(open=>!open)}><Info size={20}/></button>{mode!=='whiteboard'&&<button type="button" aria-label={outlineOpen?t('Ocultar outline'):t('Mostrar outline')} title={t('Índice da nota')} aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event=>toggleOutline(event.currentTarget)}><ListTree size={20}/></button>}<button type="button" aria-label={t("Mais opções da nota")} aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}{saveCopyName !== null && <EditorDialog title={t("Salvar uma cópia")} onClose={() => setSaveCopyName(null)}><p>{t("Este navegador não permite manter acesso direto a um arquivo escolhido. Baixe ou compartilhe uma cópia e escolha onde guardá-la. A nota aberta continua no destino atual.")}</p>{assets.length > 0 && <p>{t("O arquivo ZIP leva o Markdown e suas imagens juntos.")}</p>}<form className={styles.saveCopyForm} onSubmit={event => {event.preventDefault();event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();void exportCopy();}}><label>{t("Nome da cópia")}<input autoFocus required value={saveCopyName} onChange={event => setSaveCopyName(event.target.value)}/></label><footer><button type="button" onClick={() => setSaveCopyName(null)}>{t("Cancelar")}</button><button type="submit">{isIosApp ? t("Compartilhar cópia") : t("Baixar cópia")}</button></footer></form></EditorDialog>}{readingActionsOpen && <EditorDialog title={t('Mais opções da nota')} className={styles.mobileMenu} variant="menu" dismissOnOutside onClose={()=>setReadingActionsOpen(false)}><div role="menu" aria-label={t('Mais opções da nota')} onClickCapture={event=>{if((event.target as Element).closest('button'))event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();}}>
+  useNativeWorkspaceCommands(id => {
+    if (!nativeChromeActive || readOnly || busy || document.querySelector('dialog[open]')) return;
+    if (id === 'notes' && mode === 'split') changeMode('read');
+    else if (id === 'edit') {
+      if (mode === 'whiteboard') void selectFormat('note');
+      else if (readingEditable || mode !== 'read') { changeMode('read'); setFormattingOpen(false); (document.activeElement as HTMLElement)?.blur?.(); }
+      else startVisualEditing();
+    } else if (id.startsWith('mode:')) {
+      const selected = id.slice(5);
+      if (selected === 'whiteboard') void selectFormat('whiteboard');
+      else if (['live','read','source','split','blocks'].includes(selected)) {
+        const snapshot=documentContext.current;
+        const apply=()=>{if(selected==='live')startVisualEditing();else changeMode(selected==='blocks'?'live':selected as MarkdownMode);};
+        if (mode === 'whiteboard') void selectFormat('note').then(applied => {if(applied && sameDocument(snapshot))apply();});
+        else apply();
+      }
+    } else if (id === 'outline') setOutlineOpen(open => !open);
+    else if (id === 'info') setNoteInfoOpen(true);
+    else if (id === 'formatting') { setFormattingOpen(open => !open); if (!readingEditable) startVisualEditing(); }
+    else if (id === 'export:pdf') void exportPdf();
+    else if (id === 'export:markdown') { if (assets.length) void downloadPackage(); else downloadMarkdown(value,fileName); }
+    else if (id === 'save-as') void saveAs();
+    else if (id === 'rename') void requestRename();
+    else if (id === 'duplicate') void onDuplicate?.();
+  });
+  const nativeCommand = (id: string, title: string, symbol: string, extra: Partial<NativeWorkspaceCommand> = {}): NativeWorkspaceCommand => ({id,title,symbol,enabled:!readOnly && !busy,...extra});
+  const nativeLibraryCommand=nativeCommand('notes',nativeLibraryOpen?t('Ocultar notas recentes'):t('Notas recentes'),'sidebar.left',{priority:'high',selected:nativeLibraryOpen});
+  const nativeEditCommand=nativeCommand('edit',mode==='whiteboard'?t('Voltar à nota'):readingEditable || mode!=='read'?t('Concluir'):t('Editar'),mode==='whiteboard'?'doc.text':readingEditable || mode!=='read'?'checkmark':'pencil',{priority:'high'});
+  const nativeChrome = JSON.stringify({
+    title: fileName.split('/').at(-1) || fileName,
+    // A compact vertical bar retains its first action when the keyboard compresses it.
+    navigation: readingEditable || mode!=='read' ? [nativeEditCommand,nativeLibraryCommand] : [nativeLibraryCommand,nativeEditCommand],
+    toolbar: [
+      nativeCommand('new',t('Nova nota'),'square.and.pencil',{priority:'high'}),nativeCommand('open',t('Abrir .md / ZIP'),'folder'),
+      nativeCommand('view',t('Modo de edição'),'rectangle.split.2x1',{priority:'high',children:[...modes.map(([key,label])=>nativeCommand(`mode:${key}`,label,key==='live'?'pencil':key==='source'?'chevron.left.forwardslash.chevron.right':key==='split'?'rectangle.split.2x1':'book',{selected:key==='live'?readingEditable:mode===key&&!readingEditable})),nativeCommand('mode:blocks',t('Blocos'),'square.dashed',{selected:mode==='live'&&!readingEditable}),nativeCommand('mode:whiteboard',t('Whiteboard'),'pencil.tip.crop.circle',{selected:mode==='whiteboard'})]}),
+      nativeCommand('outline',t('Índice da nota'),'list.bullet.indent',{enabled:mode!=='whiteboard'&&!busy,selected:outlineOpen}),
+      nativeCommand('export',t('Exportar'),'square.and.arrow.up',{children:[nativeCommand('export:markdown',t('Markdown (.md)'),'doc.text'),nativeCommand('export:pdf',t('PDF (.pdf)'),'doc.richtext'),...(onSaveAs?[nativeCommand('save-as',t('Salvar como…'),'externaldrive')]:[])]}),
+      nativeCommand('save',t('Salvar nota'),'square.and.arrow.down',{priority:'high'})
+    ],
+    overflow: [nativeCommand('info',t('Informações da nota'),'info.circle'),nativeCommand('formatting',t('Formatação'),'textformat',{enabled:mode!=='whiteboard'&&!readOnly&&!busy,selected:formattingOpen}),nativeCommand('reload',nativeReloadLabel || t('Recarregar nota'),'arrow.clockwise',{enabled:nativeReloadEnabled&&!readOnly&&!busy}),...(onRename?[nativeCommand('rename',t('Renomear arquivo'),'pencil.line')]:[]),...(onDuplicate?[nativeCommand('duplicate',t('Criar uma cópia'),'doc.on.doc')]:[]),nativeCommand('theme',t('Aparência'),'circle.lefthalf.filled'),nativeCommand('settings',t('Configurações'),'gearshape'),nativeCommand('close',t('Fechar nota'),'xmark')]
+  });
+  useEffect(() => {
+    if (nativeWorkspace.nativeChrome && nativeChromeActive) void iosBridge.workspaceChrome(JSON.parse(nativeChrome)).catch(() => {});
+  }, [nativeWorkspace.nativeChrome, nativeChromeActive, nativeChrome]);
+  return <section ref={workbench} data-markdown-workbench className={`${styles.workbench} ${compact ? styles.compact : ""}`} data-mode={mode} data-reading-editable={readingEditable} data-mobile-formatting={mobileFormattingOpen} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label={t("Bancada Markdown")} aria-busy={busy}>{openingFile && <DocumentLoading label={t("Abrindo documento…")}/>}{compact && <div data-ui="toolbar" className={styles.mobileReadingBar}><button type="button" aria-label={t("Voltar às notas")} onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><button className={styles.mobileDocumentFormat} type="button" disabled={readOnly||busy} aria-label={mode==='whiteboard'?t("Voltar à nota"):t("Abrir whiteboard")} onClick={()=>void selectFormat(mode==='whiteboard'?'note':'whiteboard')}>{mode==='whiteboard'?<FileText size={18}/>:<PenTool size={18}/>}<span>{mode==='whiteboard'?t("Nota"):t("Whiteboard")}</span></button><div>{mode !== 'whiteboard' && <button className={styles.formattingToggle} type="button" disabled={readOnly||busy} aria-label={t('Formatação')} aria-expanded={formattingOpen} onClick={()=>{setFormattingOpen(open=>!open);if(!readingEditable)startVisualEditing();}}><span><b>B</b><i>I</i><u>U</u></span></button>}<button type="button" aria-label={t('Informações da nota')} aria-expanded={noteInfoOpen} onClick={()=>setNoteInfoOpen(open=>!open)}><Info size={20}/></button>{mode!=='whiteboard'&&<button type="button" aria-label={outlineOpen?t('Ocultar outline'):t('Mostrar outline')} title={t('Índice da nota')} aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event=>toggleOutline(event.currentTarget)}><ListTree size={20}/></button>}<button type="button" aria-label={t("Mais opções da nota")} aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}{saveCopyName !== null && <EditorDialog title={t("Salvar uma cópia")} onClose={() => setSaveCopyName(null)}><p>{t("Este navegador não permite manter acesso direto a um arquivo escolhido. Baixe ou compartilhe uma cópia e escolha onde guardá-la. A nota aberta continua no destino atual.")}</p>{assets.length > 0 && <p>{t("O arquivo ZIP leva o Markdown e suas imagens juntos.")}</p>}<form className={styles.saveCopyForm} onSubmit={event => {event.preventDefault();event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();void exportCopy();}}><label>{t("Nome da cópia")}<input autoFocus required value={saveCopyName} onChange={event => setSaveCopyName(event.target.value)}/></label><footer><button type="button" onClick={() => setSaveCopyName(null)}>{t("Cancelar")}</button><button type="submit">{isIosApp ? t("Compartilhar cópia") : t("Baixar cópia")}</button></footer></form></EditorDialog>}{readingActionsOpen && <EditorDialog title={t('Mais opções da nota')} className={styles.mobileMenu} variant="menu" dismissOnOutside onClose={()=>setReadingActionsOpen(false)}><div role="menu" aria-label={t('Mais opções da nota')} onClickCapture={event=>{if((event.target as Element).closest('button'))event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();}}>
       {mode !== 'whiteboard' && <div className={styles.contextSection}>{modes.map(([key,label,Icon])=><button role="menuitemradio" type="button" key={key} aria-checked={key==='live'?readingEditable:mode===key&&!readingEditable} onClick={()=>{setReadingActionsOpen(false);if(key==='live')startVisualEditing();else changeMode(key);}}><Icon size={18}/><span>{label}</span>{(key==='live'?readingEditable:mode===key&&!readingEditable)&&<Check size={16}/>}</button>)}<button role="menuitemradio" type="button" aria-checked={mode==='live'&&!readingEditable} onClick={()=>{setReadingActionsOpen(false);changeMode('live');}}><SquareCode size={18}/>{t('Blocos')}{mode==='live'&&!readingEditable&&<Check size={16}/>}</button></div>}
       <div className={styles.contextSection}><div className={styles.contextCommands} onClick={event=>{if((event.target as Element).closest('button'))setReadingActionsOpen(false);}}>{actions}{saveAction}</div>
       {onSaveAs && <button role="menuitem" type="button" disabled={readOnly||busy} onClick={()=>{setReadingActionsOpen(false);void saveAs();}}><SaveAll size={18}/>{t('Salvar como…')}</button>}
@@ -533,7 +627,7 @@ export function MarkdownWorkbench({ ref, value, onChange, fileName, existingFile
         if (marker) editor.current?.replace(marker[2] === ' ' ? 'x' : ' ', { from: range.from + marker[1].length, to: range.from + marker[1].length + 1 });
       } : undefined} onChangeDiagram={!readOnly && !busy ? (range, source) => {
         onChange(value.slice(0, range.from) + replaceExcalidrawFence(value.slice(range.from, range.to), source) + value.slice(range.to));
-      } : undefined}/>}</div>{mode === 'whiteboard' && <Suspense fallback={<p role="status" className={styles.whiteboardLoading}>{t("Carregando Whiteboard…")}</p>}><WhiteboardEditor key={`${diagramScope}:${documentId}:${selectedBoard}`} ref={whiteboard} source={boards[selectedBoard]?.source || EMPTY_EXCALIDRAW} disabled={readOnly || busy} onChange={updateWhiteboard} onCount={count => setBoardCount(current => current === count ? current : count)} onSave={onSave} onOpen={() => chooseFile()} onClose={onClose} navigation={<><label className={styles.boardPicker}><span>{t("Quadro")}</span><select aria-label={t("Quadro da nota")} value={selectedBoard} disabled={readOnly || busy} onChange={event => { void selectWhiteboard(Number(event.target.value)); }}>{boards.map((board, index) => <option key={index} value={index}>{index + 1}{board.title ? ` · ${board.title}` : ""}</option>)}</select></label><button type="button" aria-label={t("Novo quadro")} title={t("Adicionar outro quadro à nota")} disabled={readOnly || busy} onClick={() => { void newWhiteboard(); }}><Plus size={17} aria-hidden="true"/></button></>}/></Suspense>}{mode !== 'whiteboard' && outlineOpen && <DocumentOutline collapsed={collapsedHeadings} onToggle={toggleHeading} onExpandAll={() => setCollapsedHeadings(new Set())} onCollapseAll={() => setCollapsedHeadings(collapsedOutlineIds(documentOutline(value)))} id={outlineId} source={value} scrollContainer={pages} viewKey={`${mode}:${readingEditable}`} currentHeading={currentHeading} onNavigate={navigateHeading} onClose={closeOutline}/>}</div><output className={styles.blockStatus} aria-live="polite">{activeBlock?t("Markdown do bloco em edição. Escape conclui; clique em outro bloco para continuar."):""}</output><footer className={styles.footer} aria-label={t("Estatísticas do documento")}>{mode === 'whiteboard' ? <span>{boardCount}{' '}{' '}{boardCount === 1 ? t("objeto") : t("objetos")}{' '}{t("· Quadro")}{' '}{selectedBoard + 1}{' '}{t("de")}{' '}{Math.max(1, boards.length)}</span> : <SelectionStatistics ref={statistics} container={pages} resetKey={`${mode}:${documentId}`} words={words} characters={value.length}/>}<span>{readOnly ? t("Somente leitura") : dirty ? t("Alterações nesta sessão") : t("Documento carregado")}</span><span>{t("UTF-8 · .md")}</span></footer>{linkRange && <EditorDialog title={t("Inserir link")} onClose={() => setLinkRange(null)}>{linkError && <p role="alert">{linkError}</p>}<form onSubmit={event => {
+      } : undefined}/>}</div>{mode === 'whiteboard' && <Suspense fallback={<p role="status" className={styles.whiteboardLoading}>{t("Carregando Whiteboard…")}</p>}><WhiteboardEditor key={`${diagramScope}:${documentId}:${selectedBoard}`} ref={whiteboard} source={boards[selectedBoard]?.source || EMPTY_EXCALIDRAW} disabled={readOnly || busy} onChange={updateWhiteboard} onCount={count => setBoardCount(current => current === count ? current : count)} onSave={onSave} onOpen={() => chooseFile()} onClose={onClose} navigation={<><label className={styles.boardPicker}><span>{t("Quadro")}</span><select aria-label={t("Quadro da nota")} value={selectedBoard} disabled={readOnly || busy} onChange={event => { void selectWhiteboard(Number(event.target.value)); }}>{boards.map((board, index) => <option key={index} value={index}>{index + 1}{board.title ? ` · ${board.title}` : ""}</option>)}</select></label><button type="button" aria-label={t("Novo quadro")} title={t("Adicionar outro quadro à nota")} disabled={readOnly || busy} onClick={() => { void newWhiteboard(); }}><Plus size={17} aria-hidden="true"/></button></>}/></Suspense>}{mode !== 'whiteboard' && outlineOpen && <DocumentOutline collapsed={collapsedHeadings} onToggle={toggleHeading} onExpandAll={() => setCollapsedHeadings(new Set())} onCollapseAll={() => setCollapsedHeadings(collapsedOutlineIds(documentOutline(value)))} id={outlineId} source={value} scrollContainer={pages} viewKey={`${mode}:${readingEditable}`} currentHeading={currentHeading} onNavigate={navigateHeading} onClose={closeOutline}/>}</div><output className={styles.blockStatus} aria-live="polite">{activeBlock?t("Markdown do bloco em edição. Escape conclui; clique em outro bloco para continuar."):""}</output><footer className={styles.footer} aria-label={t("Estatísticas do documento")}>{mode === 'whiteboard' ? <span>{boardCount}{' '}{' '}{boardCount === 1 ? t("objeto") : t("objetos")}{' '}{t("· Quadro")}{' '}{selectedBoard + 1}{' '}{t("de")}{' '}{Math.max(1, boards.length)}</span> : <SelectionStatistics ref={statistics} container={pages} resetKey={`${mode}:${documentId}`} words={words} characters={value.length}/>}<span className={styles.documentSaveStatus} role={nativeWorkspace.nativeChrome ? "status" : undefined}>{nativeWorkspace.nativeChrome && nativeDocumentStatus ? nativeDocumentStatus : readOnly ? t("Somente leitura") : dirty ? t("Alterações nesta sessão") : t("Documento carregado")}</span><span>{t("UTF-8 · .md")}</span></footer>{linkRange && <EditorDialog title={t("Inserir link")} onClose={() => setLinkRange(null)}>{linkError && <p role="alert">{linkError}</p>}<form onSubmit={event => {
         event.preventDefault();
         try {
           const url = new URL(linkUrl, 'https://local.invalid');

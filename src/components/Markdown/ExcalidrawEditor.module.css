@@ -61,4 +61,10 @@
 .canvasRoot .insertLibrary:disabled { background: var(--bg-subtle); color: var(--text-muted); cursor: default; }
 .canvasRoot .insertLibrary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
+/* Properties belong to the current drawing pane, including a folded or resized native view. */
+:global(html[data-native-chrome="true"]) .canvas { contain: layout; container-type: size; }
+:global(html[data-native-chrome="true"]) .canvas :global(.excalidraw--mobile.excalidraw [data-radix-popper-content-wrapper]:has(> .properties-content)) { width: calc(100% - 32px); bottom: min(100px,35cqh) !important; }
+:global(html[data-native-chrome="true"]) .canvas :global(.excalidraw--mobile.excalidraw .properties-content > .Island) { max-width: 100%; max-height: min(45cqh,280px); }
+:global(html[data-native-chrome="true"]) .canvas :global(.excalidraw--mobile.excalidraw .App-mobile-menu) { max-height: min(45cqh,280px); }
+
 .editor .actions button.importDrawing span { display: inline; }

@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "55e8bfa7f0abb024a8d4f41c848b1af44006bf04",
+  "sourceChanges": "CURRENT_PROJECT_VERSION only: 27 to 28",
+  "bundleId": "com.aeonbridge.scriba",
+  "version": "1.16.1",
+  "build": "28",
+  "teamId": "8C6F4R5M4J",
+  "archive": "artifacts/ios/Scriba-1.16.1-build28.xcarchive",
+  "bundledFiles": 957,
+  "bundleTreeSha256": "ec635d882e7893fbbfa330b5875300a3c72fce1e26a4aeb12f1f2d7663f27aaa",
+  "uploadStatus": "Pending Xcode sign-in",
+  "reviewStatus": "Not resubmitted yet",
+  "publicRelease": "manual"
+}

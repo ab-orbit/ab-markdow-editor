@@ -1,5 +1,36 @@
 import type { NativeUpdateInfo } from './appUpdates';
 import { Capacitor, registerPlugin } from '@capacitor/core';
+import type { PluginListenerHandle } from '@capacitor/core';
+
+export interface WorkspaceRect { x: number; y: number; width: number; height: number }
+/** Geometry belongs to the current view, never to a cached screen or a device model. */
+export interface NativeWorkspaceLayout {
+  nativeChrome: boolean;
+  width: number;
+  height: number;
+  verticalBarEdge: 'left' | 'right' | 'none';
+  posture: 'unavailable' | 'unknown' | 'closed' | 'partiallyOpen' | 'fullyOpen';
+  division?: WorkspaceRect;
+  occlusions: WorkspaceRect[];
+  keyboardVisible: boolean;
+  textScale: number;
+}
+/** UIKit owns placement, overflow and accessibility; the document owns command behavior. */
+export interface NativeWorkspaceCommand {
+  id: string;
+  title: string;
+  symbol: string;
+  enabled?: boolean;
+  selected?: boolean;
+  priority?: 'high' | 'standard' | 'low';
+  children?: NativeWorkspaceCommand[];
+}
+export interface NativeWorkspaceChrome {
+  title: string;
+  navigation: NativeWorkspaceCommand[];
+  toolbar: NativeWorkspaceCommand[];
+  overflow: NativeWorkspaceCommand[];
+}
 
 /** The native bridge is unavailable to ordinary web pages and never receives arbitrary URLs. */
 export const isIosApp = import.meta.env.VITE_APP_PLATFORM === 'ios' && Capacitor.isNativePlatform();
@@ -16,6 +47,12 @@ export interface NativeNote {
   files: { path: string; data: string; mime: string }[];
 }
 interface IosBridge {
+  workspaceLayout(): Promise<NativeWorkspaceLayout>;
+  workspaceChrome(options: NativeWorkspaceChrome): Promise<void>;
+  /** Native Files chooser is independent of browser gesture activation and never changes the library. */
+  openNote(): Promise<{name: string; data: string} | {cancelled: true}>;
+  addListener(event: 'workspaceLayout', listener: (layout: NativeWorkspaceLayout) => void): Promise<PluginListenerHandle>;
+  addListener(event: 'workspaceCommand', listener: (command: {id: string}) => void): Promise<PluginListenerHandle>;
   /** Accessibility material preferences come from UIKit, including WebKit's missing media query. */
   accessibilityPreferences(): Promise<{reduceTransparency: boolean; increaseContrast: boolean}>;
   /** Fixed-origin update lookup; no notes, credentials or device identifiers are sent. */
