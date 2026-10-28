@@ -1,0 +1,34 @@
+Scriba 1.17.0 (29) — iPhone Duo adaptation and business-model clarification
+
+This build adds an adaptive iPhone Duo workspace while retaining the same private Markdown documents, editor and save destinations. The native UIKit navigation and toolbars follow the system's horizontal/vertical placement and overflow. The library and document use the actual available regions: side by side when open, separated across an active vertical fold, or document above/library below for a horizontal fold. Source/preview can use the two regions. Reading position and the active document are preserved through posture changes; editing remains above the keyboard. Text follows Dynamic Type.
+
+Suggested review on iPhone Duo:
+1. Launch Scriba and open a bundled reference note. Core reading/editing requires no account or network connection.
+2. Open the library, move to a later heading using the outline, and change between the outer display, fully open inner display and partially open postures in portrait/landscape. The same note and reading section remain available.
+3. Choose Write, enter text, rotate/change posture with the keyboard present, then choose Done and Save. Source/preview, diagrams and an embedded Excalidraw whiteboard remain presentations of the same document.
+4. Open Settings or use Open to access Apple's Files interface. Canceling preserves the current document. Save As and export use native system interfaces.
+
+Validation for this build used the iPhone Duo/iOS 27.1 simulator with actual Device Hub posture controls, native keyboard and touch interaction, plus an iPad Air/iOS 18.6 keyboard regression. This is simulator validation, not physical-device validation of build 29. Active inner-camera and cross-app Split View sessions were not exercised; multiwindow document editing is not enabled.
+
+Guideline 2.1(b) — answers retained from our previous response:
+
+1. Who uses paid subscriptions or features?
+Nobody. Scriba is completely free in this version. There are no paid subscribers, premium users or paid features. It is a general-purpose Markdown editor for students, writers, researchers and professionals.
+
+2. Where can users purchase subscriptions or features accessible in the app?
+Nowhere. No subscription, in-app purchase, external purchasing mechanism or other monetization is implemented for Scriba features.
+
+3. Which previously purchased subscriptions or features can users access?
+None. There are no previously purchased Scriba subscriptions, paid content or premium entitlements.
+
+4. What paid content, subscriptions or features are unlocked without In-App Purchase?
+None. Markdown editing, document management, mathematical formulas, diagrams, Excalidraw drawings, import/export and optional GitHub integration are all accessible without payment. GitHub accesses documents in the user's own repository; it does not unlock paid Scriba content.
+
+No Scriba account, registration or sign-in is required. The editor, renderers, fonts and reference notes are bundled for offline use; the app does not load the production website as its application shell. GitHub authorization is optional, accesses the user's repository and is not a Scriba identity account. Synchronization operates while the app is open and connected. Settings offers Apple's Files folder picker. Notes remain private on the device until the user chooses an external destination.
+
+Users manage their own documents and drawings. There is no public feed, media catalog, advertising, AI service or remote executable code update. Optional GitHub and Files providers depend on availability and user permissions.
+
+The owner-provided recording already attached to the October 22 correspondence, Scriba-1.16.1-review-physical-iPhone.mp4, shows an iPhone 17 Pro Max/iOS 26.3 launch and workflow. It is the previously supplied recording, not footage of this Duo revision or build 29.
+
+Thank you for reviewing Scriba.
+Aeon Bridge Co.

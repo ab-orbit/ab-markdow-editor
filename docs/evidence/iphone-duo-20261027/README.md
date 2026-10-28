@@ -1,5 +1,7 @@
 # Scriba 1.17.0 (29) — revisão para iPhone Duo
 
+> **Atualização de 28/10:** o usuário aprovou a submissão desta candidata. O mesmo build **1.17.0 (29)** foi enviado e está **Waiting for Review**, desde 07:37 Recife, com liberação pública manual. [Comprovante e notas enviadas](../../app-store/submission-20261028/README.md). As restrições de autorização abaixo registram a condição vigente durante a preparação e foram superadas por essa aprovação explícita.
+
 Esta é uma versão candidata local para avaliação do usuário. **Não autoriza envio, substituição de build ou nova submissão no App Store Connect.** A submissão 1.16.1 (27) permanece separada. O build 28 também não deve ser selecionado automaticamente.
 
 ## Direção e critérios

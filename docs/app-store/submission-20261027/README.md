@@ -2,6 +2,8 @@
 
 > Later owner instruction: prepare a separate iPhone Duo revision and wait for the owner's approval before any new submission. The current local candidate is **1.17.0 (29)**. The historical “Remaining UI action” below must not be executed automatically. [Duo review and simulator evidence](../../evidence/iphone-duo-20261027/README.md).
 
+> **October 28 update:** the owner approved the Duo submission. Build 27 was withdrawn and **1.17.0 (29)** was uploaded, validated and submitted at 07:37 Recife. It is Waiting for Review with manual release. Build 28 was not selected; the historical continuation instructions below are superseded. [Current receipt](../submission-20261028/README.md).
+
 ## Verified result
 
 **Scriba 1.16.1 (27) was resubmitted at 20:23 Recife (23:23 UTC).** Both the submission and its app-version item show **Waiting for Review**. Public release remains **manual**; this is not approval or publication.
