@@ -52,7 +52,7 @@ Os nomes e assinaturas de UIHingeInteraction, ReservedRegion, verticalBarEdge e 
 
 ## Evidências e validação
 
-Geometria de scene redimensionada **não equivale** à simulação da dobradiça. Posturas reais precisam dos controles do Device Hub. O Mac permaneceu bloqueado durante a revisão; o controle interativo dessas posturas não ficou disponível. **A candidata está preparada para avaliação, mas a validação completa da dobradiça não está concluída.**
+**A revisão das posturas reais foi concluída após o desbloqueio do Mac.** Os controles oficiais do Device Hub acionaram a tela externa, a tela interna aberta e a dobra parcial, nas duas orientações. A sessão hospedada registrou os valores reais de `workspaceLayout`, sem fabricar a geometria. Geometria de scene redimensionada continua sendo evidência complementar; não é apresentada como dobradiça.
 
 ### Resultados confirmados
 
@@ -61,23 +61,30 @@ Geometria de scene redimensionada **não equivale** à simulação da dobradiça
 | Node/HTTP, incluindo sincronização, conflitos e segurança de arquivos | **95 passaram, 0 falhas** | [Saída completa](node-http-tests.txt) |
 | WKWebView real: abertura, persistência, restauração, arquivos, conflito, renomeação, diagramas, canvas e interfaces do sistema | **8 passaram, 0 falhas** no Duo/iOS 27.1 | [Resultado Xcode](native-hosted-result.json) |
 | Janela nativa 480×700 → 950×650 → 650×940 → 480×700 | **Passou**: mesma instância WKWebView, mesmo documento e parágrafo de leitura preservado a menos de 32 pontos do topo; fonte/leitura mantêm o conteúdo | [Resultado Xcode](native-resize-result.json) · [Geometria recebida](duo-resize-results.json) |
-| Interface nativa na tela externa | **Passou**: criar, digitar, manter o editor acima do teclado, concluir, salvar, abrir Files e cancelar preservando o texto | [Resultado Xcode](native-ui-result.json) |
+| Posturas reais e continuidade | **Passou**: dez capturas finais, mesma instância WKWebView, dobra real de 40 pontos, biblioteca adaptada e seção escolhida no índice preservada a menos de 1 ponto do topo após as transições | [Resultado Xcode](native-real-posture-result.json) · [Geometria real](duo-posture-results.json) |
+| Interface nativa do Duo | **Passou**: criar, digitar, manter o editor acima do teclado, concluir, salvar, abrir Files e cancelar preservando o texto | [Resultado Xcode](native-ui-result.json) |
+| Gesto de toque em uma região útil | **Passou**: a página de configurações continua rolando internamente com a página externa imóvel | [Resultado Xcode](native-touch-scroll-result.json) |
+| Regressão da âncora de leitura | **Passou**: quatro refluxos no WebKit, incluindo scroll recebido antes de ResizeObserver e foco no título escolhido pelo índice | `node tests/reading-continuity.smoke.mjs` |
 | iPad Air 11 / iOS 18.6 | **Passou**: digitação e área de edição acima do teclado em retrato e paisagem | [Resultado Xcode](ipad-keyboard-result.json) |
 | WebKit em 390×844, 844×390, 768×1024, 1024×768 e 1440×900 | **Passou**: ambos os temas, tabela com navegação horizontal, ausência de overflow da página, fonte/leitura/escrita, commit de texto ativo do whiteboard e proteção contra importação obsoleta | [Resultados](browser-regression.json) |
 | Fixture de região reservada no CSS | **Passou**: configurações, biblioteca sobreposta e aviso ficam na área designada; editor oculto não reaparece como grade | [Captura da fixture](browser-reserved-region-css-fixture.png), **não é uma postura real do simulador** |
 | TypeScript, idiomas e assinatura | TypeScript sem erros; **911 chaves** em en/de/fr com placeholders válidos; assinatura do archive verificada | [Archive candidato](archive-candidate.json) |
 
-Não houve nova validação em aparelho físico. O teste de interface pediu mudança de orientação na tela externa; essa captura não é apresentada como uma tela interna em paisagem. O iPad tem a verificação própria de retrato/paisagem acima.
+A validação é de simulador. A sessão real do Device Hub também confirmou escrita com teclado na dobra parcial em retrato e paisagem, Dynamic Type em escala 1,82, índice contido na região útil, diagramas Pele, fonte/prévia nos dois lados da dobra e configurações em uma só região. O primeiro percurso verificou desenho e persistência do mesmo objeto no whiteboard entre as três posturas. O iPad/iOS 18.6 foi testado novamente após a correção do viewport.
 
-### Capturas da revisão
+### Capturas da revisão final
 
-![Biblioteca e tabela na janela nativa ampla](duo-library-table-overview.png)
+![Tela interna aberta: biblioteca de 248 pontos e documento ao lado](duo-posture-final-03-open-library.png)
 
-![Escrita na tela externa com Concluir acessível e estado de salvamento](duo-native-writing-keyboard.png)
+![Dobra horizontal real: nota acima e biblioteca abaixo](duo-posture-final-07-anchor-partial-portrait.png)
 
-![Seletor Files nativo com barras adaptadas pelo sistema](duo-native-files-picker.png)
+![Fonte e prévia usam regiões separadas da dobra](duo-posture-final-09-source-preview.png)
 
-[Leitura após salvar](duo-native-reading-saved.png) · [Retorno à janela compacta no mesmo parágrafo](duo-resize-3.png) · [Teclado no iPad em paisagem](ipad-legacy-tablet-writing-landscape.png) · [Revisão visual, exceções do inspetor e correções](design-review.md).
+[Seção na tela externa](duo-posture-final-04-anchor-closed.png) · [Mesma seção na tela aberta](duo-posture-final-05-anchor-open.png) · [Mesma seção com dobra vertical](duo-posture-final-06-anchor-partial.png) · [Texto ampliado](duo-posture-final-08-dynamic-type.png) · [Escrita com teclado](duo-native-writing-keyboard.png) · [Rolagem por toque](duo-inner-settings-touch-scroll.png).
+
+As capturas `duo-posture-*` vêm da janela do aplicativo e não incluem a janela separada do teclado do sistema. Os testes de interface capturam o display ativo, incluindo as interfaces do sistema. Esses frames são brutos: o display interno pode aparecer invertido em relação à apresentação 3D do Device Hub. As capturas da janela UIKit acima têm leitura normal. A revisão inicial do whiteboard está em [dobra parcial](initial-posture-audit/duo-posture-13-partial-whiteboard.png), [aberto](initial-posture-audit/duo-posture-14-open-whiteboard.png) e [externo](initial-posture-audit/duo-posture-16-closed-portrait-whiteboard.png).
+
+[Revisão visual, exceções do inspetor e correções](design-review.md).
 
 ### Antes
 
@@ -89,6 +96,7 @@ Não houve nova validação em aparelho físico. O teste de interface pediu muda
 SCRIBA_IOS_BUILD_NUMBER=29 npm run ios:sync
 node scripts/test-duo-resize.mjs <UDID-do-simulador-Scriba-Duo>
 node --test tests/workspace-geometry.test.mjs
+node tests/reading-continuity.smoke.mjs
 npm test
 ```
 
@@ -96,9 +104,28 @@ O orquestrador usa apenas um simulador Duo isolado, verifica seu nome/tipo, roda
 
 Uma tentativa anterior de `appResize` pediu 480×620: o comando informou aceitação, mas a janela observada voltou a 465×667. Esse caso não foi contado como sucesso nem interpretado como postura da dobradiça. O ciclo confirmado retorna a 480×700 e verifica a continuidade de leitura. O primeiro teste de interface também encontrou “Concluir” no overflow com teclado; a ordem da ação foi corrigida e a execução seguinte passou. A coleta longa de diagnóstico desse primeiro teste foi interrompida depois de seu resultado de falha já estar registrado.
 
-### Ainda depende de validação interativa
+### Correções encontradas nas posturas reais
 
-- Tela interna totalmente aberta, tela externa e dobra parcial real, incluindo continuidade entre elas.
-- Split View à esquerda e à direita, com bordas do sistema e câmera ativa.
-- Escrita com teclado, outline, diagramas e whiteboard em cada postura.
-- Revisão visual final do usuário antes de qualquer nova submissão.
+1. **Navegação pelo índice:** o WebKit podia enviar scroll após o refluxo e antes de ResizeObserver, substituindo a âncora antiga por um bloco do novo layout. O hook ignora esse evento enquanto a geometria está pendente. O novo teste falhava antes da correção e passou depois; o percurso real confirmou a mesma seção entre externo, aberto e parcialmente dobrado.
+2. **Rotação com teclado:** o WKWebView externo se deslocava 91 pontos para tentar seguir o cursor, embora a nota já possua seu próprio contêiner de rolagem. O wrapper usa a opção pública `ios.scrollEnabled=false` do Capacitor. O offset externo permaneceu zero na repetição; um teste de gesto confirmou que as configurações continuam rolando internamente.
+
+Os dados do diagnóstico anterior estão em [geometria inicial](initial-posture-audit/duo-posture-results.json) e [diagnóstico de viewport](initial-posture-audit/duo-posture-diagnostic.json). Duas primeiras tentativas do novo teste de gesto não chegaram ao gesto: corrigiu-se a preparação da página e a identificação do botão nativo de overflow. A execução final passou. Nenhum desses resultados antigos substitui a evidência final.
+
+### Como repetir as posturas reais
+
+Inicie `ScribaTests/testDuoRealPostureSession` no simulador QA. Use os botões **Closed**, **Partially Open**, **Open** e o menu de orientação do Device Hub. Após estabilizar cada postura, registre:
+
+```sh
+node scripts/capture-duo-posture.mjs <UDID-QA> <rotulo> closed
+node scripts/capture-duo-posture.mjs <UDID-QA> <rotulo> partiallyOpen
+node scripts/capture-duo-posture.mjs <UDID-QA> <rotulo> fullyOpen
+node scripts/capture-duo-posture.mjs <UDID-QA> finish
+```
+
+O teste confirma as três posturas, ausência de overflow, mesma instância WKWebView e viewport externo imóvel. Um quarto argumento opcional confere o prefixo da seção que deve permanecer no topo. O script só aceita um simulador isolado com nome `Scriba Duo…`; não aciona a dobradiça por APIs privadas.
+
+### Limites e decisão do usuário
+
+Split View entre aplicativos à esquerda/direita e câmera interna ativa não foram exercitados como sessões próprias. O redimensionamento nativo e os testes de regiões reservadas complementam a cobertura, sem serem apresentados como esses cenários. O Scriba não depende de câmera para ler ou editar.
+
+**A candidata 1.17.0 (29) está pronta para a avaliação do usuário no simulador.** A aprovação para upload ou nova submissão continua exclusivamente com o usuário; nenhuma ação foi realizada no App Store Connect durante esta revisão.

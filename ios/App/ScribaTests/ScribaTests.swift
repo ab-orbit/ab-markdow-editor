@@ -45,6 +45,78 @@ final class ScribaTests: XCTestCase {
         try await js("return await window.Capacitor.nativePromise('ScribaNative',method,options)", args: ["method": method,"options":args])
     }
 
+    /** Passive session: real hinge and rotation actions are performed in Device Hub.
+        The file handshake records observations; it never fabricates UIKit geometry. */
+    func testDuoRealPostureSession() async throws {
+        guard #available(iOS 27.1, *) else { throw XCTSkip("Requires iPhone Duo reserved regions.") }
+        executionTimeAllowance = 1_200
+        let originalWeb = web
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let commandURL = directory.appendingPathComponent("duo-posture-command.json")
+        let resultURL = directory.appendingPathComponent("duo-posture-results.json")
+        let readyURL = directory.appendingPathComponent("duo-posture-ready.json")
+        try? FileManager.default.removeItem(at: commandURL)
+        defer { try? FileManager.default.removeItem(at: readyURL) }
+        var snapshots = [[String: Any]]()
+        var lastID = ""
+        var finished = false
+        try JSONSerialization.data(withJSONObject: ["ready": true]).write(to: readyURL, options: .atomic)
+        for _ in 0..<10_000 {
+            if let data = try? Data(contentsOf: commandURL),
+               let command = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let id = command["id"] as? String, id != lastID {
+                lastID = id
+                if command["finish"] as? Bool == true { finished = true; break }
+                let label = (command["label"] as? String ?? id).replacingOccurrences(of: "/", with: "-")
+                let layout = try await native("workspaceLayout") as! [String: Any]
+                if let expected = command["expectPosture"] as? String {
+                    XCTAssertEqual(layout["posture"] as? String, expected, label)
+                }
+                XCTAssertTrue(web === originalWeb, "A posture change must preserve the WKWebView.")
+                let metrics = try await js("""
+                    const rect=element=>{if(!element)return null;const r=element.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
+                    const root=document.querySelector('[data-document-scroll]');
+                    const workbench=document.querySelector('[data-markdown-workbench]');
+                    const anchor=root&&[...root.querySelectorAll('h1,h2,h3,p,table,figure')].find(item=>item.getBoundingClientRect().bottom>root.getBoundingClientRect().top+8);
+                    return {width:innerWidth,height:innerHeight,pageOverflow:document.documentElement.scrollWidth>innerWidth+1,
+                        arrangement:document.querySelector('.editor-app')?.dataset.workspaceArrangement,
+                        mode:workbench?.dataset.mode,workbench:rect(workbench),library:rect(document.querySelector('#recent-notes')),
+                        outline:rect(document.querySelector('[aria-label="Índice da nota"]')),
+                        reading:rect(root),scrollTop:root?.scrollTop,anchor:anchor?.textContent?.slice(0,160),anchorTop:anchor&&root?anchor.getBoundingClientRect().top-root.getBoundingClientRect().top:null,
+                        title:document.querySelector('article h1')?.textContent,sourceLength:document.querySelector('.cm-content')?.textContent?.length,
+                        nativeChrome:document.documentElement.dataset.nativeChrome,
+                        focusedTag:document.activeElement?.tagName,
+                        viewport:{offsetTop:visualViewport?.offsetTop,height:visualViewport?.height,scrollY},
+                        sourceAnchors:root?.querySelectorAll('[data-source-from][data-source-to]').length,
+                        richText:rect(document.querySelector('[role="textbox"][aria-label="Texto da nota"]')),
+                        tables:[...document.querySelectorAll('article table')].map(table=>({width:table.scrollWidth,viewport:table.parentElement.clientWidth}))};
+                    """) as! [String: Any]
+                XCTAssertEqual(metrics["pageOverflow"] as? Bool, false, label)
+                if let prefix = command["anchorPrefix"] as? String {
+                    XCTAssertTrue((metrics["anchor"] as? String ?? "").hasPrefix(prefix), "The same section must stay at the reading position: " + label)
+                    XCTAssertLessThan(abs(metrics["anchorTop"] as? Double ?? .infinity), 32, "The outline's section must remain visible at the top: " + label)
+                }
+                let workspaceRect = metrics["workbench"] as? [String: Any]
+                XCTAssertGreaterThanOrEqual(workspaceRect?["y"] as? Double ?? 0, -2, "The keyboard must not pan the entire editor above its native viewport: " + label)
+                XCTAssertLessThan(abs(web.scrollView.contentOffset.y), 2, "Only inner document panes may scroll: " + label)
+                var snapshot: [String: Any] = ["label":label,"native":layout,"web":metrics,"sameWebView":web === originalWeb,
+                    "webScrollOffset":["x":web.scrollView.contentOffset.x,"y":web.scrollView.contentOffset.y],
+                    "webFrame":["x":web.frame.minX,"y":web.frame.minY,"width":web.frame.width,"height":web.frame.height]]
+                if let scene = web.window?.windowScene { snapshot["orientation"] = scene.interfaceOrientation.rawValue }
+                snapshots.append(snapshot)
+                if let window = web.window {
+                    let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in window.drawHierarchy(in: window.bounds, afterScreenUpdates: true) }
+                    try image.pngData()?.write(to: directory.appendingPathComponent("duo-posture-\(label).png"))
+                    let attachment = XCTAttachment(image: image); attachment.name = label; attachment.lifetime = .keepAlways; add(attachment)
+                }
+                try JSONSerialization.data(withJSONObject:snapshots,options:[.prettyPrinted,.sortedKeys]).write(to:resultURL,options:.atomic)
+            }
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        XCTAssertTrue(finished,"Finish the passive session through its documented file handshake.")
+        XCTAssertTrue(Set(snapshots.compactMap { ($0["native"] as? [String: Any])?["posture"] as? String }).isSuperset(of:["closed","partiallyOpen","fullyOpen"]),"Record all three actual Device Hub postures.")
+    }
+
     /** Run with scripts/test-duo-resize.mjs, which drives Apple's real appResize session. */
     func testDuoNativeWorkspaceResizing() async throws {
         guard #available(iOS 27.1, *) else { throw XCTSkip("Requires the native adaptive bars in iOS 27.1.") }

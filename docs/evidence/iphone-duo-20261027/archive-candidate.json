@@ -5,21 +5,22 @@
   "bundleId": "com.aeonbridge.scriba",
   "teamId": "8C6F4R5M4J",
   "archive": "artifacts/ios/Scriba-1.17.0-build29-candidate.xcarchive",
-  "preparationArchive": "/private/tmp/scriba-appstore-20261027/artifacts/ios/Scriba-1.17.0-build29-candidate-r3.xcarchive",
+  "preparationArchive": "/private/tmp/scriba-appstore-20261027/artifacts/ios/Scriba-1.17.0-build29-candidate-r4.xcarchive",
   "signatureVerified": true,
   "publicBundle": {
-    "sha256": "c0e8bc0efb9ae0e79b66f46c8f9505f5d0e321bb9e368cf8fe3b28a13091c386",
-    "files": 957
+    "sha256": "d17fcbb30f3a0458846779ad128ac1eb731cc4f14acff0923102c9768439dd7f",
+    "files": 957,
+    "algorithm": "SHA-256 of sorted relative UTF-8 path, NUL, file bytes, NUL"
   },
-  "nativeExecutableSha256": "c874557278fbe7d474bbc4e5f3d17561e9fe178777c89f58166a10de07b5a968",
+  "nativeExecutableSha256": "5d65336dbccd0e029f1102af04f43f1c682eb3f3ac70c1c0b0876a00fe5143c2",
   "sourceBaseCommit": "55e8bfa7f0abb024a8d4f41c848b1af44006bf04",
   "sourceBranch": "codex/iphone-duo-review",
   "sourceFilesSha256": {
     "ios/App/App.xcodeproj/project.pbxproj": "cd95f7e1e84dacf23b147b3fc61e248394808ee5ccca038ec2b5e2fe86531827",
     "ios/App/App/SceneDelegate.swift": "823bdd7f97048d0429f15176b3105abe7d6ec412dbddcedbdff4da3b7b528962",
     "ios/App/App/ScribaNative.swift": "73a69517c73270eaca14cfcbf593103cd96e365ab84bf84c48f962bc2af810a1",
-    "ios/App/ScribaTests/ScribaTests.swift": "c2da12de780e9f4b6954f7e7f140454dda3cee241ceabcd54e43edaa104b1984",
-    "ios/App/ScribaUITests/ScribaUITests.swift": "92c64e3587f793b2d2e255a1920e79a41f65b340dc726908fe3b5dcbee6ef07b",
+    "ios/App/ScribaTests/ScribaTests.swift": "86cdebcba4c3c14b7327bf806cdca5d4cbe656458b6fd3fe7767514042cb4dff",
+    "ios/App/ScribaUITests/ScribaUITests.swift": "09cc4388ee46ebf744a43c1b8592736128f710d88555d54af7f0b4e954d1cd30",
     "package-lock.json": "e8a164e565463c0873c94f293dea28366587939a02a32ce358c198f0527e2086",
     "package.json": "1111f25b0e99818ff501d3055eae67fbc13c67734e4a97746358a450a9f80d56",
     "scripts/test-duo-resize.mjs": "cde881bd4d4171fc93e7c28190bb94a1345eee545c9f11af92ca9da25bc5d022",
@@ -30,7 +31,7 @@
     "src/components/Markdown/MarkdownWorkbench.module.css": "e4daff45f3ea7339d5d5c6b4168f8f4bc799cd4f9485e29d87e8a4d86e6b98d5",
     "src/components/Markdown/MarkdownWorkbench.tsx": "a04dafd6cd1f7314fa6eadb8f97b08c0a888719bfec2203de22f2d5879ef3d8b",
     "src/components/Markdown/useFloatingMenu.ts": "83dd9433b44d63c7d65a67b345dd7307508aa194c3edd666a8ea5e7042fad269",
-    "src/components/Markdown/useReadingContinuity.ts": "a68b591e089dd969f01f3867558394997132f8d8b76cdd28f20e7a9d5db2dd47",
+    "src/components/Markdown/useReadingContinuity.ts": "34eb632ed184ffdc82adf764d05e7461ba04a3dde4610108375518fe5892e559",
     "src/i18n/de.json": "c24abbee7307f4aa00f4a51834c463b4181c2726085db9938ea21c3854e0ea82",
     "src/i18n/en.json": "243532cead8676e1d4118eb2f2291f2c8b657fe148967db5aae4a724547cc173",
     "src/i18n/fr.json": "4b804b44996702a0f67742106d023ba33bcc66a8e67309c23086391dce38be43",
@@ -42,9 +43,13 @@
     "src/style.css": "682ec232aa55b5bc9ab496bc3a47634e4f7d822af4c05770d79609baccf5e7a9",
     "src/ui.css": "96c9defae72188e555b71929d43fc00f594229f114545ef8502bbdd93148371f",
     "tests/duo-workspace.smoke.mjs": "82c4e1a68505e443962e86a2f2c517245077a27c91be1c03d9eb6905dc949968",
-    "tests/workspace-geometry.test.mjs": "80a93fc6241aac1abbded7f6164ebf99373225650a507d9ab12fbc3e7c77092b"
+    "tests/workspace-geometry.test.mjs": "80a93fc6241aac1abbded7f6164ebf99373225650a507d9ab12fbc3e7c77092b",
+    "capacitor.config.ts": "9eba602f08d373a4d6dd049cfdef9aa4bb88ba2a0aefd0c095849f0a7253967e",
+    "scripts/capture-duo-posture.mjs": "f270edb8b3d4e255b68e0f28c287f40f5752d0e5b7cfd972b94938377d3a7077",
+    "tests/fixtures/reading-continuity.html": "3ae4490ce769c4d41aedff39718f48a2a31b50889433705bf85317934b83e1a2",
+    "tests/reading-continuity.smoke.mjs": "b1a42682f215cefd20e95df790bf07052337f329842f4cdc8393a5cbead55f49"
   },
-  "recordedAt": "2026-10-28T00:45:53.029685+00:00",
+  "recordedAt": "2026-10-28T02:37:02.303945+00:00",
   "storeActions": "None. Owner approval is required before any upload, replacement build selection or submission.",
-  "readiness": "Local review candidate. Real Device Hub hinge postures and camera/Split View validation remain pending because the Mac is locked."
+  "readiness": "Ready for owner review in the simulator. Actual Device Hub postures, keyboard transitions and inner touch scrolling passed. Physical device, active inner camera and cross-app Split View were not exercised. No App Store actions are authorized without owner approval."
 }

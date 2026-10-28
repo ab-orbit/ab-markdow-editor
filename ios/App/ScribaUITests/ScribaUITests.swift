@@ -1,8 +1,38 @@
 import XCTest
 import UIKit
+import CoreImage
 
 /** Actual device rotation complements hosted bridge tests, including iPad window geometry. */
 final class ScribaUITests: XCTestCase {
+    /** A locked outer viewport must retain actual touch scrolling in inner panes. */
+    func testDuoInnerSettingsTouchScrolling() throws {
+        guard #available(iOS 27.1, *) else { throw XCTSkip("Duo native workspace.") }
+        continueAfterFailure = false
+        let app = XCUIApplication(bundleIdentifier: "com.aeonbridge.scriba")
+        app.launchArguments += ["-AppleLanguages", "(pt-BR)", "-AppleLocale", "pt_BR"]
+        app.launch()
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 25), app.debugDescription)
+        let back = app.buttons["scriba.command.settings-back"]
+        if !back.waitForExistence(timeout: 3) {
+            let more = app.buttons.matching(NSPredicate(format: "identifier == 'BottomOverflowBarButtonItem' OR label == 'More' OR label == 'Mais'")).firstMatch
+            XCTAssertTrue(more.waitForExistence(timeout: 20), app.debugDescription); more.tap()
+            let settings = app.buttons.matching(NSPredicate(format: "label == 'Configurações' OR label == 'Settings'")).firstMatch
+            XCTAssertTrue(settings.waitForExistence(timeout: 10)); settings.tap()
+        }
+        XCTAssertTrue(back.waitForExistence(timeout: 10))
+        let appearance = app.webViews.staticTexts["Aparência"].firstMatch
+        XCTAssertTrue(appearance.waitForExistence(timeout: 10))
+        XCTAssertTrue(appearance.isHittable)
+        let initial = appearance.frame.minY
+        let web = app.webViews.firstMatch
+        let start = web.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.30))
+        let end = web.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.04))
+        start.press(forDuration: 0.08, thenDragTo: end)
+        let moved = NSPredicate { _, _ in !appearance.isHittable || appearance.frame.minY < initial - 30 }
+        expectation(for: moved, evaluatedWith: app); waitForExpectations(timeout: 10)
+        try capture("duo-inner-settings-touch-scroll.png", to: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0])
+        back.tap()
+    }
     /** Actual UIKit bar taps, natural typing, persistence and native Files cancellation. */
     func testDuoNativeToolbarWritingAndFiles() throws {
         guard #available(iOS 27.1, *) else { throw XCTSkip("Requires the adaptive native toolbar.") }
@@ -48,9 +78,17 @@ final class ScribaUITests: XCTestCase {
         XCTAssertTrue(save.waitForExistence(timeout:10))
         XCTAssertTrue(app.webViews.descendants(matching:.any).matching(NSPredicate(format:"label CONTAINS %@ OR value CONTAINS %@","Ideias que acompanham","Ideias que acompanham")).firstMatch.waitForExistence(timeout:10))
     }
-    /** Capture the full display and normalize UIKit orientation instead of cropping a rotating app window. */
+    /** The Duo's outer main screen can be black while the inner screen is active.
+        Select an illuminated public XCUIScreen before normalizing its orientation. */
     private func capture(_ name: String, to folder: URL) throws {
-        let image = XCUIScreen.main.screenshot().image
+        let context = CIContext()
+        let images = XCUIScreen.screens.map { $0.screenshot().image }
+        let image = images.first { candidate in
+            guard let input = CIImage(image: candidate), let average = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: input, kCIInputExtentKey: CIVector(cgRect: input.extent)])?.outputImage else { return false }
+            var pixel = [UInt8](repeating: 0, count: 4)
+            context.render(average, toBitmap: &pixel, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: CGColorSpaceCreateDeviceRGB())
+            return Int(pixel[0]) + Int(pixel[1]) + Int(pixel[2]) > 12
+        } ?? XCUIScreen.main.screenshot().image
         let format = UIGraphicsImageRendererFormat(); format.scale = image.scale
         let normalized = UIGraphicsImageRenderer(size: image.size, format: format).image { _ in
             image.draw(in: CGRect(origin: .zero, size: image.size))

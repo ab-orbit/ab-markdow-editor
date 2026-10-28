@@ -1,0 +1,732 @@
+[
+  {
+    "label" : "final-01-partial-keyboard-landscape",
+    "native" : {
+      "division" : {
+        "height" : 255,
+        "width" : 40,
+        "x" : 439.5,
+        "y" : 0
+      },
+      "height" : 255,
+      "keyboardVisible" : true,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 851
+    },
+    "orientation" : 3,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "Continuity test with keyboard and folding",
+      "anchorTop" : 12,
+      "arrangement" : "column",
+      "focusedTag" : "DIV",
+      "height" : 255,
+      "library" : {
+        "height" : 255,
+        "width" : 439.5,
+        "x" : 0,
+        "y" : 0
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 173.90625,
+        "width" : 371.5,
+        "x" : 479.5,
+        "y" : 52
+      },
+      "richText" : {
+        "height" : 140.25,
+        "width" : 303.4375,
+        "x" : 513.53125,
+        "y" : 64
+      },
+      "scrollTop" : 0,
+      "sourceAnchors" : 0,
+      "sourceLength" : 43,
+      "tables" : [
+
+      ],
+      "title" : "Continuity test with keyboard and folding",
+      "viewport" : {
+        "height" : 255,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 851,
+      "workbench" : {
+        "height" : 255,
+        "width" : 371.5,
+        "x" : 479.5,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 255,
+      "width" : 851,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-02-partial-keyboard-portrait",
+    "native" : {
+      "height" : 305.66666666666669,
+      "keyboardVisible" : true,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 1,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "Continuity test with keyboard and folding",
+      "anchorTop" : 12,
+      "arrangement" : "overlay",
+      "focusedTag" : "DIV",
+      "height" : 306,
+      "library" : null,
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 224.90625,
+        "width" : 637,
+        "x" : 0,
+        "y" : 52
+      },
+      "richText" : {
+        "height" : 168.296875,
+        "width" : 586.0625,
+        "x" : 25.46875,
+        "y" : 64
+      },
+      "scrollTop" : 0,
+      "sourceAnchors" : 0,
+      "sourceLength" : 43,
+      "tables" : [
+
+      ],
+      "title" : "Continuity test with keyboard and folding",
+      "viewport" : {
+        "height" : 306,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 306,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 305.66666666666669,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-03-open-library",
+    "native" : {
+      "height" : 553,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "fullyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 851
+    },
+    "orientation" : 4,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "Atlas dos Amanhãs Possíveis",
+      "anchorTop" : 24,
+      "arrangement" : "column",
+      "focusedTag" : "BODY",
+      "height" : 553,
+      "library" : {
+        "height" : 553,
+        "width" : 248,
+        "x" : 0,
+        "y" : 0
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 523.90625,
+        "width" : 603,
+        "x" : 248,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 0,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 553,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 851,
+      "workbench" : {
+        "height" : 553,
+        "width" : 603,
+        "x" : 248,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 553,
+      "width" : 851,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-04-anchor-closed",
+    "native" : {
+      "height" : 562,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+        {
+          "height" : 92,
+          "width" : 5.6843418860808015e-14,
+          "x" : 379.66666666666663,
+          "y" : 0
+        }
+      ],
+      "posture" : "closed",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 379.66666666666669
+    },
+    "orientation" : 1,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "1.1 Flow review (1\/58)",
+      "anchorTop" : 20.203125,
+      "arrangement" : "overlay",
+      "focusedTag" : "H3",
+      "height" : 562,
+      "library" : null,
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 532.90625,
+        "width" : 380,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 1670,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 562,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 380,
+      "workbench" : {
+        "height" : 562,
+        "width" : 380,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 562,
+      "width" : 379.66666666666669,
+      "x" : 2.3333333333333428,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-05-anchor-open",
+    "native" : {
+      "height" : 553,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "fullyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 851
+    },
+    "orientation" : 4,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "1.1 Flow review (1\/58)",
+      "anchorTop" : 0.90625,
+      "arrangement" : "column",
+      "focusedTag" : "H3",
+      "height" : 553,
+      "library" : {
+        "height" : 553,
+        "width" : 248,
+        "x" : 0,
+        "y" : 0
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 523.90625,
+        "width" : 603,
+        "x" : 248,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 1474,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 553,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 851,
+      "workbench" : {
+        "height" : 553,
+        "width" : 603,
+        "x" : 248,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 553,
+      "width" : 851,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-06-anchor-partial",
+    "native" : {
+      "division" : {
+        "height" : 553,
+        "width" : 40,
+        "x" : 439.5,
+        "y" : 0
+      },
+      "height" : 553,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 851
+    },
+    "orientation" : 4,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "1.1 Flow review (1\/58)",
+      "anchorTop" : 0.796875,
+      "arrangement" : "column",
+      "focusedTag" : "H3",
+      "height" : 553,
+      "library" : {
+        "height" : 553,
+        "width" : 439.5,
+        "x" : 0,
+        "y" : 0
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 523.90625,
+        "width" : 371.5,
+        "x" : 479.5,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 1809,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 553,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 851,
+      "workbench" : {
+        "height" : 553,
+        "width" : 371.5,
+        "x" : 479.5,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 553,
+      "width" : 851,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-07-anchor-partial-portrait",
+    "native" : {
+      "division" : {
+        "height" : 40,
+        "width" : 637,
+        "x" : 0,
+        "y" : 373.5
+      },
+      "height" : 787,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 2,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "1.1 Flow review (1\/58)",
+      "anchorTop" : 0.4375,
+      "arrangement" : "stack",
+      "focusedTag" : "H3",
+      "height" : 787,
+      "library" : {
+        "height" : 373.5,
+        "width" : 637,
+        "x" : 0,
+        "y" : 413.5
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 344.40625,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 1491,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 787,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 373.5,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 787,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-08-dynamic-type",
+    "native" : {
+      "division" : {
+        "height" : 40,
+        "width" : 637,
+        "x" : 0,
+        "y" : 373.5
+      },
+      "height" : 787,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1.8235294117647058,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 2,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "1.1 Flow review (1\/58)",
+      "anchorTop" : 0.65625,
+      "arrangement" : "stack",
+      "focusedTag" : "H3",
+      "height" : 787,
+      "library" : {
+        "height" : 373.5,
+        "width" : 637,
+        "x" : 0,
+        "y" : 413.5
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 323.609375,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 2914,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 787,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 373.5,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 787,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-09-source-preview",
+    "native" : {
+      "division" : {
+        "height" : 40,
+        "width" : 637,
+        "x" : 0,
+        "y" : 373.5
+      },
+      "height" : 787,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 2,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "Atlas dos Amanhãs Possíveis",
+      "anchorTop" : 429.5,
+      "arrangement" : "stack",
+      "focusedTag" : "H3",
+      "height" : 787,
+      "library" : null,
+      "mode" : "split",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 757.90625,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 0,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 787,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 787,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 787,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "final-10-settings",
+    "native" : {
+      "division" : {
+        "height" : 40,
+        "width" : 637,
+        "x" : 0,
+        "y" : 373.5
+      },
+      "height" : 835,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 2,
+    "sameWebView" : true,
+    "web" : {
+      "anchorTop" : null,
+      "arrangement" : "stack",
+      "focusedTag" : "BODY",
+      "height" : 835,
+      "library" : null,
+      "mode" : "split",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 0,
+        "width" : 0,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 0,
+      "sourceAnchors" : 303,
+      "sourceLength" : 771,
+      "tables" : [
+
+      ],
+      "title" : "Atlas dos Amanhãs Possíveis",
+      "viewport" : {
+        "height" : 835,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 0,
+        "width" : 0,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 835,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  }
+]

@@ -35,6 +35,14 @@ O primeiro relatório está em [design-inspection/report.json](design-inspection
 
 Os avisos de fontes ficam registrados: há três papéis existentes — leitura, sistema e código — preservados por `--keep palette,type`. O inspetor não confirma fontes instaladas no sistema da mesma forma que uma fonte baixada; a revisão visual foi feita nas capturas do macOS/WebKit e do iOS. Não se afirma que a mesma face está instalada em todo navegador.
 
+## Rodada 3 — posturas reais do Device Hub
+
+Depois do desbloqueio, foram examinadas tela externa, interna aberta e dobra parcial em retrato e paisagem. A biblioteca usa 248 pontos aberta; a divisão real de 40 pontos redistribui os painéis ao dobrar. Em retrato parcial, leitura e biblioteca ficam acima/abaixo. Fonte/prévia aproveitam as duas regiões.
+
+O percurso encontrou e corrigiu duas falhas: scroll antes de ResizeObserver perdia a seção escolhida no índice; a rotação com teclado movia o WKWebView externo 91 pontos. A repetição preservou o título da seção a menos de 1 ponto do topo, manteve o viewport externo em zero e preservou a rolagem interna por gesto de toque. Dynamic Type em escala 1,82 manteve o texto legível sem overflow. As capturas finais foram novamente examinadas para hierarquia, alinhamento e colisões.
+
+O whiteboard conservou o objeto desenhado entre as três posturas no primeiro percurso; a regressão WebKit também conserva texto ativo do desenho ao trocar de modo. Capturas da janela do aplicativo não incluem a janela do teclado. Para as capturas de interface, o helper seleciona um XCUIScreen iluminado: no Duo, o main screen externo pode estar preto enquanto o interno está ativo.
+
 ## Limite desta revisão
 
-A revisão visual de posturas reais, câmera e Split View ainda depende de Device Hub acessível. O Mac bloqueado impediu essa etapa. A versão candidata não recebe o rótulo “pronta para submissão” apenas porque os testes de geometria passaram; a decisão final permanece com o usuário após a validação restante.
+Câmera interna ativa e Split View entre aplicativos não receberam sessões próprias. O relatório distingue esses cenários dos testes de redimensionamento e fixtures. A candidata está pronta para avaliação do usuário; upload, escolha de build e submissão permanecem aguardando sua aprovação.

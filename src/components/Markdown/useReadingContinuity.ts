@@ -8,7 +8,9 @@ export function useReadingContinuity(container: RefObject<HTMLDivElement | null>
     let anchor: {element: HTMLElement; fraction: number} | undefined;
     let width = root.clientWidth, height = root.clientHeight, frame = 0, restoring = false;
     const remember = () => {
-      if (restoring || document.getSelection()?.anchorNode && document.activeElement?.closest('[contenteditable="true"]')) return;
+      // WebKit may report scrolling after reflow and before ResizeObserver. Keep
+      // the previous geometry's anchor until that resize has been restored.
+      if (restoring || width!==root.clientWidth || height!==root.clientHeight || document.getSelection()?.anchorNode && document.activeElement?.closest('[contenteditable="true"]')) return;
       const top = root.getBoundingClientRect().top;
       const blocks = [...root.querySelectorAll<HTMLElement>('[data-source-from][data-source-to]')].filter(element => element.getClientRects().length);
       const element = blocks.find(element => element.getBoundingClientRect().bottom > top + 1);

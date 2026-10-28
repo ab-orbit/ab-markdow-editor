@@ -6,6 +6,9 @@ const config: CapacitorConfig = {
   appName: 'Scriba',
   webDir: 'dist-ios',
   loggingBehavior: 'none',
-  ios: { contentInset: 'never', preferredContentMode: 'mobile', scheme: 'Scriba' },
+  // Notes, source, settings and canvas own their inner scrolling. Letting the
+  // outer WKWebView scroll can pan the whole workspace above its native bars
+  // when a live caret moves during a Duo rotation with the keyboard visible.
+  ios: { contentInset: 'never', scrollEnabled: false, preferredContentMode: 'mobile', scheme: 'Scriba' },
 };
 export default config;

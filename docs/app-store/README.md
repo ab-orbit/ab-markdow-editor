@@ -1,6 +1,6 @@
 # Scriba for iPhone and iPad
 
-Current development candidate: **1.17.0 (29), iPhone Duo revision, local review only**. The owner explicitly reserves approval before another submission. Do not upload, select a replacement build or submit this candidate without that approval. [Implementation, simulator evidence and remaining validation](../evidence/iphone-duo-20261027/README.md).
+Current development candidate: **1.17.0 (29), iPhone Duo revision, local review only**. The owner explicitly reserves approval before another submission. Do not upload, select a replacement build or submit this candidate without that approval. [Implementation, real-posture simulator evidence and validation limits](../evidence/iphone-duo-20261027/README.md).
 
 Latest verified store action: **1.16.1 (27) resubmitted on October 27, 2026 at 20:23 Recife**, after Apple requested business-model clarification under Guideline 2.1(b). Both submission and item showed **Waiting for Review**, with manual public release preserved. Build **1.16.1 (28)** was subsequently uploaded and validated, but was not selected or submitted before the owner requested the separate Duo revision. [Store history and evidence](submission-20261027/README.md).
 

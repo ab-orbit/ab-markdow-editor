@@ -1,0 +1,449 @@
+[
+  {
+    "label" : "diag-01-closed-editing",
+    "native" : {
+      "height" : 224,
+      "keyboardVisible" : true,
+      "nativeChrome" : true,
+      "occlusions" : [
+        {
+          "height" : 92,
+          "width" : 5.6843418860808015e-14,
+          "x" : 379.66666666666663,
+          "y" : 0
+        }
+      ],
+      "posture" : "closed",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 379.66666666666669
+    },
+    "orientation" : 1,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "ExcalidrawCódigo100%SVG vetorialPNG transparenteExcalidraw editável",
+      "anchorTop" : -160.734375,
+      "arrangement" : "overlay",
+      "focusedTag" : "DIV",
+      "height" : 224,
+      "library" : null,
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 194.90625,
+        "width" : 380,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : {
+        "height" : 487.265625,
+        "width" : 340,
+        "x" : 20,
+        "y" : -301
+      },
+      "scrollTop" : 313,
+      "sourceAnchors" : 0,
+      "sourceLength" : 1020,
+      "tables" : [
+
+      ],
+      "title" : "Duo: uma idea continua enter teals.AGE.  Aassasssd d",
+      "viewport" : {
+        "height" : 224,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 380,
+      "workbench" : {
+        "height" : 224,
+        "width" : 380,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 224,
+      "width" : 379.66666666666669,
+      "x" : 2.3333333333333428,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "diag-02-open-editing",
+    "native" : {
+      "height" : 255,
+      "keyboardVisible" : true,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "fullyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 851
+    },
+    "orientation" : 4,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "ExcalidrawCódigo100%SVG vetorialPNG transparenteExcalidraw editável",
+      "anchorTop" : -228.15625,
+      "arrangement" : "column",
+      "focusedTag" : "DIV",
+      "height" : 255,
+      "library" : {
+        "height" : 255,
+        "width" : 248,
+        "x" : 0,
+        "y" : 0
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 225.90625,
+        "width" : 603,
+        "x" : 248,
+        "y" : 0
+      },
+      "richText" : {
+        "height" : 548.84375,
+        "width" : 534.9375,
+        "x" : 282.03125,
+        "y" : -331
+      },
+      "scrollTop" : 343,
+      "sourceAnchors" : 0,
+      "sourceLength" : 1020,
+      "tables" : [
+
+      ],
+      "title" : "Duo: uma idea continua enter teals.AGE.  Aassasssd d",
+      "viewport" : {
+        "height" : 255,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 851,
+      "workbench" : {
+        "height" : 255,
+        "width" : 603,
+        "x" : 248,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 255,
+      "width" : 851,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "diag-03-partial-editing",
+    "native" : {
+      "height" : 305.66666666666669,
+      "keyboardVisible" : true,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 2,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "ExcalidrawCódigo100%SVG vetorialPNG transparenteExcalidraw editável",
+      "anchorTop" : -203.15625,
+      "arrangement" : "overlay",
+      "focusedTag" : "DIV",
+      "height" : 306,
+      "library" : null,
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 276.90625,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : {
+        "height" : 574.84375,
+        "width" : 586.0625,
+        "x" : 25.46875,
+        "y" : -306
+      },
+      "scrollTop" : 318,
+      "sourceAnchors" : 0,
+      "sourceLength" : 1020,
+      "tables" : [
+
+      ],
+      "title" : "Duo: uma idea continua enter teals.AGE.  Aassasssd d",
+      "viewport" : {
+        "height" : 305.5,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 306,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 305.66666666666669,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "diag-04-partial-read",
+    "native" : {
+      "division" : {
+        "height" : 40,
+        "width" : 637,
+        "x" : 0,
+        "y" : 373.5
+      },
+      "height" : 787,
+      "keyboardVisible" : false,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 2,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "Duo: uma idea continua enter teals.AGE.  Aassasssd d",
+      "anchorTop" : 0,
+      "arrangement" : "stack",
+      "focusedTag" : "BODY",
+      "height" : 787,
+      "library" : {
+        "height" : 373.5,
+        "width" : 637,
+        "x" : 0,
+        "y" : 413.5
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 344.40625,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      },
+      "richText" : null,
+      "scrollTop" : 12,
+      "sourceAnchors" : 2,
+      "sourceLength" : 1020,
+      "tables" : [
+
+      ],
+      "title" : "Duo: uma idea continua enter teals.AGE.  Aassasssd d",
+      "viewport" : {
+        "height" : 787,
+        "offsetTop" : 0,
+        "scrollY" : 0
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 373.5,
+        "width" : 637,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    "webFrame" : {
+      "height" : 787,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0
+    }
+  },
+  {
+    "label" : "diag-05-title-keyboard-before",
+    "native" : {
+      "height" : 305.66666666666669,
+      "keyboardVisible" : true,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "none",
+      "width" : 637
+    },
+    "orientation" : 2,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "Continuity test with keyboard and folding",
+      "anchorTop" : 12,
+      "arrangement" : "overlay",
+      "focusedTag" : "DIV",
+      "height" : 306,
+      "library" : null,
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 276.90625,
+        "width" : 637,
+        "x" : 0,
+        "y" : -1
+      },
+      "richText" : {
+        "height" : 168.296875,
+        "width" : 586.0625,
+        "x" : 25.46875,
+        "y" : 11
+      },
+      "scrollTop" : 0,
+      "sourceAnchors" : 0,
+      "sourceLength" : 43,
+      "tables" : [
+
+      ],
+      "title" : "Continuity test with keyboard and folding",
+      "viewport" : {
+        "height" : 305.5,
+        "offsetTop" : 0.328125,
+        "scrollY" : 1
+      },
+      "width" : 637,
+      "workbench" : {
+        "height" : 306,
+        "width" : 637,
+        "x" : 0,
+        "y" : -1
+      }
+    },
+    "webFrame" : {
+      "height" : 305.66666666666669,
+      "width" : 637,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 0.66666666666666663
+    }
+  },
+  {
+    "label" : "diag-06-title-landscape",
+    "native" : {
+      "division" : {
+        "height" : 255,
+        "width" : 40,
+        "x" : 439.5,
+        "y" : 0
+      },
+      "height" : 255,
+      "keyboardVisible" : true,
+      "nativeChrome" : true,
+      "occlusions" : [
+
+      ],
+      "posture" : "partiallyOpen",
+      "textScale" : 1,
+      "verticalBarEdge" : "right",
+      "width" : 851
+    },
+    "orientation" : 3,
+    "sameWebView" : true,
+    "web" : {
+      "anchor" : "Continuity test with keyboard and folding",
+      "anchorTop" : 12,
+      "arrangement" : "column",
+      "focusedTag" : "DIV",
+      "height" : 255,
+      "library" : {
+        "height" : 255,
+        "width" : 439.5,
+        "x" : 0,
+        "y" : -91
+      },
+      "mode" : "read",
+      "nativeChrome" : "true",
+      "outline" : null,
+      "pageOverflow" : false,
+      "reading" : {
+        "height" : 225.90625,
+        "width" : 371.5,
+        "x" : 479.5,
+        "y" : -91
+      },
+      "richText" : {
+        "height" : 140.25,
+        "width" : 303.4375,
+        "x" : 513.53125,
+        "y" : -79
+      },
+      "scrollTop" : 0,
+      "sourceAnchors" : 0,
+      "sourceLength" : 43,
+      "tables" : [
+
+      ],
+      "title" : "Continuity test with keyboard and folding",
+      "viewport" : {
+        "height" : 255,
+        "offsetTop" : 59.328125,
+        "scrollY" : 91
+      },
+      "width" : 851,
+      "workbench" : {
+        "height" : 255,
+        "width" : 371.5,
+        "x" : 479.5,
+        "y" : -91
+      }
+    },
+    "webFrame" : {
+      "height" : 255,
+      "width" : 851,
+      "x" : 16,
+      "y" : 82
+    },
+    "webScrollOffset" : {
+      "x" : 0,
+      "y" : 91
+    }
+  }
+]
