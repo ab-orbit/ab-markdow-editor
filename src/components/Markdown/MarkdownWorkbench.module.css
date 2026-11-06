@@ -52,8 +52,11 @@
 .tableScroll { min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; border: 1px solid var(--reading-table-border); border-radius: var(--radius-md); }
 .tableScroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .tableScroll:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
-.reading table { width: max-content; min-width: 100%; max-width: none; border-collapse: separate; border-spacing: 0; font-size: 1em; table-layout: auto; }
-.reading th, .reading td { min-width: 10ch; max-width: var(--reading-cell-max); padding: 10px 14px; border: 0; border-right: 1px solid var(--reading-table-border); vertical-align: top; text-align: left; white-space: normal; word-break: normal; overflow-wrap: break-word; }
+.reading table { width: 100%; min-width: 100%; max-width: none; border-collapse: separate; border-spacing: 0; font-size: 1em; table-layout: auto; }
+/* Compact comparisons fit the reading column; wide tables retain horizontal navigation. */
+.reading table:has(tr > :nth-child(5)) { width: max-content; }
+.reading th, .reading td { min-width: 10ch; max-width: var(--reading-cell-max); padding: 10px 14px; border: 0; border-right: 1px solid var(--reading-table-border); vertical-align: top; text-align: left; white-space: normal; word-break: normal; overflow-wrap: anywhere; }
+.reading :is(th,td) code { overflow-wrap: anywhere; white-space: normal; }
 .reading th:last-child, .reading td:last-child { border-right: 0; }
 .reading th p, .reading td p, .reading li p { text-align: inherit; hyphens: manual; }
 .reading th { color: var(--reading-heading); background: var(--reading-table-header); white-space: nowrap; font-weight: 700; }
@@ -235,7 +238,12 @@
 .richContent :global([data-source-only]) { display: none; }
 .richContent :global(.tableWrapper) { margin-block: 1em; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; border: 1px solid var(--reading-table-border); border-radius: var(--radius-md); }
 .richContent :global(.tableWrapper)::-webkit-scrollbar { display: none; width: 0; height: 0; }
-.richContent table { width: max-content !important; min-width: 100% !important; }
+.richContent table { width: 100% !important; min-width: 100% !important; }
+.richContent table:has(tr > :nth-child(5)) { width: max-content !important; }
+@media (max-width: 899px) {
+ .reading table { width: max-content; }
+ .richContent table { width: max-content !important; }
+}
 .richContent th p, .richContent td p { margin: 0 !important; text-align: inherit; hyphens: manual; }
 .richContent :global(.selectedCell) { box-shadow: inset 0 0 0 2px var(--cyan); }
 .richContent :global(ul[data-type="taskList"]) { padding-left: 0; list-style: none; }
