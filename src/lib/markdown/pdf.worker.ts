@@ -4,6 +4,7 @@ import fonts from 'pdfmake/build/vfs_fonts';
 import courier from 'pdfmake/build/standard-fonts/Courier';
 import type { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
 import type { PdfJob, PdfReply } from './pdfTypes';
+import { PDF_PAGE_MARGINS, preparePdfTables } from './pdfTables';
 
 pdfMake.addVirtualFileSystem(fonts);
 pdfMake.addFontContainer(courier);
@@ -16,9 +17,10 @@ scope.onmessage = async ({ data: job }) => {
   try {
     setLanguage(job.language || 'en');
     const { palette } = job;
+    const pages = preparePdfTables(job.content);
     pdfMake.addTableLayouts({ scribaTable: { hLineWidth: () => .4, vLineWidth: () => 0, hLineColor: () => palette.border, paddingLeft: () => 6, paddingRight: () => 6 } });
     const definition: TDocumentDefinitions = {
-      pageSize: 'A4', pageMargins: [42, 42, 42, 58],
+      pageSize: 'A4', pageMargins: PDF_PAGE_MARGINS, pageOrientation: pages.pageOrientation,
       info: { title: job.title, creator: t("Scriba Markdown Editor") },
       defaultStyle: { font: 'Roboto', fontSize: 11, color: palette.text, lineHeight: 1.35 },
       styles: {
@@ -32,9 +34,9 @@ scope.onmessage = async ({ data: job }) => {
         caption: { fontSize: 9, color: palette.muted, margin: [0, 4, 0, 11] },
         scribaFooter: { fontSize: 8, color: palette.muted },
       },
-      content: job.content.length ? job.content : [{ text: ' ' }],
-      footer: (page, count): Content => ({ style: 'scribaFooter', margin: [42, 9, 42, 0], stack: [
-        { style: 'scribaFooter', canvas: [{ type: 'line', x1: 0, y1: 0, x2: 511.28, y2: 0, lineWidth: .4, lineColor: palette.border }], margin: [0, 0, 0, 7] },
+      content: pages.content.length ? pages.content : [{ text: ' ' }],
+      footer: (page, count, size): Content => ({ style: 'scribaFooter', margin: [42, 9, 42, 0], stack: [
+        { style: 'scribaFooter', canvas: [{ type: 'line', x1: 0, y1: 0, x2: size.width - PDF_PAGE_MARGINS[0] - PDF_PAGE_MARGINS[2], y2: 0, lineWidth: .4, lineColor: palette.border }], margin: [0, 0, 0, 7] },
         { style: 'scribaFooter', columns: [
           { style: 'scribaFooter', image: job.logo, width: 13, height: 13, margin: [0, 0, 7, 0] },
           { style: 'scribaFooter', text: t("scriba markdown editor - powered by Aeon Bridge Co."), fontSize: 8, color: palette.muted, margin: [0, 2, 0, 0], width: '*' },
