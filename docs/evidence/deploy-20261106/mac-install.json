@@ -1,0 +1,14 @@
+{
+  "url": "http://127.0.0.1:43127/",
+  "version": "1.17.2",
+  "indexSha256": "399d5a26f9a68bf3cca57c613e244e10ccef82bfd8272bd8411d4ade65185a5f",
+  "backendPid": 4111,
+  "serverRestarted": false,
+  "strictCodeSignatureVerified": true,
+  "noteRestoredAfterUpdate": {
+    "words": 1938,
+    "characters": 12000,
+    "status": "Documento carregado"
+  },
+  "allThreeReaderColumnsVisuallyVerified": true
+}

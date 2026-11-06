@@ -2,7 +2,7 @@
 
 Production: https://scriba.aeonbridge.app/
 
-Latest deployment: [23 October 2026 — compact menus, outline and recent notes](evidence/deploy-20261023/README.md).
+Latest deployment is [6 November 2026 — PDF pagination and table reading, version 1.17.2](evidence/deploy-20261106/README.md).
 
 The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves `dist/` and proxies `/github/` to the isolated synchronization gateway. No local filesystem API or server Git checkout is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups or configure the optional GitHub destination for file synchronization between devices.
 

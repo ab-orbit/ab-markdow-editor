@@ -1,0 +1,27 @@
+{
+  "version": "1.17.2",
+  "sourceCommit": "288b594bd79913c555929b35c1fb11ff3ee1b966",
+  "sourceBranch": "codex/pdf-landscape-tables",
+  "web": {
+    "url": "https://scriba.aeonbridge.app/",
+    "release": "/var/www/scriba/releases/20261106-public-1.17.2-288b594",
+    "previousRelease": "/var/www/scriba/releases/20261023-public-e058557",
+    "indexSha256": "fc719fa605900b49da52f38984e12249779ac5837084be53341c67b81d685b23",
+    "buildMode": "browser",
+    "pwaCache": "ab-markdown-shell-9240f983c7eaf4f3",
+    "nativeUpdateManifestSha256": "e5a88764a007dd1c4a6844fb021e0298d6ac7e695539c3341d68021b8b13589b",
+    "nginxConfigurationValidated": true,
+    "httpsOriginAndEdgeVerified": true
+  },
+  "mac": {
+    "installedApp": "/Applications/Scriba.app",
+    "previousVersion": "1.16.1",
+    "indexSha256": "399d5a26f9a68bf3cca57c613e244e10ccef82bfd8272bd8411d4ade65185a5f",
+    "buildMode": "local",
+    "pwaCache": "ab-markdown-shell-ec3de5f32dff482b",
+    "previousBundleBackup": "artifacts/pdf-tables-20261106/backups/Scriba-1.16.1.app",
+    "strictCodeSignatureVerified": true,
+    "backendRestarted": false,
+    "activeNoteRestored": true
+  }
+}

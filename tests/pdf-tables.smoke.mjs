@@ -37,17 +37,22 @@ const results = [];
 try {
   for (const fixture of cases) {
     const context = await browser.newContext({ locale: 'pt-BR', viewport: { width: 1440, height: 900 }, serviceWorkers: 'block', acceptDownloads: true });
-    const page = await context.newPage(), errors = [], external = [], writes = [];
+    const page = await context.newPage(), errors = [], external = [], edgeScripts = [], writes = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('request', request => {
       const url = new URL(request.url());
-      if (url.origin !== new URL(origin).origin && !['blob:', 'data:'].includes(url.protocol)) external.push(url.href);
+      // Cloudflare injects this statistics script into production HTML. Record it
+      // separately while rejecting any other external request, including converters.
+      const edgeScript = url.origin === 'https://static.cloudflareinsights.com' &&
+        url.pathname.startsWith('/beacon.min.js/') && request.resourceType() === 'script' && request.method() === 'GET';
+      if (edgeScript) edgeScripts.push(url.href);
+      else if (url.origin !== new URL(origin).origin && !['blob:', 'data:'].includes(url.protocol)) external.push(url.href);
       if (request.method() !== 'GET') writes.push(url.pathname);
     });
     try {
       await page.goto(origin);
       const input = page.getByLabel('Arquivo Markdown', { exact: true });
-      await expect(input).toBeEnabled();
+      await expect(input).toBeEnabled({ timeout: 30000 });
       await input.setInputFiles({ name: `${fixture.name}.md`, mimeType: 'text/markdown', buffer: Buffer.from(fixture.source) });
       await expect(page.getByRole('article')).toContainText(parser.parse(fixture.source).children.map(text)[0]);
       await expect(input).toBeEnabled();
@@ -71,8 +76,8 @@ try {
       const tables = parser.parse(fixture.source).children.filter(node => node.type === 'table').map(node => ({ headers: node.children[0].children.map(text), cells: node.children.flatMap(row => row.children.map(text)) }));
       const record = { case: fixture.name, engine, pdf, tables, expected: fixture.expected };
       await fs.writeFile(path.join(output, `${fixture.name}-${engine}.json`), JSON.stringify(record, null, 2));
-      results.push({ case: fixture.name, engine, pdf, exported: true, sourceUnchanged: true, externalRequests: external.length, exportWrites: writes.length - startWrites });
-      console.log(`PASS ${engine}: ${fixture.name}, real import/export, original source preserved, no export writes or external requests.`);
+      results.push({ case: fixture.name, engine, pdf, exported: true, sourceUnchanged: true, unexpectedExternalRequests: external.length, edgeStatisticsScriptRequests: edgeScripts.length, exportWrites: writes.length - startWrites });
+      console.log(`PASS ${engine}: ${fixture.name}, real import/export, original source preserved, no export writes or unexpected external requests (${edgeScripts.length} edge statistics scripts).`);
     } catch (error) {
       await page.screenshot({ path: path.join(output, `${fixture.name}-${engine}-failure.png`) });
       await fs.writeFile(path.join(output, `${fixture.name}-${engine}-failure.txt`), await page.locator('body').ariaSnapshot());

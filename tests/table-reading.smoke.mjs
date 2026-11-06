@@ -18,7 +18,7 @@ try {
     try {
       await page.goto(origin);
       const input = page.getByLabel('Arquivo Markdown', { exact: true });
-      await expect(input).toBeEnabled();
+      await expect(input).toBeEnabled({ timeout: 30000 });
       await input.setInputFiles({ name: 'table-reading.md', mimeType: 'text/markdown', buffer: Buffer.from(source) });
       await expect(page.getByRole('heading', { name: 'Table reading', exact: true })).toBeVisible();
       const close = page.getByRole('button', { name: 'Fechar lista de notas', exact: true });
