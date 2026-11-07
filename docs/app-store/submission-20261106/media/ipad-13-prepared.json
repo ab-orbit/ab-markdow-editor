@@ -1,0 +1,556 @@
+{
+  "source": {
+    "device": "C423A2E2-DFAE-45E7-88A8-E567B0818E15",
+    "deviceName": "Scriba Store iPad 31",
+    "category": "ipad-13",
+    "source": "Actual iOS simulator screenshots and screen recordings, fictional localized documents",
+    "captures": [
+      {
+        "id": "A1AF6C53-61C2-4F0D-9D08-2741B328A658",
+        "label": "reading",
+        "kind": "screenshot",
+        "locale": "pt-BR",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/pt-BR/reading.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "pt-BR",
+        "kind": "screenshot",
+        "id": "1D32D9C5-5E45-4447-8C22-C0F488243987",
+        "label": "writing",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/pt-BR/writing.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "pt-BR",
+        "id": "DD4D95B2-6F03-4CF6-88A9-DE57A1FDCEF3",
+        "label": "outline",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/pt-BR/outline.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "pt-BR",
+        "kind": "screenshot",
+        "label": "diagrams",
+        "id": "096E0C8E-79A9-4075-92A6-D452C8EA328D",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/pt-BR/diagrams.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "pt-BR",
+        "kind": "screenshot",
+        "label": "whiteboard",
+        "id": "CFA24F4A-E624-465E-B00C-31E0BE58ED23",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/pt-BR/whiteboard.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "pt-BR",
+        "id": "6F531989-AE71-4830-A63D-AB871310F21F",
+        "label": "library",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/pt-BR/library.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "label": "workflow",
+        "id": "AC27714E-6D92-42D0-A079-55552644538A",
+        "locale": "pt-BR",
+        "kind": "videoStart",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/pt-BR/workflow-raw.mp4",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "id": "BCF0D95C-1C45-445B-83C7-D210982CDFF2",
+        "kind": "screenshot",
+        "label": "reading",
+        "locale": "en-US",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/en-US/reading.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "id": "B8F578CF-88CC-4DE8-830B-16E7C84EACF1",
+        "kind": "screenshot",
+        "label": "writing",
+        "locale": "en-US",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/en-US/writing.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "en-US",
+        "id": "9CF82D8F-BB2E-4497-9301-B69B2A8B159A",
+        "kind": "screenshot",
+        "label": "outline",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/en-US/outline.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "label": "diagrams",
+        "id": "BC413D72-52D0-4604-94CE-F122B9D89137",
+        "locale": "en-US",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/en-US/diagrams.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "screenshot",
+        "id": "C94B8E39-EDED-4375-A694-6C054418B735",
+        "label": "whiteboard",
+        "locale": "en-US",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/en-US/whiteboard.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "label": "library",
+        "id": "DDB1D6DC-A7D6-403C-BF2C-97D352D192A1",
+        "locale": "en-US",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/en-US/library.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "videoStart",
+        "label": "workflow",
+        "locale": "en-US",
+        "id": "05AA217D-531F-489B-ADF4-F3AB223CA4FE",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/en-US/workflow-raw.mp4",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "screenshot",
+        "label": "reading",
+        "locale": "de-DE",
+        "id": "6AA1196D-B136-4C32-B1BC-4FCC866DC008",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/de-DE/reading.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "screenshot",
+        "label": "writing",
+        "locale": "de-DE",
+        "id": "BEC5532C-96F6-4070-93A0-72A59CC78D65",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/de-DE/writing.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "screenshot",
+        "label": "outline",
+        "locale": "de-DE",
+        "id": "D45ED851-DC66-43F9-AF28-3E6C29AD433C",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/de-DE/outline.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "screenshot",
+        "label": "diagrams",
+        "locale": "de-DE",
+        "id": "14D5E668-8399-4F28-ADA1-37437ED86A32",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/de-DE/diagrams.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "label": "whiteboard",
+        "id": "C5170E5A-7E09-4D65-8BCD-C73FC4E76775",
+        "locale": "de-DE",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/de-DE/whiteboard.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "screenshot",
+        "id": "611606CA-A438-4078-A4DD-62C2CCEB18C7",
+        "label": "library",
+        "locale": "de-DE",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/de-DE/library.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "de-DE",
+        "id": "2A7EA308-99B4-4E32-A6B8-D41CF766F53F",
+        "label": "workflow",
+        "kind": "videoStart",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/de-DE/workflow-raw.mp4",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "id": "586415A7-1938-4996-A81F-CD85CF0E0952",
+        "kind": "screenshot",
+        "label": "reading",
+        "locale": "fr-FR",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/fr-FR/reading.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "label": "writing",
+        "id": "EDBB7138-491A-4151-96AF-2E573B275E2C",
+        "locale": "fr-FR",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/fr-FR/writing.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "id": "BB8BECE4-D00B-4BE4-AA2F-BF9D71F4E9C6",
+        "kind": "screenshot",
+        "label": "outline",
+        "locale": "fr-FR",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/fr-FR/outline.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "locale": "fr-FR",
+        "id": "B1FD1EEF-DDDC-4625-9C74-338005CA20A4",
+        "label": "diagrams",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/fr-FR/diagrams.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "kind": "screenshot",
+        "locale": "fr-FR",
+        "label": "whiteboard",
+        "id": "02E45065-956A-4BB1-964F-5B7D83362F2E",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/fr-FR/whiteboard.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "label": "library",
+        "locale": "fr-FR",
+        "id": "A2E96F55-7C2B-4799-AE14-C9F2811C2E42",
+        "kind": "screenshot",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/fr-FR/library.png",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      },
+      {
+        "label": "workflow",
+        "id": "89728A23-D117-49A3-87E0-8D4FD50C24EE",
+        "locale": "fr-FR",
+        "kind": "videoStart",
+        "category": "ipad-13",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/ipad-13/fr-FR/workflow-raw.mp4",
+        "device": "Scriba Store iPad 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB"
+      }
+    ]
+  },
+  "prepared": [
+    {
+      "locale": "pt-BR",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-01-reading.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "eb98042ff1971995827132abcedd5eb10cb14957adece956932a8bfe9840fd53"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-02-writing.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "cbfeb09fab4d3a1548eb8dfea48697c0381d8b5ecfed2ae1b03f3ccd08d2f5ac"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-03-outline.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "e71dcd708977a513fb9439fcd2ece3723c8609dc7834ef07773423602cafbe9e"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-04-diagrams.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "bbb7cd98fab462d4184e6cb01e69cc3c90afcd2a3960cb4ebac73d995105d11e"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-05-whiteboard.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "a775a7d7bfd743dcdc1c177478b577574aeec0af1fc8fcd1e8439961cefa97d6"
+    },
+    {
+      "locale": "pt-BR",
+      "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/pt-BR/scriba-workflow.gif",
+      "duration": 17.526667,
+      "sourceDuration": 17.526667
+    },
+    {
+      "locale": "pt-BR",
+      "file": "docs/app-store/submission-20261106/media/previews/ipad-13/pt-BR/AppPreview.mp4",
+      "dimensions": [
+        1200,
+        1600
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    },
+    {
+      "locale": "en-US",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-01-reading.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "357ff54b2dfd20a2d55fc93b6593a1d7d0223c87a903520982d896b84bd02d5e"
+    },
+    {
+      "locale": "en-US",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-02-writing.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "7617dc0a0ceb8ab81b99b6ce7d3ad2171274c833a06e9bb8e2da2c7cf9f18408"
+    },
+    {
+      "locale": "en-US",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-03-outline.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "b9ed6fc327210a28b81d34f8e7c7b80d3f6367a5f6258ca9e6ff1b45f4fffba5"
+    },
+    {
+      "locale": "en-US",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-04-diagrams.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "45a2086c89cd31dbbeac0810e94ba7ed2cbde71a9df60b9b592a7874ba8cb191"
+    },
+    {
+      "locale": "en-US",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-05-whiteboard.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "afdb5087da4f4332f4a84050a0afe092d577fc2be9d3bb0c931992767c9894c5"
+    },
+    {
+      "locale": "en-US",
+      "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/en-US/scriba-workflow.gif",
+      "duration": 17.456667,
+      "sourceDuration": 17.456667
+    },
+    {
+      "locale": "en-US",
+      "file": "docs/app-store/submission-20261106/media/previews/ipad-13/en-US/AppPreview.mp4",
+      "dimensions": [
+        1200,
+        1600
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    },
+    {
+      "locale": "de-DE",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-01-reading.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "ee8809bad7ccece5fea2d5dfb6a1adf1ec6bcc3e2bea86b638f2fde07d4ee2cf"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-02-writing.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "5769d8694e24c4e091f6909854484fa5ba221a258a7f0b9ac5b76ae8973c98d8"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-03-outline.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "015bc156a7190cffb1cf4a0b3e4049164c7a47ad368067294b702f7138a99388"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-04-diagrams.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "672fd00315c7c54858ba7919732fe67525416680de5fd8b8334b91ac44f09aaf"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-05-whiteboard.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "837b9cd69ec74a1531a491e4daa3f0a49f41eb8e69849d213fba55df36915594"
+    },
+    {
+      "locale": "de-DE",
+      "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/de-DE/scriba-workflow.gif",
+      "duration": 17.251667,
+      "sourceDuration": 17.251667
+    },
+    {
+      "locale": "de-DE",
+      "file": "docs/app-store/submission-20261106/media/previews/ipad-13/de-DE/AppPreview.mp4",
+      "dimensions": [
+        1200,
+        1600
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-01-reading.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "e30d3d0c3b24ee9617f432b7f8f8fb36775b684de4850fa57d935bd257ced717"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-02-writing.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "a465a942e15aa83e568346b2889bac9089a9024550f686049bfab2e70baa2e57"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-03-outline.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "a8b0a9af8ad0c149eba118b47883176fdcb29416e4ec07c6f45c27180f1677ec"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-04-diagrams.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "f3eaa66a545465698d85d4dbd1a2359f97b08c4cc5c8827cb09b1ffeb9568282"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-05-whiteboard.png",
+      "dimensions": [
+        2064,
+        2752
+      ],
+      "sha256": "03ed127806ad7145c46e41166e070dc80ef62b584ccc49cfbc9257277d0c80ae"
+    },
+    {
+      "locale": "fr-FR",
+      "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/fr-FR/scriba-workflow.gif",
+      "duration": 17.25,
+      "sourceDuration": 17.25
+    },
+    {
+      "locale": "fr-FR",
+      "file": "docs/app-store/submission-20261106/media/previews/ipad-13/fr-FR/AppPreview.mp4",
+      "dimensions": [
+        1200,
+        1600
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    }
+  ]
+}

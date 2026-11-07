@@ -1,0 +1,75 @@
+{
+  "recordedAtUtc": "2026-11-07T03:53:42.263Z",
+  "observedConfirmation": "5 Items Submitted",
+  "appId": "6824664840",
+  "bundleId": "com.aeonbridge.scriba",
+  "version": "1.17.2",
+  "build": "31",
+  "applicationSourceCommit": "32209de1da517ea2578386f10f47bd19217fd2ba",
+  "appStoreBuildId": "2f58d486-a8c0-42c7-a27e-c80a40dd7535",
+  "configuredReleaseMode": "manual",
+  "submissionId": "525b3c94-9a54-4b88-b19b-a214bf897077",
+  "submissionUrl": "https://appstoreconnect.apple.com/apps/6824664840/distribution/reviewsubmissions/details/525b3c94-9a54-4b88-b19b-a214bf897077",
+  "submittedItems": [
+    {
+      "type": "appVersion",
+      "version": "1.17.2",
+      "build": "31"
+    },
+    {
+      "type": "customProductPage",
+      "name": "Scriba PT-BR",
+      "locale": "pt-BR",
+      "versionId": "072b8724-8d46-493a-ad29-f6c743845800",
+      "productPageId": "a22737b4-4f7a-46ff-abc0-db3e51c916b7",
+      "url": "https://appstoreconnect.apple.com/apps/6824664840/distribution/productpages/072b8724-8d46-493a-ad29-f6c743845800"
+    },
+    {
+      "type": "customProductPage",
+      "name": "Scriba EN-US",
+      "locale": "en-US",
+      "versionId": "eba18d20-0339-46c6-b56e-384f4f609333",
+      "productPageId": "748bce31-454a-4a02-af97-efc381e9f414",
+      "url": "https://appstoreconnect.apple.com/apps/6824664840/distribution/productpages/eba18d20-0339-46c6-b56e-384f4f609333"
+    },
+    {
+      "type": "customProductPage",
+      "name": "Scriba DE-DE",
+      "locale": "de-DE",
+      "versionId": "9b16d77f-3f88-4ed8-8352-a6546ca02db9",
+      "productPageId": "22e49a5b-f185-4986-aac1-c2ada5fd1a0f",
+      "url": "https://appstoreconnect.apple.com/apps/6824664840/distribution/productpages/9b16d77f-3f88-4ed8-8352-a6546ca02db9"
+    },
+    {
+      "type": "customProductPage",
+      "name": "Scriba FR-FR",
+      "locale": "fr-FR",
+      "versionId": "500b8df3-0852-4e3f-98d1-aeacda911f13",
+      "productPageId": "882d0664-73a7-4cec-9edf-8440270e0da2",
+      "url": "https://appstoreconnect.apple.com/apps/6824664840/distribution/productpages/500b8df3-0852-4e3f-98d1-aeacda911f13"
+    }
+  ],
+  "media": {
+    "locales": [
+      "pt-BR",
+      "en-US",
+      "de-DE",
+      "fr-FR"
+    ],
+    "deviceCategories": [
+      "iphone-medium",
+      "iphone-duo",
+      "ipad-13"
+    ],
+    "uniqueScreenshots": 60,
+    "uniqueAppPreviews": 12,
+    "animatedGifs": 12
+  },
+  "verification": {
+    "javascriptPassed": 101,
+    "nativePassed": 12,
+    "nativeSkipped": 1,
+    "nativeFailed": 0,
+    "captureSource": "Isolated iOS simulators with fictional localized documents"
+  }
+}

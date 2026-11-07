@@ -1,0 +1,46 @@
+{
+  "pt-BR": {
+    "name": "Scriba: Editor Markdown",
+    "subtitle": "Suas ideias em Markdown",
+    "customPageName": "Scriba PT-BR",
+    "promotionalText": "Leia, escreva e desenhe em Markdown. Trabalhe offline, organize suas notas e compartilhe PDFs com tabelas legíveis.",
+    "description": "Transforme suas anotações em documentos que você pode ler, editar, desenhar e compartilhar. O Scriba reúne Markdown, diagramas e whiteboards no iPhone e no iPad.\n\nESCREVA DIRETAMENTE NO TEXTO\nEdite a nota formatada ou abra o código Markdown. Use títulos, listas, tarefas, tabelas, links, imagens e fórmulas. Navegue pelo índice e acompanhe palavras, caracteres e seleção.\n\nDÊ FORMA ÀS IDEIAS\nVisualize diagramas Mermaid e ZenUML. Amplie os gráficos, consulte o código e exporte SVG ou PNG transparente. Abra o whiteboard Excalidraw para desenhar e conectar ideias na mesma nota.\n\nORGANIZE O QUE IMPORTA\nBusque nas notas recentes, fixe as mais importantes e explore os guias editáveis incluídos. Alterne entre os temas claro e escuro.\n\nCOMPARTILHE DOCUMENTOS LEGÍVEIS\nExporte PDFs com tabelas largas em páginas paisagem, cabeçalhos repetidos e texto que continua em retrato. Importe e exporte Markdown e pacotes ZIP com imagens.\n\nESCOLHA ONDE GUARDAR\nTrabalhe offline com notas e rascunhos privados no aplicativo. Escolha uma pasta em Arquivos ou conecte opcionalmente seu repositório GitHub. A sincronização ocorre enquanto o Scriba está aberto e conectado. Os arquivos enviados a um repositório público ficam públicos.\n\nO Scriba é gratuito. Abra o aplicativo e comece a escrever.\n\nDesenvolvido por Aeon Bridge Co.",
+    "keywords": "notas,markdown,md,pdf,diagramas,mermaid,excalidraw,github,offline,escrita,latex,texto",
+    "whatsNew": "• Exportação PDF com tabelas largas em páginas paisagem.\n• Cabeçalhos repetidos e retorno do texto à orientação retrato.\n• Colunas mais legíveis na leitura e edição de tabelas.",
+    "supportUrl": "https://scriba.aeonbridge.app/support.html",
+    "marketingUrl": "https://scriba.aeonbridge.app/"
+  },
+  "en-US": {
+    "name": "Scriba: Markdown Editor",
+    "subtitle": "Your ideas in Markdown",
+    "customPageName": "Scriba EN-US",
+    "promotionalText": "Read, write and draw in Markdown. Work offline, organize your notes and share PDFs with readable tables.",
+    "description": "Turn your notes into documents you can read, edit, draw in and share. Scriba brings Markdown, diagrams and whiteboards together on iPhone and iPad.\n\nEDIT FORMATTED TEXT\nWrite directly in your formatted note or open the Markdown source. Use headings, lists, tasks, tables, links, images and formulas. Navigate the outline and check word, character and selection counts.\n\nGIVE IDEAS A VISUAL FORM\nView Mermaid and ZenUML diagrams. Zoom into charts, inspect their code and export SVG or transparent PNG. Open the Excalidraw whiteboard to sketch and connect ideas in the same note.\n\nKEEP YOUR WORK ORGANIZED\nSearch recent notes, pin important documents and explore the included editable guides. Choose a light or dark theme.\n\nSHARE READABLE DOCUMENTS\nExport PDFs with wide tables on landscape pages, repeating headers and text that continues in portrait. Import and export Markdown and ZIP packages with images.\n\nCHOOSE YOUR STORAGE\nWork offline with private notes and drafts in the app. Select a folder in Files or optionally connect your GitHub repository. Synchronization runs while Scriba is open and connected. Files synchronized to a public repository become public.\n\nScriba is free. Open the app and start writing.\n\nDeveloped by Aeon Bridge Co.",
+    "keywords": "notes,markdown,md,pdf,diagrams,mermaid,excalidraw,github,offline,writing,latex,text",
+    "whatsNew": "• PDF export places wide tables on landscape pages.\n• Table headers repeat and following text returns to portrait.\n• More readable columns when viewing and editing tables.",
+    "supportUrl": "https://scriba.aeonbridge.app/support.html",
+    "marketingUrl": "https://scriba.aeonbridge.app/"
+  },
+  "de-DE": {
+    "name": "Scriba: Markdown-Editor",
+    "subtitle": "Deine Ideen in Markdown",
+    "customPageName": "Scriba DE-DE",
+    "promotionalText": "Lies, schreibe und zeichne in Markdown. Arbeite offline, ordne deine Notizen und teile PDFs mit gut lesbaren Tabellen.",
+    "description": "Mache aus deinen Notizen Dokumente, die du lesen, bearbeiten, mit Zeichnungen ergänzen und teilen kannst. Scriba verbindet Markdown, Diagramme und Whiteboards auf iPhone und iPad.\n\nFORMATIERTEN TEXT BEARBEITEN\nSchreibe direkt in der formatierten Notiz oder öffne den Markdown-Quelltext. Verwende Überschriften, Listen, Aufgaben, Tabellen, Links, Bilder und Formeln. Navigiere über die Gliederung und prüfe die Anzahl von Wörtern, Zeichen und ausgewählten Zeichen.\n\nIDEEN SICHTBAR MACHEN\nZeige Mermaid- und ZenUML-Diagramme an. Vergrößere Grafiken, sieh dir ihren Code an und exportiere SVG oder transparente PNG-Dateien. Im Excalidraw-Whiteboard kannst du zeichnen und Ideen in derselben Notiz verbinden.\n\nDEINE ARBEIT ORDNEN\nDurchsuche aktuelle Notizen, hefte wichtige Dokumente an und entdecke die enthaltenen bearbeitbaren Anleitungen. Wähle ein helles oder dunkles Design.\n\nGUT LESBARE DOKUMENTE TEILEN\nExportiere PDFs mit breiten Tabellen auf Querformatseiten, wiederholten Kopfzeilen und anschließendem Text im Hochformat. Importiere und exportiere Markdown sowie ZIP-Pakete mit Bildern.\n\nSPEICHERORT WÄHLEN\nArbeite offline mit privaten Notizen und Entwürfen in der App. Wähle einen Ordner in Dateien oder verbinde optional dein GitHub-Repository. Die Synchronisierung läuft, während Scriba geöffnet und verbunden ist. Dateien in einem öffentlichen Repository sind öffentlich.\n\nScriba ist kostenlos. Öffne die App und beginne zu schreiben.\n\nEntwickelt von Aeon Bridge Co.",
+    "keywords": "notizen,markdown,md,pdf,diagramme,mermaid,excalidraw,github,offline,schreiben,latex,text",
+    "whatsNew": "• Breite Tabellen werden im PDF auf Querformatseiten exportiert.\n• Kopfzeilen werden wiederholt und anschließender Text erscheint im Hochformat.\n• Besser lesbare Spalten beim Anzeigen und Bearbeiten von Tabellen.",
+    "supportUrl": "https://scriba.aeonbridge.app/support.html",
+    "marketingUrl": "https://scriba.aeonbridge.app/"
+  },
+  "fr-FR": {
+    "name": "Scriba: Éditeur Markdown",
+    "subtitle": "Vos idées en Markdown",
+    "customPageName": "Scriba FR-FR",
+    "promotionalText": "Lisez, écrivez et dessinez en Markdown. Travaillez hors ligne, organisez vos notes et partagez des PDF aux tableaux lisibles.",
+    "description": "Transformez vos notes en documents à lire, modifier, illustrer et partager. Scriba réunit Markdown, diagrammes et tableaux blancs sur iPhone et iPad.\n\nMODIFIEZ LE TEXTE MIS EN FORME\nÉcrivez directement dans votre note mise en forme ou ouvrez le code Markdown. Utilisez des titres, listes, tâches, tableaux, liens, images et formules. Parcourez le plan et consultez le nombre de mots, de caractères et de caractères sélectionnés.\n\nDONNEZ UNE FORME VISUELLE AUX IDÉES\nAffichez des diagrammes Mermaid et ZenUML. Agrandissez les graphiques, consultez leur code et exportez un SVG ou un PNG transparent. Ouvrez le tableau blanc Excalidraw pour dessiner et relier vos idées dans la même note.\n\nORGANISEZ VOTRE TRAVAIL\nRecherchez vos notes récentes, épinglez les documents importants et explorez les guides modifiables inclus. Choisissez un thème clair ou sombre.\n\nPARTAGEZ DES DOCUMENTS LISIBLES\nExportez des PDF avec les tableaux larges sur des pages en paysage, des en-têtes répétés et le texte suivant en portrait. Importez et exportez du Markdown et des fichiers ZIP avec images.\n\nCHOISISSEZ VOTRE STOCKAGE\nTravaillez hors ligne avec des notes et brouillons privés dans l'application. Sélectionnez un dossier dans Fichiers ou connectez votre dépôt GitHub en option. La synchronisation fonctionne lorsque Scriba est ouvert et connecté. Les fichiers synchronisés dans un dépôt public deviennent publics.\n\nScriba est gratuit. Ouvrez l'application et commencez à écrire.\n\nDéveloppé par Aeon Bridge Co.",
+    "keywords": "notes,markdown,md,pdf,diagrammes,mermaid,excalidraw,github,horsligne,écriture,latex,texte",
+    "whatsNew": "• Les tableaux larges sont exportés en PDF sur des pages en paysage.\n• Les en-têtes sont répétés et le texte suivant revient en portrait.\n• Des colonnes plus lisibles pour consulter et modifier les tableaux.",
+    "supportUrl": "https://scriba.aeonbridge.app/support.html",
+    "marketingUrl": "https://scriba.aeonbridge.app/"
+  }
+}

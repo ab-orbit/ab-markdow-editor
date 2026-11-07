@@ -1,0 +1,98 @@
+[
+  {
+    "locale": "pt-BR",
+    "category": "iphone-medium",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "pt-BR",
+    "category": "iphone-duo",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "pt-BR",
+    "category": "ipad-13",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "en-US",
+    "category": "iphone-medium",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "en-US",
+    "category": "iphone-duo",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "en-US",
+    "category": "ipad-13",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "de-DE",
+    "category": "iphone-medium",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "de-DE",
+    "category": "iphone-duo",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "de-DE",
+    "category": "ipad-13",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "fr-FR",
+    "category": "iphone-medium",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "fr-FR",
+    "category": "iphone-duo",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  },
+  {
+    "locale": "fr-FR",
+    "category": "ipad-13",
+    "screenshots": 5,
+    "previews": 1,
+    "missing": [],
+    "ok": true
+  }
+]

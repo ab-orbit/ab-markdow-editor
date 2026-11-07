@@ -1,0 +1,556 @@
+{
+  "source": {
+    "device": "A26191FE-9B45-4DFF-9EE6-08840828B812",
+    "deviceName": "Scriba PDF Review 31",
+    "category": "iphone-duo",
+    "source": "Actual iOS simulator screenshots and screen recordings, fictional localized documents",
+    "captures": [
+      {
+        "id": "498F0E1E-9AB8-41EB-AB8F-B4935C66649B",
+        "label": "reading",
+        "locale": "pt-BR",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/pt-BR/reading.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "label": "writing",
+        "kind": "screenshot",
+        "locale": "pt-BR",
+        "id": "AF227F66-973D-43B2-A5E4-D094BA864793",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/pt-BR/writing.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "label": "outline",
+        "id": "09A654D7-9AD9-4DFC-8CAC-06805513B4B8",
+        "locale": "pt-BR",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/pt-BR/outline.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "label": "diagrams",
+        "locale": "pt-BR",
+        "kind": "screenshot",
+        "id": "A887E2E3-3120-4041-B90D-621464FB3A8A",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/pt-BR/diagrams.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "3B00CD1F-BBAB-446D-82B4-EE0FB7244471",
+        "label": "whiteboard",
+        "locale": "pt-BR",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/pt-BR/whiteboard.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "label": "library",
+        "locale": "pt-BR",
+        "id": "309C8593-305D-464A-8D0E-0781885E52FE",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/pt-BR/library.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "8FAAD2DA-A009-426F-A23D-B878241FA465",
+        "kind": "videoStart",
+        "label": "workflow",
+        "locale": "pt-BR",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/pt-BR/workflow-raw.mp4",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "99BE195E-3250-4FAA-8966-1262D3AEDA66",
+        "kind": "screenshot",
+        "label": "reading",
+        "locale": "en-US",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/en-US/reading.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "4936BEE7-88AF-4B2B-8C32-FAC2C3943DA2",
+        "kind": "screenshot",
+        "locale": "en-US",
+        "label": "writing",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/en-US/writing.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "label": "outline",
+        "locale": "en-US",
+        "kind": "screenshot",
+        "id": "242DC235-E12E-4D22-8F91-8E03063C075B",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/en-US/outline.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "en-US",
+        "id": "B615DA3D-926B-4A91-82C3-9C43C3582140",
+        "label": "diagrams",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/en-US/diagrams.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "E9EAFFF0-5E9C-4EDD-8E54-746EFCDA6FBF",
+        "kind": "screenshot",
+        "label": "whiteboard",
+        "locale": "en-US",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/en-US/whiteboard.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "label": "library",
+        "locale": "en-US",
+        "id": "6CA4A6B0-9169-4C08-8CF5-E4F3FB73B5B0",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/en-US/library.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "kind": "videoStart",
+        "locale": "en-US",
+        "id": "C9E46853-5D3D-44AC-A062-239FF5E4BFA4",
+        "label": "workflow",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/en-US/workflow-raw.mp4",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "de-DE",
+        "id": "3DAAD384-6442-49C5-AD56-346B6DCF97B3",
+        "label": "reading",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/de-DE/reading.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "36E05BA6-050C-4DB3-AFBA-F0736EFBF87A",
+        "locale": "de-DE",
+        "kind": "screenshot",
+        "label": "writing",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/de-DE/writing.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "de-DE",
+        "kind": "screenshot",
+        "id": "0AAC02E6-FC5F-4E7C-8B20-25FA178FCC7B",
+        "label": "outline",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/de-DE/outline.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "de-DE",
+        "label": "diagrams",
+        "id": "6819C535-0282-4D21-823D-11A4FEF44082",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/de-DE/diagrams.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "kind": "screenshot",
+        "locale": "de-DE",
+        "label": "whiteboard",
+        "id": "4D4AB0FC-6DCA-4B8A-ABF6-74157B6CE38E",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/de-DE/whiteboard.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "F515BBB9-01A7-4C0C-8ED8-742108775E31",
+        "label": "library",
+        "locale": "de-DE",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/de-DE/library.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "de-DE",
+        "id": "7925106E-4621-4373-AFDB-683AA6CC1859",
+        "kind": "videoStart",
+        "label": "workflow",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/de-DE/workflow-raw.mp4",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "fr-FR",
+        "id": "4D32AC80-B714-47E3-8919-27D29D079143",
+        "label": "reading",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/fr-FR/reading.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "3AD59108-0AB3-45FD-B2D0-12193FB6BDCB",
+        "label": "writing",
+        "locale": "fr-FR",
+        "kind": "screenshot",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/fr-FR/writing.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "kind": "screenshot",
+        "id": "D828D38C-048B-4FEC-8D7C-965F28534C49",
+        "label": "outline",
+        "locale": "fr-FR",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/fr-FR/outline.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "fr-FR",
+        "label": "diagrams",
+        "kind": "screenshot",
+        "id": "07111C68-BA75-48A8-AB13-EA5E3CEC0BCD",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/fr-FR/diagrams.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "locale": "fr-FR",
+        "id": "1341F114-DE44-4621-9CE2-65751E0E2F50",
+        "kind": "screenshot",
+        "label": "whiteboard",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/fr-FR/whiteboard.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "ADDC337E-977D-416C-B154-029AFBA921C9",
+        "kind": "screenshot",
+        "label": "library",
+        "locale": "fr-FR",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/fr-FR/library.png",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      },
+      {
+        "id": "57973661-5789-4559-AB63-D0CF832B548A",
+        "kind": "videoStart",
+        "label": "workflow",
+        "locale": "fr-FR",
+        "category": "iphone-duo",
+        "file": "/tmp/scriba-pdf-tables-20261106/store-media/iphone-duo/fr-FR/workflow-raw.mp4",
+        "device": "Scriba PDF Review 31",
+        "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo"
+      }
+    ]
+  },
+  "prepared": [
+    {
+      "locale": "pt-BR",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-01-reading.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "5b30ec4636a2435818122d3731427d816e2cea729c3f059dc4436febedf8dd9a"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-02-writing.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "23e415e461bbe143321f4a4f1bb96a5b07afcf44453921be53a262371f62eadf"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-03-outline.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "1c2ac09e604bfb0bc82052fb5e875a9eed1e1882c0b2802f848c9e39dc5d8c73"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-04-diagrams.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "0ec0d6d3c56f2c7a19102729587edae6148a22f4d742869315ffce0084e72a31"
+    },
+    {
+      "locale": "pt-BR",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-05-whiteboard.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "fa8c6338bb600155ba1f8c3afe675057720fa5501ce8a74a42c41ec3bcb1b32f"
+    },
+    {
+      "locale": "pt-BR",
+      "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/pt-BR/scriba-workflow.gif",
+      "duration": 17.35,
+      "sourceDuration": 17.35
+    },
+    {
+      "locale": "pt-BR",
+      "file": "docs/app-store/submission-20261106/media/previews/iphone-duo/pt-BR/AppPreview.mp4",
+      "dimensions": [
+        886,
+        1920
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    },
+    {
+      "locale": "en-US",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-01-reading.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "44435f6715c989553cb0a5cd8ed8eed5c538c9550751da4f8242e0baace488f7"
+    },
+    {
+      "locale": "en-US",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-02-writing.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "fd14469bb04267d40ea220ecc6c43199ff7fc34e89cf1717963fadf80a35ab19"
+    },
+    {
+      "locale": "en-US",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-03-outline.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "959cc6ccf881d4262dcc195d3bf6023436357db4c031de2528681d4173a8ee0a"
+    },
+    {
+      "locale": "en-US",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-04-diagrams.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "11edf7e90d2a38bf971199a3346bbeb5283dce28f16643891936bcd57370ec7a"
+    },
+    {
+      "locale": "en-US",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-05-whiteboard.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "0c29860293c09e49edbdefbbca0420071e8c204909b6902081ba2fde43de1a4c"
+    },
+    {
+      "locale": "en-US",
+      "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/en-US/scriba-workflow.gif",
+      "duration": 17.478333,
+      "sourceDuration": 17.478333
+    },
+    {
+      "locale": "en-US",
+      "file": "docs/app-store/submission-20261106/media/previews/iphone-duo/en-US/AppPreview.mp4",
+      "dimensions": [
+        886,
+        1920
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    },
+    {
+      "locale": "de-DE",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-01-reading.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "ee75e8a68dd8442957a0d8cc502d3400fbf0680455d51bf25c1dfebbf57d7119"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-02-writing.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "7bca74e2b6b3dca7ffa507203f6cf2d2542e3f0e0f7b0293753eea620283ca5b"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-03-outline.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "59bc1e74b84fe9a38ded2967123895876c2f27226a347c6f90bf58892c808d85"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-04-diagrams.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "229a3146f15c32194367fe1e28cbaf5780e5cd7f06a855f4406364f0c77229d1"
+    },
+    {
+      "locale": "de-DE",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-05-whiteboard.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "98f7e89c3e0b7a7dbb046cda82e5610d08ebea970b74bbf2a116ff4c4ce80cb1"
+    },
+    {
+      "locale": "de-DE",
+      "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/de-DE/scriba-workflow.gif",
+      "duration": 17.388333,
+      "sourceDuration": 17.388333
+    },
+    {
+      "locale": "de-DE",
+      "file": "docs/app-store/submission-20261106/media/previews/iphone-duo/de-DE/AppPreview.mp4",
+      "dimensions": [
+        886,
+        1920
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "reading",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-01-reading.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "4b4460b736f3f3e93ff5b215ecf2f9d28b60f8881847175f1ca1ab286f02f43f"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "writing",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-02-writing.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "19fc4cc63613223774dc666e33f5f26f31fe1722bdac392cd953c0ef42f2391c"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "outline",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-03-outline.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "896ba9fb49cc5b27439156cc92ee78ac9b42cecd16390bafb37bd4f3919f38d8"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "diagrams",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-04-diagrams.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "16e52771af015621d4f1fe3bcd77b8d560d2f84afbb07a7605b31ad9f0cd4176"
+    },
+    {
+      "locale": "fr-FR",
+      "scene": "whiteboard",
+      "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-05-whiteboard.png",
+      "dimensions": [
+        1398,
+        2034
+      ],
+      "sha256": "55b1d10d9dfd3c1d135742ca8cdd60a3525dff10111b0e072820c7453f5d6414"
+    },
+    {
+      "locale": "fr-FR",
+      "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/fr-FR/scriba-workflow.gif",
+      "duration": 17.078333,
+      "sourceDuration": 17.078333
+    },
+    {
+      "locale": "fr-FR",
+      "file": "docs/app-store/submission-20261106/media/previews/iphone-duo/fr-FR/AppPreview.mp4",
+      "dimensions": [
+        886,
+        1920
+      ],
+      "duration": 20,
+      "editing": "Final native frame held to reach 20 seconds. Silent stereo AAC track added."
+    }
+  ]
+}

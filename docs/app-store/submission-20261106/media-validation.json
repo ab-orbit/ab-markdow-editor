@@ -1,0 +1,494 @@
+[
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/pt-BR/pt-BR-iphone-medium-01-reading.png",
+    "sha256": "313e1bd192af90cfb4a66da80d0e47db82461b05d753591f7d287db700a33ba4",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/pt-BR/pt-BR-iphone-medium-02-writing.png",
+    "sha256": "8b56f495c2a4a0c041ea2f06a392a3b0a7c148a5e3f980baf7a71f0c403cebac",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/pt-BR/pt-BR-iphone-medium-03-outline.png",
+    "sha256": "c9698f2533e40f7b86f470815c3620639874ab14465c9431c9ab1cb55dfe8cb2",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/pt-BR/pt-BR-iphone-medium-04-diagrams.png",
+    "sha256": "cb031b41fc27746be1d2c916c02b8bf7261607ae3b08511f40552bf0681273c9",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/pt-BR/pt-BR-iphone-medium-05-whiteboard.png",
+    "sha256": "923ddc5d65e2c5ddb04102f276eb4cc722e096e7b6448826dbcc85e8841c6118",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/pt-BR/pt-BR-iphone-medium-00-AppPreview.mp4",
+    "sha256": "79241b6856829522a73a9a0ce491665ba6c40dd08afa000360d65bdd40cfac65",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-medium/pt-BR/scriba-workflow.gif",
+    "sha256": "249d0ced5ac928f150ed6792a098cf9402deab96947a812ad5521cacc3894105",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/en-US/en-US-iphone-medium-01-reading.png",
+    "sha256": "a146936551a384a286c09b7a1f08ff33838dacc23fa9c35f1b42b17e531adc2c",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/en-US/en-US-iphone-medium-02-writing.png",
+    "sha256": "ed40f2ddf11ea6197951fefe258f28e46af89259bfc3f7b2cea91db84a46505c",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/en-US/en-US-iphone-medium-03-outline.png",
+    "sha256": "5410152d5aaa4803fd2ad24db4e98cd092862086b2d356b010632688ec6cc6ee",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/en-US/en-US-iphone-medium-04-diagrams.png",
+    "sha256": "1451761a0bc61bfc980deb61c4666cb74b1a42bf1727b536a68bf3f8e619f7c6",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/en-US/en-US-iphone-medium-05-whiteboard.png",
+    "sha256": "38b2343e7c5d60989f1d9eabfcad3e60e1dcc1cee0c822183a800d3b1ea414cd",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/en-US/en-US-iphone-medium-00-AppPreview.mp4",
+    "sha256": "e6473d2848c3c145dce74b38b86a86bb5ac95d9d3041f9ce3c5403f44c4c04e9",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-medium/en-US/scriba-workflow.gif",
+    "sha256": "473248ba1b091f828dd89012cb79f4146638a29f4fe1f7579f9a5bc5c86a8b6c",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/de-DE/de-DE-iphone-medium-01-reading.png",
+    "sha256": "52ce7fdc8b1473668a494ef3b813c30f419a2a7c4515a9bbd41d1920abb08d97",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/de-DE/de-DE-iphone-medium-02-writing.png",
+    "sha256": "2925c42679c3f7615073f003ddb2c1ad603a4319c3e536f74979afeffbe15626",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/de-DE/de-DE-iphone-medium-03-outline.png",
+    "sha256": "424174574e18b078ace568977364d791e08cb27bcfd980c2f3eed8eb1800fb5d",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/de-DE/de-DE-iphone-medium-04-diagrams.png",
+    "sha256": "20b7da984f2854eae5b1eb9f3c72da20891fefd2e3267ce4c35abcfd1064dbd4",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/de-DE/de-DE-iphone-medium-05-whiteboard.png",
+    "sha256": "0dff226e982fb64346e445b10dc87037fd3d0b2cc3e6a01286bff5bbfda0f816",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/de-DE/de-DE-iphone-medium-00-AppPreview.mp4",
+    "sha256": "f78a7c1fee71a1f354d05bc78802c5282d38860aaced6732cd6f5b9b3d5b05ac",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-medium/de-DE/scriba-workflow.gif",
+    "sha256": "f3ac406a0bb59a24065392f381d6f8d148e38f343697e88a3982f6cef556f455",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/fr-FR/fr-FR-iphone-medium-01-reading.png",
+    "sha256": "1417676a1230257de2321974e42434f80c469bafedf12af03d8ac0e22c1a85fe",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/fr-FR/fr-FR-iphone-medium-02-writing.png",
+    "sha256": "3849dd41889cbcbbb0e65090b27e3767b49893eaf9620d64065e9964af8684a8",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/fr-FR/fr-FR-iphone-medium-03-outline.png",
+    "sha256": "1800809b3797ae47f75d06e13cc4f43973444e2e662f82e33f9cf92994bb2acf",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/fr-FR/fr-FR-iphone-medium-04-diagrams.png",
+    "sha256": "6a9c90db28bb4dd7825e6e975b941d8d989380e24b3986e61502d4326c13b42a",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/fr-FR/fr-FR-iphone-medium-05-whiteboard.png",
+    "sha256": "512381646538a5805e1d22e74112c7035412b6c65354681f027b21ac15eb11a1",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-medium/fr-FR/fr-FR-iphone-medium-00-AppPreview.mp4",
+    "sha256": "8cf60f798363e62068a7a88d246aa7553f17e1ba5e83c45bd3f18be51e1997f5",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-medium/fr-FR/scriba-workflow.gif",
+    "sha256": "f746e569290425a67738de7a514de5ba4a51d668d268e7851bd9e2be4eb855e4",
+    "kind": "gif",
+    "frames": 112
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-01-reading.png",
+    "sha256": "5b30ec4636a2435818122d3731427d816e2cea729c3f059dc4436febedf8dd9a",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-02-writing.png",
+    "sha256": "23e415e461bbe143321f4a4f1bb96a5b07afcf44453921be53a262371f62eadf",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-03-outline.png",
+    "sha256": "1c2ac09e604bfb0bc82052fb5e875a9eed1e1882c0b2802f848c9e39dc5d8c73",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-04-diagrams.png",
+    "sha256": "0ec0d6d3c56f2c7a19102729587edae6148a22f4d742869315ffce0084e72a31",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-05-whiteboard.png",
+    "sha256": "fa8c6338bb600155ba1f8c3afe675057720fa5501ce8a74a42c41ec3bcb1b32f",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/pt-BR/pt-BR-iphone-duo-00-AppPreview.mp4",
+    "sha256": "17c6ee1336a524b48a5926f81d176fcf9a801e224bc3bfabb72aee08b8c677b2",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/pt-BR/scriba-workflow.gif",
+    "sha256": "6cf525509eadeb59f515914cc9d0e794cb022bae78d7d0b7521fd705d70b66db",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-01-reading.png",
+    "sha256": "44435f6715c989553cb0a5cd8ed8eed5c538c9550751da4f8242e0baace488f7",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-02-writing.png",
+    "sha256": "fd14469bb04267d40ea220ecc6c43199ff7fc34e89cf1717963fadf80a35ab19",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-03-outline.png",
+    "sha256": "959cc6ccf881d4262dcc195d3bf6023436357db4c031de2528681d4173a8ee0a",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-04-diagrams.png",
+    "sha256": "11edf7e90d2a38bf971199a3346bbeb5283dce28f16643891936bcd57370ec7a",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-05-whiteboard.png",
+    "sha256": "0c29860293c09e49edbdefbbca0420071e8c204909b6902081ba2fde43de1a4c",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/en-US/en-US-iphone-duo-00-AppPreview.mp4",
+    "sha256": "d1d79d7d6afaf6f06efbb5ca807b2f5a4f1125ebae009ea0d4a07c36ee639760",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/en-US/scriba-workflow.gif",
+    "sha256": "d5a93be9048f1d2882b451966e0986dad200643e3c100a5e9123fc73ffeb3159",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-01-reading.png",
+    "sha256": "ee75e8a68dd8442957a0d8cc502d3400fbf0680455d51bf25c1dfebbf57d7119",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-02-writing.png",
+    "sha256": "7bca74e2b6b3dca7ffa507203f6cf2d2542e3f0e0f7b0293753eea620283ca5b",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-03-outline.png",
+    "sha256": "59bc1e74b84fe9a38ded2967123895876c2f27226a347c6f90bf58892c808d85",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-04-diagrams.png",
+    "sha256": "229a3146f15c32194367fe1e28cbaf5780e5cd7f06a855f4406364f0c77229d1",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-05-whiteboard.png",
+    "sha256": "98f7e89c3e0b7a7dbb046cda82e5610d08ebea970b74bbf2a116ff4c4ce80cb1",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/de-DE/de-DE-iphone-duo-00-AppPreview.mp4",
+    "sha256": "697eb0b5b6bb4429e815e093e0ecf85733571378744d187b31e762412dd290ac",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/de-DE/scriba-workflow.gif",
+    "sha256": "f0cc4820288909903f6fbd0031d80a2a2c50a0305604aa3e4a80089600b4bf63",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-01-reading.png",
+    "sha256": "4b4460b736f3f3e93ff5b215ecf2f9d28b60f8881847175f1ca1ab286f02f43f",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-02-writing.png",
+    "sha256": "19fc4cc63613223774dc666e33f5f26f31fe1722bdac392cd953c0ef42f2391c",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-03-outline.png",
+    "sha256": "896ba9fb49cc5b27439156cc92ee78ac9b42cecd16390bafb37bd4f3919f38d8",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-04-diagrams.png",
+    "sha256": "16e52771af015621d4f1fe3bcd77b8d560d2f84afbb07a7605b31ad9f0cd4176",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-05-whiteboard.png",
+    "sha256": "55b1d10d9dfd3c1d135742ca8cdd60a3525dff10111b0e072820c7453f5d6414",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/iphone-duo/fr-FR/fr-FR-iphone-duo-00-AppPreview.mp4",
+    "sha256": "80411244f6c30d15806bbe41396e1e1910eb20af22948f40a6081cb52ca01e2c",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      886,
+      1920
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/iphone-duo/fr-FR/scriba-workflow.gif",
+    "sha256": "6981fbd1435852f87bae6d3e0b8691f3ad9a6802ba1c02475c97a1167eb8ab2e",
+    "kind": "gif",
+    "frames": 109
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-01-reading.png",
+    "sha256": "eb98042ff1971995827132abcedd5eb10cb14957adece956932a8bfe9840fd53",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-02-writing.png",
+    "sha256": "cbfeb09fab4d3a1548eb8dfea48697c0381d8b5ecfed2ae1b03f3ccd08d2f5ac",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-03-outline.png",
+    "sha256": "e71dcd708977a513fb9439fcd2ece3723c8609dc7834ef07773423602cafbe9e",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-04-diagrams.png",
+    "sha256": "bbb7cd98fab462d4184e6cb01e69cc3c90afcd2a3960cb4ebac73d995105d11e",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-05-whiteboard.png",
+    "sha256": "a775a7d7bfd743dcdc1c177478b577574aeec0af1fc8fcd1e8439961cefa97d6",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/pt-BR/pt-BR-ipad-13-00-AppPreview.mp4",
+    "sha256": "b6aaa9a8d7ee388795c9b9926a0e27315f764daec2e5145486d4a1a7ee7569d5",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      1200,
+      1600
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/pt-BR/scriba-workflow.gif",
+    "sha256": "0dcc5b6a5a8fa5aece4caed3f1f007e2d616f483b2bd72360468a243b271070d",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-01-reading.png",
+    "sha256": "357ff54b2dfd20a2d55fc93b6593a1d7d0223c87a903520982d896b84bd02d5e",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-02-writing.png",
+    "sha256": "7617dc0a0ceb8ab81b99b6ce7d3ad2171274c833a06e9bb8e2da2c7cf9f18408",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-03-outline.png",
+    "sha256": "b9ed6fc327210a28b81d34f8e7c7b80d3f6367a5f6258ca9e6ff1b45f4fffba5",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-04-diagrams.png",
+    "sha256": "45a2086c89cd31dbbeac0810e94ba7ed2cbde71a9df60b9b592a7874ba8cb191",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-05-whiteboard.png",
+    "sha256": "afdb5087da4f4332f4a84050a0afe092d577fc2be9d3bb0c931992767c9894c5",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/en-US/en-US-ipad-13-00-AppPreview.mp4",
+    "sha256": "07116fdcdef6d5240e5d4d852ae4d0f09a0fd97c9ad835653f9953a36a360d3e",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      1200,
+      1600
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/en-US/scriba-workflow.gif",
+    "sha256": "f6ed1ba45b35d644f00529d6d30df85a8a0665617c03d196a69e76348eaecd7d",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-01-reading.png",
+    "sha256": "ee8809bad7ccece5fea2d5dfb6a1adf1ec6bcc3e2bea86b638f2fde07d4ee2cf",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-02-writing.png",
+    "sha256": "5769d8694e24c4e091f6909854484fa5ba221a258a7f0b9ac5b76ae8973c98d8",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-03-outline.png",
+    "sha256": "015bc156a7190cffb1cf4a0b3e4049164c7a47ad368067294b702f7138a99388",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-04-diagrams.png",
+    "sha256": "672fd00315c7c54858ba7919732fe67525416680de5fd8b8334b91ac44f09aaf",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-05-whiteboard.png",
+    "sha256": "837b9cd69ec74a1531a491e4daa3f0a49f41eb8e69849d213fba55df36915594",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/de-DE/de-DE-ipad-13-00-AppPreview.mp4",
+    "sha256": "98dcb2027a8aa3e1639defe450c4fb8cc460e06b8db8295aa2c1bf811dfdcd9c",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      1200,
+      1600
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/de-DE/scriba-workflow.gif",
+    "sha256": "e55a2453c037117a5c586fda1b1fca82f7473e6c266a6ca61e39353f4d34ba73",
+    "kind": "gif",
+    "frames": 110
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-01-reading.png",
+    "sha256": "e30d3d0c3b24ee9617f432b7f8f8fb36775b684de4850fa57d935bd257ced717",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-02-writing.png",
+    "sha256": "a465a942e15aa83e568346b2889bac9089a9024550f686049bfab2e70baa2e57",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-03-outline.png",
+    "sha256": "a8b0a9af8ad0c149eba118b47883176fdcb29416e4ec07c6f45c27180f1677ec",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-04-diagrams.png",
+    "sha256": "f3eaa66a545465698d85d4dbd1a2359f97b08c4cc5c8827cb09b1ffeb9568282",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-05-whiteboard.png",
+    "sha256": "03ed127806ad7145c46e41166e070dc80ef62b584ccc49cfbc9257277d0c80ae",
+    "kind": "screenshot"
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/screenshots/ipad-13/fr-FR/fr-FR-ipad-13-00-AppPreview.mp4",
+    "sha256": "e74df04a554fc9735e47eeab35ae4bd0a5d87511472783e770f7e8c73cdc5114",
+    "kind": "app-preview",
+    "duration": 20,
+    "dimensions": [
+      1200,
+      1600
+    ]
+  },
+  {
+    "file": "docs/app-store/submission-20261106/media/gifs/ipad-13/fr-FR/scriba-workflow.gif",
+    "sha256": "a71ff422e019fb5ae9fbdda944680fae9ab77859fd3e345f4602abf024cee54d",
+    "kind": "gif",
+    "frames": 110
+  }
+]

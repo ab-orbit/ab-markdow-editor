@@ -245,6 +245,222 @@ final class ScribaTests: XCTestCase {
         try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
             .write(to: documents.appendingPathComponent("pdf-table-regression.json"), options: .atomic)
     }
+
+    /** Manual media session driven by scripts/capture-appstore-media.mjs on an isolated simulator. */
+    func testLocalizedStoreMedia() async throws {
+        continueAfterFailure = false
+        executionTimeAllowance = 900
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let catalogURL = documents.appendingPathComponent("store-capture-catalog.json")
+        for _ in 0..<20 {
+            if FileManager.default.fileExists(atPath: catalogURL.path) { break }
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        guard FileManager.default.fileExists(atPath: catalogURL.path) else {
+            throw XCTSkip("Run the localized store media orchestrator to provide a capture catalog.")
+        }
+        let catalog = try JSONSerialization.jsonObject(with: Data(contentsOf: catalogURL)) as! [[String: Any]]
+        let request = documents.appendingPathComponent("store-capture-request.json")
+        let acknowledgment = documents.appendingPathComponent("store-capture-ack.json")
+        var labels = [String: String]()
+        var importedNames = [String: Int]()
+
+        func settle() async throws {
+            _ = try await js("await document.fonts.ready; await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); return true")
+            try await Task.sleep(nanoseconds: 400_000_000)
+        }
+        func fitWhiteboard() async throws {
+            // Use the canvas's own keyboard actions so floating tools stay clear of the sample drawing.
+            _ = try await js("""
+                const canvas = document.querySelector('.excalidraw-container');
+                canvas.focus();
+                canvas.dispatchEvent(new KeyboardEvent('keydown', {
+                    key: '1', code: 'Digit1', shiftKey: true, bubbles: true, cancelable: true
+                }));
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                canvas.dispatchEvent(new KeyboardEvent('keydown', {
+                    key: '-', code: 'Minus', shiftKey: true, bubbles: true, cancelable: true
+                }));
+                return true;
+                """)
+            web.endEditing(true)
+            try await settle()
+        }
+        func command(_ value: String) async throws {
+            try await waitFor("!document.querySelector('header input[type=\"file\"][accept*=\".md\"]').disabled")
+            _ = try await js("""
+                if (document.documentElement.dataset.nativeChrome === 'true') {
+                    const workbench = document.querySelector('[data-markdown-workbench]');
+                    const finishing = command === 'mode:read' && (workbench.dataset.readingEditable === 'true' || workbench.dataset.mode === 'whiteboard');
+                    window.dispatchEvent(new CustomEvent('scriba:native-command', {detail: finishing ? 'edit' : command}));
+                    return true;
+                }
+                const buttons = () => [...document.querySelectorAll('button')];
+                const byLabel = label => buttons().find(button => button.getAttribute('aria-label') === label);
+                if (command === 'outline') buttons().find(button => button.querySelector('svg.lucide-list-tree'))?.click();
+                else if (command === 'notes') window.dispatchEvent(new Event('scriba:show-notes'));
+                else if (command === 'close-notes') document.querySelector('#recent-notes .close-notes')?.click();
+                else if (command === 'mode:live') byLabel(labels.formatting)?.click();
+                else if (command === 'mode:whiteboard') byLabel(labels.openWhiteboard)?.click();
+                else if (command === 'mode:read') {
+                    if (document.querySelector('[data-markdown-workbench]').dataset.mode === 'whiteboard') {
+                        byLabel(labels.backToNote)?.click();
+                    } else {
+                        byLabel(labels.more)?.click();
+                        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                        buttons().find(button => button.textContent.trim() === labels.read)?.click();
+                    }
+                }
+                if (command === 'mode:read') {
+                    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                    if (document.querySelector('[data-markdown-workbench]').dataset.formattingOpen === 'true') {
+                        document.querySelector('[role="toolbar"] button:has(svg.lucide-more-vertical)')?.click();
+                        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                        document.querySelector('[role="menu"] button:has(svg.lucide-eye-off)')?.click();
+                    }
+                }
+                return true;
+                """, args: ["command": value, "labels": labels])
+            try await settle()
+        }
+        func importDocument(_ item: [String: Any]) async throws {
+            try await waitFor("!document.querySelector('header input[type=\"file\"][accept*=\".md\"]').disabled")
+            var payload = item
+            let name = item["name"] as! String
+            let count = (importedNames[name] ?? 0) + 1
+            importedNames[name] = count
+            if count > 1 {
+                let url = URL(fileURLWithPath: name)
+                payload["name"] = url.deletingPathExtension().lastPathComponent + " \(count)." + url.pathExtension
+            }
+            _ = try await js("""
+                const bytes = item.zip ? Uint8Array.from(atob(item.zip), char => char.charCodeAt(0)) : item.source;
+                const transfer = new DataTransfer();
+                transfer.items.add(new File([bytes], item.name, {type: item.zip ? 'application/zip' : 'text/markdown'}));
+                const input = document.querySelector('header input[type="file"][accept*=".md"]');
+                input.files = transfer.files;
+                input.dispatchEvent(new Event('change', {bubbles: true}));
+                return true;
+                """, args: ["item": payload])
+            if item["whiteboard"] as? Bool == true {
+                let expectedHeading = String(data: try JSONSerialization.data(withJSONObject: item["heading"]!, options: .fragmentsAllowed), encoding: .utf8)!
+                try await waitFor("document.querySelector('article h1')?.textContent === " + expectedHeading + " || !!document.querySelector('[data-whiteboard-state=\"ready\"] canvas.interactive')")
+                try await waitFor("!document.querySelector('header input[type=\"file\"][accept*=\".md\"]').disabled")
+                try await command("mode:whiteboard")
+                try await waitFor("!!document.querySelector('[data-whiteboard-state=\"ready\"] canvas.interactive')")
+            } else {
+                try await waitFor("document.querySelector('article h1')?.textContent === " + String(data: try JSONSerialization.data(withJSONObject: item["heading"]!, options: .fragmentsAllowed), encoding: .utf8)!)
+            }
+            try await waitFor("!document.querySelector('header input[type=\"file\"][accept*=\".md\"]').disabled")
+            if item["zip"] != nil {
+                try await waitFor("[...document.querySelectorAll('article img')].some(image => image.complete && image.naturalWidth > 0)")
+            }
+            try await settle()
+        }
+        func phase(_ kind: String, _ label: String, _ locale: String) async throws {
+            let id = UUID().uuidString
+            let language = try await js("return document.documentElement.lang") as? String
+            let expectedLanguage = String(locale.prefix(2))
+            guard language?.split(separator: "-").first.map(String.init) == expectedLanguage else {
+                throw NSError(domain: "ScribaMedia", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unexpected capture language: " + (language ?? "nil") + " for " + locale])
+            }
+            let message: [String: Any] = ["id": id, "kind": kind, "label": label, "locale": locale]
+            try JSONSerialization.data(withJSONObject: message).write(to: request, options: .atomic)
+            for _ in 0..<600 {
+                if let data = try? Data(contentsOf: acknowledgment),
+                   let reply = try? JSONSerialization.jsonObject(with: data) as? [String: Any], reply["id"] as? String == id { return }
+                try await Task.sleep(nanoseconds: 100_000_000)
+            }
+            XCTFail("Media orchestrator did not acknowledge " + locale + "/" + label)
+        }
+
+        for entry in catalog {
+            let locale = entry["locale"] as! String
+            labels = entry["labels"] as! [String: String]
+            importedNames = [:]
+            _ = try await js("""
+                for (const [name, store] of [['ab-markdown-drafts', 'drafts'], ['scriba-private-notes', 'library']]) {
+                    const db = await new Promise((resolve, reject) => {
+                        const open = indexedDB.open(name);
+                        open.onsuccess = () => resolve(open.result);
+                        open.onerror = () => reject(open.error);
+                    });
+                    if (db.objectStoreNames.contains(store)) await new Promise((resolve, reject) => {
+                        const tx = db.transaction(store, 'readwrite');
+                        tx.objectStore(store).clear(); tx.oncomplete = resolve; tx.onerror = () => reject(tx.error);
+                    });
+                    db.close();
+                }
+                localStorage.clear();
+                localStorage.setItem('scriba-language', language);
+                localStorage.setItem('ab-markdown-theme', 'light');
+                window.__scribaMediaReloadPending = true;
+                location.reload(); return true;
+                """, args: ["language": entry["language"]!])
+            try await waitFor("!window.__scribaMediaReloadPending")
+            try await waitFor("!!document.querySelector('header input[type=\"file\"][accept*=\".md\"]') && !document.querySelector('header input[type=\"file\"][accept*=\".md\"]').disabled")
+            try await waitFor("document.querySelector('article h1')?.textContent.includes('Scriba') === true")
+            let note = entry["note"] as! [String: Any]
+            let diagram = entry["diagram"] as! [String: Any]
+            let board = entry["board"] as! [String: Any]
+            try await importDocument(note)
+            try await phase("screenshot", "reading", locale)
+            try await command("mode:live")
+            web.endEditing(true)
+            try await settle()
+            try await phase("screenshot", "writing", locale)
+            try await command("mode:read")
+            try await command("outline")
+            try await phase("screenshot", "outline", locale)
+            _ = try await js("document.querySelector('[data-markdown-workbench] dialog[open] [data-ui=\"dismiss\"], [data-markdown-workbench] aside [data-ui=\"dismiss\"]')?.click(); return true")
+            try await settle()
+            try await importDocument(diagram)
+            try await waitFor("document.querySelector('figure[data-diagram-state=\"ready\"]') !== null")
+            try await settle()
+            _ = try await js("document.querySelector('figure[data-diagram-state=\"ready\"]')?.scrollIntoView({block: 'center'}); return true")
+            try await settle()
+            try await phase("screenshot", "diagrams", locale)
+            try await importDocument(board)
+            try await command("mode:whiteboard")
+            try await waitFor("!!document.querySelector('[data-whiteboard-state=\"ready\"] canvas.interactive')")
+            try await fitWhiteboard()
+            try await phase("screenshot", "whiteboard", locale)
+            try await command("mode:read")
+            _ = try await js("window.dispatchEvent(new Event('scriba:show-notes')); return true")
+            try await settle()
+            _ = try await js("document.activeElement?.blur(); return true")
+            web.endEditing(true)
+            try await settle()
+            try await phase("screenshot", "library", locale)
+            _ = try await js("document.querySelector('#recent-notes .close-notes')?.click(); return true")
+            try await settle()
+            try await importDocument(note)
+            try await phase("videoStart", "workflow", locale)
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+            _ = try await js("const root = document.querySelector('[data-document-scroll]'); root?.scrollBy({top: 210, behavior: 'smooth'}); return true")
+            try await Task.sleep(nanoseconds: 1_500_000_000)
+            _ = try await js("document.querySelector('[data-document-scroll]')?.scrollTo({top: 0, behavior: 'smooth'}); return true")
+            try await command("mode:live")
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+            web.endEditing(true)
+            try await command("mode:read")
+            try await importDocument(diagram)
+            try await waitFor("document.querySelector('figure[data-diagram-state=\"ready\"]') !== null")
+            _ = try await js("document.querySelector('figure button[aria-expanded]')?.click(); return true")
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+            _ = try await js("document.querySelector('figure button[aria-expanded]')?.click(); document.querySelector('figure button:has(svg.lucide-plus)')?.click(); return true")
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+            try await importDocument(board)
+            try await command("mode:whiteboard")
+            try await waitFor("!!document.querySelector('[data-whiteboard-state=\"ready\"] canvas.interactive')")
+            try await fitWhiteboard()
+            try await Task.sleep(nanoseconds: 3_000_000_000)
+            try await phase("videoStop", "workflow", locale)
+            try await command("mode:read")
+        }
+        let lastLocale = try XCTUnwrap(catalog.last?["locale"] as? String)
+        try await phase("finish", "complete", lastLocale)
+    }
     /** Automatic appearance releases UIKit's override so system changes reach WKWebView. */
     func testAutomaticAppearanceFollowsNativeSystem() async throws {
         let controller = try XCTUnwrap(scribaController(web.window?.rootViewController))

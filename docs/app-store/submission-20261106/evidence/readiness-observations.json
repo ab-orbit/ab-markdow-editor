@@ -1,0 +1,98 @@
+[
+  {
+    "page": "cpp-de",
+    "locale": "de-DE",
+    "category": "ipad-13",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:46:01.448Z"
+  },
+  {
+    "page": "cpp-de",
+    "locale": "de-DE",
+    "category": "iphone-duo",
+    "missing": [],
+    "editablePreview": false,
+    "checkedAt": "2026-11-07T03:46:02.481Z"
+  },
+  {
+    "page": "cpp-de",
+    "locale": "de-DE",
+    "category": "iphone-medium",
+    "missing": [],
+    "editablePreview": false,
+    "checkedAt": "2026-11-07T03:46:03.571Z"
+  },
+  {
+    "page": "cpp-en",
+    "locale": "pt-BR",
+    "category": "iphone-medium",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:47:09.525Z"
+  },
+  {
+    "page": "cpp-en",
+    "locale": "pt-BR",
+    "category": "iphone-duo",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:47:09.718Z"
+  },
+  {
+    "page": "cpp-en",
+    "locale": "pt-BR",
+    "category": "ipad-13",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:47:09.866Z"
+  },
+  {
+    "page": "cpp-en",
+    "locale": "en-US",
+    "category": "iphone-medium",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:47:21.176Z"
+  },
+  {
+    "page": "cpp-en",
+    "locale": "en-US",
+    "category": "iphone-duo",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:47:21.335Z"
+  },
+  {
+    "page": "cpp-en",
+    "locale": "en-US",
+    "category": "ipad-13",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:47:21.474Z"
+  },
+  {
+    "page": "cpp-pt",
+    "locale": "pt-BR",
+    "category": "iphone-medium",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:48:05.549Z"
+  },
+  {
+    "page": "cpp-pt",
+    "locale": "pt-BR",
+    "category": "iphone-duo",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:48:05.732Z"
+  },
+  {
+    "page": "cpp-pt",
+    "locale": "pt-BR",
+    "category": "ipad-13",
+    "missing": [],
+    "editablePreview": true,
+    "checkedAt": "2026-11-07T03:48:05.916Z"
+  }
+]
