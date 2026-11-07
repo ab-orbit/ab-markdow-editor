@@ -44,6 +44,8 @@ Successful installation re-registers this specific application with LaunchServic
 
 The **macOS installer** GitHub Actions workflow builds from checkout on a fresh hosted Mac for pull requests and changes to `main`, then runs the full Node test suite against the resulting signed app. It keeps a ZIP of that verified app, identified by commit, for release QA.
 
+The `main` branch requires the **Build and verify Mac installer** check from the GitHub Actions app before changes can merge, with an up-to-date branch and enforcement for administrators as well.
+
 The bundle regression tests copy that signed artifact and deliberately remove the window helper, remove the document-icon declaration/resource, downgrade the Markdown handler rank, alter a signed resource and supply a stale expected version. Each damaged package must be rejected. These tests do not modify the installed Scriba, Finder defaults or the user's files.
 
 Run the same packaging flow locally without installing or starting a service:
