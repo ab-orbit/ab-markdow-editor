@@ -36,9 +36,19 @@ if ! git --version >/dev/null 2>&1; then
   exit 1
 fi
 cd "$SOURCE_DIR"
+# Confirm a standalone window can be opened on this Mac without launching it during preflight.
+if [[ "${MARKDOWN_PACKAGE_ONLY:-0}" != 1 ]]; then
+  "$NODE_BIN" --input-type=module -e 'import { openEditorWindow } from "./scripts/editor-window.mjs"; try { await openEditorWindow("http://127.0.0.1:43127", {run: async () => {}}); } catch { console.error("A janela do Scriba requer Chrome, Edge, Brave ou Chromium instalado neste Mac."); process.exit(1); }'
+fi
 echo 'Instalando dependências e compilando o editor…'
 "$NPM_BIN" ci --no-audit --no-fund
-"$NPM_BIN" run build
+# Diagram/editor bundles need more than Node's 2 GB default on smaller clean Macs.
+# Scope the build heap to this command and honor an explicitly configured limit.
+BUILD_NODE_OPTIONS="${NODE_OPTIONS:-}"
+if [[ "$BUILD_NODE_OPTIONS" != *--max-old-space-size* && "$BUILD_NODE_OPTIONS" != *--max_old_space_size* ]]; then
+  BUILD_NODE_OPTIONS="${BUILD_NODE_OPTIONS:+$BUILD_NODE_OPTIONS }--max-old-space-size=4096"
+fi
+NODE_OPTIONS="$BUILD_NODE_OPTIONS" "$NPM_BIN" run build
 
 APP_DIR="$WORK_DIR/Scriba.app"
 RESOURCES="$APP_DIR/Contents/Resources"
@@ -48,7 +58,7 @@ cp -R dist server native "$RESOURCES/"
 mkdir -p "$RESOURCES/docs"
 cp docs/Scriba-Diagramas.md "$RESOURCES/docs/"
 cp -R docs/reference-texts docs/welcome-texts "$RESOURCES/docs/"
-cp scripts/launch.mjs scripts/stop.mjs scripts/local-service.mjs "$RESOURCES/scripts/"
+cp scripts/launch.mjs scripts/stop.mjs scripts/local-service.mjs scripts/editor-window.mjs "$RESOURCES/scripts/"
 cp -R "$NODE_HOME" "$RESOURCES/runtime"
 "$RESOURCES/runtime/bin/node" --version
 printf '%s\n' "${PATH#*:}" > "$RESOURCES/runtime-path.txt"
@@ -67,13 +77,15 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>CFBundleDocumentTypes</key><array><dict>
 <key>CFBundleTypeName</key><string>Markdown document</string>
 <key>CFBundleTypeRole</key><string>Editor</string>
-<key>LSHandlerRank</key><string>Alternate</string>
+<key>CFBundleTypeIconFile</key><string>AppIcon.icns</string>
+<key>LSHandlerRank</key><string>Default</string>
 <key>CFBundleTypeExtensions</key><array><string>md</string><string>markdown</string><string>mdown</string></array>
 <key>LSItemContentTypes</key><array><string>net.daringfireball.markdown</string><string>public.markdown</string><string>com.unknown.md</string></array>
 </dict></array>
 <key>UTImportedTypeDeclarations</key><array><dict>
 <key>UTTypeIdentifier</key><string>net.daringfireball.markdown</string>
 <key>UTTypeDescription</key><string>Markdown document</string>
+<key>UTTypeIconFile</key><string>AppIcon.icns</string>
 <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
 <key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>md</string><string>markdown</string><string>mdown</string></array><key>public.mime-type</key><string>text/markdown</string></dict>
 </dict></array>
@@ -93,6 +105,18 @@ for SIZE in 16 32 128 256 512; do
 done
 iconutil -c icns "$WORK_DIR/AppIcon.iconset" -o "$RESOURCES/AppIcon.icns"
 plutil -lint "$APP_DIR/Contents/Info.plist"
+# Validate the finished, signed package before touching an existing app or local service.
+/usr/bin/codesign --force --deep --sign - "$APP_DIR"
+"$NODE_BIN" scripts/verify-macos-bundle.mjs "$APP_DIR" "$APP_VERSION"
+
+# CI and release QA exercise the real installer without changing Finder defaults, aliases or services.
+if [[ "${MARKDOWN_PACKAGE_ONLY:-0}" == 1 ]]; then
+  PACKAGE_APP="$APPLICATIONS_DIR/Scriba.app"
+  [[ ! -e "$PACKAGE_APP" ]] || { echo "O destino de teste já existe: $PACKAGE_APP" >&2; exit 1; }
+  mv "$APP_DIR" "$PACKAGE_APP"
+  echo "Pacote validado: $PACKAGE_APP"
+  exit 0
+fi
 
 # Replace only our own application and desktop link; never remove unrelated files.
 TARGET_APP="$APPLICATIONS_DIR/Scriba.app"
@@ -112,7 +136,7 @@ if [[ -e "$TARGET_APP" ]]; then
   rm -rf "$TARGET_APP"
 fi
 mv "$APP_DIR" "$TARGET_APP"
-/usr/bin/codesign --force --deep --sign - "$TARGET_APP"
+/usr/bin/codesign --verify --deep --strict "$TARGET_APP"
 # The application icon is supplied by CFBundleIconFile; custom Finder resource forks invalidate signing.
 DESKTOP_LINK="$DESKTOP_DIR/Scriba.app"
 if [[ -L "$DESKTOP_LINK" ]]; then
@@ -127,4 +151,5 @@ touch "$TARGET_APP"
 "$TARGET_APP/Contents/Resources/runtime/bin/node" "$TARGET_APP/Contents/Resources/scripts/local-service.mjs" install
 echo "Instalado: $TARGET_APP"
 echo "Ícone na Mesa: $DESKTOP_LINK"
+echo 'Para tornar padrão: Finder → selecione um .md → Obter Informações → Abrir com Scriba → Alterar Tudo.'
 if [[ "${MARKDOWN_NO_OPEN:-0}" != 1 ]]; then open "$TARGET_APP"; fi

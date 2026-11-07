@@ -1,0 +1,44 @@
+name: macOS installer
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: Build and verify Mac installer
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build a fresh application with the actual installer
+        env:
+          MARKDOWN_PACKAGE_ONLY: '1'
+          MARKDOWN_APPLICATIONS_DIR: ${{ runner.temp }}/scriba-package
+          MARKDOWN_DESKTOP_DIR: ${{ runner.temp }}/scriba-desktop
+        run: ./install.sh
+      - name: Test source behavior and reject damaged application packages
+        env:
+          SCRIBA_MAC_BUNDLE: ${{ runner.temp }}/scriba-package/Scriba.app
+        run: npm test
+      - name: Preserve the verified application for release QA
+        run: ditto -c -k --sequesterRsrc --keepParent "${{ runner.temp }}/scriba-package/Scriba.app" "${{ runner.temp }}/Scriba-mac.zip"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Scriba-mac-${{ github.sha }}
+          path: ${{ runner.temp }}/Scriba-mac.zip
+          if-no-files-found: error
+          retention-days: 14

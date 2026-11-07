@@ -1,4 +1,5 @@
 import { startService } from './local-service.mjs';
+import { openEditorWindow } from './editor-window.mjs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -54,14 +55,21 @@ if (!url) {
   process.exit(1);
 }
 const documents = process.argv.slice(2).filter(argument => !argument.startsWith('-psn_'));
-if (!documents.length) await exec('/usr/bin/open', [url]);
-for (const document of documents) {
-  const filename = await fs.realpath(document);
-  if (!/\.(md|markdown|mdown)$/i.test(filename)) continue;
-  // Scope attachment reads to the selected document's directory without changing the user's Git checkout.
-  const reader = new Repository(state); reader.root = path.dirname(filename);
-  const payload = { ...await reader.read(path.basename(filename)), filename };
-  const inbox = path.join(state, 'finder-inbox'); await fs.mkdir(inbox, {recursive:true, mode:0o700});
-  const id = randomUUID(); await fs.writeFile(path.join(inbox, `${id}.json`), JSON.stringify(payload), {mode:0o600});
-  await exec('/usr/bin/open', [`${url}/?finder=${id}`]);
+try {
+  if (!documents.length) await openEditorWindow(url);
+  for (const document of documents) {
+    const filename = await fs.realpath(document);
+    if (!/\.(md|markdown|mdown)$/i.test(filename)) continue;
+    // Scope attachment reads to the selected document's directory without changing the user's Git checkout.
+    const reader = new Repository(state); reader.root = path.dirname(filename);
+    const payload = { ...await reader.read(path.basename(filename)), filename };
+    const inbox = path.join(state, 'finder-inbox'); await fs.mkdir(inbox, {recursive:true, mode:0o700});
+    const id = randomUUID(); await fs.writeFile(path.join(inbox, `${id}.json`), JSON.stringify(payload), {mode:0o600});
+    await openEditorWindow(`${url}/?finder=${id}`);
+  }
+} catch (error) {
+  // Finder starts this process without a terminal. Report launch failures instead of silently doing nothing.
+  await fs.appendFile(path.join(state, 'server.log'), `\n${new Date().toISOString()} Scriba launcher: ${error.message}\n`, { mode: 0o600 });
+  await exec('/usr/bin/osascript', ['-e', 'on run argv\n display alert "Scriba" message (item 1 of argv) as critical\nend run', error.message]);
+  process.exitCode = 1;
 }

@@ -29,12 +29,14 @@ A compatibilidade com notas importadas reconhece comandos matemáticos sem delim
 Baixe ou clone este repositório, abra o Terminal na pasta do editor e execute:
 
 ```bash
-git clone https://github.com/ab-orbit/ab-markdow-editor.git
+git clone --branch main https://github.com/ab-orbit/ab-markdow-editor.git
 cd ab-markdow-editor
 ./install.sh
 ```
 
-O instalador compila o editor, instala `Scriba.app` em `/Applications` (ou `~/Applications`, sem acesso à pasta global), cria um ícone na Mesa e abre o navegador padrão. O aplicativo inclui seu próprio runtime Node: depois da instalação, a pasta baixada pode ser movida ou removida. A primeira instalação precisa de internet. O instalador baixa a distribuição oficial do Node.js 22 LTS para a arquitetura do Mac, verifica SHA-256 e inclui o runtime completo no aplicativo, sem depender de Node/Homebrew/nvm já instalados. É necessário Git; se faltar, o macOS oferece instalar suas ferramentas de linha de comando e o instalador pede para ser executado novamente após essa instalação.
+O instalador compila o editor, instala `Scriba.app` em `/Applications` (ou `~/Applications`, sem acesso à pasta global), cria um ícone na Mesa e abre uma janela do aplicativo. O launcher reutiliza o Scriba local instalado pelo Chrome/Edge; sem essa instalação, usa uma janela independente de um navegador Chromium disponível. A janela requer Chrome, Edge, Brave ou Chromium instalado no Mac; o instalador verifica essa disponibilidade antes de continuar. O aplicativo inclui seu próprio runtime Node: depois da instalação, a pasta baixada pode ser movida ou removida. A primeira instalação precisa de internet. O instalador baixa a distribuição oficial do Node.js 22 LTS para a arquitetura do Mac, verifica SHA-256 e inclui o runtime completo no aplicativo, sem depender de Node/Homebrew/nvm já instalados. É necessário Git; se faltar, o macOS oferece instalar suas ferramentas de linha de comando e o instalador pede para ser executado novamente após essa instalação.
+
+Antes de substituir uma instalação existente, o instalador valida o aplicativo completo: versão, runtime, launcher da janela do Scriba, registro Markdown, ícone dos documentos e assinatura. Se algo faltar, a instalação para antes de encerrar o serviço ou substituir o aplicativo anterior. A mesma instalação é construída e testada em um Mac limpo no GitHub Actions. [Validação e atualizações do instalador](docs/MAC-INSTALLATION.md).
 
 Abra **Scriba** na Mesa nas próximas vezes. O servidor escuta apenas em `127.0.0.1` numa porta livre, sem conta, API externa ou banco de dados. Fechar a aba mantém o servidor disponível para a próxima abertura.
 
@@ -222,7 +224,9 @@ Build the public version with `VITE_STORAGE_MODE=browser npm run build`. See [pr
 
 The macOS installer registers AB Markdown as an alternate editor for `.md`, `.markdown`, and `.mdown`. Right-click a file → Open With → AB Markdown. To make it the default, use Get Info → Open with → AB Markdown → Change All. Installation does not replace your current default editor.
 
-The native launcher receives Finder document events and imports the selected Markdown with safe local raster attachments. Files inside the currently configured Git checkout retain their relative path and revision. Files outside it are imported; saving uses the configured checkout and preserves the source file. The public PWA's OS file associations are separate from this macOS application registration.
+The native launcher receives Finder document events and imports the selected Markdown with safe local raster attachments into a Scriba application window, rather than a default-browser tab. It matches the installed local PWA by origin, never the public-site PWA; without a matching PWA it uses Chromium application mode. Files inside the currently configured Git checkout retain their relative path and revision. Files outside it are imported; saving uses the configured checkout and preserves the source file. The public PWA's OS file associations are separate from this macOS application registration.
+
+To make Scriba the default for all Markdown files on a Mac, select a `.md` file in Finder, choose **Get Info → Open with → Scriba → Change All**, and confirm. The Finder “Always Open With” choice can apply to an individual file. The installer registers Scriba as a Markdown editor with its document icon; it preserves the user's choice of default application. If Finder still displays the former application's icon after an update, relaunching Finder refreshes that cached icon. See [Apple's file-association instructions](https://support.apple.com/guide/mac-help/mh35597/mac).
 
 ## GitHub on web, iPhone and iPad
 

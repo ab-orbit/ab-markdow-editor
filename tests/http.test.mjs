@@ -355,7 +355,8 @@ test('Finder snapshots remain readable after deletion; explicit reload reads onl
 async function referenceCheckout(label, files, pins=[]) {
   const repo=path.join(temporary,label),upstream=path.join(temporary,`${label}.git`);
   await fs.mkdir(repo);await fs.mkdir(upstream);await git(repo,'init','-b','main');await git(upstream,'init','--bare','-b','main');
-  for(const [key,value] of [['user.name','Reference Test'],['user.email','test@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null']])await git(repo,'config',key,value);
+  // These fixtures keep CRLF worktree bytes while asserting normalized LF Git blobs, independent of host preferences.
+  for(const [key,value] of [['user.name','Reference Test'],['user.email','test@example.invalid'],['commit.gpgsign','false'],['core.hooksPath','/dev/null'],['core.autocrlf','input']])await git(repo,'config',key,value);
   for(const [name,value] of Object.entries(files)){await fs.mkdir(path.dirname(path.join(repo,name)),{recursive:true});await fs.writeFile(path.join(repo,name),value);}
   await git(repo,'add','.');await git(repo,'commit','-m','Existing notes');await git(repo,'remote','add','origin',upstream);await git(repo,'push','-u','origin','main');
   const connected=await request('connect',{directory:repo});assert.equal(connected.status,200);
