@@ -1,0 +1,276 @@
+{
+  "eval-0-localized-pages-and-duo/old_skill/run-1/coverage-check.json": {
+    "source": "outputs/coverage.csv",
+    "parser": "Python standard-library csv.DictReader",
+    "expected_base_unique_tuples": 33,
+    "expected_base_by_page": {
+      "default": 12,
+      "cpp-pt": 3,
+      "cpp-en": 6,
+      "cpp-de": 6,
+      "cpp-fr": 6
+    },
+    "actual_csv_rows": 60,
+    "malformed_csv_lines": [],
+    "all_unique_tuples_including_pending_scope": 60,
+    "explicit_scope_column_present": false,
+    "scope_row_counts": {
+      "unscoped_required": 60
+    },
+    "scope_unique_tuple_counts": {
+      "unscoped_required": 60
+    },
+    "actual_base_unique_tuples": 60,
+    "actual_base_by_page": {
+      "default": 12,
+      "cpp-pt": 12,
+      "cpp-en": 12,
+      "cpp-de": 12,
+      "cpp-fr": 12
+    },
+    "missing_expected_base_tuples": [],
+    "unexpected_unconditional_base_tuples": [
+      {
+        "page_id": "cpp-de",
+        "locale": "en-US",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-de",
+        "locale": "en-US",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-de",
+        "locale": "en-US",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-de",
+        "locale": "fr-FR",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-de",
+        "locale": "fr-FR",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-de",
+        "locale": "fr-FR",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-en",
+        "locale": "de-DE",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-en",
+        "locale": "de-DE",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-en",
+        "locale": "de-DE",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-en",
+        "locale": "fr-FR",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-en",
+        "locale": "fr-FR",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-en",
+        "locale": "fr-FR",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-fr",
+        "locale": "de-DE",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-fr",
+        "locale": "de-DE",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-fr",
+        "locale": "de-DE",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-fr",
+        "locale": "en-US",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-fr",
+        "locale": "en-US",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-fr",
+        "locale": "en-US",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "de-DE",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "de-DE",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "de-DE",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "en-US",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "en-US",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "en-US",
+        "device_slot": "iphone-medium"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "fr-FR",
+        "device_slot": "ipad-13"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "fr-FR",
+        "device_slot": "iphone-duo-outer"
+      },
+      {
+        "page_id": "cpp-pt",
+        "locale": "fr-FR",
+        "device_slot": "iphone-medium"
+      }
+    ],
+    "base_tuple_set_exactly_matches_expected": false,
+    "observed_slot_unique_tuples_total": 60,
+    "inner_unique_tuples": 0,
+    "inner_tuples_counted_as_unconditional_base": [],
+    "duplicate_tuple_media_keys": [],
+    "invalid_targets": [],
+    "incomplete_media_kind_sets": [],
+    "every_tuple_targets_five_screenshots_and_one_movie": true,
+    "verification_field_value_counts": {},
+    "positive_completed_evidence_flags": [],
+    "interpretation": "The 33 required tuples are a minimum subset. Candidate scope_status rows distinguish required, optional all-CPP-locale expansion, and conditional inner coverage. Baseline explicitly chooses all four locales on every page in plan.md line 10, so its additional 27 observed-slot tuples are allowed; it separately defers inner applicability.",
+    "all_required_base_tuples_present": true,
+    "additional_observed_slot_tuples": 27,
+    "additional_scope_explicit_in_plan": true,
+    "minimum_set_assertion_passes": true
+  },
+  "eval-0-localized-pages-and-duo/with_skill/run-1/coverage-check.json": {
+    "source": "outputs/coverage.csv",
+    "parser": "Python standard-library csv.DictReader",
+    "expected_base_unique_tuples": 33,
+    "expected_base_by_page": {
+      "default": 12,
+      "cpp-pt": 3,
+      "cpp-en": 6,
+      "cpp-de": 6,
+      "cpp-fr": 6
+    },
+    "actual_csv_rows": 160,
+    "malformed_csv_lines": [],
+    "all_unique_tuples_including_pending_scope": 80,
+    "explicit_scope_column_present": true,
+    "scope_row_counts": {
+      "required": 66,
+      "conditional_inner_slot": 22,
+      "confirm_all_cpp_locales": 54,
+      "conditional_inner_and_all_cpp_locales": 18
+    },
+    "scope_unique_tuple_counts": {
+      "required": 33,
+      "conditional_inner_slot": 11,
+      "confirm_all_cpp_locales": 27,
+      "conditional_inner_and_all_cpp_locales": 9
+    },
+    "actual_base_unique_tuples": 33,
+    "actual_base_by_page": {
+      "default": 12,
+      "cpp-pt": 3,
+      "cpp-en": 6,
+      "cpp-de": 6,
+      "cpp-fr": 6
+    },
+    "missing_expected_base_tuples": [],
+    "unexpected_unconditional_base_tuples": [],
+    "base_tuple_set_exactly_matches_expected": true,
+    "observed_slot_unique_tuples_total": 60,
+    "inner_unique_tuples": 20,
+    "inner_tuples_counted_as_unconditional_base": [],
+    "duplicate_tuple_media_keys": [],
+    "invalid_targets": [],
+    "incomplete_media_kind_sets": [],
+    "every_tuple_targets_five_screenshots_and_one_movie": true,
+    "verification_field_value_counts": {
+      "processing_complete_verified": {
+        "false": 160
+      },
+      "saved_reload_verified": {
+        "false": 160
+      },
+      "local_files_verified": {
+        "false": 160
+      }
+    },
+    "positive_completed_evidence_flags": [],
+    "interpretation": "The 33 required tuples are a minimum subset. Candidate scope_status rows distinguish required, optional all-CPP-locale expansion, and conditional inner coverage. Baseline explicitly chooses all four locales on every page in plan.md line 10, so its additional 27 observed-slot tuples are allowed; it separately defers inner applicability.",
+    "all_required_base_tuples_present": true,
+    "additional_observed_slot_tuples": 27,
+    "additional_scope_explicit_in_plan": true,
+    "minimum_set_assertion_passes": true
+  },
+  "eval-1-upload-and-tester-eligibility/old_skill/run-1/fact-check.json": {
+    "source": "fixture and outputs/decision.json",
+    "exact_locale_errors_match": true,
+    "archive_path_matches": true,
+    "current_selected_build_preserved_as_39": true,
+    "build43_in_apple_reported_false": true,
+    "performed_evidence_flags": {},
+    "assessment": "Only supplied facts and future requirements checked; no archive content or live Apple success was established."
+  },
+  "eval-1-upload-and-tester-eligibility/with_skill/run-1/fact-check.json": {
+    "source": "fixture and outputs/decision.json",
+    "exact_locale_errors_match": true,
+    "archive_path_matches": true,
+    "current_selected_build_preserved_as_39": true,
+    "build43_in_apple_reported_false": true,
+    "performed_evidence_flags": {
+      "archive_inspected": false,
+      "upload": false,
+      "processing_observed": false,
+      "selected_build_changed": false,
+      "metadata_saved_or_read_back": false,
+      "beta_review_submitted": false,
+      "testers_enabled": false,
+      "review_submitted": false,
+      "account_or_role_mutations": false
+    },
+    "assessment": "Only supplied facts and future requirements checked; no archive content or live Apple success was established."
+  }
+}

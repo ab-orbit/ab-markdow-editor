@@ -1,16 +1,20 @@
 # Scriba for iPhone and iPad
 
-Current App Review submission: **1.17.0 (29), iPhone Duo revision — Waiting for Review**, submitted on **October 28, 2026 at 07:37 Recife (10:37 UTC)** after explicit owner approval. The selected Apple build is `8a98cd67-d531-41f6-a009-cc2ff84b240e`; public release remains **manual**. [Submission receipt, review notes and evidence](submission-20261028/README.md) · [Implementation, real-posture simulator evidence and validation limits](../evidence/iphone-duo-20261027/README.md).
+Publication workflow: [repository-versioned app-store-deploy skill](../../.agents/skills/app-store-deploy/SKILL.md). Use it for current release work; inspect App Store Connect for live status. This page and the linked receipts describe dated observations.
+
+Latest receipt found during the **7 November 2026 documentation audit**: **1.17.2 (31)** plus four Custom Product Pages, with **5 Items Submitted** at **03:53 UTC / 00:53 Recife**, public release **manual**. The [pinned receipt](https://github.com/ab-orbit/ab-markdow-editor/blob/ed7c81bf46430e45ba380be76040250fda3a9586/docs/app-store/submission-20261106/review-submission.json) and [media record](https://github.com/ab-orbit/ab-markdow-editor/blob/ed7c81bf46430e45ba380be76040250fda3a9586/docs/app-store/submission-20261106/README.md) live in a later release branch rather than this page's original October snapshot. These establish historical submission, not current approval or public availability.
+
+Earlier App Review submission: **1.17.0 (29), iPhone Duo revision**, observed Waiting for Review after submission on **October 28, 2026 at 07:37 Recife (10:37 UTC)**. The selected Apple build then was `8a98cd67-d531-41f6-a009-cc2ff84b240e`; public release was **manual**. [Submission receipt, review notes and evidence](submission-20261028/README.md) · [Implementation, real-posture simulator evidence and validation limits](../evidence/iphone-duo-20261027/README.md).
 
 Previous store action: **1.16.1 (27) resubmitted on October 27, 2026 at 20:23 Recife**, after Apple requested business-model clarification under Guideline 2.1(b). It was withdrawn on October 28 to submit the approved Duo revision above. Build **1.16.1 (28)** was uploaded and validated but was not selected for review. [Store history and evidence](submission-20261027/README.md).
 
-Historical October 22 upload and review action: **1.16.1 (27)** on 22 October 2026 at 13:25 Recife, through Xcode Organizer. Apple processing completed and build 27 is **Testing** in both Equipe Scriba (internal) and Scriba Beta (external), with automatic tester notifications enabled. [Current submission work and evidence](submission-20261022/README.md). The public update manifest still promotes build 17. The owner then supplied a physical-iPhone recording; the complete reply and attachment were sent, Notes updated and the official build **1.16.1 (27) resubmitted at 13:55 Recife**. Both submission and item are **Waiting for Review**. Release remains manual.
+Historical October 22 upload and review action: **1.16.1 (27)** on 22 October 2026 at 13:25 Recife, through Xcode Organizer. Processing completed and build 27 was observed **Testing** in Equipe Scriba (internal) and Scriba Beta (external). The owner supplied a physical-iPhone recording; reply, attachment and Notes were sent before resubmission at **13:55 Recife**, when both submission and item showed **Waiting for Review**, with manual release. [Dated evidence](submission-20261022/README.md). Inspect the current update manifest and groups before promoting another build.
 
 The iOS application bundles the editor, renderers, fonts and reference notes with Capacitor 8.5.3. It does not load the production website as its application shell. The web/PWA and local Mac application remain separate builds and separate private libraries.
 
 ## Build and test
 
-Requirements: macOS, Node 22.12+, Xcode 26+ and an installed iOS simulator. This release was prepared with Xcode 27 and the iOS 18.6 simulator. Package resolution is committed, including the native Capacitor framework revision.
+Requirements: macOS, the repository's supported Node version, Xcode and an installed compatible iOS simulator. The initial October preparation used Xcode 27 and iOS 18.6; build 31 later used Xcode/iPhoneOS SDK 27.1. Discover the toolchain and available simulator before reusing a historical command. Package resolution is committed, including the native Capacitor framework revision.
 
 ```sh
 npm ci
@@ -54,9 +58,9 @@ SCRIBA_APPLE_TEAM_ID=ABCDEFGHIJ npm run ios:archive
 
 This creates an archive and exports an IPA; it does not silently submit an incomplete app or accept new legal agreements. App Store distribution requires a valid distribution signature, an App Store Connect record and the required listing, review-contact, age/privacy and screenshot fields. Physical-device and TestFlight checks complement simulator verification, especially for third-party Files providers. An unsigned simulator build cannot be uploaded as an App Store binary.
 
-The signed ARM64 build 1.16.1 (24), including the updated brand, was uploaded successfully on 22 October 2026 at 13:25:27 UTC. Processing and beta-group assignment still require verification in App Store Connect; the public update manifest remains on the last verified Testing build. See [build 24 validation](../evidence/ios-1.16.1-build24/README.md).
+The signed ARM64 build 1.16.1 (24), including the updated brand, was uploaded on 22 October 2026 at 13:25:27 UTC. That record did not establish processing or beta-group assignment. See [build 24 validation](../evidence/ios-1.16.1-build24/README.md).
 
-Build 1.16.1 (27) is now Testing in both existing TestFlight groups and selected in the official review item, which is Ready for Review with manual release preserved. Localized privacy and missing German/English metadata fields have been corrected. The owner supplied a physical-iPhone demonstration, which was attached to the complete App Review reply and referenced in Notes. The official submission is now Waiting for Review (22 October, 13:55 Recife). See [current submission evidence](submission-20261022/README.md). Historical build 17 evidence remains in [the earlier release record](../evidence/ios-1.16.1-build17/README.md).
+The October 22 record later observed build 1.16.1 (27) Testing in both groups and Waiting for Review after localized privacy/metadata corrections, the physical-iPhone attachment, sent reply and Notes. See [that historical submission](submission-20261022/README.md). Historical build 17 evidence remains in [the earlier release record](../evidence/ios-1.16.1-build17/README.md). None of these receipts substitutes for a current account check.
 
 ## PWA Builder
 
@@ -77,4 +81,6 @@ PWABuilder is optional for App Store distribution. The PWA already has a version
 
 ## Localized privacy and reusable deployment
 
-Four public privacy URLs are documented in [privacy pages](../privacy/README.md). The measured App Store workflow is available as [app-store-deploy](deploy-skill/app-store-deploy/SKILL.md), also installed in `~/.codex/skills/app-store-deploy/`. The skill distinguishes native upload, TestFlight distribution, App Review submission and public release.
+Four public privacy URLs are documented in [privacy pages](../privacy/README.md). The canonical [app-store-deploy skill](../../.agents/skills/app-store-deploy/SKILL.md) is versioned in this project, including a changelog, official source index, media validator and offline evaluations. A separately installed copy in a user profile is not synchronized automatically. The skill distinguishes native upload, TestFlight distribution, App Review submission and public release.
+
+[Skill 1.0.0 validation and comparison](../evidence/app-store-deploy-skill-20261107/README.md): 27 media regression tests and four paired offline workflow scenarios, with the actual scope and limitations recorded.

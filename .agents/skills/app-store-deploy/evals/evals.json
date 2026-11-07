@@ -1,0 +1,84 @@
+{
+  "skill_name": "app-store-deploy",
+  "evals": [
+    {
+      "id": 0,
+      "name": "localized-pages-and-duo",
+      "prompt": "Os prints do Harbor Notes ainda estão em português quando seleciono inglês e o iPhone Duo está vazio. Quero cinco cenas e um vídeo atrativo em pt-BR, en-US, de-DE e fr-FR, tanto na ficha padrão como nas quatro Custom Product Pages. Prepare a correção usando o estado em localized-pages-and-duo.json. Ainda não autorizei cancelar a versão aprovada nem liberá-la ao público. Não faça ações reais na Apple. Entregue um plano executável com prioridades, uma matriz de cobertura CSV e decision.json com bloqueios, ações permitidas e o que precisa ser comprovado antes da submissão. Use somente os fatos fornecidos e fontes locais da skill; não invente que novos assets já foram capturados ou enviados.",
+      "expected_output": "An actionable prepared correction distinguishing default/CPP locales, genuine device/language media, GIF versus preview, processing, current locks and a precise remaining owner decision without claiming completion.",
+      "files": [
+        "fixtures/localized-pages-and-duo.json"
+      ],
+      "assertions": [
+        "Produces a coverage CSV containing all 33 required default/CPP primary-plus-target page/locale/device combinations for the three observed slots, each targeting five screenshots and one movie; additional explicitly scoped coverage is allowed, and unverified inner-display coverage is not silently assumed complete.",
+        "Treats Portuguese pixels in English/German slots and inherited primary-language images as incomplete localization; requires actual UI and document content in the target language rather than renaming files.",
+        "Requires genuine Duo/device captures and inspection of the uninspected inner slot/current SDK deadline; does not scale phone images to impersonate Duo or invent an API enum.",
+        "Separates default localized listings from the four independent CPP resources and preserves each primary Portuguese localization alongside the target locale.",
+        "Keeps marketing GIF delivery separate from an accepted encoded App Preview, and requires final movie properties and decoded duration to be validated.",
+        "Treats French processing/unverified thumbnails and Asset Library counts as insufficient; requires actual placement, completed processing, save and fresh readback of ordered media.",
+        "Prepares replacement assets while honoring the Pending Developer Release lock and missing cancellation authority; requests only the necessary remaining decision and never releases the older version to unlock editing.",
+        "Uses an isolated capture environment with fictional localized content and preserves the personal simulator notes.",
+        "Reports blocked or prepared status honestly, with no fabricated capture, upload, processing, approval or final submission."
+      ]
+    },
+    {
+      "id": 1,
+      "name": "upload-and-tester-eligibility",
+      "prompt": "Já conectei a conta no Xcode, mas o envio do Harbor Notes falha e minha conta do telefone aparece No Builds Available. Pode preparar o caminho para enviar a versão correta para review e liberar os testers sem eu trocar o Apple Account do telefone. O estado está em upload-and-tester-eligibility.json. Não faça ações reais na Apple, não mude papéis de usuário e não crie um build novo sem motivo. Entregue plan.md e decision.json distinguindo os builds e cada evidência necessária. Se houver erros de idiomas, trate-os também. A submissão normal está autorizada, publicação pública continua manual.",
+      "expected_output": "A specific recovery using the existing archive, correct distribution and selected build, full processing/tester diagnosis and localized validation without unnecessary rebuild, account switching or unauthorized privileges.",
+      "files": [
+        "fixtures/upload-and-tester-eligibility.json"
+      ],
+      "assertions": [
+        "Identifies build 43 and its existing signed archive as the intended candidate; diagnoses the account-to-team failing step and proposes Organizer distribution of that same archive without an unnecessary build 44.",
+        "Separates supported login/team checks from credential extraction and avoids repeating identical CLI attempts without a changed condition.",
+        "Rejects using Internal Only build 42 for external testing or official review and instead requires the appropriate App Store Connect distribution candidate.",
+        "Requires successful upload, completed processing/compliance and explicit replacement of selected build 39 with the eligible intended build 43.",
+        "Explains No Builds Available from the unassigned external group and missing test information/Beta App Review, while checking build expiration and eligibility rather than email-list presence alone.",
+        "Keeps the existing phone Apple Account, notes that internal testing requires eligible App Store Connect membership/app access, and does not grant new broad roles without authorization.",
+        "Resolves the actual German description/keywords/support URL and English support URL errors, then saves and reloads to verify persistence.",
+        "Distinguishes TestFlight availability, official final submission and public release, preserving manual release without adding a redundant generic submission approval request.",
+        "Does not claim build 43 has uploaded, is selected, is Testing, or was submitted when those actions remain unperformed."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "review-evidence-and-owner-hold",
+      "prompt": "Prepare a ressubmissão de Harbor Notes para a exigência da Apple descrita em review-evidence-and-owner-hold.json. Os vídeos estão prontos segundo quem gravou e a resposta já está em Draft. Eu dou o OK depois de revisar, então por enquanto só prepare. Não faça ações reais na Apple. Entregue plan.md e decision.json com a sequência até a confirmação final, o que já está comprovado e o que ainda falta. Confira também privacidade e trader sem inventar dados. Não afirme que simulador prova teste físico ou que clicar Save Draft significa ressubmeter.",
+      "expected_output": "Preparation respects the explicit hold, distinguishes physical QA/marketing videos and actual duration, preserves original privacy evidence, separates draft/attachment/notes/final resubmission, and identifies unverified privacy/trader facts.",
+      "files": [
+        "fixtures/review-evidence-and-owner-hold.json"
+      ],
+      "assertions": [
+        "Honors the explicit prepare-only owner hold and manual release, with no immediate resubmission or public release despite listing the later authorized sequence.",
+        "Distinguishes genuine physical review evidence from the simulator and GIF, and identifies that the supplied physical footage does not establish the selected build or current supported OS.",
+        "Preserves owner-original.mov and proposes a separate documented privacy edit retaining Home Screen launch and continuous workflow rather than publishing identifiers or overwriting the original.",
+        "Computes that 420 frames at 30 fps provide only 14 seconds and treats simulator-demo.mp4 as an invalid 15-second-minimum App Preview despite its nominal 20-second container; the GIF is not a replacement preview.",
+        "Separates attachment processing, saved draft, sent reply with the verified file, requested App Review Notes, and final resubmission with confirmation/status/timestamp.",
+        "Does not infer accurate published App Privacy from manifest presence or local-first behavior; calls for auditing the optional SDK/backend flows and checking public policy URL plus persisted locales and published privacy answers.",
+        "Uses owner-supplied verified business facts for trader status/contact verification; does not invent legal identity/address or persist future verification codes and private documents in public output.",
+        "Treats browser/simulator successes as scoped tests and records the remaining physical-device/build/OS limitations.",
+        "Final state is prepared/blocked pending specific evidence and owner OK, with no assertion that a draft, processed attachment or later submission means approval/public availability."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "first-release-and-configured-policy",
+      "prompt": "Prepare the first App Store release of FoldMap, a native SwiftUI app, using first-release-and-configured-policy.json. Keep its configured automatic release policy. I want three screenshots per requested slot in English and Japanese, no App Preview, no CPP and no new public website. Preparation only: do not change the account, upload, submit or release. Produce plan.md and decision.json with product-specific prerequisites, scoped media coverage, remaining owner facts and the later submission stopping points. Do not copy Scriba IDs, languages, pricing or packaging commands into this different product.",
+      "expected_output": "A transferable first-release plan preserving automatic policy and the preparation hold, using the native SwiftUI project, exact two-locale/three-screenshot scope, no unwanted movie/CPP/site, and truthful first-publication metadata/signing/privacy requirements.",
+      "files": [
+        "fixtures/first-release-and-configured-policy.json"
+      ],
+      "assertions": [
+        "Preserves FoldMap's explicitly configured automatic release policy without unilaterally switching it to manual; explains the later approval/publication consequence and honors preparation-only now.",
+        "Uses the actual native SwiftUI project/scheme and product identifiers, with appropriate registration/signing/archive prerequisites; does not run or prescribe Scriba Capacitor/npm packaging as the product's build path.",
+        "Scopes the listing to primary en-US plus Japanese, three screenshots in each requested device slot, zero optional App Previews, no CPP and no public-site creation; does not impose Scriba's 5/1 four-language matrix.",
+        "Identifies first-publication membership/role/team, bundle registration, signing and native icon/orientation/capability checks as unverified prerequisites rather than already-completed facts.",
+        "Identifies missing age/content, category, pricing/territories, copyright, private review contact/access and export-compliance facts without assuming a free business model or copying another product's identity.",
+        "Separates public policy validation, SDK/data-practice audit, native privacy manifest and published App Privacy; none is inferred complete from the native implementation or owner claim.",
+        "Requires genuine localized UI/content captures, exact current device requirements and inspection of unverified Duo-inner scope, preserving personal device data.",
+        "Provides later upload/processing/build selection/final-submission verification checkpoints without claiming an archive, upload, review submission or public release has occurred."
+      ]
+    }
+  ]
+}

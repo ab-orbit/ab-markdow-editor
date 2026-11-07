@@ -1,0 +1,31 @@
+{
+  "recorded_on": "2026-11-07",
+  "skill": "app-store-deploy",
+  "version": "1.0.0",
+  "checks": {
+    "quick_validate": {
+      "result": "passed",
+      "command": "uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py .agents/skills/app-store-deploy"
+    },
+    "media_regression_tests": {
+      "result": "passed",
+      "tests": 27,
+      "failures": 0,
+      "skipped": 0,
+      "runner_reported_seconds": 0.194,
+      "includes": "Real 15-second ProRes 422 HQ MOV decoded by ffprobe; manifest and parser cases",
+      "command": "uv run --script .agents/skills/app-store-deploy/evals/test_audit_media.py"
+    },
+    "json_parse": "passed",
+    "skill_relative_links": "passed",
+    "sensitive_pattern_scan": "no findings in newly authored skill files",
+    "application_ui_changes": false,
+    "live_apple_operations": false
+  },
+  "limitations": [
+    "Offline scenario evaluations measure plan completeness, not a real App Store release.",
+    "The media checker inspects PNG headers/chunks, not full pixel decoding or OCR.",
+    "Store fields and visual-review flags are supplied attestations, not independently observed Apple state.",
+    "Apple requirements and historical release state must be rechecked during an authorized release."
+  ]
+}

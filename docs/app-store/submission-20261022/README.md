@@ -39,7 +39,7 @@ The official draft was updated from build 17 to build 27 using Delete (selection
 - [Apple processing build 27](app-store-build27-processing.png)
 - Saved privacy URLs: [Portuguese](privacy-pt-BR-saved.png), [English](privacy-en-US-saved.png), [French](privacy-fr-FR-saved.png), [German](privacy-de-DE-saved.png)
 - [Localized public pages and verification](../../privacy/README.md)
-- [Reusable deployment skill](../deploy-skill/app-store-deploy/SKILL.md), also installed in `~/.codex/skills/app-store-deploy/`. Skill frontmatter validation passed.
+- [Reusable deployment skill](../../../.agents/skills/app-store-deploy/SKILL.md), now versioned in the project. A separately installed user-profile copy is not automatically synchronized. Skill frontmatter validation passed for the historical release.
 
 - [Build 27 Testing in both groups](build27-testing-both-groups.png)
 
