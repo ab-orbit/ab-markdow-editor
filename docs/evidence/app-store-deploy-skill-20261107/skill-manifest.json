@@ -1,0 +1,25 @@
+{
+  "skill": "app-store-deploy",
+  "version": "1.0.0",
+  "date": "2026-11-07",
+  "files": {
+    "CHANGELOG.md": "cf42d5a815dd3a1b7ddbe28c1fbb896dd98f831d4a8a9008d5e027cddc650f40",
+    "SKILL.md": "79b7427e6d8e51276ae4aa6f3c4286624eff98ac46ce8ecf865fffa116ab24f6",
+    "assets/media-matrix.template.json": "618382a925c2dc12bf27e09841844db06e61aba35aa0995eca7f06af0e8fc79b",
+    "assets/release-record.template.json": "e05016fb5d65330564810a69bc252abc0fa5dd3446f48ca467ae166e0ddf59e6",
+    "evals/README.md": "6e28ed9763582d694b0d591ba88929b448cc6aa9c87d14cdf73214dea4ec4424",
+    "evals/evals.json": "ac8f08f6a55f669b54682b5112b70007b1d851f6f9ffaff3bd21e85b96ae56e6",
+    "evals/fixtures/first-release-and-configured-policy.json": "218147c63b9ebf4f20248248ec186ad345e8a1b454c796218674a1e5c0c3be8e",
+    "evals/fixtures/localized-pages-and-duo.json": "62448765698fdf69d89300956b69bdb4b8bcb2e8f30df51a312a663732590243",
+    "evals/fixtures/review-evidence-and-owner-hold.json": "5147da11dcaa364e96d855d929c108d327d55984cff4949c2cac53991df2a484",
+    "evals/fixtures/upload-and-tester-eligibility.json": "a366844d51ec40a6c88696efcdfaf295818d4ed4ab243fb04bb439f827ff52b9",
+    "evals/test_audit_media.py": "a6eacbecbd0a6acbe52e3787a6c98982d19fb177771fea849e919f2312bc854b",
+    "references/apple-sources.md": "ef24b07aff8118ab83dd13806e7bfd4950b41a440b7b6644c0a09043c99b5573",
+    "references/compliance.md": "adabce7039614889952870e4c9b3c4e9d941ee439f8b6b76259ae689f57bd584",
+    "references/localization-and-media.md": "bf56c6f11cc37840109cc49295b19d6d646d3de2d78f1483424a69f5f0c37d24",
+    "references/media-manifest.md": "4956e3a0abe629c8e5bf68eebaa381d57a25b4075fe8090f649e18213580ca6c",
+    "references/release-workflow.md": "ab8b3b8f7e28216289e6447ba31d3123af0c18a024a9c0a3ee86c6f777e2a9be",
+    "references/scriba.md": "54508264ebeaab4f5a709b658afd69a3a269b7a7397bbdadc8d56262a0654d85",
+    "scripts/audit_media.py": "0695c4a28a1b930e086edc39bb20f27c72c1a131e6b3c570fd9bcc77de4740c4"
+  }
+}

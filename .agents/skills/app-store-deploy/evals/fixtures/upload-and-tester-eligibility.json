@@ -1,0 +1,96 @@
+{
+  "fictional": true,
+  "app": {
+    "name": "Harbor Notes",
+    "bundle_id": "example.harbor.notes",
+    "primary_locale": "pt-BR",
+    "locales": [
+      "pt-BR",
+      "en-US",
+      "de-DE",
+      "fr-FR"
+    ],
+    "version": "2.4.0",
+    "release_mode": "MANUAL",
+    "state": "DEVELOPER_REJECTED",
+    "selected_build": 39
+  },
+  "desired_candidate": {
+    "build": 43,
+    "source_commit": "FICTIONAL_SOURCE_43",
+    "archive": "/private/releases/Harbor-2.4.0-43.xcarchive",
+    "archive_fingerprint": "FICTIONAL_ARCHIVE_HASH",
+    "signed": true,
+    "team": "FICTIONAL_TEAM",
+    "approved_for_submission": true,
+    "bundle_synced_before_archive": true,
+    "source_changes_after_archive": false
+  },
+  "upload": {
+    "cli_attempts": 3,
+    "same_error_step": "IDEDistributionUploadAccountStep",
+    "error": "Unable to resolve App Store Connect account to distribution team",
+    "account_connected_in_xcode": true,
+    "correct_team_role_observed": true,
+    "build43_in_apple": false,
+    "organizer_attempted": false
+  },
+  "other_builds": [
+    {
+      "build": 42,
+      "distribution": "TESTFLIGHT_INTERNAL_ONLY",
+      "processing": "COMPLETE",
+      "state": "Testing",
+      "groups": [
+        "Employees"
+      ],
+      "expired": false
+    },
+    {
+      "build": 39,
+      "distribution": "APP_STORE_CONNECT",
+      "state": "selected for official review",
+      "expired_for_testing": true
+    }
+  ],
+  "tester": {
+    "id": "fictional-owner-phone-account",
+    "email_in_external_list": true,
+    "external_invitation_accepted": true,
+    "is_app_store_connect_user": false,
+    "app_store_connect_role": null,
+    "phone_apple_account_must_remain": true,
+    "desired_group": "Preview Users",
+    "observed_message": "No Builds Available"
+  },
+  "external_group": {
+    "name": "Preview Users",
+    "assigned_build": null,
+    "beta_review_state": "NOT_SUBMITTED",
+    "test_information": "missing"
+  },
+  "generic_validation_banner": "There was an error saving your changes",
+  "detailed_locale_errors": [
+    {
+      "locale": "de-DE",
+      "missing": [
+        "description",
+        "keywords",
+        "support_url"
+      ]
+    },
+    {
+      "locale": "en-US",
+      "missing": [
+        "support_url"
+      ]
+    }
+  ],
+  "metadata_change_only_after_archive": true,
+  "no_permission_for": [
+    "new App Store Connect roles",
+    "public release",
+    "changing device Apple Account"
+  ],
+  "requested_outcome": "plan ordinary authorized review submission plus tester distribution without performing it during this evaluation"
+}

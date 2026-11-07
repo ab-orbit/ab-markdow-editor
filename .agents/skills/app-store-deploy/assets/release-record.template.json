@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": null,
+  "scope": {
+    "requested_outcome": null,
+    "preparation_authorized": null,
+    "submission_authorized": null,
+    "public_release_authorized": null,
+    "requested_release_mode": null,
+    "owner_hold": null
+  },
+  "app": {
+    "app_id": null,
+    "bundle_id": null,
+    "platform": null,
+    "primary_locale": null
+  },
+  "binary": {
+    "source_commit": null,
+    "version": null,
+    "build_number": null,
+    "signing_team_id": null,
+    "archive_path_private": null,
+    "archive_fingerprint": null,
+    "upload_confirmation": null,
+    "processing_state": null,
+    "selected_apple_build_id": null
+  },
+  "coverage": {
+    "locales": [],
+    "device_slots": [],
+    "pages": [],
+    "media_manifest_private": null
+  },
+  "evidence": {
+    "tests": [],
+    "physical_device_limits": [],
+    "local_media_audit": null,
+    "store_readback_audit": null,
+    "metadata_readback": [],
+    "reviewer_attachments_private": []
+  },
+  "review": {
+    "submission_id": null,
+    "submission_url": null,
+    "expected_item_count": null,
+    "observed_item_count": null,
+    "items": [],
+    "observed_state": null,
+    "observed_at_utc": null,
+    "release_mode": null
+  },
+  "blockers": [],
+  "privacy_note": "Copy to an ignored private release location. Unknown values remain null. Do not add credentials, verification codes, real tester identities, legal documents or reviewer-only recordings to the public repository."
+}

@@ -1,0 +1,67 @@
+{
+  "fictional": true,
+  "observed_at": "2026-11-07T12:00:00Z",
+  "app": {
+    "name": "FoldMap",
+    "bundle_id": "example.foldmap.app",
+    "app_id": "FICTIONAL_FOLDMAP_ID",
+    "primary_locale": "en-US",
+    "locales": [
+      "en-US",
+      "ja"
+    ],
+    "release_mode": "AUTOMATIC",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "version": "1.0.0",
+    "selected_build": null
+  },
+  "source": {
+    "framework": "SwiftUI",
+    "xcode_project": "FoldMap.xcodeproj",
+    "scheme": "FoldMap",
+    "web_bundle": false,
+    "archive_prepared": false,
+    "build_number": 1,
+    "team_id": "OWNER_TEAM_NOT_YET_SELECTED",
+    "sdk": "iOS 27.1"
+  },
+  "scope": {
+    "prepare_only": true,
+    "submit_authorized": false,
+    "public_release_now": false,
+    "preserve_automatic_policy": true,
+    "screenshots_per_tuple": 3,
+    "app_previews": 0,
+    "custom_product_pages": 0,
+    "public_website_changes": false,
+    "device_slots_requested": [
+      "iphone-medium",
+      "iphone-duo-outer",
+      "ipad-13"
+    ],
+    "duo_inner_live_scope": "not inspected"
+  },
+  "known_prerequisites": {
+    "developer_membership": "active according to owner, role/team not yet inspected",
+    "bundle_identifier_registered": false,
+    "signing_profile_verified": false,
+    "native_icon_verified": false,
+    "orientations_and_entitlements_verified": false,
+    "category_and_age_rating": "not answered",
+    "content_rights": "not recorded",
+    "pricing": "owner will provide, do not assume free",
+    "territories": "owner will provide",
+    "copyright": "owner will provide",
+    "review_contact_private": "missing",
+    "review_access_requirement": "no own app account, third-party service optional; verify exact feature access",
+    "export_compliance": "not answered"
+  },
+  "privacy": {
+    "policy_url": "owner-provided URL not yet validated",
+    "sdk_audit_complete": false,
+    "manifest_verified": false,
+    "app_privacy_published": false
+  },
+  "media": "no real captures available; use isolated sample data when preparing actual media",
+  "stop_condition": "Ready-to-review preparation report for owner; configured automatic release would publish after a later approval, not during this evaluation."
+}

@@ -1,0 +1,79 @@
+{
+  "fictional": true,
+  "app": {
+    "name": "Harbor Notes",
+    "bundle_id": "example.harbor.notes",
+    "version": "2.4.0",
+    "build": 43,
+    "selected_build": 43,
+    "release_mode": "MANUAL",
+    "state": "REJECTED"
+  },
+  "authorization": {
+    "prepare": true,
+    "submit_now": false,
+    "owner_requires_ok_after_review": true,
+    "public_release": false
+  },
+  "review_message": {
+    "guideline": "2.1",
+    "request": "Provide a continuous recording from a supported physical device on the current supported OS. Begin at the Home Screen, launch the submitted app, then demonstrate offline editing, Files save/reopen and optional GitHub sync. Include the complete explanation in App Review Information Notes."
+  },
+  "evidence_available": [
+    {
+      "file": "simulator-demo.mp4",
+      "physical": false,
+      "nominal_container_seconds": 20,
+      "decoded_frames": 420,
+      "fps": 30,
+      "decoded_seconds": 14,
+      "purpose": "proposed App Preview"
+    },
+    {
+      "file": "marketing.gif",
+      "physical": false,
+      "duration": 20,
+      "purpose": "marketing"
+    },
+    {
+      "file": "owner-original.mov",
+      "physical": true,
+      "starts_with": "Settings screen containing device identifiers, then Home Screen, launch and continuous workflow",
+      "exact_app_build_visible": false,
+      "os_version_visible": false,
+      "reviewed_for_privacy": false,
+      "original_preserved": true
+    }
+  ],
+  "review_thread": {
+    "reply_state": "DRAFT",
+    "attachment_state": "PROCESSING",
+    "sent_reply_contains_file": false,
+    "notes_updated": false,
+    "final_resubmission_confirmed": false
+  },
+  "privacy": {
+    "policy_url": "https://example.invalid/privacy",
+    "http_status_checked": false,
+    "locale_urls_saved_and_reloaded": false,
+    "manifest_present": true,
+    "questionnaire": "Data Not Collected proposed because local-first",
+    "optional_features": [
+      "GitHub synchronization",
+      "third-party crash SDK not audited"
+    ],
+    "app_privacy_published": false
+  },
+  "trader": {
+    "owner_says_product_of_business": true,
+    "legal_entity_name_verified": false,
+    "business_address_verified": false,
+    "verification_codes_available": false
+  },
+  "tests": {
+    "browser": "passed offline editing",
+    "simulator": "passed sample Files workflow",
+    "physical": "recording workflow observed but selected build/current OS unverified"
+  },
+  "do_not_include": "No real owner identity, contact, credentials, codes or footage are present in this fixture."
+}

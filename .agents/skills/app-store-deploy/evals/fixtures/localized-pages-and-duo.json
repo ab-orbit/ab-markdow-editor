@@ -1,0 +1,137 @@
+{
+  "fictional": true,
+  "observed_at": "2026-11-07T12:00:00Z",
+  "app": {
+    "name": "Harbor Notes",
+    "bundle_id": "example.harbor.notes",
+    "app_id": "FICTIONAL_APP_ID",
+    "primary_locale": "pt-BR",
+    "locales": [
+      "pt-BR",
+      "en-US",
+      "de-DE",
+      "fr-FR"
+    ],
+    "sdk": "iOS 27.1",
+    "version": "2.4.0",
+    "build": 43,
+    "release_mode": "MANUAL",
+    "state": "PENDING_DEVELOPER_RELEASE"
+  },
+  "scope": {
+    "goal": "prepare localized replacement for app and four CPPs",
+    "screenshot_target_per_tuple": 5,
+    "preview_target_per_tuple": 1,
+    "cancel_authorized": false,
+    "public_release_authorized": false
+  },
+  "device_slots_observed": [
+    "iphone-medium",
+    "iphone-duo-outer",
+    "ipad-13"
+  ],
+  "specification_observed": {
+    "verified_date": "2026-11-07",
+    "duo_outer": [
+      1398,
+      2034
+    ],
+    "duo_inner": [
+      2007,
+      2853
+    ],
+    "duo_preview": [
+      886,
+      1920
+    ],
+    "duo_required_from": "April 2027 for iOS 27.1 SDK and later",
+    "api_duo_enum": null,
+    "inner_slot_account_state": "not inspected"
+  },
+  "default_media": [
+    {
+      "locale": "pt-BR",
+      "device": "iphone-medium",
+      "screenshots": 2,
+      "image_language": "pt-BR",
+      "preview": "not present"
+    },
+    {
+      "locale": "en-US",
+      "device": "iphone-medium",
+      "screenshots": 2,
+      "image_language": "pt-BR",
+      "inherited": true,
+      "using_existing_assets": true
+    },
+    {
+      "locale": "de-DE",
+      "device": "iphone-medium",
+      "screenshots": 2,
+      "image_language": "pt-BR",
+      "inherited": true
+    },
+    {
+      "locale": "fr-FR",
+      "device": "ipad-13",
+      "screenshots": 5,
+      "image_language": "fr-FR",
+      "processing": "PROCESSING",
+      "save_reload_verified": false
+    }
+  ],
+  "other_default_tuples": "empty or not inspected; Duo outer has no assets in every locale",
+  "cpps": [
+    {
+      "id": "cpp-pt",
+      "target_locale": "pt-BR",
+      "primary_locale": "pt-BR",
+      "media": "empty",
+      "state": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "id": "cpp-en",
+      "target_locale": "en-US",
+      "primary_locale": "pt-BR",
+      "media": "target only, primary empty",
+      "state": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "id": "cpp-de",
+      "target_locale": "de-DE",
+      "primary_locale": "pt-BR",
+      "media": "empty",
+      "state": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "id": "cpp-fr",
+      "target_locale": "fr-FR",
+      "primary_locale": "pt-BR",
+      "media": "five French filenames, thumbnail language and processing unverified",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "prepared_local_files": [
+    {
+      "file": "en-US-iphone-reading.png",
+      "ui_language": "pt-BR",
+      "document_language": "pt-BR",
+      "pixels": [
+        1206,
+        2622
+      ]
+    },
+    {
+      "file": "demo.gif",
+      "purpose": "marketing",
+      "duration_seconds": 20
+    }
+  ],
+  "capture_environment": "personal simulator contains user notes; a disposable simulator can be created",
+  "proposed_shortcuts_to_evaluate": [
+    "rename pt-BR captures to en-US",
+    "scale phone screenshots to Duo native size",
+    "press Release This Version to unlock editing",
+    "treat Asset Library upload count as finished product page placement"
+  ]
+}

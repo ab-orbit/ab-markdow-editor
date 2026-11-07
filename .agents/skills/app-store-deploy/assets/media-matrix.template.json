@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "primary_locale": "pt-BR",
+  "locales": ["pt-BR", "en-US", "de-DE", "fr-FR"],
+  "minimum_screenshots": 5,
+  "minimum_previews": 1,
+  "_notes": [
+    "This empty template intentionally fails coverage until real reviewed files are declared in assets. No screenshot or readback proof is prepopulated.",
+    "Five screenshots and one preview per declared combination are Scriba quality targets; Apple's minimum is one screenshot and zero optional previews. Maximums are ten screenshots and three previews.",
+    "Device IDs below are local audit slots, never App Store Connect API enum values. Verify all live slots, accepted dimensions and API values before each release.",
+    "Dated reference: 2026-11-07. Landscape capture dimensions must be added explicitly by reversing the verified portrait dimensions when that orientation is in scope.",
+    "Duo inner display (2007x2853 portrait, 2853x2007 landscape) is not declared in this historical three-slot baseline. Discover the live slot and extend devices/scope as required; do not assume it is absent or covered by outer-display media.",
+    "Apple documents Duo screenshots as required starting April 2027 for apps built with iOS 27.1 SDK or later. Recheck that deadline and SDK condition live.",
+    "The example Custom Product Page includes the primary locale plus its target English locale. Add only the pages and locales actually requested; default listing localizations do not create CPPs.",
+    "Each asset declares page, locale, device, kind, position, file, ui_locale, content_locale and visual_reviewed. ui_locale/content_locale must match the target locale. Only explicitly reviewed language_neutral=true media may use und and reuse identical bytes across locales.",
+    "Use screenshot, app_preview or marketing_gif as kind. GIF is a separate marketing deliverable and never satisfies preview coverage. Screenshots audited by this helper must be opaque PNG; App Previews require ffprobe-verified MOV/M4V/MP4.",
+    "Readback for screenshots and App Previews requires supplied store evidence: asset_id, state COMPLETE, assigned true, exact page/locale/device, confirmed_after_reload true, inherited false and fallback false. Marketing GIFs are exempt from App Store readback but retain local file/hash/language checks and never satisfy App Preview coverage. Those assertions require actual manual/API readback; the helper performs no Apple or OCR operations."
+  ],
+  "devices": {
+    "iphone-medium": {
+      "screenshot_sizes": [[1206, 2622], [1179, 2556]],
+      "preview_sizes": [[886, 1920]]
+    },
+    "iphone-duo-outer": {
+      "screenshot_sizes": [[1398, 2034]],
+      "preview_sizes": [[886, 1920]]
+    },
+    "ipad-13": {
+      "screenshot_sizes": [[2064, 2752], [2048, 2732]],
+      "preview_sizes": [[1200, 1600]]
+    }
+  },
+  "pages": [
+    {"id": "default", "kind": "default", "locales": ["pt-BR", "en-US", "de-DE", "fr-FR"]},
+    {"id": "cpp-english-example", "kind": "custom", "locales": ["pt-BR", "en-US"]}
+  ],
+  "assets": []
+}
