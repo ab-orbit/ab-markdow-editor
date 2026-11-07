@@ -48,7 +48,7 @@ cp -R dist server native "$RESOURCES/"
 mkdir -p "$RESOURCES/docs"
 cp docs/Scriba-Diagramas.md "$RESOURCES/docs/"
 cp -R docs/reference-texts docs/welcome-texts "$RESOURCES/docs/"
-cp scripts/launch.mjs scripts/stop.mjs scripts/local-service.mjs "$RESOURCES/scripts/"
+cp scripts/launch.mjs scripts/stop.mjs scripts/local-service.mjs scripts/editor-window.mjs "$RESOURCES/scripts/"
 cp -R "$NODE_HOME" "$RESOURCES/runtime"
 "$RESOURCES/runtime/bin/node" --version
 printf '%s\n' "${PATH#*:}" > "$RESOURCES/runtime-path.txt"
