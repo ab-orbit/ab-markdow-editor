@@ -36,6 +36,8 @@ The installer does not perform a silent Git update or discard source edits. It p
 
 For a normal installation, preflight also resolves a supported local application-window route through Chrome, Edge, Brave or Chromium. It does this without opening a window and stops with an installation requirement message if no compatible browser is available. Package-only CI builds skip that host preference check and test the resolver against isolated real bundle metadata instead.
 
+The installer gives the build command a 4 GB Node heap unless an explicit heap limit is already present in `NODE_OPTIONS`. The clean hosted Mac exposed a Vite failure at Node's 2 GB default while processing the editor/diagram bundles. This setting applies to the build subprocess, rather than the installed local service.
+
 Successful installation re-registers this specific application with LaunchServices. It does not erase the global LaunchServices registry or automatically replace another editor chosen by the user. To select Scriba for every `.md` file, use **Finder → Get Info → Open with → Scriba → Change All** and confirm. Finder may need a relaunch to refresh an old cached icon after an update. The installer prints the default-app instructions at completion.
 
 ## Fresh-build acceptance and CI

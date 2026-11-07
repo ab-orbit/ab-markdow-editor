@@ -42,7 +42,13 @@ if [[ "${MARKDOWN_PACKAGE_ONLY:-0}" != 1 ]]; then
 fi
 echo 'Instalando dependências e compilando o editor…'
 "$NPM_BIN" ci --no-audit --no-fund
-"$NPM_BIN" run build
+# Diagram/editor bundles need more than Node's 2 GB default on smaller clean Macs.
+# Scope the build heap to this command and honor an explicitly configured limit.
+BUILD_NODE_OPTIONS="${NODE_OPTIONS:-}"
+if [[ "$BUILD_NODE_OPTIONS" != *--max-old-space-size* && "$BUILD_NODE_OPTIONS" != *--max_old_space_size* ]]; then
+  BUILD_NODE_OPTIONS="${BUILD_NODE_OPTIONS:+$BUILD_NODE_OPTIONS }--max-old-space-size=4096"
+fi
+NODE_OPTIONS="$BUILD_NODE_OPTIONS" "$NPM_BIN" run build
 
 APP_DIR="$WORK_DIR/Scriba.app"
 RESOURCES="$APP_DIR/Contents/Resources"
