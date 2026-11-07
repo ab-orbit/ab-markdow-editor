@@ -29,12 +29,14 @@ A compatibilidade com notas importadas reconhece comandos matemáticos sem delim
 Baixe ou clone este repositório, abra o Terminal na pasta do editor e execute:
 
 ```bash
-git clone https://github.com/ab-orbit/ab-markdow-editor.git
+git clone --branch main https://github.com/ab-orbit/ab-markdow-editor.git
 cd ab-markdow-editor
 ./install.sh
 ```
 
 O instalador compila o editor, instala `Scriba.app` em `/Applications` (ou `~/Applications`, sem acesso à pasta global), cria um ícone na Mesa e abre uma janela do aplicativo. O launcher reutiliza o Scriba local instalado pelo Chrome/Edge; sem essa instalação, usa uma janela independente de um navegador Chromium disponível. Chrome ou Edge são recomendados para essa janela. O aplicativo inclui seu próprio runtime Node: depois da instalação, a pasta baixada pode ser movida ou removida. A primeira instalação precisa de internet. O instalador baixa a distribuição oficial do Node.js 22 LTS para a arquitetura do Mac, verifica SHA-256 e inclui o runtime completo no aplicativo, sem depender de Node/Homebrew/nvm já instalados. É necessário Git; se faltar, o macOS oferece instalar suas ferramentas de linha de comando e o instalador pede para ser executado novamente após essa instalação.
+
+Antes de substituir uma instalação existente, o instalador valida o aplicativo completo: versão, runtime, launcher da janela do Scriba, registro Markdown, ícone dos documentos e assinatura. Se algo faltar, a instalação para antes de encerrar o serviço ou substituir o aplicativo anterior. A mesma instalação é construída e testada em um Mac limpo no GitHub Actions. [Validação e atualizações do instalador](docs/MAC-INSTALLATION.md).
 
 Abra **Scriba** na Mesa nas próximas vezes. O servidor escuta apenas em `127.0.0.1` numa porta livre, sem conta, API externa ou banco de dados. Fechar a aba mantém o servidor disponível para a próxima abertura.
 

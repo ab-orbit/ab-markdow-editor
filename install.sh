@@ -95,6 +95,18 @@ for SIZE in 16 32 128 256 512; do
 done
 iconutil -c icns "$WORK_DIR/AppIcon.iconset" -o "$RESOURCES/AppIcon.icns"
 plutil -lint "$APP_DIR/Contents/Info.plist"
+# Validate the finished, signed package before touching an existing app or local service.
+/usr/bin/codesign --force --deep --sign - "$APP_DIR"
+"$NODE_BIN" scripts/verify-macos-bundle.mjs "$APP_DIR" "$APP_VERSION"
+
+# CI and release QA exercise the real installer without changing Finder defaults, aliases or services.
+if [[ "${MARKDOWN_PACKAGE_ONLY:-0}" == 1 ]]; then
+  PACKAGE_APP="$APPLICATIONS_DIR/Scriba.app"
+  [[ ! -e "$PACKAGE_APP" ]] || { echo "O destino de teste já existe: $PACKAGE_APP" >&2; exit 1; }
+  mv "$APP_DIR" "$PACKAGE_APP"
+  echo "Pacote validado: $PACKAGE_APP"
+  exit 0
+fi
 
 # Replace only our own application and desktop link; never remove unrelated files.
 TARGET_APP="$APPLICATIONS_DIR/Scriba.app"
@@ -114,7 +126,7 @@ if [[ -e "$TARGET_APP" ]]; then
   rm -rf "$TARGET_APP"
 fi
 mv "$APP_DIR" "$TARGET_APP"
-/usr/bin/codesign --force --deep --sign - "$TARGET_APP"
+/usr/bin/codesign --verify --deep --strict "$TARGET_APP"
 # The application icon is supplied by CFBundleIconFile; custom Finder resource forks invalidate signing.
 DESKTOP_LINK="$DESKTOP_DIR/Scriba.app"
 if [[ -L "$DESKTOP_LINK" ]]; then
@@ -129,4 +141,5 @@ touch "$TARGET_APP"
 "$TARGET_APP/Contents/Resources/runtime/bin/node" "$TARGET_APP/Contents/Resources/scripts/local-service.mjs" install
 echo "Instalado: $TARGET_APP"
 echo "Ícone na Mesa: $DESKTOP_LINK"
+echo 'Para tornar padrão: Finder → selecione um .md → Obter Informações → Abrir com Scriba → Alterar Tudo.'
 if [[ "${MARKDOWN_NO_OPEN:-0}" != 1 ]]; then open "$TARGET_APP"; fi
