@@ -67,13 +67,15 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <key>CFBundleDocumentTypes</key><array><dict>
 <key>CFBundleTypeName</key><string>Markdown document</string>
 <key>CFBundleTypeRole</key><string>Editor</string>
-<key>LSHandlerRank</key><string>Alternate</string>
+<key>CFBundleTypeIconFile</key><string>AppIcon.icns</string>
+<key>LSHandlerRank</key><string>Default</string>
 <key>CFBundleTypeExtensions</key><array><string>md</string><string>markdown</string><string>mdown</string></array>
 <key>LSItemContentTypes</key><array><string>net.daringfireball.markdown</string><string>public.markdown</string><string>com.unknown.md</string></array>
 </dict></array>
 <key>UTImportedTypeDeclarations</key><array><dict>
 <key>UTTypeIdentifier</key><string>net.daringfireball.markdown</string>
 <key>UTTypeDescription</key><string>Markdown document</string>
+<key>UTTypeIconFile</key><string>AppIcon.icns</string>
 <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
 <key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>md</string><string>markdown</string><string>mdown</string></array><key>public.mime-type</key><string>text/markdown</string></dict>
 </dict></array>

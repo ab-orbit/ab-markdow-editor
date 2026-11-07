@@ -224,6 +224,8 @@ The macOS installer registers AB Markdown as an alternate editor for `.md`, `.ma
 
 The native launcher receives Finder document events and imports the selected Markdown with safe local raster attachments into a Scriba application window, rather than a default-browser tab. It matches the installed local PWA by origin, never the public-site PWA; without a matching PWA it uses Chromium application mode. Files inside the currently configured Git checkout retain their relative path and revision. Files outside it are imported; saving uses the configured checkout and preserves the source file. The public PWA's OS file associations are separate from this macOS application registration.
 
+To make Scriba the default for all Markdown files on a Mac, select a `.md` file in Finder, choose **Get Info → Open with → Scriba → Change All**, and confirm. The Finder “Always Open With” choice can apply to an individual file. The installer registers Scriba as a Markdown editor with its document icon; it preserves the user's choice of default application. If Finder still displays the former application's icon after an update, relaunching Finder refreshes that cached icon. See [Apple's file-association instructions](https://support.apple.com/guide/mac-help/mh35597/mac).
+
 ## GitHub on web, iPhone and iPad
 
 In Settings → GitHub, connect an account, choose an existing repository and the notes folder (`scriba` by default). Saving commits the Markdown and its images together. Browser-only notes and the Mac's local Git repository remain alternatives. Offline changes stay private on the device until saved online; automatic saving works while the note is open.
