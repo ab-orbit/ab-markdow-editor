@@ -1,0 +1,26 @@
+Scriba 1.16.1 — Guideline 2.1(b), business model clarification
+
+Scriba is completely free in this version. No monetization, subscription, premium entitlement, paid content, in-app purchase or external purchasing mechanism is implemented. All available functionality is accessible without payment.
+
+1. Who uses paid subscriptions or features?
+Nobody. There are no paid subscribers, premium users or paid features. Scriba is a general-purpose Markdown editor for the public, including students, writers, researchers and professionals.
+
+2. Where can users purchase subscriptions or features accessible in the app?
+Nowhere. There is no purchase flow in the app or on an external website for Scriba features.
+
+3. Which previously purchased subscriptions or features can users access?
+None. There are no previously purchased Scriba subscriptions, paid content or premium entitlements.
+
+4. What paid content, subscriptions or features are unlocked without In-App Purchase?
+None. Markdown editing, document management, mathematical formulas, diagrams, Excalidraw drawings, import/export and optional GitHub integration are all available without payment. GitHub accesses documents in the user's own repository; it does not unlock paid Scriba content.
+
+No Scriba account, registration or sign-in is required for the core editor. Open the bundled reference notes or create a note. Core editing, renderers, fonts and reference notes are bundled for offline use. Settings offers Apple's Files folder picker; import/export uses native system interfaces. GitHub authorization is optional and is a repository integration, not a Scriba identity account. Synchronization operates while the app is open and connected.
+
+Users manage their own documents and drawings. There is no public feed, media catalog, advertising, AI service or remote executable code update. Core features are consistent across regions; optional GitHub and Files providers depend on their availability and the user's permissions.
+
+The owner-provided physical-device recording submitted on October 22 remains attached to the App Review correspondence as Scriba-1.16.1-review-physical-iPhone.mp4. It shows an iPhone 17 Pro Max running iOS 26.3 and begins at Home Screen launch. Only the introductory Settings screen containing device identifiers was removed; the demonstrated workflow remains continuous. This is the previously supplied recording, not a new recording for a later build.
+
+If paid digital capabilities are introduced in a future release, the appropriate Apple-compliant purchase flow will be implemented before offering them. No such commercial model is implemented in the version under review.
+
+Thank you for reviewing Scriba.
+Aeon Bridge Co.

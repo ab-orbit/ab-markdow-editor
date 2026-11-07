@@ -1,0 +1,14 @@
+✔ a wide table has its own landscape pages, keeps its heading and restores portrait text (1.810041ms)
+✔ small tables stay in the text flow and long identifiers cannot widen the sheet (0.182167ms)
+✔ dense four-column prose also gets landscape, without reducing the text size (0.125292ms)
+✔ consecutive wide tables start separate pages without a trailing empty portrait page (0.163709ms)
+✔ rows taller than a page may continue instead of disappearing as an unbreakable block (0.109958ms)
+✔ an empty note stays portrait and a code panel is not treated as a Markdown table (0.60225ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.977833

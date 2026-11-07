@@ -945,5 +945,20 @@
   "Não foi possível criar a cópia. A nota original continua aberta.": "Could not create the copy. The original note remains open.",
   "O arquivo mudou durante a sincronização. Sua cópia foi preservada.": "The file changed during synchronization. Your copy was preserved.",
   "Listas": "Lists",
-  "Mais opções de formatação": "More formatting options"
+  "Mais opções de formatação": "More formatting options",
+  "Concluir": "Done",
+  "Editar": "Edit",
+  "Os controles nativos estão indisponíveis.": "Native controls are unavailable.",
+  "Feche a seleção de arquivo antes de escolher uma pasta.": "Close the file chooser before selecting a folder.",
+  "Já existe uma seleção de arquivo ou pasta aberta.": "A file or folder chooser is already open.",
+  "Feche a janela atual antes de abrir um arquivo.": "Close the current window before opening a file.",
+  "Selecione um arquivo local no Files.": "Select a local file in Files.",
+  "Selecione um arquivo Markdown ou pacote ZIP/Bear válido.": "Select a valid Markdown file or ZIP/Bear package.",
+  "O arquivo selecionado excede o limite de 64 MB.": "The selected file exceeds the 64 MB limit.",
+  "Não foi possível ler o arquivo selecionado.": "Could not read the selected file.",
+  "Não foi possível abrir o arquivo selecionado. {0}": "Could not open the selected file. {0}",
+  "Processando…": "Working…",
+  "Alterações não salvas": "Unsaved changes",
+  "Salvo no dispositivo · sincronização pendente": "Saved on device · sync pending",
+  "Tudo salvo": "All changes saved"
 }

@@ -1,0 +1,8 @@
+{
+  "origin": "https://scriba.aeonbridge.app/",
+  "persistence": true,
+  "contextIsolation": true,
+  "offlineSaveAndReload": true,
+  "localApiRequests": 0,
+  "pageErrors": []
+}

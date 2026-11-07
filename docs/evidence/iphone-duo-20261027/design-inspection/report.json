@@ -1,0 +1,1560 @@
+{
+ "url": "http://127.0.0.1:5189/",
+ "at": "2026-10-28T00:29:42.033Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.57
+   ],
+   "motion": {
+    "elements": 6,
+    "css": 6,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 900,
+     "screens": 1,
+     "words": 526,
+     "img": 4,
+     "video": 0,
+     "canvas": 0,
+     "svg": 38,
+     "sections": 7,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 6,
+     "uiAbuse": false,
+     "realPictures": 1,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "3ca310c3-62a0-4abd-a848-8016d7c8b0d9"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 32,
+     "vw": 2.3,
+     "font": "Avenir Next",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.4,
+     "top": 144,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "lines": 1,
+     "size": 32.4,
+     "font": "Avenir Next"
+    },
+    "headings": [
+     {
+      "text": "Welcome to Scriba",
+      "words": 3,
+      "chars": 17,
+      "lines": 1,
+      "size": 32.4,
+      "vw": 2.3,
+      "font": "Avenir Next",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.4,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.49,
+      "top": 144,
+      "tag": "h1",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 1,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Avenir Next",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "-apple-system",
+       "share": 0.19,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.02,
+       "mono": false
+      },
+      {
+       "family": "Georgia",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 4,
+     "sizes": [
+      13,
+      15,
+      16,
+      18,
+      25,
+      32
+     ],
+     "sizeCount": 6,
+     "notLoaded": [
+      "Avenir Next",
+      "JetBrains Mono"
+     ],
+     "body": {
+      "font": "Avenir Next",
+      "size": 18,
+      "leading": 1.75,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 12.4
+     },
+     "measureChars": 78,
+     "max": {
+      "size": 32.4,
+      "vw": 2.3,
+      "font": "Avenir Next",
+      "text": "Welcome to Scriba"
+     },
+     "monoShare": 0.02,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.01,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#1e1f20",
+     "bodyBgHsl": {
+      "h": 210,
+      "s": 0.03,
+      "l": 0.12
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#1e1f20",
+       "top": 0,
+       "hsl": {
+        "h": 210,
+        "s": 0.03,
+        "l": 0.12
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#dedfdf",
+       "share": 0.75
+      },
+      {
+       "color": "#a9aeb1",
+       "share": 0.15
+      },
+      {
+       "color": "#cbd9df",
+       "share": 0.08
+      },
+      {
+       "color": "#78c0df",
+       "share": 0.02
+      }
+     ],
+     "button": {
+      "bg": "#26383f",
+      "hsl": {
+       "h": 197,
+       "s": 0.25,
+       "l": 0.2
+      },
+      "fg": "#cbd9df"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 3,
+     "inHero": 3,
+     "radius": "pill",
+     "height": 40,
+     "withShadow": 1,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Welcome_to_Scriba_EN.md",
+      "Note",
+      "Whiteboard"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 3,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 5,
+     "hairlineSamples": [
+      "aside#recent-notes.notes-sidebar 280px",
+      "li.note-row 263px",
+      "p._assetHint_11uoe_75 1160px",
+      "footer._footer_11uoe_62 1160px",
+      "hr 700px rule"
+     ],
+     "outlinedBoxes": 1,
+     "dashed": 0,
+     "blurred": 2,
+     "roundedBoxes": 1,
+     "boxRadius": 18,
+     "squareMedia": 0,
+     "roundedMedia": 1,
+     "mediaRadius": 4,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.19
+     }
+    ],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 400,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 900,
+    "margins": {
+     "left": 8,
+     "right": 29
+    },
+    "sections": [],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Welcome to Scriba",
+      "size": 32,
+      "top": 144,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [
+     {
+      "text": "Notes",
+      "side": "left",
+      "px": 8
+     }
+    ],
+    "edges": [
+     {
+      "x": 512,
+      "n": 4
+     }
+    ],
+    "leftBlocks": 4,
+    "bodySize": 18,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0.1,
+    "voidBox": {
+     "x": 1260,
+     "y": 120,
+     "w": 180,
+     "h": 720
+    }
+   },
+   "app": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "dark": true,
+    "ground": "#1e1f20",
+    "sidebar": {
+     "w": 280,
+     "tag": "aside",
+     "links": 12,
+     "share": 0.19
+    },
+    "topbar": null,
+    "canvas": {
+     "left": 16,
+     "right": 29
+    },
+    "hero": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 32,
+     "vw": 2.3,
+     "font": "Avenir Next",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.4,
+     "top": 144,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 2,
+     "firstScreen": 2,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 2,
+     "radii": [
+      [
+       3,
+       1
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      11,
+      13,
+      15,
+      16,
+      18,
+      21,
+      25,
+      27,
+      32
+     ]
+    },
+    "title": {
+     "text": "Welcome to Scriba",
+     "size": 32,
+     "top": 144
+    },
+    "colourShare": 0.045
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.57
+   ],
+   "motion": {
+    "elements": 6,
+    "css": 6,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 1024,
+     "screens": 1,
+     "words": 426,
+     "img": 1,
+     "video": 0,
+     "canvas": 0,
+     "svg": 25,
+     "sections": 6,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 4,
+     "uiAbuse": false,
+     "realPictures": 1,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "6d176dec-e41c-490e-85f0-eb6b6c9754c2"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 28,
+     "vw": 3.6,
+     "font": "Avenir Next",
+     "weight": 700,
+     "tracking": -0.01,
+     "leading": 1.3,
+     "top": 86,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "lines": 1,
+     "size": 28,
+     "font": "Avenir Next"
+    },
+    "headings": [
+     {
+      "text": "Welcome to Scriba",
+      "words": 3,
+      "chars": 17,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.6,
+      "font": "Avenir Next",
+      "weight": 700,
+      "tracking": -0.015,
+      "leading": 1.3,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.89,
+      "top": 86,
+      "tag": "h1",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 1,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Avenir Next",
+       "share": 0.98,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.02,
+       "mono": false
+      },
+      {
+       "family": "-apple-system",
+       "share": 0,
+       "mono": false
+      },
+      {
+       "family": "Georgia",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 4,
+     "sizes": [
+      14,
+      16,
+      22,
+      28
+     ],
+     "sizeCount": 4,
+     "notLoaded": [
+      "Avenir Next",
+      "JetBrains Mono"
+     ],
+     "body": {
+      "font": "Avenir Next",
+      "size": 16,
+      "leading": 1.75,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 12.4
+     },
+     "measureChars": 86,
+     "max": {
+      "size": 28,
+      "vw": 3.6,
+      "font": "Avenir Next",
+      "text": "Welcome to Scriba"
+     },
+     "monoShare": 0.02,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#1e1f20",
+     "bodyBgHsl": {
+      "h": 210,
+      "s": 0.03,
+      "l": 0.12
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#1e1f20",
+       "top": 0,
+       "hsl": {
+        "h": 210,
+        "s": 0.03,
+        "l": 0.12
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#dedfdf",
+       "share": 0.92
+      },
+      {
+       "color": "#cbd9df",
+       "share": 0.06
+      },
+      {
+       "color": "#78c0df",
+       "share": 0.02
+      }
+     ],
+     "button": null,
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 0,
+     "inHero": 0,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": []
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 3,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "hr 684px rule"
+     ],
+     "outlinedBoxes": 1,
+     "dashed": 0,
+     "blurred": 3,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 0,
+     "roundedMedia": 1,
+     "mediaRadius": 4,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.3
+     }
+    ],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 0,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 1024,
+    "margins": {
+     "left": 12,
+     "right": 16
+    },
+    "sections": [
+     {
+      "sel": "p",
+      "tag": "p",
+      "top": 166,
+      "height": 343,
+      "words": 0,
+      "media": 1,
+      "middle": 0,
+      "heading": null,
+      "left": 42,
+      "right": 42,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 681,
+      "height": 235,
+      "words": 67,
+      "media": 0,
+      "middle": 4,
+      "heading": {
+       "text": "From the first line to the next idea",
+       "size": 22,
+       "tag": "h2"
+      },
+      "left": 0,
+      "right": 42,
+      "textLeft": 42,
+      "textRight": 42,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 936,
+      "height": 511,
+      "words": 5,
+      "media": 0,
+      "middle": 4,
+      "heading": {
+       "text": "A small workshop of possibilities",
+       "size": 22,
+       "tag": "h2"
+      },
+      "left": 0,
+      "right": 375,
+      "textLeft": 42,
+      "textRight": 375,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 1463,
+      "height": 263,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 0,
+      "right": 730,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 1746,
+      "height": 444,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 0,
+      "right": 730,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Welcome to Scriba",
+      "size": 28,
+      "top": 86,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 42,
+      "n": 6
+     }
+    ],
+    "leftBlocks": 6,
+    "bodySize": 16,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "dark": true,
+    "ground": "#1e1f20",
+    "sidebar": null,
+    "topbar": {
+     "h": 66
+    },
+    "canvas": {
+     "left": 8,
+     "right": 27
+    },
+    "hero": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 28,
+     "vw": 3.6,
+     "font": "Avenir Next",
+     "weight": 700,
+     "tracking": -0.01,
+     "leading": 1.3,
+     "top": 86,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 0,
+     "firstScreen": 0,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 0,
+     "radii": [],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.01,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      11,
+      14,
+      15,
+      16,
+      17,
+      21,
+      22,
+      27,
+      28
+     ]
+    },
+    "title": {
+     "text": "Welcome to Scriba",
+     "size": 28,
+     "top": 86
+    },
+    "colourShare": 0.079
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.74
+   ],
+   "motion": {
+    "elements": 6,
+    "css": 6,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 844,
+     "screens": 1,
+     "words": 426,
+     "img": 1,
+     "video": 0,
+     "canvas": 0,
+     "svg": 25,
+     "sections": 6,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 4,
+     "uiAbuse": false,
+     "realPictures": 1,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "f463a276-d26d-44ce-a2a7-d44bdbf965ac"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 28,
+     "vw": 7.2,
+     "font": "Avenir Next",
+     "weight": 700,
+     "tracking": -0.01,
+     "leading": 1.3,
+     "top": 86,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "lines": 1,
+     "size": 28,
+     "font": "Avenir Next"
+    },
+    "headings": [
+     {
+      "text": "Welcome to Scriba",
+      "words": 3,
+      "chars": 17,
+      "lines": 1,
+      "size": 28,
+      "vw": 7.2,
+      "font": "Avenir Next",
+      "weight": 700,
+      "tracking": -0.015,
+      "leading": 1.3,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 86,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "From the first line to the next idea",
+      "words": 8,
+      "chars": 36,
+      "lines": 2,
+      "size": 22,
+      "vw": 5.6,
+      "font": "Avenir Next",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.4,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 620,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "A small workshop of possibilities",
+      "words": 5,
+      "chars": 33,
+      "lines": 2,
+      "size": 22,
+      "vw": 5.6,
+      "font": "Avenir Next",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.4,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 990,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Open the atlas, change the map",
+      "words": 6,
+      "chars": 30,
+      "lines": 2,
+      "size": 22,
+      "vw": 5.6,
+      "font": "Avenir Next",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.4,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 1856,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Your notebook, your destination",
+      "words": 4,
+      "chars": 31,
+      "lines": 2,
+      "size": 22,
+      "vw": 5.6,
+      "font": "Avenir Next",
+      "weight": 700,
+      "tracking": 0,
+      "leading": 1.4,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 2309,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 5,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": 6,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Avenir Next",
+       "share": 0.98,
+       "mono": false
+      },
+      {
+       "family": "JetBrains Mono",
+       "share": 0.02,
+       "mono": false
+      },
+      {
+       "family": "-apple-system",
+       "share": 0,
+       "mono": false
+      },
+      {
+       "family": "Georgia",
+       "share": 0,
+       "mono": false
+      }
+     ],
+     "familyCount": 4,
+     "sizes": [
+      14,
+      16,
+      22,
+      28
+     ],
+     "sizeCount": 4,
+     "notLoaded": [
+      "Avenir Next",
+      "JetBrains Mono"
+     ],
+     "body": {
+      "font": "Avenir Next",
+      "size": 16,
+      "leading": 1.75,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 12.4
+     },
+     "measureChars": 42,
+     "max": {
+      "size": 28,
+      "vw": 7.2,
+      "font": "Avenir Next",
+      "text": "Welcome to Scriba"
+     },
+     "monoShare": 0.02,
+     "monoProseShare": 0,
+     "monoFamilies": [
+      "JetBrains Mono"
+     ],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#1e1f20",
+     "bodyBgHsl": {
+      "h": 210,
+      "s": 0.03,
+      "l": 0.12
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#1e1f20",
+       "top": 0,
+       "hsl": {
+        "h": 210,
+        "s": 0.03,
+        "l": 0.12
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#dedfdf",
+       "share": 0.92
+      },
+      {
+       "color": "#cbd9df",
+       "share": 0.06
+      },
+      {
+       "color": "#78c0df",
+       "share": 0.02
+      }
+     ],
+     "button": null,
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 0,
+     "inHero": 0,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": []
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 3,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "hr 334px rule"
+     ],
+     "outlinedBoxes": 1,
+     "dashed": 0,
+     "blurred": 3,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 0,
+     "roundedMedia": 1,
+     "mediaRadius": 4,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.17
+     }
+    ],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 0,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 844,
+    "margins": {
+     "left": 12,
+     "right": 16
+    },
+    "sections": [
+     {
+      "sel": "p",
+      "tag": "p",
+      "top": 166,
+      "height": 168,
+      "words": 0,
+      "media": 1,
+      "middle": 0,
+      "heading": null,
+      "left": 28,
+      "right": 28,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "p",
+      "tag": "p",
+      "top": 402,
+      "height": 168,
+      "words": 39,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 28,
+      "right": 28,
+      "textLeft": 28,
+      "textRight": 28,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 590,
+      "height": 350,
+      "words": 47,
+      "media": 0,
+      "middle": 4,
+      "heading": {
+       "text": "From the first line to the next idea",
+       "size": 22,
+       "tag": "h2"
+      },
+      "left": 0,
+      "right": 28,
+      "textLeft": 28,
+      "textRight": 28,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 960,
+      "height": 850,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 0,
+      "right": 366,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 1826,
+      "height": 434,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 0,
+      "right": 366,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section",
+      "tag": "section",
+      "top": 2279,
+      "height": 671,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 0,
+      "right": 366,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Welcome to Scriba",
+      "size": 28,
+      "top": 86,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 28,
+      "n": 4
+     }
+    ],
+    "leftBlocks": 4,
+    "bodySize": 16,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "dark": true,
+    "ground": "#1e1f20",
+    "sidebar": null,
+    "topbar": {
+     "h": 66
+    },
+    "canvas": {
+     "left": 23,
+     "right": 27
+    },
+    "hero": {
+     "text": "Welcome to Scriba",
+     "words": 3,
+     "chars": 17,
+     "lines": 1,
+     "size": 28,
+     "vw": 7.2,
+     "font": "Avenir Next",
+     "weight": 700,
+     "tracking": -0.01,
+     "leading": 1.3,
+     "top": 86,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 0,
+     "firstScreen": 0,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 0,
+     "radii": [],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.01,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      11,
+      14,
+      15,
+      16,
+      17,
+      21,
+      22,
+      27,
+      28
+     ]
+    },
+    "title": {
+     "text": "Welcome to Scriba",
+     "size": 28,
+     "top": 86
+    },
+    "colourShare": 0.039
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "FAIL",
+   "id": "button-fx",
+   "width": 1440,
+   "message": "Buttons with shadow/glow.",
+   "fix": "Flat fill, one colour."
+  },
+  {
+   "level": "WARN",
+   "id": "font-count",
+   "width": 1440,
+   "message": "3 typefaces in use (Avenir Next, -apple-system, JetBrains Mono).",
+   "fix": "Two at most."
+  },
+  {
+   "level": "WARN",
+   "id": "font-fallback",
+   "width": 1440,
+   "message": "Typeface(s) declared but not loaded, so a fallback is rendering: Avenir Next, JetBrains Mono",
+   "fix": "Fix the font URL / family name, or the screenshots you are judging are not the design.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "dev-server",
+   "width": 1440,
+   "message": "This page is served by a development server (Vite, webpack or Next in dev mode).",
+   "fix": "Run the last gate on the production build too (vite build && vite preview, next build && next start, or the built index.html): minifiers and bundlers change the CSS a visitor receives.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "edge-text",
+   "width": 1440,
+   "message": "1 text block(s) sit within 16px of the screen edge: \"Notes\" (8px from the left)",
+   "fix": "Keep text inside the page margin (16–32px or more). Only display type deliberately bled past the edge may touch it."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "/private/tmp/scriba-appstore-20261027/docs/evidence/iphone-duo-20261027/design-inspection/desktop-fold.jpg",
+   "pages": [
+    "/private/tmp/scriba-appstore-20261027/docs/evidence/iphone-duo-20261027/design-inspection/desktop-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "/private/tmp/scriba-appstore-20261027/docs/evidence/iphone-duo-20261027/design-inspection/tablet-fold.jpg",
+   "pages": [
+    "/private/tmp/scriba-appstore-20261027/docs/evidence/iphone-duo-20261027/design-inspection/tablet-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "/private/tmp/scriba-appstore-20261027/docs/evidence/iphone-duo-20261027/design-inspection/mobile-fold.jpg",
+   "pages": [
+    "/private/tmp/scriba-appstore-20261027/docs/evidence/iphone-duo-20261027/design-inspection/mobile-page-01.jpg"
+   ],
+   "film": []
+  }
+ ]
+}

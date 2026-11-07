@@ -1,11 +1,94 @@
 import XCTest
 import UIKit
+import CoreImage
 
 /** Actual device rotation complements hosted bridge tests, including iPad window geometry. */
 final class ScribaUITests: XCTestCase {
-    /** Capture the full display and normalize UIKit orientation instead of cropping a rotating app window. */
+    /** A locked outer viewport must retain actual touch scrolling in inner panes. */
+    func testDuoInnerSettingsTouchScrolling() throws {
+        guard #available(iOS 27.1, *) else { throw XCTSkip("Duo native workspace.") }
+        continueAfterFailure = false
+        let app = XCUIApplication(bundleIdentifier: "com.aeonbridge.scriba")
+        app.launchArguments += ["-AppleLanguages", "(pt-BR)", "-AppleLocale", "pt_BR"]
+        app.launch()
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 25), app.debugDescription)
+        let back = app.buttons["scriba.command.settings-back"]
+        if !back.waitForExistence(timeout: 3) {
+            let more = app.buttons.matching(NSPredicate(format: "identifier == 'BottomOverflowBarButtonItem' OR label == 'More' OR label == 'Mais'")).firstMatch
+            XCTAssertTrue(more.waitForExistence(timeout: 20), app.debugDescription); more.tap()
+            let settings = app.buttons.matching(NSPredicate(format: "label == 'Configurações' OR label == 'Settings'")).firstMatch
+            XCTAssertTrue(settings.waitForExistence(timeout: 10)); settings.tap()
+        }
+        XCTAssertTrue(back.waitForExistence(timeout: 10))
+        let appearance = app.webViews.staticTexts["Aparência"].firstMatch
+        XCTAssertTrue(appearance.waitForExistence(timeout: 10))
+        XCTAssertTrue(appearance.isHittable)
+        let initial = appearance.frame.minY
+        let web = app.webViews.firstMatch
+        let start = web.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.30))
+        let end = web.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.04))
+        start.press(forDuration: 0.08, thenDragTo: end)
+        let moved = NSPredicate { _, _ in !appearance.isHittable || appearance.frame.minY < initial - 30 }
+        expectation(for: moved, evaluatedWith: app); waitForExpectations(timeout: 10)
+        try capture("duo-inner-settings-touch-scroll.png", to: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0])
+        back.tap()
+    }
+    /** Actual UIKit bar taps, natural typing, persistence and native Files cancellation. */
+    func testDuoNativeToolbarWritingAndFiles() throws {
+        guard #available(iOS 27.1, *) else { throw XCTSkip("Requires the adaptive native toolbar.") }
+        continueAfterFailure=false
+        let app=XCUIApplication(bundleIdentifier:"com.aeonbridge.scriba")
+        app.launchArguments += ["-AppleLanguages","(pt-BR)","-AppleLocale","pt_BR"]
+        XCUIDevice.shared.orientation = .portrait
+        app.launch()
+        let create=app.buttons["scriba.command.new"]
+        XCTAssertTrue(create.waitForExistence(timeout:25));XCTAssertTrue(create.isHittable);create.tap()
+        let discard=app.buttons["Descartar e criar"]
+        if discard.waitForExistence(timeout:2) { discard.tap() }
+        let text=app.webViews.textViews["Texto da nota"]
+        XCTAssertTrue(text.waitForExistence(timeout:20));text.tap()
+        text.typeText("Caderno de campo\n\nIdeias que acompanham a pesquisa no Duo.")
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout:10))
+        let web=app.webViews.firstMatch,keyboard=app.keyboards.firstMatch
+        XCTAssertGreaterThan(web.frame.height,100)
+        XCTAssertLessThanOrEqual(web.frame.maxY,keyboard.frame.minY+2)
+        let output=FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0]
+        try capture("duo-native-writing-keyboard.png",to:output)
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let fitted=NSPredicate { _,_ in web.frame.height>100 && web.frame.maxY<=keyboard.frame.minY+2 }
+        expectation(for:fitted,evaluatedWith:app);waitForExpectations(timeout:12)
+        app.typeText(" Texto preservado após a mudança de orientação.")
+        try capture("duo-native-writing-orientation-request.png",to:output)
+        XCUIDevice.shared.orientation = .portrait
+        let done=app.buttons["scriba.command.edit"]
+        XCTAssertTrue(done.waitForExistence(timeout:10))
+        let doneVisible=NSPredicate { _,_ in done.exists && done.isHittable }
+        expectation(for:doneVisible,evaluatedWith:app);waitForExpectations(timeout:10);done.tap()
+        let save=app.buttons["scriba.command.save"]
+        XCTAssertTrue(save.waitForExistence(timeout:10));XCTAssertTrue(save.isHittable);save.tap()
+        let saved=app.webViews.descendants(matching:.any).matching(NSPredicate(format:"label == %@ OR value == %@","Tudo salvo","Tudo salvo")).firstMatch
+        XCTAssertTrue(saved.waitForExistence(timeout:15))
+        try capture("duo-native-reading-saved.png",to:output)
+        let open=app.buttons["scriba.command.open"]
+        XCTAssertTrue(open.isHittable);open.tap()
+        let cancel=app.buttons.matching(NSPredicate(format:"label == 'Cancelar' OR label == 'Cancel'")).firstMatch
+        XCTAssertTrue(cancel.waitForExistence(timeout:15))
+        try capture("duo-native-files-picker.png",to:output)
+        cancel.tap()
+        XCTAssertTrue(save.waitForExistence(timeout:10))
+        XCTAssertTrue(app.webViews.descendants(matching:.any).matching(NSPredicate(format:"label CONTAINS %@ OR value CONTAINS %@","Ideias que acompanham","Ideias que acompanham")).firstMatch.waitForExistence(timeout:10))
+    }
+    /** The Duo's outer main screen can be black while the inner screen is active.
+        Select an illuminated public XCUIScreen before normalizing its orientation. */
     private func capture(_ name: String, to folder: URL) throws {
-        let image = XCUIScreen.main.screenshot().image
+        let context = CIContext()
+        let images = XCUIScreen.screens.map { $0.screenshot().image }
+        let image = images.first { candidate in
+            guard let input = CIImage(image: candidate), let average = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: input, kCIInputExtentKey: CIVector(cgRect: input.extent)])?.outputImage else { return false }
+            var pixel = [UInt8](repeating: 0, count: 4)
+            context.render(average, toBitmap: &pixel, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: CGColorSpaceCreateDeviceRGB())
+            return Int(pixel[0]) + Int(pixel[1]) + Int(pixel[2]) > 12
+        } ?? XCUIScreen.main.screenshot().image
         let format = UIGraphicsImageRendererFormat(); format.scale = image.scale
         let normalized = UIGraphicsImageRenderer(size: image.size, format: format).image { _ in
             image.draw(in: CGRect(origin: .zero, size: image.size))
@@ -52,12 +135,12 @@ final class ScribaUITests: XCTestCase {
         text.typeText("Landscape writing")
         XCUIDevice.shared.orientation = .landscapeLeft
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 10))
-        let tools = app.buttons["Mostrar formatação"]
+        let tools = app.buttons["Formatação"]
         XCTAssertTrue(tools.waitForExistence(timeout: 10)); XCTAssertTrue(tools.isHittable); tools.tap()
         let bold = app.buttons["Negrito"]
         XCTAssertTrue(bold.waitForExistence(timeout: 10)); XCTAssertTrue(bold.isHittable); bold.tap()
         app.typeText(" formatted text")
-        XCTAssertTrue(app.buttons["Ocultar formatação"].isHittable)
+        XCTAssertTrue(tools.isHittable)
         let output = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         try capture("writing-landscape-keyboard.png", to: output)
         // WKWebView exposes differently formatted text runs as separate accessibility elements.

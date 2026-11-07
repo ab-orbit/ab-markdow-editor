@@ -1,6 +1,7 @@
 import XCTest
 import WebKit
 import UIKit
+import PDFKit
 @testable import App
 
 /** These tests exercise the real bundled WKWebView and Swift bridge on an isolated simulator. */
@@ -13,7 +14,7 @@ final class ScribaTests: XCTestCase {
         continueAfterFailure = true
         for _ in 0..<200 {
             if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let controller = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController as? ScribaViewController,
+               let controller = scribaController(scene.windows.first(where: { $0.isKeyWindow })?.rootViewController),
                let view = controller.webView {
                 web = view
                 if (try? await js("return !!window.Capacitor?.nativePromise && !!document.querySelector('.editor-app')")) as? Bool == true { break }
@@ -34,23 +35,219 @@ final class ScribaTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "scriba.files.bookmark")
         if let fixture = fixture { try? FileManager.default.removeItem(at: fixture) }
     }
+    private func scribaController(_ root: UIViewController?) -> ScribaViewController? {
+        if let navigation = root as? UINavigationController { return navigation.topViewController as? ScribaViewController }
+        return root as? ScribaViewController
+    }
     private func js(_ body: String, args: [String: Any] = [:]) async throws -> Any? {
         try await web.callAsyncJavaScript(body, arguments: args, in: nil, contentWorld: .page)
     }
     private func native(_ method: String, args: [String: Any] = [:]) async throws -> Any? {
         try await js("return await window.Capacitor.nativePromise('ScribaNative',method,options)", args: ["method": method,"options":args])
     }
+
+    /** Passive session: real hinge and rotation actions are performed in Device Hub.
+        The file handshake records observations; it never fabricates UIKit geometry. */
+    func testDuoRealPostureSession() async throws {
+        guard #available(iOS 27.1, *) else { throw XCTSkip("Requires iPhone Duo reserved regions.") }
+        executionTimeAllowance = 1_200
+        let originalWeb = web
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let commandURL = directory.appendingPathComponent("duo-posture-command.json")
+        let resultURL = directory.appendingPathComponent("duo-posture-results.json")
+        let readyURL = directory.appendingPathComponent("duo-posture-ready.json")
+        try? FileManager.default.removeItem(at: commandURL)
+        defer { try? FileManager.default.removeItem(at: readyURL) }
+        var snapshots = [[String: Any]]()
+        var lastID = ""
+        var finished = false
+        try JSONSerialization.data(withJSONObject: ["ready": true]).write(to: readyURL, options: .atomic)
+        for _ in 0..<10_000 {
+            if let data = try? Data(contentsOf: commandURL),
+               let command = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let id = command["id"] as? String, id != lastID {
+                lastID = id
+                if command["finish"] as? Bool == true { finished = true; break }
+                let label = (command["label"] as? String ?? id).replacingOccurrences(of: "/", with: "-")
+                let layout = try await native("workspaceLayout") as! [String: Any]
+                if let expected = command["expectPosture"] as? String {
+                    XCTAssertEqual(layout["posture"] as? String, expected, label)
+                }
+                XCTAssertTrue(web === originalWeb, "A posture change must preserve the WKWebView.")
+                let metrics = try await js("""
+                    const rect=element=>{if(!element)return null;const r=element.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};
+                    const root=document.querySelector('[data-document-scroll]');
+                    const workbench=document.querySelector('[data-markdown-workbench]');
+                    const anchor=root&&[...root.querySelectorAll('h1,h2,h3,p,table,figure')].find(item=>item.getBoundingClientRect().bottom>root.getBoundingClientRect().top+8);
+                    return {width:innerWidth,height:innerHeight,pageOverflow:document.documentElement.scrollWidth>innerWidth+1,
+                        arrangement:document.querySelector('.editor-app')?.dataset.workspaceArrangement,
+                        mode:workbench?.dataset.mode,workbench:rect(workbench),library:rect(document.querySelector('#recent-notes')),
+                        outline:rect(document.querySelector('[aria-label="Índice da nota"]')),
+                        reading:rect(root),scrollTop:root?.scrollTop,anchor:anchor?.textContent?.slice(0,160),anchorTop:anchor&&root?anchor.getBoundingClientRect().top-root.getBoundingClientRect().top:null,
+                        title:document.querySelector('article h1')?.textContent,sourceLength:document.querySelector('.cm-content')?.textContent?.length,
+                        nativeChrome:document.documentElement.dataset.nativeChrome,
+                        focusedTag:document.activeElement?.tagName,
+                        viewport:{offsetTop:visualViewport?.offsetTop,height:visualViewport?.height,scrollY},
+                        sourceAnchors:root?.querySelectorAll('[data-source-from][data-source-to]').length,
+                        richText:rect(document.querySelector('[role="textbox"][aria-label="Texto da nota"]')),
+                        tables:[...document.querySelectorAll('article table')].map(table=>({width:table.scrollWidth,viewport:table.parentElement.clientWidth}))};
+                    """) as! [String: Any]
+                XCTAssertEqual(metrics["pageOverflow"] as? Bool, false, label)
+                if let prefix = command["anchorPrefix"] as? String {
+                    XCTAssertTrue((metrics["anchor"] as? String ?? "").hasPrefix(prefix), "The same section must stay at the reading position: " + label)
+                    XCTAssertLessThan(abs(metrics["anchorTop"] as? Double ?? .infinity), 32, "The outline's section must remain visible at the top: " + label)
+                }
+                let workspaceRect = metrics["workbench"] as? [String: Any]
+                XCTAssertGreaterThanOrEqual(workspaceRect?["y"] as? Double ?? 0, -2, "The keyboard must not pan the entire editor above its native viewport: " + label)
+                XCTAssertLessThan(abs(web.scrollView.contentOffset.y), 2, "Only inner document panes may scroll: " + label)
+                var snapshot: [String: Any] = ["label":label,"native":layout,"web":metrics,"sameWebView":web === originalWeb,
+                    "webScrollOffset":["x":web.scrollView.contentOffset.x,"y":web.scrollView.contentOffset.y],
+                    "webFrame":["x":web.frame.minX,"y":web.frame.minY,"width":web.frame.width,"height":web.frame.height]]
+                if let scene = web.window?.windowScene { snapshot["orientation"] = scene.interfaceOrientation.rawValue }
+                snapshots.append(snapshot)
+                if let window = web.window {
+                    let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in window.drawHierarchy(in: window.bounds, afterScreenUpdates: true) }
+                    try image.pngData()?.write(to: directory.appendingPathComponent("duo-posture-\(label).png"))
+                    let attachment = XCTAttachment(image: image); attachment.name = label; attachment.lifetime = .keepAlways; add(attachment)
+                }
+                try JSONSerialization.data(withJSONObject:snapshots,options:[.prettyPrinted,.sortedKeys]).write(to:resultURL,options:.atomic)
+            }
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        XCTAssertTrue(finished,"Finish the passive session through its documented file handshake.")
+        XCTAssertTrue(Set(snapshots.compactMap { ($0["native"] as? [String: Any])?["posture"] as? String }).isSuperset(of:["closed","partiallyOpen","fullyOpen"]),"Record all three actual Device Hub postures.")
+    }
+
+    /** Run with scripts/test-duo-resize.mjs, which drives Apple's real appResize session. */
+    func testDuoNativeWorkspaceResizing() async throws {
+        guard #available(iOS 27.1, *) else { throw XCTSkip("Requires the native adaptive bars in iOS 27.1.") }
+        let controller = try XCTUnwrap(scribaController(web.window?.rootViewController))
+        let originalWeb = web
+        try await waitFor("document.documentElement.dataset.nativeChrome==='true'")
+        let source = "# Acervo Aurora\n\nUma pesquisa começa com uma pergunta e continua em qualquer formato.\n\n## Fontes e evidências\n\n| Fonte | Responsável | Próximo passo |\n|---|---|---|\n| Entrevistas | Equipe de pesquisa | Revisar transcrições |\n| Arquivo histórico | Curadoria | Conferir datas e referências |\n\n## Plano de trabalho\n\n- [ ] Ler as evidências\n- [ ] Escrever a síntese\n\n" + (1...18).map { "Parágrafo \($0): a mesma nota acompanha o espaço disponível sem perder seu conteúdo.\n\n" }.joined()
+        _ = try await js("const transfer=new DataTransfer();transfer.items.add(new File([source],filename,{type:'text/markdown'}));const input=document.querySelector('input[aria-label=\"Arquivo Markdown\"]');input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));return true",args:["source":source,"filename":"Aurora-\(UUID().uuidString.prefix(4)).md"])
+        try await waitFor("!!document.querySelector('article h1') && document.querySelector('article h1').textContent.includes('Acervo Aurora') && !document.querySelector('[aria-label=\"Bancada Markdown\"]').getAttribute('aria-busy').includes('true')")
+        _ = try await js("window.__duoDocument=document.querySelector('[data-document-scroll]');return true")
+        let directory = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0]
+        let request = directory.appendingPathComponent("duo-resize-request.json")
+        defer { try? FileManager.default.removeItem(at:request) }
+        var snapshots = [[String:Any]]()
+        // Return to the initial supported compact window to prove round-trip continuity.
+        for (index,size) in [(480,700),(950,650),(650,940),(480,700)].enumerated() {
+            let phase:[String:Any] = ["phase":index,"width":size.0,"height":size.1]
+            try JSONSerialization.data(withJSONObject:phase).write(to:request,options:.atomic)
+            var resized = false
+            for _ in 0..<300 {
+                if let window=web.window, abs(window.bounds.width-CGFloat(size.0))<2, abs(window.bounds.height-CGFloat(size.1))<2 { resized=true;break }
+                try await Task.sleep(nanoseconds:100_000_000)
+            }
+            XCTAssertTrue(resized,"appResize did not reach phase \(index); actual window \(String(describing:web.window?.bounds)). Run the documented orchestrator.")
+            if !resized { break }
+            try await Task.sleep(nanoseconds:400_000_000)
+            let nativeLayout = try await native("workspaceLayout") as! [String:Any]
+            XCTAssertEqual(nativeLayout["nativeChrome"] as? Bool,true)
+            XCTAssertGreaterThan(nativeLayout["width"] as? Double ?? 0,250)
+            XCTAssertGreaterThan(nativeLayout["height"] as? Double ?? 0,100)
+            XCTAssertTrue(web===originalWeb,"Resizing must never recreate the WebKit editor.")
+            try await expect("return window.__duoDocument===document.querySelector('[data-document-scroll]') && document.documentElement.scrollWidth<=innerWidth+1",equals:true)
+            if index > 0 {
+                try await expect("const root=document.querySelector('[data-document-scroll]'),anchor=window.__duoReadingAnchor;return anchor?.isConnected && Math.abs(anchor.getBoundingClientRect().top-root.getBoundingClientRect().top)<32",equals:true)
+            }
+            try await expect("return getComputedStyle(document.querySelector('[aria-label=\"Bancada Markdown\"] > header')).display==='none'",equals:true)
+            let items=controller.toolbarItems ?? []
+            XCTAssertTrue(items.contains(where:{$0.accessibilityIdentifier=="scriba.command.save"}))
+            XCTAssertTrue(items.contains(where:{$0.accessibilityIdentifier=="scriba.command.view"}))
+            let snapshot=try await js("return {width:innerWidth,height:innerHeight,arrangement:document.querySelector('.editor-app').dataset.workspaceArrangement,library:!!document.querySelector('#recent-notes'),mode:document.querySelector('[aria-label=\"Bancada Markdown\"]').dataset.mode,title:document.querySelector('article h1')?.textContent}") as! [String:Any]
+            snapshots.append(["phase":index,"native":nativeLayout,"web":snapshot])
+            if let window=web.window {
+                let image=UIGraphicsImageRenderer(bounds:window.bounds).image { _ in window.drawHierarchy(in:window.bounds,afterScreenUpdates:true) }
+                let attachment=XCTAttachment(image:image);attachment.name="Duo scene \(size.0)×\(size.1)";attachment.lifetime = .keepAlways;add(attachment)
+                try image.pngData()?.write(to:directory.appendingPathComponent("duo-resize-\(index).png"))
+            }
+            if index == 0 {
+                // Preserve a middle-of-document reading position, not just its DOM instance.
+                _ = try await js("const root=document.querySelector('[data-document-scroll]'),anchor=[...root.querySelectorAll('p')].find(item=>item.textContent.startsWith('Parágrafo 6:'));if(!anchor)throw new Error('Missing reading fixture');window.__duoReadingAnchor=anchor;root.scrollTop+=anchor.getBoundingClientRect().top-root.getBoundingClientRect().top;await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return true")
+            }
+        }
+        XCTAssertEqual(snapshots.count,4)
+        try JSONSerialization.data(withJSONObject:snapshots,options:[.prettyPrinted,.sortedKeys]).write(to:directory.appendingPathComponent("duo-resize-results.json"),options:.atomic)
+        _ = try await js("window.dispatchEvent(new CustomEvent('scriba:native-command',{detail:'mode:source'}));return true")
+        try await waitFor("document.querySelector('[aria-label=\"Bancada Markdown\"]').dataset.mode==='source'")
+        try await expect("return document.querySelector('.cm-content').textContent.includes('Acervo Aurora')",equals:true)
+        _ = try await js("window.dispatchEvent(new CustomEvent('scriba:native-command',{detail:'mode:read'}));return true")
+        try await waitFor("document.querySelector('article h1')?.textContent.includes('Acervo Aurora')===true")
+    }
     func testUpdateBridgeReportsInstalledMetadataAndRejectsUnknownChannels() async throws {
         let info = try await native("updateInfo") as? [String: Any]
-        XCTAssertEqual(info?["version"] as? String, "1.16.1")
+        let installedVersion = try XCTUnwrap(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)
+        XCTAssertEqual(info?["version"] as? String, installedVersion)
         XCTAssertNotNil(info?["build"] as? String)
         XCTAssertEqual(info?["channel"] as? String, "development")
         let rejected = try await js("try { await window.Capacitor.nativePromise('ScribaNative','openUpdate',{channel:'untrusted'}); return false; } catch { return true; }")
         XCTAssertEqual(rejected as? Bool, true)
     }
+
+    /** Exercise the bundled PDF worker, native export command and actual share sheet. */
+    func testPdfTableExportPreservesColumnsAndPageOrientation() async throws {
+        let controller = try XCTUnwrap(scribaController(web.window?.rootViewController))
+        let filename = "PDF-Tables-" + UUID().uuidString
+        let rows = (1...24).map { index in
+            "| Criterion \(index) | Contextual observation \(index) | Independent evidence \(index) | `minimum_recent_independent_observations_\(index)` | Final interpretation \(index) |"
+        }.joined(separator: "\n")
+        let source = "# PDF regression\n\nPortrait introduction.\n\n## Wide comparison\n\n" +
+            "| Criterion | Monitor | Research | Platform | Interpretation |\n|---|---|---|---|---|\n" + rows +
+            "\n\n## Conclusion\n\nPortrait conclusion after the table.\n"
+        _ = try await js("""
+            const transfer = new DataTransfer();
+            transfer.items.add(new File([source], filename + '.md', {type: 'text/markdown'}));
+            const input = document.querySelector('input[aria-label="Arquivo Markdown"]');
+            input.files = transfer.files;
+            input.dispatchEvent(new Event('change', {bubbles: true}));
+            return true;
+            """, args: ["source": source, "filename": filename])
+        try await waitFor("document.querySelector('article h1')?.textContent === 'PDF regression' && !document.querySelector('input[aria-label=\"Arquivo Markdown\"]').disabled")
+        _ = try await js("window.dispatchEvent(new CustomEvent('scriba:native-command', {detail: 'export:pdf'})); return true")
+        for _ in 0..<600 {
+            if controller.presentedViewController is UIActivityViewController { break }
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        let sheet = try XCTUnwrap(controller.presentedViewController as? UIActivityViewController, "PDF export must present Apple's share sheet.")
+        defer {
+            sheet.completionWithItemsHandler?(nil, false, nil, nil)
+            sheet.dismiss(animated: false)
+        }
+        let exports = try FileManager.default.contentsOfDirectory(at: FileManager.default.temporaryDirectory, includingPropertiesForKeys: nil)
+        let pdfURL = try XCTUnwrap(exports.filter { $0.lastPathComponent.hasPrefix("scriba-export-") }
+            .map { $0.appendingPathComponent(filename + ".pdf") }
+            .first { FileManager.default.fileExists(atPath: $0.path) })
+        let document = try XCTUnwrap(PDFDocument(url: pdfURL))
+        XCTAssertGreaterThanOrEqual(document.pageCount, 3)
+        let pages = try (0..<document.pageCount).map { try XCTUnwrap(document.page(at: $0)) }
+        let orientations = pages.map { page -> String in
+            let bounds = page.bounds(for: .mediaBox)
+            return bounds.width > bounds.height ? "landscape" : "portrait"
+        }
+        XCTAssertEqual(orientations.first, "portrait")
+        XCTAssertEqual(orientations.last, "portrait")
+        XCTAssertTrue(orientations.contains("landscape"))
+        let text = String(pages.compactMap(\.string).joined().filter { !$0.isWhitespace })
+        for index in 1...24 {
+            for cell in ["Criterion\(index)", "Contextualobservation\(index)", "Independentevidence\(index)", "minimum_recent_independent_observations_\(index)", "Finalinterpretation\(index)"] {
+                XCTAssertTrue(text.contains(cell), "The native PDF must preserve every cell: " + cell)
+            }
+        }
+        XCTAssertTrue(text.contains("Portraitconclusionafterthetable."))
+        XCTAssertTrue(text.contains("poweredbyAeonBridgeCo."))
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let evidence = documents.appendingPathComponent("pdf-table-regression.pdf")
+        try Data(contentsOf: pdfURL).write(to: evidence, options: .atomic)
+        let result: [String: Any] = ["pages": document.pageCount, "orientations": orientations, "verifiedBodyCells": 120, "nativeShareSheet": true]
+        try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
+            .write(to: documents.appendingPathComponent("pdf-table-regression.json"), options: .atomic)
+    }
     /** Automatic appearance releases UIKit's override so system changes reach WKWebView. */
     func testAutomaticAppearanceFollowsNativeSystem() async throws {
-        let controller = try XCTUnwrap(web.window?.rootViewController as? ScribaViewController)
+        let controller = try XCTUnwrap(scribaController(web.window?.rootViewController))
         _ = try await native("appearance", args:["dark":true,"automatic":false,"red":20,"green":20,"blue":20])
         XCTAssertEqual(controller.overrideUserInterfaceStyle, .dark)
         _ = try await native("appearance", args:["dark":false,"automatic":false,"red":255,"green":255,"blue":255])
@@ -99,7 +296,8 @@ final class ScribaTests: XCTestCase {
         _ = try await native("renameNote",args:["name":"boards/whiteboard.md","newName":"boards/Project.md","version":version])
         let directory=fixture.appendingPathComponent("scriba/boards",isDirectory:true)
         let moved=directory.appendingPathComponent("Project.md")
-        XCTAssertEqual(try String(contentsOf:moved,encoding:.utf8),original)
+        // Compare bytes: Foundation's String file initializer consumes the UTF-8 BOM.
+        XCTAssertEqual(try Data(contentsOf:moved),Data(original.utf8))
         XCTAssertFalse(FileManager.default.fileExists(atPath:directory.appendingPathComponent("whiteboard.md").path))
         XCTAssertEqual(try Data(contentsOf:directory.appendingPathComponent("assets/pixel.png")),Data(base64Encoded:pixel))
         try Data("# Keep".utf8).write(to:directory.appendingPathComponent("Existing.md"))
@@ -120,12 +318,13 @@ final class ScribaTests: XCTestCase {
         _ = try await native("authorizeFolder")
         let loaded = try await native("readNotes") as! [String: Any]
         let notes = loaded["notes"] as! [[String: Any]]
-        XCTAssertEqual(notes.first?["value"] as? String, initial)
+        // The native decoder consumes the UTF-8 encoding marker, not document text.
+        XCTAssertEqual(notes.first?["value"] as? String, "# Arquivo do Files\r\n\r\nConteúdo original.\r\n")
         let body: [String: Any] = ["name":"original.md","value":"# Primeira cópia","files":[]]
         _ = try await native("saveNote", args: body)
         let saved = fixture.appendingPathComponent("scriba/original.md")
         XCTAssertEqual(try String(contentsOf: saved, encoding:.utf8),"# Primeira cópia")
-        XCTAssertEqual(try String(contentsOf: fixture.appendingPathComponent("original.md"),encoding:.utf8),initial)
+        XCTAssertEqual(try Data(contentsOf: fixture.appendingPathComponent("original.md")),Data(initial.utf8))
         try Data("# Alterado por outro aplicativo".utf8).write(to:saved)
         let conflict = try await js("try {await Capacitor.nativePromise('ScribaNative','saveNote',note);return false} catch(error){return String(error.message).includes('mudou fora')}",args:["note":body])
         XCTAssertEqual(conflict as? Bool,true)
@@ -154,15 +353,18 @@ final class ScribaTests: XCTestCase {
         scene.requestGeometryUpdate(.iOS(interfaceOrientations:.landscapeLeft))
         for _ in 0..<100 { if web.bounds.width > web.bounds.height { break };try await Task.sleep(nanoseconds:50_000_000) }
         XCTAssertGreaterThan(web.bounds.width,web.bounds.height)
+        // UIKit geometry and WKWebView's viewport update on separate layout passes.
+        try await waitFor("innerWidth>innerHeight && document.documentElement.scrollWidth<=innerWidth+1")
         try await expect("return document.documentElement.scrollWidth<=innerWidth+1",equals:true)
         scene.requestGeometryUpdate(.iOS(interfaceOrientations:.portrait))
         for _ in 0..<100 { if web.bounds.height > web.bounds.width { break };try await Task.sleep(nanoseconds:50_000_000) }
         XCTAssertGreaterThan(web.bounds.height,web.bounds.width)
+        try await waitFor("innerHeight>innerWidth && document.documentElement.scrollWidth<=innerWidth+1")
         try await expect("return document.documentElement.scrollWidth<=innerWidth+1",equals:true)
     }
 
     func testReferenceDiagramsCanvasAndSystemSheets() async throws {
-        let controller = (UIApplication.shared.connectedScenes.first as! UIWindowScene).windows.first(where: { $0.isKeyWindow })!.rootViewController as! ScribaViewController
+        let controller = try XCTUnwrap(scribaController(web.window?.rootViewController))
         let fixtureURL = Bundle(for: Self.self).url(forResource: "StoreReference", withExtension: "md")!
         let source = try String(contentsOf: fixtureURL, encoding: .utf8)
         _ = try await js("""
@@ -192,8 +394,10 @@ final class ScribaTests: XCTestCase {
         for _ in 0..<100 { if controller.presentedViewController is UIActivityViewController { break };try await Task.sleep(nanoseconds:50_000_000) }
         let sheet = try XCTUnwrap(controller.presentedViewController as? UIActivityViewController)
         sheet.completionWithItemsHandler?(nil,false,nil,nil);sheet.dismiss(animated:false);_ = try await shareTask.value
-        XCTAssertGreaterThan(web.frame.minY,0)
-        XCTAssertLessThan(web.frame.maxY,controller.view.bounds.height)
+        let contentFrame = web.convert(web.bounds, to: controller.view)
+        let safeFrame = controller.view.safeAreaLayoutGuide.layoutFrame
+        XCTAssertGreaterThanOrEqual(contentFrame.minY,safeFrame.minY-1)
+        XCTAssertLessThanOrEqual(contentFrame.maxY,safeFrame.maxY+1)
         _ = try await js("document.querySelector('article h1').scrollIntoView();window.dispatchEvent(new KeyboardEvent('keydown',{key:'s',metaKey:true,bubbles:true,cancelable:true}));return true")
         try await waitFor("document.body.textContent.includes('Nota salva neste aplicativo') || [...document.querySelectorAll('dialog[open] button')].some(button=>button.textContent==='Substituir arquivo existente')")
         // Repeated runs may import a newer version of this fictional simulator-only fixture.
@@ -233,7 +437,17 @@ final class ScribaTests: XCTestCase {
     func testBundledEditorAndPrivatePersistence() async throws {
         XCTAssertEqual(web.url?.scheme,"capacitor")
         try await expect("return document.querySelector('meta[http-equiv=\"Content-Security-Policy\"]').content.includes(\"script-src 'self'\")", equals: true)
-        try await expect("return !!document.querySelector('button[aria-label=\"Configurações\"]')", equals: true)
+        // Mobile settings are reached through the visible note menu, not a desktop-only button.
+        _ = try await js("""
+          const direct=document.querySelector('button[aria-controls="settings-page"]');
+          if(document.documentElement.dataset.nativeChrome==='true')window.dispatchEvent(new CustomEvent('scriba:native-command',{detail:'settings'}));
+          else if(direct?.getClientRects().length)direct.click();
+          else document.querySelector('button[aria-label="Mais opções da nota"]')?.click();
+          return true;
+          """)
+        try await waitFor("!!document.querySelector('#settings-page') || !!document.querySelector('dialog[open] [role=menu]')")
+        _ = try await js("if(!document.querySelector('#settings-page'))[...document.querySelectorAll('dialog[open] button')].find(button=>button.textContent==='Configurações')?.click();return true")
+        try await waitFor("!!document.querySelector('#settings-page')")
         try await expect("return !!document.querySelector('script[src=\"/register-sw.js\"]')", equals: false)
         // IndexedDB opens and persists in the real native origin, not an ephemeral browser profile.
         let persisted = try await js("""
@@ -242,8 +456,6 @@ final class ScribaTests: XCTestCase {
           const value=await new Promise(resolve=>{const r=database.transaction('notes').objectStore('notes').get('fixture');r.onsuccess=()=>resolve(r.result)});database.close();return value;
           """)
         XCTAssertEqual(persisted as? String,"conteúdo privado")
-        _ = try await js("document.querySelector('button[aria-label=\"Configurações\"]').click();return true")
-        try await waitFor("!!document.querySelector('#settings-page')")
         try await expect("return [...document.querySelectorAll('button')].some(button=>button.textContent.includes('Escolher pasta'))", equals: true)
         try await expect("return document.body.textContent.includes('Instalar no Mac')", equals: false)
         // GitHub setup is intentionally hidden until the user chooses that destination.

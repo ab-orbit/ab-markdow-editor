@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Reading continuity regression</title></head><body>
+<div id="fixture"></div><script type="module">
+import React, {useRef} from 'react';
+import {createRoot} from 'react-dom/client';
+import {useReadingContinuity} from '../../src/components/Markdown/useReadingContinuity.ts';
+function Fixture(){
+ const root=useRef(null);useReadingContinuity(root,true,1);
+ return React.createElement('div',{ref:root,id:'reading',style:{width:390,height:500,overflow:'auto',font:'18px/1.7 sans-serif'}},
+  Array.from({length:40},(_,index)=>React.createElement('section',{key:index},
+   React.createElement('h3',{'data-source-from':index*100,'data-source-to':index*100+20,tabIndex:0,id:`heading-${index}`},`Section ${index}`),
+   React.createElement('p',{'data-source-from':index*100+21,'data-source-to':index*100+99},'A note preserves its reading position across a real change in available space. '.repeat(4)))));
+}
+createRoot(document.querySelector('#fixture')).render(React.createElement(Fixture));
+</script></body></html>

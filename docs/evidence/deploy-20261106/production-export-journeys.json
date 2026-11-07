@@ -1,0 +1,82 @@
+[
+  {
+    "case": "mixed",
+    "engine": "chromium",
+    "pdf": "mixed-chromium.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  },
+  {
+    "case": "table-only",
+    "engine": "chromium",
+    "pdf": "table-only-chromium.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  },
+  {
+    "case": "tall-row",
+    "engine": "chromium",
+    "pdf": "tall-row-chromium.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  },
+  {
+    "case": "long-identifier",
+    "engine": "chromium",
+    "pdf": "long-identifier-chromium.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  },
+  {
+    "case": "mixed",
+    "engine": "webkit",
+    "pdf": "mixed-webkit.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  },
+  {
+    "case": "table-only",
+    "engine": "webkit",
+    "pdf": "table-only-webkit.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  },
+  {
+    "case": "tall-row",
+    "engine": "webkit",
+    "pdf": "tall-row-webkit.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  },
+  {
+    "case": "long-identifier",
+    "engine": "webkit",
+    "pdf": "long-identifier-webkit.pdf",
+    "exported": true,
+    "sourceUnchanged": true,
+    "unexpectedExternalRequests": 0,
+    "edgeStatisticsScriptRequests": 1,
+    "exportWrites": 0
+  }
+]

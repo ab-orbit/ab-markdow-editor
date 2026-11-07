@@ -1,0 +1,19 @@
+{
+  "sourceCommit": "55e8bfa7f0abb024a8d4f41c848b1af44006bf04",
+  "sourceChanges": "CURRENT_PROJECT_VERSION only: 27 to 28",
+  "bundleId": "com.aeonbridge.scriba",
+  "version": "1.16.1",
+  "build": "28",
+  "teamId": "8C6F4R5M4J",
+  "archive": "artifacts/ios/Scriba-1.16.1-build28.xcarchive",
+  "bundledFiles": 957,
+  "bundleTreeSha256": "ec635d882e7893fbbfa330b5875300a3c72fce1e26a4aeb12f1f2d7663f27aaa",
+  "uploadStatus": "Uploaded to Apple, observed in Xcode Organizer at 20:36; Apple processing completed",
+  "reviewStatus": "Not selected yet; current store build 27 last observed Waiting for Review",
+  "publicRelease": "manual",
+  "appleBinaryState": "Validated",
+  "appleTestFlightState": "Ready to Submit",
+  "appleBuildId": "9276a5ea-7cc4-43c9-be8f-3b0ea774755c",
+  "remainingAction": "Mac must be manually unlocked before UI can replace and resubmit build 28",
+  "validation": "90 Node/HTTP; 9 hosted native; targeted phone rotation; phone writing and formatting UI; tablet keyboard portrait and landscape UI passed. Test harness corrected; application code unchanged."
+}

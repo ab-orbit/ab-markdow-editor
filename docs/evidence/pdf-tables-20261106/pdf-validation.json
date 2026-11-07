@@ -1,0 +1,134 @@
+[
+  {
+    "case": "long-identifier",
+    "engine": "chromium",
+    "pages": 1,
+    "orientations": [
+      "portrait"
+    ],
+    "completeCells": 4,
+    "clipping": false
+  },
+  {
+    "case": "mixed",
+    "engine": "chromium",
+    "pages": 5,
+    "orientations": [
+      "portrait",
+      "landscape",
+      "landscape",
+      "landscape",
+      "portrait"
+    ],
+    "completeCells": 129,
+    "clipping": false
+  },
+  {
+    "case": "signals-benchmark",
+    "engine": "chromium",
+    "pages": 8,
+    "orientations": [
+      "portrait",
+      "portrait",
+      "landscape",
+      "landscape",
+      "portrait",
+      "portrait",
+      "portrait",
+      "portrait"
+    ],
+    "completeCells": 101,
+    "clipping": false
+  },
+  {
+    "case": "table-only",
+    "engine": "chromium",
+    "pages": 2,
+    "orientations": [
+      "landscape",
+      "landscape"
+    ],
+    "completeCells": 20,
+    "clipping": false
+  },
+  {
+    "case": "tall-row",
+    "engine": "chromium",
+    "pages": 5,
+    "orientations": [
+      "landscape",
+      "landscape",
+      "landscape",
+      "landscape",
+      "landscape"
+    ],
+    "completeCells": 10,
+    "clipping": false
+  },
+  {
+    "case": "long-identifier",
+    "engine": "webkit",
+    "pages": 1,
+    "orientations": [
+      "portrait"
+    ],
+    "completeCells": 4,
+    "clipping": false
+  },
+  {
+    "case": "mixed",
+    "engine": "webkit",
+    "pages": 5,
+    "orientations": [
+      "portrait",
+      "landscape",
+      "landscape",
+      "landscape",
+      "portrait"
+    ],
+    "completeCells": 129,
+    "clipping": false
+  },
+  {
+    "case": "signals-benchmark",
+    "engine": "webkit",
+    "pages": 8,
+    "orientations": [
+      "portrait",
+      "portrait",
+      "landscape",
+      "landscape",
+      "portrait",
+      "portrait",
+      "portrait",
+      "portrait"
+    ],
+    "completeCells": 101,
+    "clipping": false
+  },
+  {
+    "case": "table-only",
+    "engine": "webkit",
+    "pages": 2,
+    "orientations": [
+      "landscape",
+      "landscape"
+    ],
+    "completeCells": 20,
+    "clipping": false
+  },
+  {
+    "case": "tall-row",
+    "engine": "webkit",
+    "pages": 5,
+    "orientations": [
+      "landscape",
+      "landscape",
+      "landscape",
+      "landscape",
+      "landscape"
+    ],
+    "completeCells": 10,
+    "clipping": false
+  }
+]
