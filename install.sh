@@ -36,6 +36,10 @@ if ! git --version >/dev/null 2>&1; then
   exit 1
 fi
 cd "$SOURCE_DIR"
+# Confirm a standalone window can be opened on this Mac without launching it during preflight.
+if [[ "${MARKDOWN_PACKAGE_ONLY:-0}" != 1 ]]; then
+  "$NODE_BIN" --input-type=module -e 'import { openEditorWindow } from "./scripts/editor-window.mjs"; try { await openEditorWindow("http://127.0.0.1:43127", {run: async () => {}}); } catch { console.error("A janela do Scriba requer Chrome, Edge, Brave ou Chromium instalado neste Mac."); process.exit(1); }'
+fi
 echo 'Instalando dependências e compilando o editor…'
 "$NPM_BIN" ci --no-audit --no-fund
 "$NPM_BIN" run build
