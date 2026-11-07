@@ -1,6 +1,7 @@
 import XCTest
 import WebKit
 import UIKit
+import PDFKit
 @testable import App
 
 /** These tests exercise the real bundled WKWebView and Swift bridge on an isolated simulator. */
@@ -178,11 +179,71 @@ final class ScribaTests: XCTestCase {
     }
     func testUpdateBridgeReportsInstalledMetadataAndRejectsUnknownChannels() async throws {
         let info = try await native("updateInfo") as? [String: Any]
-        XCTAssertEqual(info?["version"] as? String, "1.17.0")
+        let installedVersion = try XCTUnwrap(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)
+        XCTAssertEqual(info?["version"] as? String, installedVersion)
         XCTAssertNotNil(info?["build"] as? String)
         XCTAssertEqual(info?["channel"] as? String, "development")
         let rejected = try await js("try { await window.Capacitor.nativePromise('ScribaNative','openUpdate',{channel:'untrusted'}); return false; } catch { return true; }")
         XCTAssertEqual(rejected as? Bool, true)
+    }
+
+    /** Exercise the bundled PDF worker, native export command and actual share sheet. */
+    func testPdfTableExportPreservesColumnsAndPageOrientation() async throws {
+        let controller = try XCTUnwrap(scribaController(web.window?.rootViewController))
+        let filename = "PDF-Tables-" + UUID().uuidString
+        let rows = (1...24).map { index in
+            "| Criterion \(index) | Contextual observation \(index) | Independent evidence \(index) | `minimum_recent_independent_observations_\(index)` | Final interpretation \(index) |"
+        }.joined(separator: "\n")
+        let source = "# PDF regression\n\nPortrait introduction.\n\n## Wide comparison\n\n" +
+            "| Criterion | Monitor | Research | Platform | Interpretation |\n|---|---|---|---|---|\n" + rows +
+            "\n\n## Conclusion\n\nPortrait conclusion after the table.\n"
+        _ = try await js("""
+            const transfer = new DataTransfer();
+            transfer.items.add(new File([source], filename + '.md', {type: 'text/markdown'}));
+            const input = document.querySelector('input[aria-label="Arquivo Markdown"]');
+            input.files = transfer.files;
+            input.dispatchEvent(new Event('change', {bubbles: true}));
+            return true;
+            """, args: ["source": source, "filename": filename])
+        try await waitFor("document.querySelector('article h1')?.textContent === 'PDF regression' && !document.querySelector('input[aria-label=\"Arquivo Markdown\"]').disabled")
+        _ = try await js("window.dispatchEvent(new CustomEvent('scriba:native-command', {detail: 'export:pdf'})); return true")
+        for _ in 0..<600 {
+            if controller.presentedViewController is UIActivityViewController { break }
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        let sheet = try XCTUnwrap(controller.presentedViewController as? UIActivityViewController, "PDF export must present Apple's share sheet.")
+        defer {
+            sheet.completionWithItemsHandler?(nil, false, nil, nil)
+            sheet.dismiss(animated: false)
+        }
+        let exports = try FileManager.default.contentsOfDirectory(at: FileManager.default.temporaryDirectory, includingPropertiesForKeys: nil)
+        let pdfURL = try XCTUnwrap(exports.filter { $0.lastPathComponent.hasPrefix("scriba-export-") }
+            .map { $0.appendingPathComponent(filename + ".pdf") }
+            .first { FileManager.default.fileExists(atPath: $0.path) })
+        let document = try XCTUnwrap(PDFDocument(url: pdfURL))
+        XCTAssertGreaterThanOrEqual(document.pageCount, 3)
+        let pages = try (0..<document.pageCount).map { try XCTUnwrap(document.page(at: $0)) }
+        let orientations = pages.map { page -> String in
+            let bounds = page.bounds(for: .mediaBox)
+            return bounds.width > bounds.height ? "landscape" : "portrait"
+        }
+        XCTAssertEqual(orientations.first, "portrait")
+        XCTAssertEqual(orientations.last, "portrait")
+        XCTAssertTrue(orientations.contains("landscape"))
+        let text = String(pages.compactMap(\.string).joined().filter { !$0.isWhitespace })
+        for index in 1...24 {
+            for cell in ["Criterion\(index)", "Contextualobservation\(index)", "Independentevidence\(index)", "minimum_recent_independent_observations_\(index)", "Finalinterpretation\(index)"] {
+                XCTAssertTrue(text.contains(cell), "The native PDF must preserve every cell: " + cell)
+            }
+        }
+        XCTAssertTrue(text.contains("Portraitconclusionafterthetable."))
+        XCTAssertTrue(text.contains("poweredbyAeonBridgeCo."))
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let evidence = documents.appendingPathComponent("pdf-table-regression.pdf")
+        try Data(contentsOf: pdfURL).write(to: evidence, options: .atomic)
+        let result: [String: Any] = ["pages": document.pageCount, "orientations": orientations, "verifiedBodyCells": 120, "nativeShareSheet": true]
+        try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
+            .write(to: documents.appendingPathComponent("pdf-table-regression.json"), options: .atomic)
     }
     /** Automatic appearance releases UIKit's override so system changes reach WKWebView. */
     func testAutomaticAppearanceFollowsNativeSystem() async throws {
