@@ -1,0 +1,11 @@
+{
+  "nativeShareSheet" : true,
+  "orientations" : [
+    "portrait",
+    "landscape",
+    "landscape",
+    "portrait"
+  ],
+  "pages" : 4,
+  "verifiedBodyCells" : 120
+}

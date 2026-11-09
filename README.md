@@ -26,6 +26,8 @@ Ler, Visão e Escrever renderizam TeX com KaTeX e fontes locais: `$...$`, `$$...
 
 A compatibilidade com notas importadas reconhece comandos matemáticos sem delimitadores e barras duplicadas, preservando o Markdown original. Em novas notas, prefira delimitadores explícitos para evitar ambiguidades com texto comum. Código e links não passam pela inferência matemática. [Validação com o guia de privacidade diferencial](docs/evidence/math/README.md).
 
+A exportação para PDF também renderiza as fórmulas, incluindo frações, matrizes, sistemas e equações dentro das tabelas. Os símbolos usam gráficos vetoriais, com alinhamento ao texto e quebra de linha conforme a largura da página ou da coluna. O texto ao redor permanece selecionável. Os recursos matemáticos acompanham o aplicativo e o cache offline. [Validação da exportação matemática](docs/evidence/pdf-math-20261108/README.md).
+
 ## Instalar no Mac
 
 Baixe ou clone este repositório, abra o Terminal na pasta do editor e execute:

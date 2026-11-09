@@ -1,0 +1,44 @@
+{
+  "version": "1.17.3",
+  "sourceCommit": "c4f00d0ae62be8d1a8d61853d13097e6157ad55b",
+  "sourceBranch": "codex/pdf-math-export",
+  "verifiedAt": "2026-11-09T01:37:35.874Z",
+  "web": {
+    "url": "https://scriba.aeonbridge.app/",
+    "release": "/var/www/scriba/releases/20261108-public-1.17.3-c4f00d0",
+    "previousRelease": "/var/www/scriba/releases/20261106-public-1.17.2-288b594",
+    "buildMode": "browser",
+    "indexSha256": "4448443177c6b0bd4b9c689b65b9cbdd540732a1a0dd330c359b8a1d726ad6e4",
+    "serviceWorkerSha256": "6f8d77b771a1b0720fd6f8b79381d9e3359d1303fe56092da8a1e409eaab7a88",
+    "pwaCache": "ab-markdown-shell-faf26ed807c38646",
+    "nginxConfigurationValidated": true,
+    "nginxReloaded": true,
+    "httpsEdgeVerified": true,
+    "originContentMatches": true,
+    "previousHashedAssetsRetained": true,
+    "nativeUpdateManifestSha256": "e5a88764a007dd1c4a6844fb021e0298d6ac7e695539c3341d68021b8b13589b"
+  },
+  "mac": {
+    "bundle": "/Applications/Scriba.app",
+    "version": "1.17.3",
+    "documentIcon": "AppIcon.icns",
+    "nodeVersion": "v22.23.3",
+    "signature": "verified",
+    "backendPid": 4111,
+    "backendRestarted": false,
+    "servedIndexMatches": true,
+    "indexSha256": "7cb2bfbdafb8f823a01f9c0d87617cc21e587469f8dc3fb3a408ca1548bdbb20",
+    "previousVersion": "1.17.2",
+    "buildMode": "local",
+    "previousBundleBackup": "artifacts/pdf-math-20261108/backups/Scriba-1.17.2.app",
+    "atomicExchange": true,
+    "previousHashedAssetsRetained": true
+  },
+  "native": {
+    "validation": "iOS Simulator",
+    "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-Duo",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-1",
+    "testsPassed": 1,
+    "nativeShareSheet": true
+  }
+}

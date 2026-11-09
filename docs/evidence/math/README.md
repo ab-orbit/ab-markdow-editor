@@ -15,7 +15,7 @@ Validation:
 - [Existing editing and outline regressions](regressions.log).
 - [Catalog validation](catalogs.log): formula controls translated into all four interface languages.
 
-The custom PDF exporter is unchanged by this rendering feature and currently retains formula source as text. Markdown exports preserve the original mathematical notation.
+Since 1.17.3, the PDF exporter uses the same math-aware Markdown parsing and renders mathematical expressions as vectors alongside selectable prose. [PDF mathematics validation](../pdf-math-20261108/README.md). Markdown exports preserve the original mathematical notation.
 
 ![Standard notation and table formulas](standard-webkit.png)
 
