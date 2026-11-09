@@ -1,0 +1,30 @@
+{
+  "version": "1.17.5",
+  "sourceCommit": "e60aa019bcb844ecca4f78fab4420ecfd6f22c09",
+  "sourceBranch": "codex/inline-note-rename",
+  "verifiedAt": "2026-11-09T17:07:52.625Z",
+  "web": {
+    "url": "https://scriba.aeonbridge.app/",
+    "buildMode": "browser",
+    "release": "/var/www/scriba/releases/20261109-public-1.17.5-e60aa01",
+    "previousRelease": "/var/www/scriba/releases/20261109-public-1.17.4-751dfea",
+    "indexSha256": "e8fa004bc621e28508410c8161e8f23d6fd21891683a0637cb2b85ba19a643a2",
+    "httpsHtmlMatches": true,
+    "pwaCache": "ab-markdown-shell-4b3b8aa6a2df825a",
+    "previousHashedAssetsRetained": true
+  },
+  "mac": {
+    "bundle": "/Applications/Scriba.app",
+    "version": "1.17.5",
+    "documentIcon": "AppIcon.icns",
+    "nodeVersion": "v22.23.3",
+    "signature": "verified",
+    "previousVersion": "1.17.4",
+    "backendPidBefore": 3051,
+    "backendPidAfter": 3051,
+    "atomicExchange": true,
+    "servedIndexMatches": true,
+    "indexSha256": "1012edaf987bc453af59eda1f444e3b1fa02f2cc7fd4a2b02089339194eabb02",
+    "backup": "/Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/artifacts/inline-rename-20261109/backups/Scriba-1.17.4.app"
+  }
+}

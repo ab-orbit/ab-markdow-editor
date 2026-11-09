@@ -28,3 +28,7 @@ All screenshots use synthetic notes in isolated test contexts.
 ![Invalid filename feedback beside the field](phone-validation.png)
 
 ![Tablet landscape filename editing](tablet-landscape.png)
+
+## Deployment
+
+Version 1.17.5 is active at the public HTTPS origin and installed in `/Applications/Scriba.app`. All eight browser rename journeys passed against the published site. The Mac package was exchanged atomically with a verified signature and a retained rollback copy. The existing local backend continued serving the updated distribution. [Production journeys](production-results.json), [release receipt](release.json).
