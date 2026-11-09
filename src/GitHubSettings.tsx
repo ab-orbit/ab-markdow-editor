@@ -27,7 +27,7 @@ export function GitHubSettings({
 }) {
   const [status, setStatus] = useState<GitHubStatus | null>(null),
     [repositories, setRepositories] = useState<Repository[]>([]),
-    [folder, setFolder] = useState(t("scriba")),
+    [folder, setFolder] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [token, setToken] = useState("");
@@ -50,9 +50,6 @@ export function GitHubSettings({
   async function refresh() {
     const info = await githubStatus();
     setStatus(info);
-    if (info.selection) {
-      setFolder(info.selection.folder);
-    }
     if (info.connected)
       setRepositories(await githubJson<Repository[]>("repositories"));
   }
@@ -85,7 +82,7 @@ export function GitHubSettings({
     <dl className="storage-details"><div><dt>{t('Branch')}</dt><dd>{active.branch}</dd></div><div><dt>{t('Pasta das notas')}</dt><dd>{active.folder || '/'}</dd></div></dl>
     <p>{t('Salvamento ativo no GitHub.')}</p>
     {error && <p role="alert">{error}</p>}
-    <div className="storage-choices"><button type="button" disabled={busy} onClick={() => {setRepositoryQuery(""); setChoosing(true); void run(refresh);}}>{t("Trocar repositório")}</button>
+    <div className="storage-choices"><button type="button" disabled={busy} onClick={() => {setRepositoryQuery(""); setFolder(""); setChoosing(true); void run(refresh);}}>{t("Trocar repositório")}</button>
     <button className="storage-disconnect" disabled={busy} onClick={() => void disconnect()}>{t('Desconectar GitHub')}</button></div>
   </div>;
   return (
@@ -120,6 +117,7 @@ export function GitHubSettings({
           <p><span className="connection-status" data-state="connected"><CircleCheck size={16} aria-hidden="true"/>{t("Conectado como")}{' '}<strong>{status.user?.login}</strong></span></p>
           <h4>{t("Selecione um repositório")}</h4>
           <p>{t("Ao selecionar, suas notas serão salvas automaticamente na pasta indicada.")}</p>
+          <p className="storage-path">{t("Pasta das notas")}{' · '}{folder.trim() || t("Raiz do repositório (padrão)")}</p>
           <label className="repository-search"><Search size={18} aria-hidden="true"/><input type="search" autoFocus autoComplete="off" aria-label={t("Buscar repositório")} placeholder={t("Organização ou nome do repositório")} value={repositoryQuery} disabled={busy} onChange={event => setRepositoryQuery(event.target.value)}/></label>
           <ul className="github-repository-list" aria-label={t("Repositório GitHub")}>
             {matchingRepositories.map(item => <li key={item.fullName}><button type="button" disabled={busy} onClick={() => void selectRepository(item.fullName)}><span><strong>{item.fullName}</strong><small>{item.private ? t("Privado") : t("Público")}</small></span><ChevronRight size={18} aria-hidden="true"/></button></li>)}
@@ -127,8 +125,8 @@ export function GitHubSettings({
           {!matchingRepositories.length && !busy && <p role="status">{t("Nenhum repositório encontrado.")}</p>}
           {busy && <p role="status">{t("Carregando…")}</p>}
           <details className="github-advanced"><summary>{t("Opções avançadas")}</summary>
-            <label>{t("Pasta das notas")}<input value={folder} disabled={busy} onChange={event => setFolder(event.target.value)} placeholder="scriba"/></label>
-            <p>{t("Use scriba para uma pasta dedicada. Deixe vazio para ler as notas desde a raiz do repositório. Seus rascunhos do navegador continuam separados por destino.")}</p>
+            <label>{t("Pasta das notas")}<input value={folder} disabled={busy} onChange={event => setFolder(event.target.value)} placeholder="/"/></label>
+            <p>{t("Por padrão, suas notas são lidas e salvas na raiz do repositório. Para usar uma subpasta, informe o caminho acima.")}</p>
             <div className="settings-actions">{status.installUrl && <a className="settings-action" href={status.installUrl} target="_blank" rel="noopener noreferrer">{t("Autorizar repositórios no GitHub")}</a>}
               <button type="button" disabled={busy} onClick={() => void run(refresh)}><RefreshCw size={18}/>{t("Atualizar repositórios")}</button>
             </div>

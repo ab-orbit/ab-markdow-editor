@@ -28,6 +28,7 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
   await git("init", "-b", "main");
   await fs.mkdir(path.join(repo, "scriba"));
   await fs.writeFile(path.join(repo, "scriba/note.md"), "# Original");
+  await fs.writeFile(path.join(repo, "root.md"), "# Repository root");
   await git("add", ".");
   await git("commit", "-m", "Initial");
   let forceRace = false;
@@ -222,6 +223,21 @@ test("GitHub gateway HTTP: isolated encrypted sessions, real Git atomic commits,
       (await request("repositories")).data[0].fullName,
       "alice/notes",
     );
+    // Omitted and explicitly empty folders must both read and save from the root.
+    for (const destination of [{ fullName: "alice/notes" }, { fullName: "alice/notes", folder: "" }]) {
+      const selected = await request("select", destination);
+      assert.equal(selected.status, 200);
+      assert.equal(selected.data.folder, "");
+      assert.deepEqual((await request("library")).data.notes.map(note => note.name).sort(), ["root.md", "scriba/note.md"]);
+      assert.equal((await request("document?name=root.md")).data.value, "# Repository root");
+    }
+    const rootSave = await request("save", {
+      name: "saved-at-root.md", value: "# Shared across devices", version: null, files: [],
+      scope: "github:alice/notes:main:",
+    });
+    assert.equal(rootSave.status, 200);
+    assert.equal(await git("show", "HEAD:saved-at-root.md"), "# Shared across devices");
+    assert.equal((await request("status")).data.selection.folder, "");
     assert.equal(
       (await request("select", { fullName: "alice/notes", folder: "scriba" }))
         .status,
