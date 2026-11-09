@@ -982,5 +982,7 @@
   "Usados recentemente": "Zuletzt verwendet",
   "Importe uma biblioteca ou adicione símbolos selecionados no quadro.": "Importiere eine Bibliothek oder füge ausgewählte Symbole von der Zeichenfläche hinzu.",
   "Não foi possível organizar a biblioteca. Seus símbolos foram preservados.": "Die Bibliothek konnte nicht sortiert werden. Deine Symbole wurden beibehalten.",
-  "Esta biblioteca já foi importada. Seus símbolos foram mantidos.": "Diese Bibliothek wurde bereits importiert. Deine Symbole wurden beibehalten."
+  "Esta biblioteca já foi importada. Seus símbolos foram mantidos.": "Diese Bibliothek wurde bereits importiert. Deine Symbole wurden beibehalten.",
+  "Raiz do repositório (padrão)": "Repository-Stammverzeichnis (Standard)",
+  "Por padrão, suas notas são lidas e salvas na raiz do repositório. Para usar uma subpasta, informe o caminho acima.": "Standardmäßig werden Notizen im Stammverzeichnis des Repositorys gelesen und gespeichert. Um einen Unterordner zu verwenden, geben Sie oben seinen Pfad ein."
 }

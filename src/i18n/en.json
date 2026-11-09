@@ -982,5 +982,7 @@
   "Usados recentemente": "Recently used",
   "Importe uma biblioteca ou adicione símbolos selecionados no quadro.": "Import a library or add selected symbols from the canvas.",
   "Não foi possível organizar a biblioteca. Seus símbolos foram preservados.": "Unable to organize the library. Your symbols were preserved.",
-  "Esta biblioteca já foi importada. Seus símbolos foram mantidos.": "This library has already been imported. Your symbols were preserved."
+  "Esta biblioteca já foi importada. Seus símbolos foram mantidos.": "This library has already been imported. Your symbols were preserved.",
+  "Raiz do repositório (padrão)": "Repository root (default)",
+  "Por padrão, suas notas são lidas e salvas na raiz do repositório. Para usar uma subpasta, informe o caminho acima.": "By default, notes are read from and saved to the repository root. To use a subfolder, enter its path above."
 }

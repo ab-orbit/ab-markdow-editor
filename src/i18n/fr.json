@@ -982,5 +982,7 @@
   "Usados recentemente": "Récemment utilisés",
   "Importe uma biblioteca ou adicione símbolos selecionados no quadro.": "Importez une bibliothèque ou ajoutez les symboles sélectionnés sur le tableau.",
   "Não foi possível organizar a biblioteca. Seus símbolos foram preservados.": "Impossible de trier la bibliothèque. Vos symboles ont été conservés.",
-  "Esta biblioteca já foi importada. Seus símbolos foram mantidos.": "Cette bibliothèque a déjà été importée. Vos symboles ont été conservés."
+  "Esta biblioteca já foi importada. Seus símbolos foram mantidos.": "Cette bibliothèque a déjà été importée. Vos symboles ont été conservés.",
+  "Raiz do repositório (padrão)": "Racine du dépôt (par défaut)",
+  "Por padrão, suas notas são lidas e salvas na raiz do repositório. Para usar uma subpasta, informe o caminho acima.": "Par défaut, les notes sont lues et enregistrées à la racine du dépôt. Pour utiliser un sous-dossier, indiquez son chemin ci-dessus."
 }

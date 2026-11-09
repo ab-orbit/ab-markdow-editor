@@ -1,0 +1,82 @@
+[
+  {
+    "engine": "webkit",
+    "nativeBridgeFixture": false,
+    "width": 390,
+    "height": 844,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  },
+  {
+    "engine": "webkit",
+    "nativeBridgeFixture": false,
+    "width": 1440,
+    "height": 900,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  },
+  {
+    "engine": "chromium",
+    "nativeBridgeFixture": false,
+    "width": 390,
+    "height": 844,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  },
+  {
+    "engine": "chromium",
+    "nativeBridgeFixture": false,
+    "width": 1440,
+    "height": 900,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  },
+  {
+    "engine": "webkit",
+    "nativeBridgeFixture": true,
+    "width": 390,
+    "height": 844,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  },
+  {
+    "engine": "webkit",
+    "nativeBridgeFixture": true,
+    "width": 1440,
+    "height": 900,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  },
+  {
+    "engine": "chromium",
+    "nativeBridgeFixture": true,
+    "width": 390,
+    "height": 844,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  },
+  {
+    "engine": "chromium",
+    "nativeBridgeFixture": true,
+    "width": 1440,
+    "height": 900,
+    "defaultRoot": true,
+    "customSubfolder": true,
+    "restoredDestination": true,
+    "rootOnReselection": true
+  }
+]

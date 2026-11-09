@@ -742,7 +742,7 @@ export function createGitHubService({
         const repo = await api(session, `/repos/${body.fullName}`);
         if (!repo.permissions?.push || repo.archived)
           throw fail("Sem permissão de escrita.", 403);
-        const folder = String(body.folder ?? "scriba")
+        const folder = String(body.folder ?? "")
           .trim()
           .replace(/^\/+|\/+$/g, "");
         if (
