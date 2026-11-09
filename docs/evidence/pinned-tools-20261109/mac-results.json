@@ -1,0 +1,21 @@
+[
+  {
+    "engine": "chromium",
+    "viewport": "desktop",
+    "scrollInput": "wheel",
+    "searchInitiallyCollapsed": true,
+    "searchFocusOnOpen": true,
+    "filterClearedOnClose": true,
+    "commandsPinned": true,
+    "searchPinned": true,
+    "documentToolbarPinned": true,
+    "independentScrolling": true,
+    "darkAndLight": true,
+    "scrollbar": "thin",
+    "thumb": "#6b7073",
+    "surface": "rgb(30, 31, 32)",
+    "background": "rgb(30, 31, 32)",
+    "sidebarBorder": "1px",
+    "documentOverflow": false
+  }
+]

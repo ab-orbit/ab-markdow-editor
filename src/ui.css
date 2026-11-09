@@ -96,8 +96,7 @@
 .editor-app .desktop-git-help > summary { min-height: 44px; font-weight: 500; display: flex; align-items: center; gap: 10px; cursor: pointer; }
 @media (max-width: 899px) { .editor-app .desktop-git-help { display: none; } }
 
-/* The functional layer floats above the document; a shared regular material keeps text legible. */
-.editor-app [data-markdown-workbench] > header[data-ui="toolbar"],
+/* Temporary controls share a material distinct from the document. */
 .editor-app [class*="mobileReadingBar"] > div,
 [data-ui="action-menu"],
 .editor-app dialog[data-ui="inspector"],
@@ -109,16 +108,19 @@
   box-shadow: var(--ui-glass-shadow);
 }
 .editor-app [data-markdown-workbench] > header[data-ui="toolbar"] {
-  margin: 8px 12px; border-radius: 22px; padding: 8px 12px;
+  position: relative; z-index: var(--ui-layer-controls); flex: 0 0 auto;
+  min-height: var(--ui-toolbar-height); margin: 0; padding: 4px 16px;
+  border: 0; border-bottom: 1px solid var(--ui-separator); border-radius: 0;
+  background: var(--bg-surface); box-shadow: none;
 }
 .editor-app [data-ui="toolbar"] button:not(:where([data-ui="action-menu"] *)) { border-radius: var(--radius-full); }
 .editor-app [data-ui="toolbar"] button[aria-pressed="true"] {
   color: var(--text-primary); background: var(--ui-glass-selected); border-color: var(--ui-glass-edge);
 }
 .editor-app [data-ui="toolbar"] [data-ui="format-segments"] { border: 0; border-radius: var(--radius-full); padding: 2px; }
-.editor-app [class*="mobileReadingBar"] { z-index: var(--ui-layer-controls); background: transparent; }
+.editor-app [class*="mobileReadingBar"] { z-index: var(--ui-layer-controls); background: var(--bg-surface); border-bottom: 1px solid var(--ui-separator); }
 .editor-app [class*="mobileReadingBar"] > div { border-radius: 999px; padding: 3px; }
-.editor-app .notes-sidebar { background: var(--ui-glass-sidebar); }
+.editor-app .notes-sidebar { background: var(--bg-surface); }
 .editor-app dialog[data-ui] > header { background: transparent; }
 .editor-app [data-ui="action-menu"] { border-radius: 18px; }
 .editor-app .notes-menu-content { border-radius: 18px; }
@@ -136,8 +138,7 @@ html[data-reduce-transparency="true"] {
   --ui-glass-blur: none; --ui-glass-edge: var(--border-strong); --ui-glass-selected: var(--bg-hover);
 }
 @media (max-width: 899px) {
-  .editor-app [data-mode="read"] > [class*="mobileReadingBar"] { position: relative; margin-bottom: -62px; min-height: 62px; padding-block: 7px; }
-  .editor-app [data-mode="read"] > [class*="mobileReadingBar"] ~ [class*="documentArea"] [data-document-scroll] { padding-top: 66px; }
+  .editor-app [data-mode="read"] > [class*="mobileReadingBar"] { position: relative; flex: 0 0 auto; margin: 0; min-height: 62px; padding-block: 7px; }
   .editor-app [class*="mobileReadingBar"] > button { background: var(--ui-glass-fill); border: 1px solid var(--ui-glass-edge); box-shadow: var(--ui-glass-shadow); -webkit-backdrop-filter: var(--ui-glass-blur); backdrop-filter: var(--ui-glass-blur); }
 }
 
@@ -150,7 +151,7 @@ html[data-reduce-transparency="true"] {
 [data-theme="dark"] :is(.github-source, .powered-by) img { filter: invert(1); }
 
 /* Format selection uses stable hooks so localization cannot change its geometry. */
-.editor-app [data-ui="toolbar"] [data-ui="format-segments"] { padding: 3px; background: var(--ui-control-bg); border-radius: var(--radius-full); }
+.editor-app [data-ui="toolbar"] [data-ui="format-segments"] { padding: 0; background: transparent; border-radius: var(--radius-full); }
 .editor-app [data-ui="format-segments"] button[aria-pressed="true"] { background: var(--ui-active-bg); color: var(--text-primary); border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
 
 /* Dismissal is an unframed icon action across notes, panels and dialogs. */
@@ -186,3 +187,21 @@ html[data-reduce-transparency="true"] {
 
 /* Embedded command menus retain row geometry instead of inheriting toolbar capsules. */
 .editor-app [data-ui="action-menu"] button { border: 0; border-radius: var(--ui-row-radius); box-shadow: none; }
+
+/* Scroll indicators share a quiet transparent track; table and diagram scrollers
+ * retain their own horizontal navigation and indicator policies. */
+.editor-app :is(.notes-sidebar > nav, [data-document-scroll], .cm-scroller) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-scrollbar-thumb) transparent;
+}
+.editor-app :is(.notes-sidebar > nav, [data-document-scroll], .cm-scroller)::-webkit-scrollbar { width: 10px; height: 10px; }
+.editor-app :is(.notes-sidebar > nav, [data-document-scroll], .cm-scroller)::-webkit-scrollbar-track,
+.editor-app :is(.notes-sidebar > nav, [data-document-scroll], .cm-scroller)::-webkit-scrollbar-corner { background: transparent; }
+.editor-app :is(.notes-sidebar > nav, [data-document-scroll], .cm-scroller)::-webkit-scrollbar-thumb {
+  border: 3px solid transparent; border-radius: var(--radius-full);
+  background: var(--ui-scrollbar-thumb); background-clip: padding-box;
+}
+.editor-app :is(.notes-sidebar > nav, [data-document-scroll], .cm-scroller)::-webkit-scrollbar-thumb:hover { background-color: var(--text-muted); }
+@media (forced-colors: active) {
+  .editor-app :is(.notes-sidebar > nav, [data-document-scroll], .cm-scroller) { scrollbar-color: auto; }
+}

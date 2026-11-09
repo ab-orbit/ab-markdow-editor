@@ -1,0 +1,212 @@
+[
+  {
+    "engine": "chromium",
+    "width": 1440,
+    "height": 900,
+    "reading": {
+      "width": 698,
+      "content": 698
+    },
+    "editing": {
+      "width": 702,
+      "content": 702
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "chromium",
+    "width": 1293,
+    "height": 1418,
+    "reading": {
+      "width": 698,
+      "content": 698
+    },
+    "editing": {
+      "width": 702,
+      "content": 702
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "chromium",
+    "width": 2551,
+    "height": 1365,
+    "reading": {
+      "width": 698,
+      "content": 698
+    },
+    "editing": {
+      "width": 702,
+      "content": 702
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "chromium",
+    "width": 390,
+    "height": 844,
+    "reading": {
+      "width": 332,
+      "content": 872
+    },
+    "editing": {
+      "width": 332,
+      "content": 872
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "chromium",
+    "width": 844,
+    "height": 390,
+    "reading": {
+      "width": 682,
+      "content": 872
+    },
+    "editing": {
+      "width": 682,
+      "content": 872
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "chromium",
+    "width": 768,
+    "height": 1024,
+    "reading": {
+      "width": 682,
+      "content": 872
+    },
+    "editing": {
+      "width": 682,
+      "content": 872
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "chromium",
+    "width": 1024,
+    "height": 768,
+    "reading": {
+      "width": 642,
+      "content": 642
+    },
+    "editing": {
+      "width": 646,
+      "content": 646
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "webkit",
+    "width": 1440,
+    "height": 900,
+    "reading": {
+      "width": 698,
+      "content": 698
+    },
+    "editing": {
+      "width": 702,
+      "content": 702
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "webkit",
+    "width": 1293,
+    "height": 1418,
+    "reading": {
+      "width": 698,
+      "content": 698
+    },
+    "editing": {
+      "width": 702,
+      "content": 702
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "webkit",
+    "width": 2551,
+    "height": 1365,
+    "reading": {
+      "width": 698,
+      "content": 698
+    },
+    "editing": {
+      "width": 702,
+      "content": 702
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "webkit",
+    "width": 390,
+    "height": 844,
+    "reading": {
+      "width": 332,
+      "content": 872
+    },
+    "editing": {
+      "width": 332,
+      "content": 872
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "webkit",
+    "width": 844,
+    "height": 390,
+    "reading": {
+      "width": 682,
+      "content": 872
+    },
+    "editing": {
+      "width": 682,
+      "content": 872
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "webkit",
+    "width": 768,
+    "height": 1024,
+    "reading": {
+      "width": 682,
+      "content": 872
+    },
+    "editing": {
+      "width": 682,
+      "content": 872
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  },
+  {
+    "engine": "webkit",
+    "width": 1024,
+    "height": 768,
+    "reading": {
+      "width": 642,
+      "content": 642
+    },
+    "editing": {
+      "width": 646,
+      "content": 646
+    },
+    "keyboardNavigation": true,
+    "pageOverflow": false
+  }
+]

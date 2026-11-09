@@ -121,7 +121,12 @@ textarea:not(:where(.excalidraw *)) { font: inherit; font-size: 16px; color: var
 .editor-brandbar > button { min-height: 36px; padding: 6px 8px; border: 0; background: transparent; }
 .editor-layout { flex: 1; min-height: 0; align-items: stretch; gap: 0; }
 .editor-layout > .editor-container { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-.notes-sidebar { position: static; flex: 0 0 220px; width: 220px; max-height: none; border: 0; border-right: 1px solid var(--border-panel); border-radius: 0; padding: 8px; overflow-y: auto; }
+.notes-sidebar { position: static; display: flex; flex-direction: column; flex: 0 0 220px; width: 220px; min-height: 0; max-height: none; border: 0; border-right: 1px solid var(--ui-separator); border-radius: 0; padding: 0; overflow: hidden; }
+/* Commands and search stay in place while the note library scrolls independently. */
+.notes-sidebar > .notes-commandbar { flex: 0 0 auto; min-height: var(--ui-toolbar-height); padding: 4px 12px; }
+.notes-sidebar > .notes-search { flex: 0 0 auto; margin: 4px 12px 12px; }
+.notes-sidebar > .notes-empty { margin: 8px 20px; }
+.notes-sidebar > nav { flex: 1 1 auto; min-height: 0; min-width: 0; overflow-y: auto; overflow-x: hidden; padding: 0 8px 16px 12px; overscroll-behavior-y: contain; scrollbar-gutter: stable; }
 .notes-heading h2 { font-size: 12px; }
 .notes-heading p { font-size: 11px; margin: 0; }
 .notes-heading button { min-height: 32px; padding: 6px; border: 0; background: transparent; }

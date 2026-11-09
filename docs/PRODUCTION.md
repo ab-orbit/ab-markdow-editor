@@ -2,7 +2,7 @@
 
 Production: https://scriba.aeonbridge.app/
 
-Latest deployment is [8 November 2026 — vector PDF mathematics, version 1.17.3](evidence/pdf-math-20261108/README.md).
+Latest deployment is [9 November 2026 — fixed toolbars and refined scroll indicators, version 1.17.4](evidence/pinned-tools-20261109/README.md).
 
 The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves `dist/` and proxies `/github/` to the isolated synchronization gateway. No local filesystem API or server Git checkout is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups or configure the optional GitHub destination for file synchronization between devices.
 
