@@ -229,26 +229,71 @@ export function MarkdownWorkbench({ ref, nativeChromeActive = true, nativeLibrar
       await open(new File([bytes],result.name,{type:/\.(zip|bear)$/i.test(result.name)?'application/zip':'text/markdown'}));
     }).catch(cause=>{if(sameDocument(original))setError(cause instanceof Error?t(cause.message):t('Não foi possível abrir o arquivo.'));}).finally(()=>{nativePickerOpen.current=false;if(mounted.current)setBusy(false);});
   }
-  const [renameName,setRenameName]=useState<string|null>(null),[renameError,setRenameError]=useState(""),[renaming,setRenaming]=useState(false);
+  const [renameName, setRenameName] = useState<string | null>(null);
+  const [renameError, setRenameError] = useState("");
+  const [renaming, setRenaming] = useState(false);
+  const renameInput = useRef<HTMLInputElement>(null);
+  const renameTrigger = useRef<HTMLElement | null>(null);
+  const renameOperation = useRef(false);
+  const renameErrorId = useId();
+  const renameOpen = renameName !== null;
+  useEffect(() => {
+    if (!renameOpen || !renameInput.current) return;
+    const input = renameInput.current;
+    input.focus();
+    // Select the editable stem while retaining the existing Markdown extension.
+    input.setSelectionRange(0, input.value.replace(/\.(md|markdown|mdown)$/i, '').length);
+  }, [renameOpen]);
+  function finishRename() {
+    setRenameName(null);
+    requestAnimationFrame(() => {
+      if (!mounted.current) return;
+      const trigger = renameTrigger.current;
+      if (trigger?.isConnected && trigger.getClientRects().length) trigger.focus();
+      else workbench.current?.querySelector<HTMLButtonElement>(`.${styles.mobileReadingBar} button:last-child`)?.focus();
+    });
+  }
   async function requestRename() {
     setReadingActionsOpen(false);
-    if(!onRename || readOnly || busy)return;
-    if(mode==='whiteboard' && whiteboard.current && !await whiteboard.current.flush())return;
-    await afterPaint();setRenameError("");setRenameName(fileName.split('/').at(-1)!);
+    if (!onRename || readOnly || busy || renameOpen) return;
+    const original = documentContext.current;
+    renameTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (mode === 'whiteboard' && whiteboard.current && !await whiteboard.current.flush()) return;
+    if (!sameDocument(original)) return;
+    setRenameError("");
+    setRenameName(fileName.split('/').at(-1)!);
   }
   async function applyRename() {
-    if(!onRename || renameName===null || renaming)return;
-    const leaf=renameName.trim();
-    if(!leaf || /[<>:"/\\|?*\u0000-\u001f]/.test(leaf) || leaf.startsWith('.') || /[. ]$/.test(leaf)){setRenameError(t("Informe um nome de arquivo válido, sem barras."));return;}
-    const fullName=fileName.slice(0,fileName.lastIndexOf('/')+1)+( /\.(md|markdown|mdown)$/i.test(leaf)?leaf:leaf+'.md');
-    setRenaming(true);setRenameError("");
-    try{await onRename(fullName);setRenameName(null);}catch(error){setRenameError(error instanceof Error?t(error.message):t("Não foi possível renomear o arquivo."));}finally{setRenaming(false);}
+    if (!onRename || renameName === null || renameOperation.current || readOnly || busy) return;
+    const leaf = renameName.trim();
+    if (!leaf || /[<>:"/\\|?*\u0000-\u001f]/.test(leaf) || leaf.startsWith('.') || /[. ]$/.test(leaf)) {
+      setRenameError(t("Informe um nome de arquivo válido, sem barras."));
+      renameInput.current?.focus();
+      return;
+    }
+    const fullName = fileName.slice(0, fileName.lastIndexOf('/') + 1) + (/\.(md|markdown|mdown)$/i.test(leaf) ? leaf : leaf + '.md');
+    if (fullName === fileName) { finishRename(); return; }
+    renameOperation.current = true;
+    setRenaming(true);
+    setRenameError("");
+    try {
+      await onRename(fullName);
+      if (mounted.current) finishRename();
+    } catch (error) {
+      if (mounted.current) {
+        setRenameError(error instanceof Error ? t(error.message) : t("Não foi possível renomear o arquivo."));
+        renameInput.current?.focus();
+      }
+    } finally {
+      renameOperation.current = false;
+      if (mounted.current) setRenaming(false);
+    }
   }
   useImperativeHandle(ref, () => ({
     openFile: chooseFile,
-    isBusy: () => busy || nativePickerOpen.current || saveAsOperation.current || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]'),
+    isBusy: () => busy || renameOpen || nativePickerOpen.current || saveAsOperation.current || mode === 'whiteboard' && !!whiteboard.current?.isBusy() || !!document.querySelector('dialog[data-scriba-canvas][open]') || !!workbench.current?.querySelector('dialog[open]'),
     flushInput: async () => {
-      if (readOnly || busy || document.querySelector('dialog[open]')) return false;
+      if (readOnly || busy || renameOpen || document.querySelector('dialog[open]')) return false;
       if (mode === 'whiteboard') return whiteboard.current ? whiteboard.current.flush() : false;
       return true;
     },
@@ -553,6 +598,7 @@ export function MarkdownWorkbench({ ref, nativeChromeActive = true, nativeLibrar
     return headings.filter(heading => { const element = headingElement(heading); return element && element.getClientRects().length > 0 && element.getBoundingClientRect().top <= top; }).at(-1)?.id;
   }
   useNativeWorkspaceCommands(id => {
+    if (renameOpen) return;
     if (!nativeChromeActive || readOnly || busy || document.querySelector('dialog[open]')) return;
     if (id === 'notes' && mode === 'split') changeMode('read');
     else if (id === 'edit') {
@@ -596,7 +642,7 @@ export function MarkdownWorkbench({ ref, nativeChromeActive = true, nativeLibrar
   useEffect(() => {
     if (nativeWorkspace.nativeChrome && nativeChromeActive) void iosBridge.workspaceChrome(JSON.parse(nativeChrome)).catch(() => {});
   }, [nativeWorkspace.nativeChrome, nativeChromeActive, nativeChrome]);
-  return <section ref={workbench} data-markdown-workbench className={`${styles.workbench} ${compact ? styles.compact : ""}`} data-mode={mode} data-reading-editable={readingEditable} data-mobile-formatting={mobileFormattingOpen} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} aria-label={t("Bancada Markdown")} aria-busy={busy}>{openingFile && <DocumentLoading label={t("Abrindo documento…")}/>}{compact && <div data-ui="toolbar" className={styles.mobileReadingBar}><button type="button" aria-label={t("Voltar às notas")} onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><button className={styles.mobileDocumentFormat} type="button" disabled={readOnly||busy} aria-label={mode==='whiteboard'?t("Voltar à nota"):t("Abrir whiteboard")} onClick={()=>void selectFormat(mode==='whiteboard'?'note':'whiteboard')}>{mode==='whiteboard'?<FileText size={18}/>:<PenTool size={18}/>}<span>{mode==='whiteboard'?t("Nota"):t("Whiteboard")}</span></button><div>{mode !== 'whiteboard' && <button className={styles.formattingToggle} type="button" disabled={readOnly||busy} aria-label={t('Formatação')} aria-expanded={formattingOpen} onClick={()=>{setFormattingOpen(open=>!open);if(!readingEditable)startVisualEditing();}}><span><b>B</b><i>I</i><u>U</u></span></button>}<button type="button" aria-label={t('Informações da nota')} aria-expanded={noteInfoOpen} onClick={()=>setNoteInfoOpen(open=>!open)}><Info size={20}/></button>{mode!=='whiteboard'&&<button type="button" aria-label={outlineOpen?t('Ocultar outline'):t('Mostrar outline')} title={t('Índice da nota')} aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event=>toggleOutline(event.currentTarget)}><ListTree size={20}/></button>}<button type="button" aria-label={t("Mais opções da nota")} aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}{saveCopyName !== null && <EditorDialog title={t("Salvar uma cópia")} onClose={() => setSaveCopyName(null)}><p>{t("Este navegador não permite manter acesso direto a um arquivo escolhido. Baixe ou compartilhe uma cópia e escolha onde guardá-la. A nota aberta continua no destino atual.")}</p>{assets.length > 0 && <p>{t("O arquivo ZIP leva o Markdown e suas imagens juntos.")}</p>}<form className={styles.saveCopyForm} onSubmit={event => {event.preventDefault();event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();void exportCopy();}}><label>{t("Nome da cópia")}<input autoFocus required value={saveCopyName} onChange={event => setSaveCopyName(event.target.value)}/></label><footer><button type="button" onClick={() => setSaveCopyName(null)}>{t("Cancelar")}</button><button type="submit">{isIosApp ? t("Compartilhar cópia") : t("Baixar cópia")}</button></footer></form></EditorDialog>}{readingActionsOpen && <EditorDialog title={t('Mais opções da nota')} className={styles.mobileMenu} variant="menu" dismissOnOutside onClose={()=>setReadingActionsOpen(false)}><div role="menu" aria-label={t('Mais opções da nota')} onClickCapture={event=>{if((event.target as Element).closest('button'))event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();}}>
+  return <section ref={workbench} data-markdown-workbench className={`${styles.workbench} ${compact ? styles.compact : ""}`} data-mode={mode} data-reading-editable={readingEditable} data-mobile-formatting={mobileFormattingOpen} data-formatting-open={formattingOpen} data-block-editing={!!activeBlock} data-reading-actions={readingActionsOpen} data-renaming={renameOpen} aria-label={t("Bancada Markdown")} aria-busy={busy}>{openingFile && <DocumentLoading label={t("Abrindo documento…")}/>}{compact && <div data-ui="toolbar" className={styles.mobileReadingBar}><button type="button" aria-label={t("Voltar às notas")} onClick={() => window.dispatchEvent(new Event('scriba:show-notes'))}><ArrowLeft size={22}/></button><button className={styles.mobileDocumentFormat} type="button" disabled={readOnly||busy} aria-label={mode==='whiteboard'?t("Voltar à nota"):t("Abrir whiteboard")} onClick={()=>void selectFormat(mode==='whiteboard'?'note':'whiteboard')}>{mode==='whiteboard'?<FileText size={18}/>:<PenTool size={18}/>}<span>{mode==='whiteboard'?t("Nota"):t("Whiteboard")}</span></button><div>{mode !== 'whiteboard' && <button className={styles.formattingToggle} type="button" disabled={readOnly||busy} aria-label={t('Formatação')} aria-expanded={formattingOpen} onClick={()=>{setFormattingOpen(open=>!open);if(!readingEditable)startVisualEditing();}}><span><b>B</b><i>I</i><u>U</u></span></button>}<button type="button" aria-label={t('Informações da nota')} aria-expanded={noteInfoOpen} onClick={()=>setNoteInfoOpen(open=>!open)}><Info size={20}/></button>{mode!=='whiteboard'&&<button type="button" aria-label={outlineOpen?t('Ocultar outline'):t('Mostrar outline')} title={t('Índice da nota')} aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event=>toggleOutline(event.currentTarget)}><ListTree size={20}/></button>}<button type="button" aria-label={t("Mais opções da nota")} aria-expanded={readingActionsOpen} onClick={() => setReadingActionsOpen(!readingActionsOpen)}><MoreVertical size={22}/></button></div></div>}{saveCopyName !== null && <EditorDialog title={t("Salvar uma cópia")} onClose={() => setSaveCopyName(null)}><p>{t("Este navegador não permite manter acesso direto a um arquivo escolhido. Baixe ou compartilhe uma cópia e escolha onde guardá-la. A nota aberta continua no destino atual.")}</p>{assets.length > 0 && <p>{t("O arquivo ZIP leva o Markdown e suas imagens juntos.")}</p>}<form className={styles.saveCopyForm} onSubmit={event => {event.preventDefault();event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();void exportCopy();}}><label>{t("Nome da cópia")}<input autoFocus required value={saveCopyName} onChange={event => setSaveCopyName(event.target.value)}/></label><footer><button type="button" onClick={() => setSaveCopyName(null)}>{t("Cancelar")}</button><button type="submit">{isIosApp ? t("Compartilhar cópia") : t("Baixar cópia")}</button></footer></form></EditorDialog>}{readingActionsOpen && <EditorDialog title={t('Mais opções da nota')} className={styles.mobileMenu} variant="menu" dismissOnOutside onClose={()=>setReadingActionsOpen(false)}><div role="menu" aria-label={t('Mais opções da nota')} onClickCapture={event=>{if((event.target as Element).closest('button'))event.currentTarget.closest<HTMLDialogElement>('dialog')?.close();}}>
       {mode !== 'whiteboard' && <div className={styles.contextSection}>{modes.map(([key,label,Icon])=><button role="menuitemradio" type="button" key={key} aria-checked={key==='live'?readingEditable:mode===key&&!readingEditable} onClick={()=>{setReadingActionsOpen(false);if(key==='live')startVisualEditing();else changeMode(key);}}><Icon size={18}/><span>{label}</span>{(key==='live'?readingEditable:mode===key&&!readingEditable)&&<Check size={16}/>}</button>)}<button role="menuitemradio" type="button" aria-checked={mode==='live'&&!readingEditable} onClick={()=>{setReadingActionsOpen(false);changeMode('live');}}><SquareCode size={18}/>{t('Blocos')}{mode==='live'&&!readingEditable&&<Check size={16}/>}</button></div>}
       <div className={styles.contextSection}><div className={styles.contextCommands} onClick={event=>{if((event.target as Element).closest('button'))setReadingActionsOpen(false);}}>{actions}{saveAction}</div>
       {onSaveAs && <button role="menuitem" type="button" disabled={readOnly||busy} onClick={()=>{setReadingActionsOpen(false);void saveAs();}}><SaveAll size={18}/>{t('Salvar como…')}</button>}
@@ -608,10 +654,19 @@ export function MarkdownWorkbench({ ref, nativeChromeActive = true, nativeLibrar
       <button role="menuitem" type="button" onClick={()=>{setReadingActionsOpen(false);window.dispatchEvent(new Event('scriba:show-appearance'));}}><Sun size={18}/>{t('Aparência')}</button>
       <button role="menuitem" type="button" disabled={!onOpenSettings} onClick={()=>{setReadingActionsOpen(false);onOpenSettings?.();}}><Settings size={18}/>{t('Configurações')}</button>
     </div></EditorDialog>}
-    {renameName!==null && <EditorDialog title={t("Renomear arquivo")} onClose={()=>{if(!renaming)setRenameName(null);}}><form onSubmit={event=>{event.preventDefault();void applyRename();}}><label>{t("Nome do arquivo")}<input autoFocus required maxLength={200} value={renameName} disabled={renaming} onChange={event=>setRenameName(event.target.value)}/></label>{renameError && <p role="alert">{renameError}</p>}<footer><button type="button" disabled={renaming} onClick={()=>setRenameName(null)}>{t("Cancelar")}</button><button className="primary" type="submit" disabled={renaming}>{renaming?t("Renomeando…"):t("Renomear")}</button></footer></form></EditorDialog>}
     {mobileExportOpen && <EditorDialog title={t('Exportar nota')} className={styles.mobileMenu} variant="menu" dismissOnOutside onClose={()=>setMobileExportOpen(false)}><div role="group" aria-label={t('Formatos de exportação')}><button data-menu-item type="button" disabled={busy} onClick={()=>{setMobileExportOpen(false);if(assets.length)void downloadPackage();else downloadMarkdown(value,fileName);}}><FileText size={18} aria-hidden="true"/><span>{t('Markdown (.md)')}{assets.length>0&&<small>{t('ZIP com imagens anexadas')}</small>}</span></button><button data-menu-item type="button" disabled={busy} onClick={()=>{setMobileExportOpen(false);void exportPdf();}}><FileDown size={18} aria-hidden="true"/><span>{t('PDF (.pdf)')}</span></button></div></EditorDialog>}
     {noteInfoOpen && <MobileNoteInformation source={value} words={words} createdAt={createdAt} modifiedAt={modifiedAt} onClose={()=>setNoteInfoOpen(false)} outline={{collapsed:collapsedHeadings,onToggle:toggleHeading,onExpandAll:()=>setCollapsedHeadings(new Set()),onCollapseAll:()=>setCollapsedHeadings(collapsedOutlineIds(documentOutline(value))),scrollContainer:pages,viewKey:`${documentId}:${mode}:${readingEditable}`,currentHeading,onNavigate:heading=>{setNoteInfoOpen(false);navigateHeading(heading,true);}}}/>}
-    <header data-ui="toolbar" className={styles.toolbar}><div className={styles.filename}><FileText size={16} aria-hidden="true"/>{onRename ? <button className={styles.renameButton} type="button" title={fileName} aria-label={t("Renomear arquivo")} disabled={readOnly||busy} onClick={()=>void requestRename()}>{fileName}</button> : <span title={fileName}>{fileName}</span>}{dirty && <span className={styles.dot} aria-label={t("Documento alterado")}/>}{onClose && <button data-ui="dismiss" type="button" disabled={readOnly || busy} aria-label={t("Fechar nota")} aria-keyshortcuts="Meta+W Control+W" title={t("Fechar nota (⌘W / Ctrl+W, quando disponível no navegador)")} onClick={onClose}><X size={16} aria-hidden="true"/></button>}</div><div className={styles.formats} data-ui="format-segments" role="group" aria-label={t("Formato do documento")}><button type="button" aria-pressed={mode !== 'whiteboard'} disabled={readOnly || busy} onClick={() => { void selectFormat('note'); }}><FileText size={15} aria-hidden="true"/>{t("Nota")}</button><button type="button" aria-pressed={mode === 'whiteboard'} disabled={readOnly || busy} onClick={() => { void selectFormat('whiteboard'); }}><PenTool size={15} aria-hidden="true"/>{t("Whiteboard")}</button></div>{!compact && mode !== 'whiteboard' && <div className={styles.modes} role="group" aria-label={t("Modo de edição")}>{modes.map(([key, label, Icon, description]) => <button type="button" key={key} title={description} aria-pressed={key === 'live' ? readingEditable : mode === key && !readingEditable} onClick={() => key === 'live' ? startVisualEditing() : changeMode(key)}><Icon size={16} aria-hidden="true"/><span>{label}</span></button>)}<button type="button" aria-label={t("Editar blocos Markdown")} title={t("Markdown com blocos renderizados")} aria-pressed={mode === 'live' && !readingEditable} onClick={() => changeMode('live')}><SquareCode size={16} aria-hidden="true"/><span>{t("Blocos")}</span></button></div>}<div className={styles.actions}>{compact ? <div className={styles.quickActions}>
+    <header data-ui="toolbar" className={styles.toolbar}><div className={styles.filename}><FileText size={16} aria-hidden="true"/>{renameOpen ? <form className={styles.renameForm} aria-label={t("Renomear arquivo")} aria-busy={renaming} onSubmit={event => { event.preventDefault(); void applyRename(); }} onKeyDown={event => {
+      if (event.key === 'Enter' && event.nativeEvent.isComposing) event.preventDefault();
+      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); if (!renameOperation.current) finishRename(); }
+    }}>
+      <div className={styles.renameField}>
+        <input ref={renameInput} aria-label={t("Nome do arquivo")} aria-invalid={!!renameError} aria-describedby={renameError ? renameErrorId : undefined} maxLength={200} value={renameName} readOnly={renaming || readOnly || busy} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} enterKeyHint="done" onChange={event => { setRenameName(event.target.value); setRenameError(""); }}/>
+        {renameError && <span id={renameErrorId} className={styles.renameError} role="alert">{renameError}</span>}
+      </div>
+      <button type="submit" disabled={renaming || readOnly || busy} aria-label={renaming ? t("Renomeando…") : t("Renomear")} title={t("Renomear")}><Check size={18} aria-hidden="true"/></button>
+      <button type="button" disabled={renaming} aria-label={t("Cancelar")} title={t("Cancelar")} onClick={finishRename}><X size={18} aria-hidden="true"/></button>
+    </form> : onRename ? <button className={styles.renameButton} type="button" title={fileName} aria-label={t("Renomear arquivo")} disabled={readOnly||busy} onClick={()=>void requestRename()}>{fileName}</button> : <span title={fileName}>{fileName}</span>}{!renameOpen && dirty && <span className={styles.dot} aria-label={t("Documento alterado")}/>}{!renameOpen && onClose && <button data-ui="dismiss" type="button" disabled={readOnly || busy} aria-label={t("Fechar nota")} aria-keyshortcuts="Meta+W Control+W" title={t("Fechar nota (⌘W / Ctrl+W, quando disponível no navegador)")} onClick={onClose}><X size={16} aria-hidden="true"/></button>}</div><div className={styles.formats} data-ui="format-segments" role="group" aria-label={t("Formato do documento")}><button type="button" aria-pressed={mode !== 'whiteboard'} disabled={readOnly || busy} onClick={() => { void selectFormat('note'); }}><FileText size={15} aria-hidden="true"/>{t("Nota")}</button><button type="button" aria-pressed={mode === 'whiteboard'} disabled={readOnly || busy} onClick={() => { void selectFormat('whiteboard'); }}><PenTool size={15} aria-hidden="true"/>{t("Whiteboard")}</button></div>{!compact && mode !== 'whiteboard' && <div className={styles.modes} role="group" aria-label={t("Modo de edição")}>{modes.map(([key, label, Icon, description]) => <button type="button" key={key} title={description} aria-pressed={key === 'live' ? readingEditable : mode === key && !readingEditable} onClick={() => key === 'live' ? startVisualEditing() : changeMode(key)}><Icon size={16} aria-hidden="true"/><span>{label}</span></button>)}<button type="button" aria-label={t("Editar blocos Markdown")} title={t("Markdown com blocos renderizados")} aria-pressed={mode === 'live' && !readingEditable} onClick={() => changeMode('live')}><SquareCode size={16} aria-hidden="true"/><span>{t("Blocos")}</span></button></div>}<div className={styles.actions}>{compact ? <div className={styles.quickActions}>
       {mode!=='whiteboard'&&<button className={styles.formattingToggle} type="button" disabled={readOnly||busy} aria-label={t('Formatação')} aria-expanded={formattingOpen} onClick={()=>{setFormattingOpen(open=>!open);if(!readingEditable)startVisualEditing();}}><span><b>B</b><i>I</i><u>U</u></span></button>}
       <button type="button" aria-label={t('Informações da nota')} aria-expanded={noteInfoOpen} onClick={()=>setNoteInfoOpen(open=>!open)}><Info size={20}/></button>
       {mode!=='whiteboard'&&<button type="button" aria-label={outlineOpen?t('Ocultar outline'):t('Mostrar outline')} title={t('Índice da nota')} aria-expanded={outlineOpen} aria-controls={outlineId} onClick={event=>toggleOutline(event.currentTarget)}><ListTree size={20}/></button>}
