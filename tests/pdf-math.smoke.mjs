@@ -118,7 +118,9 @@ try {
         await page.screenshot({ path: path.join(output, `exported-desktop-${engine}.png`) });
         await page.setViewportSize({ width: 390, height: 844 });
         const close = page.getByRole('button', { name: 'Fechar lista de notas', exact: true });
-        if (await close.isVisible()) await close.click();
+        // The responsive layout closes its desktop library asynchronously.
+        await expect(close).toBeHidden();
+        await expect(page.getByRole('button', { name: 'Voltar às notas', exact: true })).toBeVisible();
         await page.screenshot({ path: path.join(output, `exported-mobile-${engine}.png`) });
       }
       await openExport(page);

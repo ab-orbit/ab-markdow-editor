@@ -8,13 +8,13 @@ The mathematical renderer loads when a document contains mathematical export ann
 
 ## Regression coverage
 
-`node --test tests/math.test.mjs tests/pdf-math.test.mjs tests/pdf-tables.test.mjs` passed 21 tests. Coverage includes baseline alignment, selectable prose/links, paragraph wrapping, immutable input, landscape cell widths, AMS matrices/cases/alignment, imported doubled escapes, numeric units and unsupported/active TeX fallback. Numeric units share the existing conservative import inference used by reading.
+`node --test tests/math.test.mjs tests/pdf-math.test.mjs tests/pdf-tables.test.mjs` passed 22 tests. Coverage includes baseline alignment, selectable prose/links, paragraph wrapping, immutable input, landscape cell widths, AMS matrices/cases/alignment, imported doubled escapes, numeric units and unsupported/active TeX fallback. Numeric units share the existing conservative import inference used by reading. Escaped brackets attached to a TeX command, such as an imported expectation `E[A+T]`, stay part of the complete inline expression.
 
-The complete suite passed 121 tests with the actual packaged Mac application supplied through `SCRIBA_MAC_BUNDLE`. No tests were skipped. It exercises package integrity, Finder associations and the existing save, Git, file-conflict and browser-storage contracts. [Complete test output](unit-tests.txt).
+The complete suite passed 122 tests with the actual packaged Mac application supplied through `SCRIBA_MAC_BUNDLE`. No tests were skipped. It exercises package integrity, Finder associations and the existing save, Git, file-conflict and browser-storage contracts. [Complete test output](unit-tests.txt).
 
 `tests/pdf-math.smoke.mjs` imports through the actual file input and exports through the current PDF menu in isolated browser contexts. It verifies source-preserving Markdown download, selectable surrounding prose, disappearance of raw formula commands from the synthetic mathematical PDF, literal code, branded footer and absence of export saves or unexpected external requests.
 
-Chrome and WebKit passed the synthetic reference and the complete owner-provided course. The course exported to 27 pages. On the published HTTPS site, observed course export times were approximately 1.9 seconds in Chrome and 3.4 seconds in WebKit on the test Mac. These observations are descriptive. The Chrome PWA also passed a first mathematical PDF export after disconnecting the context, with the renderer loaded through the installed service-worker cache. [Local browser and Mac journeys](browser-results.json), [production journeys](production-results.json).
+Chrome and WebKit passed the synthetic reference and the complete owner-provided course. The course exported to 27 pages. The linked records include observed export times for each engine and build. The Chrome PWA also passed a first mathematical PDF export after disconnecting the context, with the renderer loaded through the installed service-worker cache. [Local browser and Mac journeys](browser-results.json), [production journeys](production-results.json).
 
 The existing non-mathematical table journey passed all four cases in both engines. Every cell was recovered, with continuation headers, page margins and portrait/landscape transitions checked. [Table geometry results](table-validation.json).
 

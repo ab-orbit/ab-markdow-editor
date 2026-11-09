@@ -5,12 +5,12 @@
       "engine": "chromium",
       "offline": false,
       "pdf": "/tmp/scriba-pdf-math-20261108/browser/probability-reference-chromium.pdf",
-      "durationMs": 1655,
-      "sourceSha256": "fa969205714832ba0a4dec741fff3db71db486f21e3ed7cebb017499eadd1653",
+      "durationMs": 841,
+      "sourceSha256": "1311a03fa76564c647168fdef246df89cb1ec3f9c7cdcf5851277b911f492e16",
       "sourceUnchanged": true,
       "exportWrites": 0,
       "unexpectedExternalRequests": 0,
-      "pdfBytes": 65861,
+      "pdfBytes": 66698,
       "pages": 3
     },
     {
@@ -18,12 +18,12 @@
       "engine": "chromium",
       "offline": false,
       "pdf": "/tmp/scriba-pdf-math-20261108/browser/course-reference-chromium.pdf",
-      "durationMs": 1885,
+      "durationMs": 2956,
       "sourceSha256": "fa42ff2d06de982e96bc89de2aef9d55c248a3e1765fc142bb10f71245f9ba14",
       "sourceUnchanged": true,
       "exportWrites": 0,
       "unexpectedExternalRequests": 0,
-      "pdfBytes": 972866,
+      "pdfBytes": 967019,
       "pages": 27
     }
   ],
@@ -33,12 +33,12 @@
       "engine": "webkit",
       "offline": false,
       "pdf": "/tmp/scriba-pdf-math-20261108/browser/probability-reference-webkit.pdf",
-      "durationMs": 917,
-      "sourceSha256": "fa969205714832ba0a4dec741fff3db71db486f21e3ed7cebb017499eadd1653",
+      "durationMs": 969,
+      "sourceSha256": "1311a03fa76564c647168fdef246df89cb1ec3f9c7cdcf5851277b911f492e16",
       "sourceUnchanged": true,
       "exportWrites": 0,
       "unexpectedExternalRequests": 0,
-      "pdfBytes": 65861,
+      "pdfBytes": 66698,
       "pages": 3
     },
     {
@@ -46,12 +46,12 @@
       "engine": "webkit",
       "offline": false,
       "pdf": "/tmp/scriba-pdf-math-20261108/browser/course-reference-webkit.pdf",
-      "durationMs": 2425,
+      "durationMs": 2554,
       "sourceSha256": "fa42ff2d06de982e96bc89de2aef9d55c248a3e1765fc142bb10f71245f9ba14",
       "sourceUnchanged": true,
       "exportWrites": 0,
       "unexpectedExternalRequests": 0,
-      "pdfBytes": 972866,
+      "pdfBytes": 967019,
       "pages": 27
     }
   ],
@@ -61,12 +61,12 @@
       "engine": "chromium",
       "offline": true,
       "pdf": "/tmp/scriba-pdf-math-20261108/offline/probability-reference-chromium.pdf",
-      "durationMs": 734,
-      "sourceSha256": "fa969205714832ba0a4dec741fff3db71db486f21e3ed7cebb017499eadd1653",
+      "durationMs": 1267,
+      "sourceSha256": "1311a03fa76564c647168fdef246df89cb1ec3f9c7cdcf5851277b911f492e16",
       "sourceUnchanged": true,
       "exportWrites": 0,
       "unexpectedExternalRequests": 0,
-      "pdfBytes": 65861,
+      "pdfBytes": 66698,
       "pages": 3
     }
   ],
@@ -76,12 +76,12 @@
       "engine": "chromium",
       "offline": false,
       "pdf": "/tmp/scriba-pdf-math-20261108/mac-pdf/probability-reference-chromium.pdf",
-      "durationMs": 317,
-      "sourceSha256": "fa969205714832ba0a4dec741fff3db71db486f21e3ed7cebb017499eadd1653",
+      "durationMs": 352,
+      "sourceSha256": "1311a03fa76564c647168fdef246df89cb1ec3f9c7cdcf5851277b911f492e16",
       "sourceUnchanged": true,
       "exportWrites": 0,
       "unexpectedExternalRequests": 0,
-      "pdfBytes": 65861,
+      "pdfBytes": 66698,
       "pages": 3
     },
     {
@@ -89,12 +89,12 @@
       "engine": "chromium",
       "offline": false,
       "pdf": "/tmp/scriba-pdf-math-20261108/mac-pdf/course-reference-chromium.pdf",
-      "durationMs": 1446,
+      "durationMs": 1608,
       "sourceSha256": "fa42ff2d06de982e96bc89de2aef9d55c248a3e1765fc142bb10f71245f9ba14",
       "sourceUnchanged": true,
       "exportWrites": 0,
       "unexpectedExternalRequests": 0,
-      "pdfBytes": 972866,
+      "pdfBytes": 967019,
       "pages": 27
     }
   ]
