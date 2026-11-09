@@ -936,6 +936,7 @@
   /* Native Avenir is available on iOS/macOS; other platforms keep a local fallback. */
   --font-reading: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --reading-size: 18px;
+  --reading-column-width: 1600px;
   --reading-leading: 1.75;
   --reading-cell-max: 44ch;
   --diagram-code-token-string-expression: var(--diagram-code-token-string);

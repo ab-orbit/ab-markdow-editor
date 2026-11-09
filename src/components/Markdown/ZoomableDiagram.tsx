@@ -11,7 +11,7 @@ interface ZoomableDiagramProps {
   magnifying: boolean;
   onZoom: (scale: number) => void;
   onLayout?: () => void;
-  /** Wide hand-drawn scenes retain readable labels and pan instead of shrinking to tiny text. */
+  /** Compact layouts retain readable labels. Desktop previews fit the available reading pane. */
   minWidth?: number;
 }
 
@@ -54,5 +54,5 @@ export function ZoomableDiagram({ ref, svg, id, magnifying, onZoom, onLayout, mi
     onKeyDown={event => { if (event.target !== event.currentTarget) return; if (['+', '=', '-', '0'].includes(event.key)) { event.preventDefault(); event.key === '0' ? change(1) : change(scale.current * (event.key === '-' ? 1 / 1.25 : 1.25)); } }}
     onPointerDown={event => { if (event.pointerType !== 'mouse' || event.button !== 0 || magnifying || scale.current <= 1) return; const element = event.currentTarget; drag.current = { x: event.clientX, y: event.clientY, left: element.scrollLeft, top: element.scrollTop }; element.setPointerCapture(event.pointerId); event.preventDefault(); }}
     onPointerMove={event => { if (!drag.current) return; event.currentTarget.scrollLeft = drag.current.left - (event.clientX - drag.current.x); event.currentTarget.scrollTop = drag.current.top - (event.clientY - drag.current.y); }}
-    onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}><div className={styles.zoomBounds} style={{ width: `${zoom * 100}%`, minWidth: minWidth ? minWidth * zoom : undefined, height: height * zoom || undefined }}><div ref={surface} className={styles.zoomSurface} style={{ width: `${100 / zoom}%`, transform: `scale(${zoom})` }}><MagnifiableDiagram svg={svg} enabled={magnifying} id={id}/></div></div></div>;
+    onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}><div className={styles.zoomBounds} style={{ width: `${zoom * 100}%`, minWidth: minWidth ? `var(--diagram-min-width, ${minWidth * zoom}px)` : undefined, height: height * zoom || undefined }}><div ref={surface} className={styles.zoomSurface} style={{ width: `${100 / zoom}%`, transform: `scale(${zoom})` }}><MagnifiableDiagram svg={svg} enabled={magnifying} id={id}/></div></div></div>;
 }

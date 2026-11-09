@@ -119,7 +119,7 @@
 .compact .modeHint { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
 .compact .pages { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .compact .source { padding: 20px 32px 80px; width: 100%; max-width: 800px; }
-.compact .reading { max-width: 800px; padding: 32px 48px 80px; }
+.compact .reading { max-width: var(--reading-column-width); padding: 32px clamp(20px,3vw,40px) 80px; }
 .compact .footer { padding: 4px 16px; font-size: 11px; flex-shrink: 0; border-top: 1px solid var(--border-base); }
 .compact .assetHint { padding: 4px 16px; margin: 0; font-size: 11px; }
 .compact .editingToolbar { padding: 4px 12px; gap: 0; }
@@ -202,7 +202,7 @@
  .compact[data-mode="read"] > .footer, .compact[data-mode="read"] > .editingToolbar { display: none; }
  .compact[data-mode="read"] > .footer:has(.selectionCount) { display: flex; }
  .compact .footer:has(.selectionCount) > span:not(.statistics) { display: none; }
- .compact[data-mode="read"] .reading { max-width: 740px; padding: 16px 28px 56px; letter-spacing: normal; }
+ .compact[data-mode="read"] .reading { max-width: var(--reading-column-width); padding: 16px 28px 56px; letter-spacing: normal; }
  .compact[data-mode="read"] .reading h1 { font-size: 28px; line-height: 1.3; letter-spacing: -.015em; margin: 0 0 28px; }
  .compact[data-mode="read"] .reading h2 { font-size: 22px; line-height: 1.4; margin: 30px 0 14px; }
  .compact[data-mode="read"] .reading h3 { font-size: 18px; line-height: 1.4; margin: 24px 0 12px; }
@@ -490,7 +490,7 @@
   :global(html[data-native-chrome="true"]) .compact.workbench > .footer > .statistics:not(:has(.selectionCount)) { display: none; }
   :global(html[data-native-chrome="true"]) .compact.workbench > .footer:has(.selectionCount) > .documentSaveStatus { display: none; }
 }
-:global(html[data-native-chrome="true"]) .compact .reading { max-width: 760px; padding: 24px clamp(20px,4vw,48px) 64px; font-size: calc(var(--reading-size) * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
+:global(html[data-native-chrome="true"]) .compact .reading { max-width: var(--reading-column-width); padding: 24px clamp(20px,4cqw,40px) 64px; font-size: calc(var(--reading-size) * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
 :global(html[data-native-chrome="true"]) .compact[data-reading-editable="true"] .richReading { font-size: calc(max(16px,var(--reading-size)) * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
 :global(html[data-native-chrome="true"]) .compact[data-mode="read"] .reading h1 { font-size: 1.8em; }
 :global(html[data-native-chrome="true"]) .compact[data-mode="read"] .reading h2 { font-size: 1.4em; }
