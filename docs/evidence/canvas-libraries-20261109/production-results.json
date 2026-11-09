@@ -1,0 +1,181 @@
+{
+  "origin": "https://scriba.aeonbridge.app/",
+  "results": [
+    {
+      "engine": "chromium",
+      "viewport": "desktop",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:1",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3"
+      ],
+      "liveElements": 17,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    },
+    {
+      "engine": "chromium",
+      "viewport": "phone",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:2"
+      ],
+      "liveElements": 16,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    },
+    {
+      "engine": "chromium",
+      "viewport": "tablet-portrait",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:2"
+      ],
+      "liveElements": 16,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    },
+    {
+      "engine": "chromium",
+      "viewport": "tablet-landscape",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:2"
+      ],
+      "liveElements": 16,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    },
+    {
+      "engine": "webkit",
+      "viewport": "desktop",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:1",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3"
+      ],
+      "liveElements": 17,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    },
+    {
+      "engine": "webkit",
+      "viewport": "phone",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:2"
+      ],
+      "liveElements": 16,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    },
+    {
+      "engine": "webkit",
+      "viewport": "tablet-portrait",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:2"
+      ],
+      "liveElements": 16,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    },
+    {
+      "engine": "webkit",
+      "viewport": "tablet-landscape",
+      "symbols": 200,
+      "recent": [
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:4",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:12",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:11",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:10",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:9",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:8",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:7",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:6",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:5",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:3",
+        "scriba:import:b88a5b000decfe7cf591f7db4f0371095c3b09eec0660c98eddce495fe3227d9:2"
+      ],
+      "liveElements": 16,
+      "uniqueIds": true,
+      "arrowBindingPreserved": true,
+      "passed": true
+    }
+  ]
+}

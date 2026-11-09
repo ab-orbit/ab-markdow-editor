@@ -32,3 +32,7 @@ The following screenshots use synthetic libraries and drawings in isolated conte
 ![Light phone library](phone-light.png)
 
 ![Tablet landscape drawing library](tablet-landscape.png)
+
+## Deployment
+
+Version 1.17.6 is active at the public HTTPS origin and installed in `/Applications/Scriba.app`. All eight library journeys also passed on the published site. The installed package has a verified signature and a retained rollback copy. Activation used an atomic exchange, and the existing local backend continued serving the new distribution. [Published-site results](production-results.json), [release receipt](release.json).
