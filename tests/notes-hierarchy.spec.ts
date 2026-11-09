@@ -13,7 +13,6 @@ test('notes header creates a whiteboard and protects an unsaved note during repl
   const notes = page.getByRole('complementary', { name: 'Notas recentes' });
   await expect(notes.getByRole('button', { name: 'Nova nota', exact: true })).toBeVisible();
   await expect(notes.getByRole('button', { name: 'Novo whiteboard', exact: true })).toBeVisible();
-  await notes.getByRole('button', { name: 'Ocultar busca de notas' }).click();
   await expect(notes.getByRole('searchbox')).toHaveCount(0);
   await notes.getByRole('button', { name: 'Mostrar busca de notas' }).click();
   await expect(notes.getByRole('searchbox')).toBeFocused();

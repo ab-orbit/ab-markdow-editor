@@ -23,6 +23,7 @@ for(const viewport of [{name:'desktop',width:1440,height:900},{name:'mobile',wid
    await expect(sidebar.getByRole('heading',{name:'Hoje',exact:true})).toBeVisible();await expect(sidebar.getByRole('heading',{name:'Ontem',exact:true})).toBeVisible();await expect(sidebar.getByRole('heading',{name:'Últimos 7 dias',exact:true})).toBeVisible();
    await expect(sidebar.locator('[data-note="note-104.md"] time')).toContainText(/há 2 h/);
    await expect(page.locator('.editor-brandbar')).toHaveCount(0);
+   await page.getByRole('button',{name:'Mostrar busca de notas',exact:true}).click();
    const search=page.getByRole('searchbox',{name:'Buscar nas notas recentes'});
    await search.fill('NOTA 104');await expect(recent.locator('li')).toHaveCount(1);
    await search.fill('Conteudo 103');await expect(recent.locator('li')).toHaveCount(1);await expect(recent.locator('strong').first()).toHaveText('Nota 103');
