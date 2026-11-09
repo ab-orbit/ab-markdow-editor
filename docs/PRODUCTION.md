@@ -2,7 +2,7 @@
 
 Production: https://scriba.aeonbridge.app/
 
-Latest deployment is [9 November 2026 — inline filename editing, version 1.17.5](evidence/inline-rename-20261109/README.md).
+Latest deployment is [9 November 2026 — drawing library import, type groups and recent symbols, version 1.17.6](evidence/canvas-libraries-20261109/README.md).
 
 The public build uses `VITE_STORAGE_MODE=browser npm run build`. Nginx serves `dist/` and proxies `/github/` to the isolated synchronization gateway. No local filesystem API or server Git checkout is published. Notes, attachments, pins, and preferences live in the visitor's origin-scoped IndexedDB. Clearing site data removes them. Export ZIP backups or configure the optional GitHub destination for file synchronization between devices.
 

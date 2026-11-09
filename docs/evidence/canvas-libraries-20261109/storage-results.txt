@@ -1,0 +1,2 @@
+chromium: 187 default symbols, personal edits preserved, no reseeding after removal or clearing.
+webkit: 187 default symbols, personal edits preserved, no reseeding after removal or clearing.

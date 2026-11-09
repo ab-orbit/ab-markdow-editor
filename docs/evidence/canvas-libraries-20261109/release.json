@@ -1,0 +1,31 @@
+{
+  "version": "1.17.6",
+  "sourceCommit": "69827cc86bbb2103bdafd03ed45b5c130287ebd6",
+  "sourceBranch": "codex/canvas-library-management",
+  "verifiedAt": "2026-11-09T17:39:02.740Z",
+  "web": {
+    "url": "https://scriba.aeonbridge.app/",
+    "buildMode": "browser",
+    "release": "/var/www/scriba/releases/20261109-public-1.17.6-69827cc",
+    "previousRelease": "/var/www/scriba/releases/20261109-public-1.17.5-e60aa01",
+    "indexSha256": "fd0edb918b05a5d2bd0e62b2f68fb1317944688d41c63c35af6619947cf31753",
+    "httpsHtmlMatches": true,
+    "pwaCache": "ab-markdown-shell-d75a85f70ca5bf82",
+    "previousHashedAssetsRetained": true,
+    "browserJourneysPassed": 8
+  },
+  "mac": {
+    "bundle": "/Applications/Scriba.app",
+    "version": "1.17.6",
+    "documentIcon": "AppIcon.icns",
+    "nodeVersion": "v22.23.3",
+    "signature": "verified",
+    "previousVersion": "1.17.5",
+    "backendPidBefore": 3051,
+    "backendPidAfter": 3051,
+    "atomicExchange": true,
+    "servedIndexMatches": true,
+    "indexSha256": "5c1b6633829e2fc0d8471ebebef78197d63623ef36f07cde1857811d38d4115d",
+    "backup": "artifacts/canvas-libraries-20261109/backups/Scriba-1.17.5.app"
+  }
+}
