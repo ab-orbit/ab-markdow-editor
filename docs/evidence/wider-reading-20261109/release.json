@@ -1,0 +1,31 @@
+{
+  "version": "1.17.7",
+  "sourceCommit": "9ed64c247c06653da0a3c1fe7b10cfea50e15d95",
+  "sourceBranch": "codex/wider-document-view",
+  "verifiedAt": "2026-11-09T18:12:00.957Z",
+  "web": {
+    "url": "https://scriba.aeonbridge.app/",
+    "buildMode": "browser",
+    "release": "/var/www/scriba/releases/20261109-public-1.17.7-9ed64c2",
+    "previousRelease": "/var/www/scriba/releases/20261109-public-1.17.6-69827cc",
+    "indexSha256": "9bf98a168d322317060d57899e67b7693a6e65f9f1b3ab39369df9fa449ef4fa",
+    "httpsHtmlMatches": true,
+    "pwaCache": "ab-markdown-shell-b5e7a4f78b175249",
+    "previousHashedAssetsRetained": true,
+    "browserJourneysPassed": 10
+  },
+  "mac": {
+    "bundle": "/Applications/Scriba.app",
+    "version": "1.17.7",
+    "documentIcon": "AppIcon.icns",
+    "nodeVersion": "v22.23.3",
+    "signature": "verified",
+    "previousVersion": "1.17.6",
+    "backendPidBefore": 3051,
+    "backendPidAfter": 3051,
+    "atomicExchange": true,
+    "servedIndexMatches": true,
+    "indexSha256": "5f8d1eee610235ef532cf7b1f79bf1a3fdfdf007f60216f8c2008af7a4f38667",
+    "backup": "artifacts/wider-reading-20261109/backups/Scriba-1.17.6.app"
+  }
+}

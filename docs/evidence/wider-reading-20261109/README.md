@@ -25,3 +25,7 @@ These screenshots use a synthetic wide drawing and comparison table.
 ![Compact phone layout](phone-dark.png)
 
 ![Tablet landscape layout](tablet-landscape.png)
+
+## Deployment
+
+Version 1.17.7 is active at the public HTTPS origin and installed in `/Applications/Scriba.app`. All ten width and diagram journeys also passed against the published site. The installed Mac package has a verified signature, an atomic activation and a retained rollback copy. The existing local backend continued serving the new distribution. [Published-site results](production-results.json), [release receipt](release.json).
