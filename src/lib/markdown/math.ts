@@ -47,7 +47,7 @@ export function mathSpans(source: string, legacy = true): MathSpan[] {
   for (let i = 0; i < source.length;) {
     let to = 0, tex = '', display = false;
     const preceding = source.slice(Math.max(0, i - 64), i);
-    const slashDelimiter = source[i - 1] !== '\\' && !/\\[A-Za-z]+$|\\+in\s*$/.test(preceding);
+    const slashDelimiter = source[i - 1] !== '\\' && !/\\[A-Za-z]+(?:\{[^{}]*\})?$|\\+in\s*$/.test(preceding);
     const delimiter = source.startsWith('$$', i) ? '$$' : source[i] === '$' && source[i - 1] !== '\\' ? '$' : slashDelimiter && source.startsWith('\\(', i) ? '\\(' : slashDelimiter && source.startsWith('\\[', i) ? '\\[' : '';
     if (delimiter) {
       const close = delimiter === '\\(' ? '\\)' : delimiter === '\\[' ? '\\]' : delimiter;

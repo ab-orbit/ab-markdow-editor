@@ -29,6 +29,8 @@ Imported notation P(Y \= k) \= \\binom{n}{k} p^k (1 \- p)^{n \- k}, \\quad \\mat
 
 Imported units 10\\text{ minutes} and 49\\text{ mm} remain attached to their values.
 
+Imported expectation \\mathbb{E}\[A+T\] \= 20\\text{ minutes} stays in one expression.
+
 ## Matrices and systems
 
 \[
