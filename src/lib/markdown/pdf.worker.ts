@@ -5,6 +5,7 @@ import courier from 'pdfmake/build/standard-fonts/Courier';
 import type { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
 import type { PdfJob, PdfReply } from './pdfTypes';
 import { PDF_PAGE_MARGINS, preparePdfTables } from './pdfTables';
+import type { PdfFontResolver } from './pdfMath';
 
 pdfMake.addVirtualFileSystem(fonts);
 pdfMake.addFontContainer(courier);
@@ -13,6 +14,10 @@ const scope = globalThis as unknown as {
   onmessage: (event: MessageEvent<PdfJob>) => void;
   postMessage: (reply: PdfReply, transfer?: Transferable[]) => void;
 };
+function containsMath(node: unknown): boolean {
+  if (!node || typeof node !== 'object') return false;
+  return 'scribaMath' in node || Object.values(node).some(containsMath);
+}
 scope.onmessage = async ({ data: job }) => {
   try {
     setLanguage(job.language || 'en');
@@ -46,6 +51,15 @@ scope.onmessage = async ({ data: job }) => {
       // Footer nodes also appear in pdfmake's following-node list; they cannot keep a heading with its body.
       pageBreakBefore: (node, queries) => !!node.headlineLevel && !queries.getFollowingNodesOnPage().some(next => next.style !== 'scribaFooter' && !next.headlineLevel),
     };
+    if (containsMath(pages.content)) {
+      const { preparePdfMath } = await import('./pdfMath');
+      // Measure with pdfmake's embedded fonts, so inline formulas share the prose baseline and wrap width.
+      const metrics = pdfMake.createPdf({ content: [] });
+      const document = await metrics.getStream() as unknown as { provideFont: PdfFontResolver };
+      try {
+        definition.content = preparePdfMath(pages.content, (...args) => document.provideFont(...args), definition.styles || {}, definition.defaultStyle || {});
+      } finally { await metrics.getBuffer(); }
+    }
     const bytes = Uint8Array.from(await pdfMake.createPdf(definition).getBuffer()).buffer;
     if (bytes.byteLength > 60 * 1024 * 1024) throw new Error(t("O PDF excede 60 MB. Exporte uma seção menor ou reduza as imagens."));
     scope.postMessage({ bytes }, [bytes]);

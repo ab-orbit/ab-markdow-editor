@@ -187,14 +187,17 @@ final class ScribaTests: XCTestCase {
         XCTAssertEqual(rejected as? Bool, true)
     }
 
-    /** Exercise the bundled PDF worker, native export command and actual share sheet. */
+    /** Exercise vector mathematics, table pagination, the bundled worker and the native share sheet. */
     func testPdfTableExportPreservesColumnsAndPageOrientation() async throws {
         let controller = try XCTUnwrap(scribaController(web.window?.rootViewController))
         let filename = "PDF-Tables-" + UUID().uuidString
         let rows = (1...24).map { index in
-            "| Criterion \(index) | Contextual observation \(index) | Independent evidence \(index) | `minimum_recent_independent_observations_\(index)` | Final interpretation \(index) |"
+            "| Criterion \(index) | Contextual observation \(index) | Independent evidence \(index) $\\frac{1}{\(index)}$ | `minimum_recent_independent_observations_\(index)` | Final interpretation \(index) |"
         }.joined(separator: "\n")
-        let source = "# PDF regression\n\nPortrait introduction.\n\n## Wide comparison\n\n" +
+        let mathematics = #"An inline formula $\frac{r(1-p)}{p^2}$ remains beside native selectable prose."# +
+            "\n\n" + #"$$\mathbb{E}[X]=p,\quad\operatorname{Var}(X)=p(1-p)$$"# +
+            "\n\n" + #"Imported units 10\\text{ minutes} remain attached to the value."#
+        let source = "# PDF regression\n\nPortrait introduction.\n\n" + mathematics + "\n\n## Wide comparison\n\n" +
             "| Criterion | Monitor | Research | Platform | Interpretation |\n|---|---|---|---|---|\n" + rows +
             "\n\n## Conclusion\n\nPortrait conclusion after the table.\n"
         _ = try await js("""
@@ -238,6 +241,10 @@ final class ScribaTests: XCTestCase {
         }
         XCTAssertTrue(text.contains("Portraitconclusionafterthetable."))
         XCTAssertTrue(text.contains("poweredbyAeonBridgeCo."))
+        XCTAssertTrue(text.contains("nativeselectableprose."))
+        for command in [#"\frac"#, #"\mathbb"#, #"\quad"#, #"\operatorname"#, #"\text{"#] {
+            XCTAssertFalse(text.contains(command), "Mathematical source must be typeset in the native PDF: " + command)
+        }
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let evidence = documents.appendingPathComponent("pdf-table-regression.pdf")
         try Data(contentsOf: pdfURL).write(to: evidence, options: .atomic)

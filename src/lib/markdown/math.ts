@@ -57,7 +57,7 @@ export function mathSpans(source: string, legacy = true): MathSpan[] {
       const bracketMath = delimiter !== '\\[' || !source.slice(0, i).trim() && !source.slice(end + close.length).trim() || /\\[A-Za-z]+|[=+^]|(?<!\\)_/.test(inner);
       if (end >= 0 && bracketMath && (delimiter !== '$' || !source.slice(i + 1, end).includes('\n'))) { to = end + close.length; tex = source.slice(i + delimiter.length, end); display = delimiter === '$$' || delimiter === '\\['; }
     }
-    if (!to && legacy && !/[\p{L}\p{N}\\]/u.test(source[i - 1] || '') && /[A-Za-z\\(]/.test(source[i])) {
+    if (!to && legacy && !/[\p{L}\p{N}\\]/u.test(source[i - 1] || '') && /[A-Za-z\d\\(]/.test(source[i])) {
       const end = legacyEnd(source, i), raw = source.slice(i, end).trimEnd();
       if (/\\+[A-Za-z]+|[A-Za-z]\\*_\{?[\d\\]/.test(raw)) {
         const candidate = importedTex(raw).replace(/[, ]+$/, '');

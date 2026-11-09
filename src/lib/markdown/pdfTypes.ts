@@ -1,4 +1,9 @@
-import type { Content } from 'pdfmake/interfaces';
+import type { Content, ContentText } from 'pdfmake/interfaces';
+
+export interface PdfMathText extends ContentText {
+  /** Export-only annotation. The fallback text retains unsupported TeX verbatim. */
+  scribaMath: { tex: string; display: boolean };
+}
 
 export interface PdfPalette {
   /** Resolved light reading tokens, independent of the current screen theme. */
