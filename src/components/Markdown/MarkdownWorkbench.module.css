@@ -386,6 +386,28 @@
 .compact .filename { flex: 1 1 160px; min-width: 110px; max-width: min(28vw, 360px); gap: 6px; }
 .compact .filename > .renameButton { display: block; flex: 1 1 auto; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: start; }
 .compact .filename > button:not(.renameButton) { flex: 0 0 36px; }
+.renameForm { display: flex; align-items: flex-start; gap: 4px; width: 100%; min-width: 0; font-family: var(--font-ui); }
+.renameField { display: flex; flex: 1 1 auto; flex-direction: column; min-width: 0; }
+.renameForm input { width: 100%; min-width: 0; min-height: 44px; padding: 8px 10px; font: inherit; border: 1px solid var(--border-strong); border-radius: var(--ui-control-radius); background: var(--bg-input); color: var(--text-primary); }
+.renameForm input:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.renameForm input[aria-invalid="true"] { border-color: var(--red); }
+.renameForm input[readonly] { cursor: progress; }
+.compact .filename .renameForm > button, .renameForm > button { flex: 0 0 44px; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 8px; border: 0; border-radius: var(--ui-control-radius); color: var(--text-secondary); background: transparent; }
+.renameForm > button[type="submit"] { color: var(--cyan); }
+.renameForm > button:hover:not(:disabled) { background: var(--ui-glass-fill); }
+.renameError { padding: 4px 2px 0; color: var(--red); font-size: var(--ui-caption-size); line-height: 1.4; overflow-wrap: anywhere; }
+.compact.workbench[data-renaming="true"] > .toolbar > .filename { min-width: 0; }
+/* Compact and UIKit layouts expose the filename as an inline row while it is edited. */
+@media (max-width: 899px), (max-height: 600px) and (pointer: coarse) {
+ .compact.workbench[data-renaming="true"] > .toolbar { display: flex !important; padding: 6px 12px; }
+ .compact.workbench[data-renaming="true"] > .toolbar > :not(.filename) { display: none; }
+ .compact.workbench[data-renaming="true"] > .toolbar > .filename { flex: 1 1 100%; max-width: none; }
+ .renameForm input { font-size: 16px; }
+}
+:global(html[data-native-chrome="true"]) .compact.workbench[data-renaming="true"] > .toolbar { display: flex !important; padding: 6px 12px; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-renaming="true"] > .toolbar > :not(.filename) { display: none; }
+:global(html[data-native-chrome="true"]) .compact.workbench[data-renaming="true"] > .toolbar > .filename { flex: 1 1 100%; max-width: none; }
+:global(html[data-native-chrome="true"]) .renameForm input { font-size: 16px; }
 .compact .actions { margin-inline-start: auto; justify-content: flex-end; }
 .compact .formats, .compact .modes { flex-shrink: 0; }
 @media (min-width: 1400px) { .compact .filename { flex-basis: 240px; } }

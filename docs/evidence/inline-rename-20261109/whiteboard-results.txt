@@ -1,0 +1,4 @@
+chromium 390: timestamped creation, real note/whiteboard rename and immediate writing after drawing survive reload.
+chromium 1440: timestamped creation, real note/whiteboard rename and immediate writing after drawing survive reload.
+webkit 390: timestamped creation, real note/whiteboard rename and immediate writing after drawing survive reload.
+webkit 1440: timestamped creation, real note/whiteboard rename and immediate writing after drawing survive reload.

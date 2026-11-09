@@ -1,0 +1,39 @@
+{
+  "origin": "http://127.0.0.1:52489",
+  "results": [
+    {
+      "engine": "chromium",
+      "viewport": "desktop",
+      "geometry": {
+        "form": {
+          "x": 296,
+          "right": 656,
+          "width": 360,
+          "height": 44
+        },
+        "input": {
+          "x": 296,
+          "right": 560,
+          "width": 264,
+          "height": 44
+        },
+        "buttons": [
+          {
+            "x": 564,
+            "right": 608,
+            "width": 44,
+            "height": 44
+          },
+          {
+            "x": 612,
+            "right": 656,
+            "width": 44,
+            "height": 44
+          }
+        ],
+        "viewport": 1440
+      },
+      "passed": true
+    }
+  ]
+}
