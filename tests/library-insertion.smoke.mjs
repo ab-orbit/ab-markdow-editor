@@ -3,9 +3,10 @@ import {createServer} from 'vite';
 import {mkdir} from 'node:fs/promises';
 process.env.VITE_STORAGE_MODE='browser';
 const server=await createServer({server:{host:'127.0.0.1',port:0}});await server.listen();
-await mkdir('docs/evidence/library-insertion',{recursive:true});
+const output=process.env.SCRIBA_LIBRARY_INSERTION_OUTPUT || 'artifacts/library-insertion';
+await mkdir(output,{recursive:true});
 try{for(const engine of [chromium,webkit]){
- const browser=await engine.launch({headless:true});
+ const browser=await engine.launch({headless:true,...(engine===chromium?{channel:'chrome'}:{})});
  try{
   const page=await browser.newPage({hasTouch:true,isMobile:true,viewport:{width:390,height:844},locale:'en-US',serviceWorkers:'block'});
   await page.goto(server.resolvedUrls.local[0]);await expect(page.getByLabel('Markdown file',{exact:true})).toBeEnabled();
@@ -25,7 +26,7 @@ try{for(const engine of [chromium,webkit]){
   const cells=page.locator('.library-unit__active');await expect(cells.first()).toBeVisible({timeout:30000});
   await cells.nth(0).locator('.library-unit__checkbox').click();await cells.nth(1).locator('.library-unit__checkbox').click();
   const add=page.getByRole('button',{name:'Add selected (2)',exact:true});await expect(add).toBeEnabled();
-  await page.screenshot({path:`docs/evidence/library-insertion/${engine.name()}-selected.png`});
+  await page.screenshot({path:`${output}/${engine.name()}-selected.png`});
   await add.click();await expect(page.locator('.library-menu-items-container')).toHaveCount(0);
   await page.getByRole('button',{name:'Back to note',exact:true}).click();
   const editor=page.getByRole('textbox',{name:'Note text',exact:true});await expect(editor).toBeVisible();
@@ -33,7 +34,7 @@ try{for(const engine of [chromium,webkit]){
   await page.getByRole('button',{name:'See drawing code',exact:true}).click();
   const scene=JSON.parse(await editor.locator('pre').innerText());expect(scene.elements.filter(element=>!element.isDeleted).length).toBeGreaterThan(1);
   await page.getByRole('button',{name:'Hide drawing code',exact:true}).click();
-  await page.screenshot({path:`docs/evidence/library-insertion/${engine.name()}-inserted.png`});
+  await page.screenshot({path:`${output}/${engine.name()}-inserted.png`});
   console.log(`${engine.name()}: selected library symbols inserted without leaving the app; sidebar dismissed and drawing returned to note.`);
  }finally{await browser.close();}
 }}finally{await server.close();}

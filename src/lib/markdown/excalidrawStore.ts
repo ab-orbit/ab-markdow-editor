@@ -1,3 +1,5 @@
+import { nextLibraryRecents } from './canvasLibrary';
+
 /** Private, origin-local canvas drafts and reusable shape libraries; nothing leaves this device. */
 let database: Promise<IDBDatabase> | undefined;
 function open() {
@@ -14,6 +16,19 @@ export async function readCanvasState<T>(key: string): Promise<T | undefined> {
 export async function writeCanvasState(key: string, value?: unknown) {
   const db = await open();
   return new Promise<void>((resolve, reject) => { const tx = db.transaction('private', 'readwrite'), store = tx.objectStore('private'); if (value === undefined) store.delete(key); else store.put(value, key); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); });
+}
+
+/** Merge recent uses atomically so two open canvases cannot overwrite each other's history. */
+export async function rememberCanvasLibraryUse(ids: readonly string[]): Promise<string[]> {
+  const db = await open();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('private', 'readwrite'), store = tx.objectStore('private');
+    const read = store.get('library-recents-v1');
+    let recent: string[] = [];
+    read.onsuccess = () => { recent = nextLibraryRecents(read.result, ids); store.put(recent, 'library-recents-v1'); };
+    tx.oncomplete = () => resolve(recent);
+    tx.onerror = tx.onabort = () => reject(tx.error);
+  });
 }
 
 /** Seed bundled symbols once; user edits, deletions and library clearing are never undone. */

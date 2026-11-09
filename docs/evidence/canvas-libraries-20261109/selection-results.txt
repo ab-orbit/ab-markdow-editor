@@ -1,0 +1,3 @@
+Port 5173 is in use, trying another one...
+chromium: selected library symbols inserted without leaving the app; sidebar dismissed and drawing returned to note.
+webkit: selected library symbols inserted without leaving the app; sidebar dismissed and drawing returned to note.

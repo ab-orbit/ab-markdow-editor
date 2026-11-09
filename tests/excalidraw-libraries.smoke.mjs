@@ -2,13 +2,17 @@ import {chromium,webkit,expect} from '@playwright/test';
 import {createServer} from 'vite';
 const server=await createServer({server:{host:'127.0.0.1',port:0}});await server.listen();
 try{for(const engine of [chromium,webkit]){
- const browser=await engine.launch({headless:true});
+ const browser=await engine.launch({headless:true,...(engine===chromium?{channel:'chrome'}:{})});
  try{const page=await browser.newPage();await page.goto(server.resolvedUrls.local[0]+'privacy.html');
  const result=await page.evaluate(async()=>{
   const {initialCanvasLibrary,writeCanvasState,readCanvasState}=await import('/src/lib/markdown/excalidrawStore.ts');
   const seed=await initialCanvasLibrary();const custom={...seed[0],id:'personal-symbol',name:'My own symbol'};
   const edited=[custom,...seed.slice(1)];await writeCanvasState('library',edited);
-  const again=await initialCanvasLibrary();await writeCanvasState('library',[]);const cleared=await initialCanvasLibrary();
+  const again=await initialCanvasLibrary();
+  const {rememberCanvasLibraryUse}=await import('/src/lib/markdown/excalidrawStore.ts');
+  await Promise.all([rememberCanvasLibraryUse(['tab-a']),rememberCanvasLibraryUse(['tab-b'])]);
+  const recent=await readCanvasState('library-recents-v1');
+  if(!recent.includes('tab-a') || !recent.includes('tab-b'))throw new Error('Concurrent library uses lost history');await writeCanvasState('library',[]);const cleared=await initialCanvasLibrary();
   return {count:seed.length,unique:new Set(seed.map(item=>item.id)).size,personal:again.find(item=>item.id==='personal-symbol')?.name,removed:again.some(item=>item.id===seed[0].id),cleared:cleared.length,marker:await readCanvasState('bundled-libraries-v1')};
  });
  expect(result).toEqual({count:187,unique:187,personal:'My own symbol',removed:false,cleared:0,marker:true});
