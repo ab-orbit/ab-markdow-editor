@@ -1,5 +1,5 @@
 {
-  "origin": "http://127.0.0.1:54881",
+  "origin": "http://127.0.0.1:55250",
   "results": [
     {
       "engine": "chromium",
@@ -43,6 +43,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 1440,
+        "available": 1440,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 1440,
         "available": 1440,

@@ -43,6 +43,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 1600,
+        "available": 2208,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 308,
+          "width": 44
+        },
+        {
+          "left": 308,
+          "width": 44
+        },
+        {
+          "left": 308,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 1600,
         "available": 2208,
@@ -104,6 +131,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 1440,
+        "available": 1440,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 1440,
         "available": 1440,
@@ -165,6 +219,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 1180,
+        "available": 1180,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 1180,
         "available": 1180,
@@ -226,6 +307,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 820,
+        "available": 820,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          32.8
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 820,
         "available": 820,
@@ -287,6 +395,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 390,
+        "available": 390,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          20
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 390,
         "available": 390,
@@ -348,6 +483,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 1600,
+        "available": 2208,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 308,
+          "width": 44
+        },
+        {
+          "left": 308,
+          "width": 44
+        },
+        {
+          "left": 308,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 1600,
         "available": 2208,
@@ -409,6 +571,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 1440,
+        "available": 1440,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 1440,
         "available": 1440,
@@ -470,6 +659,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 1180,
+        "available": 1180,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 1180,
         "available": 1180,
@@ -531,6 +747,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 820,
+        "available": 820,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          32.799999
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 820,
         "available": 820,
@@ -592,6 +835,33 @@
         ],
         "bodyOverflow": 0
       },
+      "nativeReader": {
+        "width": 390,
+        "available": 390,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          20
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
       "nativeLayout": {
         "width": 390,
         "available": 390,
