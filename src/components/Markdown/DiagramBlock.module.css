@@ -52,6 +52,8 @@
 .zoomViewport[data-diagram-zoom]:not([data-diagram-zoom="1.000"]) { cursor: grab; }
 .zoomViewport:active { cursor: grabbing; }
 .zoomBounds { position: relative; min-width: 100%; }
+/* Start at a complete width fit on desktop; zoom controls still expand the existing SVG. */
+@media (min-width: 900px) { .zoomViewport { --diagram-min-width: 0px; } }
 .zoomSurface { position: relative; transform-origin: top left; }
 .diagramFooter { display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 0 8px 8px; font: var(--ui-caption-size)/1.4 var(--font-ui); }
 .diagramFooter button, .diagramFooter summary, .codePanel footer button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 8px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); font: inherit; cursor: pointer; }

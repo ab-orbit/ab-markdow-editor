@@ -1,0 +1,93 @@
+{
+  "origin": "http://127.0.0.1:55250",
+  "results": [
+    {
+      "engine": "chromium",
+      "viewport": "desktop",
+      "reading": {
+        "width": 1160,
+        "available": 1160,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "withoutLibrary": {
+        "width": 1440,
+        "available": 1440,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "editing": {
+        "width": 1440,
+        "available": 1440,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          40,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "nativeReader": {
+        "width": 1440,
+        "available": 1440,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          52,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "headingControls": [
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        },
+        {
+          "left": 4,
+          "width": 44
+        }
+      ],
+      "nativeLayout": {
+        "width": 1440,
+        "available": 1440,
+        "parentPadding": [
+          0,
+          0
+        ],
+        "padding": [
+          40,
+          40
+        ],
+        "bodyOverflow": 0
+      },
+      "diagram": {
+        "width": 1034,
+        "overflow": 0
+      },
+      "passed": true
+    }
+  ]
+}
