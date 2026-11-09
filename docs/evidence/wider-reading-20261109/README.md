@@ -1,6 +1,6 @@
 # Wider document visualization
 
-Scriba 1.17.7 raises the standalone reading and visual-editing column limit from 800px to 1600px. The column follows its actual available pane width up to that limit. Desktop horizontal padding is reduced to a 20–40px responsive range. The mobile reader uses the same width limit, allowing tablet layouts to use their pane. Native padding uses container-relative units so a narrow Duo pane measures its own available space.
+Scriba 1.17.7 raises the standalone reading and visual-editing column limit from 800px to 1600px. The column follows its actual available pane width up to that limit. Desktop horizontal padding is reduced to a 20–40px responsive range. The mobile reader uses the same width limit, allowing tablet layouts to use their pane. Native padding uses container-relative units so a narrow Duo pane measures its own available space. A 52px heading gutter keeps the 44px disclosure controls fully inside the scrollable pane.
 
 Excalidraw previews at viewport widths of at least 900px initially fit the entire drawing into the available width. Zoom buttons, wheel zoom and panning still operate on the existing SVG. Compact layouts retain the existing readable minimum width and horizontal navigation.
 

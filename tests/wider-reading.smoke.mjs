@@ -81,6 +81,17 @@ try {
           checkWidth(await geometry(page));
           await page.getByRole('button', { name: 'Close outline', exact: true }).click();
 
+          await page.evaluate(() => document.documentElement.dataset.nativeChrome = 'true');
+          const nativeReader = await geometry(page);
+          checkWidth(nativeReader);
+          const headingControls = await page.locator('[data-heading-section] > [class*="sectionHeading"] > button').evaluateAll(buttons => buttons.map(button => {
+            const box = button.getBoundingClientRect(), pane = button.closest('[data-document-scroll]').getBoundingClientRect();
+            return { left: box.left - pane.left, width: box.width };
+          }));
+          expect(headingControls.length).toBeGreaterThan(0);
+          for (const button of headingControls) { expect(button.left).toBeGreaterThanOrEqual(0); expect(button.width).toBeGreaterThanOrEqual(44); }
+          await page.evaluate(() => document.documentElement.dataset.nativeChrome = 'false');
+
           await page.getByRole('button', { name: 'Formatting', exact: true }).click();
           await expect(page.getByRole('textbox', { name: 'Note text', exact: true })).toBeVisible({ timeout: 30000 });
           const editing = await geometry(page);
@@ -92,7 +103,7 @@ try {
           expect(Math.min(...nativeLayout.padding)).toBeGreaterThanOrEqual(20);
           expect(Math.max(...nativeLayout.padding)).toBeLessThanOrEqual(40);
           expect(errors).toEqual([]);
-          results.push({ engine, viewport: viewport.name, reading, withoutLibrary, editing, nativeLayout, diagram: fit, passed: true });
+          results.push({ engine, viewport: viewport.name, reading, withoutLibrary, editing, nativeReader, headingControls, nativeLayout, diagram: fit, passed: true });
           console.log(`${engine} ${viewport.name}: wider reading/editing, sidebar and outline resizing, diagram fit and zoom passed.`);
         } catch (cause) {
           await page.screenshot({ path: path.join(output, `${engine}-${viewport.name}-failure.png`) }).catch(() => {});

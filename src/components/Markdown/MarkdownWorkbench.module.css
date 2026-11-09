@@ -491,6 +491,7 @@
   :global(html[data-native-chrome="true"]) .compact.workbench > .footer:has(.selectionCount) > .documentSaveStatus { display: none; }
 }
 :global(html[data-native-chrome="true"]) .compact .reading { max-width: var(--reading-column-width); padding: 24px clamp(20px,4cqw,40px) 64px; font-size: calc(var(--reading-size) * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
+:global(html[data-native-chrome="true"]) .compact .reading:has([data-heading-section]) { padding-inline-start: 52px; }
 :global(html[data-native-chrome="true"]) .compact[data-reading-editable="true"] .richReading { font-size: calc(max(16px,var(--reading-size)) * var(--ui-font-scale,1) * var(--native-reading-scale,1)); }
 :global(html[data-native-chrome="true"]) .compact[data-mode="read"] .reading h1 { font-size: 1.8em; }
 :global(html[data-native-chrome="true"]) .compact[data-mode="read"] .reading h2 { font-size: 1.4em; }
