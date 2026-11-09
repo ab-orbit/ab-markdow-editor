@@ -1,0 +1,51 @@
+[
+  {
+    "file": "browser/probability-reference-chromium.pdf",
+    "pages": 3,
+    "bodyBoundaryErrors": 0,
+    "vectorPathsChecked": 331,
+    "examples": []
+  },
+  {
+    "file": "browser/course-reference-chromium.pdf",
+    "pages": 27,
+    "bodyBoundaryErrors": 0,
+    "vectorPathsChecked": 4279,
+    "examples": []
+  },
+  {
+    "file": "browser/probability-reference-webkit.pdf",
+    "pages": 3,
+    "bodyBoundaryErrors": 0,
+    "vectorPathsChecked": 331,
+    "examples": []
+  },
+  {
+    "file": "browser/course-reference-webkit.pdf",
+    "pages": 27,
+    "bodyBoundaryErrors": 0,
+    "vectorPathsChecked": 4279,
+    "examples": []
+  },
+  {
+    "file": "mac-pdf/course-reference-chromium.pdf",
+    "pages": 27,
+    "bodyBoundaryErrors": 0,
+    "vectorPathsChecked": 4279,
+    "examples": []
+  },
+  {
+    "file": "corrected/course-reference-chromium.pdf",
+    "pages": 27,
+    "bodyBoundaryErrors": 0,
+    "vectorPathsChecked": 4279,
+    "examples": []
+  },
+  {
+    "file": "repo/docs/evidence/pdf-math-20261108/native-pdf-table-regression.pdf",
+    "pages": 4,
+    "bodyBoundaryErrors": 0,
+    "vectorPathsChecked": 128,
+    "examples": []
+  }
+]

@@ -5,6 +5,8 @@ export const PDF_PAGE_MARGINS: [number, number, number, number] = [42, 42, 42, 5
 const A4 = { width: 595.28, height: 841.89 }, PADDING = 12, FONT_SIZE = 10;
 const PORTRAIT_WIDTH = A4.width - PDF_PAGE_MARGINS[0] - PDF_PAGE_MARGINS[2];
 const LANDSCAPE_WIDTH = A4.height - PDF_PAGE_MARGINS[0] - PDF_PAGE_MARGINS[2];
+/** Text and mathematical layout share the exact widths chosen for table pages. */
+export const PDF_CONTENT_WIDTHS = { portrait: PORTRAIT_WIDTH, landscape: LANDSCAPE_WIDTH };
 
 function cellText(value: unknown): string {
   if (typeof value === 'string' || typeof value === 'number') return String(value);

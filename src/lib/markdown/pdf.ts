@@ -2,12 +2,14 @@ import { t, currentLanguage } from '../../i18n';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
-import type { RootContent, PhrasingContent, Definition, FootnoteDefinition } from 'mdast';
+import remarkMath from 'remark-math';
+import type { Root, RootContent, PhrasingContent, Definition, FootnoteDefinition } from 'mdast';
 import type { Content, ContentText, TableCell } from 'pdfmake/interfaces';
 import { resolveAsset, type MarkdownAsset } from './assets';
 import { diagramIdentity, diagramKey, diagramLanguage, diagramSourceKey, renderDiagram, selectedDiagramEngine, usesZenUml, type DiagramAppearance } from './diagrams';
 import { portableSvg } from './diagramExport';
-import type { PdfJob, PdfPalette, PdfReply } from './pdfTypes';
+import type { PdfJob, PdfMathText, PdfPalette, PdfReply } from './pdfTypes';
+import { mathBody, remarkCompatibleMath } from './math';
 
 interface Options {
   /** Snapshot of the current note, including edits not yet saved to its destination. */
@@ -22,7 +24,7 @@ interface Options {
   onProgress: (message: string) => void;
 }
 const WIDTH = 511.28, HEIGHT = 640;
-const parser = unified().use(remarkParse).use(remarkGfm);
+const parser = unified().use(remarkParse).use(remarkGfm).use(remarkMath).use(remarkCompatibleMath);
 const plain = (nodes: readonly PhrasingContent[]): string => nodes.map(node => 'value' in node ? node.value : 'children' in node ? plain(node.children) : node.type === 'image' ? node.alt || '' : '').join('');
 const cancelled = (signal: AbortSignal) => { if (signal.aborted) throw new DOMException(t("Exportação cancelada."), 'AbortError'); };
 function base64(bytes: Uint8Array) { let value = ''; for (let index = 0; index < bytes.length; index += 8192) value += String.fromCharCode(...bytes.subarray(index, index + 8192)); return btoa(value); }
@@ -65,13 +67,14 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
   try {
     const palette = printPalette(host), css = getComputedStyle(host), font = css.getPropertyValue('--font-ui').trim();
     const appearance: DiagramAppearance = { background: css.getPropertyValue('--reading-bg').trim(), foreground: palette.heading, muted: palette.muted, surface: palette.stripe, border: palette.muted, accent: palette.link, font, dark: false };
-    const tree = parser.parse(value), definitions = new Map<string, Definition>(), footnotes = new Map<string, FootnoteDefinition>(), numbers = new Map<string, number>(), occurrences = new Map<string, number>();
+    const tree = parser.runSync(parser.parse(value), { value }) as Root, definitions = new Map<string, Definition>(), footnotes = new Map<string, FootnoteDefinition>(), numbers = new Map<string, number>(), occurrences = new Map<string, number>();
     for (const node of tree.children) { if (node.type === 'definition') definitions.set(node.identifier, node); if (node.type === 'footnoteDefinition') footnotes.set(node.identifier, node); }
     function link(url?: string) { return url && /^(?:https?:\/\/|mailto:)/i.test(url) ? { link: url, color: palette.link, decoration: 'underline' as const } : {}; }
     function inline(nodes: readonly PhrasingContent[]): ContentText[] {
       return nodes.flatMap((node): ContentText[] => {
         switch (node.type) {
           case 'text': return [{ text: node.value }];
+          case 'inlineMath': return [formula(node.value, node.data?.hProperties?.className?.includes('math-display') === true)];
           case 'inlineCode': return [{ text: node.value, style: 'inlineCode' }];
           case 'strong': return [{ text: inline(node.children), bold: true }];
           case 'emphasis': return [{ text: inline(node.children), italics: true }];
@@ -84,6 +87,9 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
           default: return [];
         }
       });
+    }
+    function formula(tex: string, display = false): PdfMathText {
+      return { text: tex, scribaMath: { tex: mathBody(tex), display } };
     }
     let totalDiagrams = 0, completedDiagrams = 0;
     function count(nodes: readonly RootContent[]) { for (const node of nodes) { if (node.type === 'code' && diagramLanguage(node.lang || '')) totalDiagrams++; if ('children' in node) count(node.children as RootContent[]); } } count(tree.children);
@@ -121,6 +127,7 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
       for (const node of nodes) {
         cancelled(signal);
         switch (node.type) {
+          case 'math': output.push({ ...formula(node.value, true), margin: [0, 5, 0, 12] }); break;
           case 'heading': output.push({ text: inline(node.children), style: `h${Math.min(4, node.depth)}`, headlineLevel: node.depth }); break;
           case 'paragraph': {
             let run: PhrasingContent[] = [];
@@ -141,6 +148,10 @@ export async function createMarkdownPdf({ value, assets, fileName, diagramScope,
             output.push({ table: { headerRows: 1, dontBreakRows: true, widths: Array(columns).fill('*'), body }, fontSize: columns > 5 ? 8.5 : 10, margin: [0, 3, 0, 14], layout: 'scribaTable' }); break;
           }
           case 'code': {
+            if (/^(?:math|latex|tex)$/i.test(node.lang || '')) {
+              output.push({ ...formula(node.value, true), margin: [0, 5, 0, 12] });
+              break;
+            }
             const language = diagramLanguage(node.lang || '');
             if (language) {
               try { output.push(...await diagram(node.value, language)); }

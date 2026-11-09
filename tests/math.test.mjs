@@ -41,6 +41,23 @@ x = "\\Delta"
 \`\`\``.replaceAll('\\`','`'));
  assert.equal(all(tree,'inlineMath').length,0);assert.equal(mathSpans(String.raw`C:\Users\notes`).length,0);
 });
+test('imported units can start with a number without inferring ordinary dates or amounts',()=>{
+ const tree=parse(String.raw`Wait 10\\text{ minutos}, measure 49\\text{ mm} and 190\\text{ cm}.
+
+Ordinary 10 minutes, 49 mm, 2026-11-08, $20 and 12.50 stay plain.`);
+ const expressions=all(tree,'inlineMath');
+ assert.deepEqual(expressions.map(node=>node.value),[String.raw`10\text{ minutos}`,String.raw`49\text{ mm}`,String.raw`190\text{ cm}`]);
+ assert.ok(all(tree,'text').some(node=>node.value.includes('Ordinary 10 minutes, 49 mm, 2026-11-08, $20 and 12.50 stay plain.')));
+ for(const node of expressions)assert.match(renderMath(node.value),/class="katex/);
+});
+test('escaped brackets attached to an imported TeX command retain the complete inline expression',()=>{
+ const tree=parse(String.raw`Interval total \\mathbb{E}\[A+T\] \= 20\\text{ min}`);
+ const expressions=all(tree,'inlineMath');
+ assert.equal(expressions.length,1);
+ assert.equal(expressions[0].value,String.raw`\mathbb{E}[A+T] = 20\text{ min}`);
+ assert.ok(expressions[0].data.hProperties.className.includes('math-inline'));
+ assert.match(renderMath(expressions[0].value),/class="katex/);
+});
 test('unsafe TeX cannot create active HTML or fetch external resources, invalid input remains visible',()=>{
  for(const source of [String.raw`\href{javascript:alert(1)}{X}`,String.raw`\includegraphics{https://example.com/x}`,String.raw`\htmlClass{overlay}{X}`]){const html=renderMath(source);assert.doesNotMatch(html,/<a |<img |class="overlay"/);}
  assert.match(renderMath(String.raw`\frac{`),/math-error/);

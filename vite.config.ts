@@ -2,6 +2,15 @@ import { createReadStream, existsSync, readFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { defineConfig, type Plugin } from 'vite';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+/** Micromark's browser entity decoder needs document; workers use its equivalent pure-JS entry. */
+function workerEntityDecoder(): Plugin {
+  const decoder = createRequire(import.meta.url).resolve('decode-named-character-reference');
+  return {
+    name: 'scriba-worker-entity-decoder', enforce: 'pre',
+    resolveId(id) { if (id === 'decode-named-character-reference') return decoder; },
+  };
+}
 /** PDF layout already runs off-thread. Decode PNGs there instead of spawning CSP-blocked Blob workers. */
 function pdfWorkerPngDecoder(): Plugin {
   return {
@@ -90,7 +99,7 @@ function excalidrawFonts(): Plugin {
 
 export default defineConfig({
   plugins: [zenumlSvgOnly(), excalidrawFonts()],
-  worker: {plugins: () => [pdfWorkerPngDecoder()]},
+  worker: {format: 'es', plugins: () => [pdfWorkerPngDecoder(), workerEntityDecoder()]},
   define: { __APP_VERSION__: JSON.stringify(JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version), __BUILD_DATE__: JSON.stringify(new Date().toISOString()) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // The SDK is excluded so its font policy runs in development too. Its CJS
