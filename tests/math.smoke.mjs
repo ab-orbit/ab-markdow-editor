@@ -70,7 +70,9 @@ try{
  const changedDownload=page.waitForEvent('download');await page.getByRole('group',{name:'Formatos de exportação',exact:true}).getByRole('button',{name:/^Markdown/}).click();
  assert.equal(await readFile(await(await changedDownload).path(),'utf8'),fixture.replace(String.raw`$\frac{\Delta f}{\epsilon}$`,String.raw`$\frac{a}{b}$`),'Editing one formula leaves the other formulas and blocks unchanged');
 
- const reference=process.env.SCRIBA_MATH_REFERENCE || '/Users/jwcunha/Documents/my-markdown-notes/private-notes/GUIA DE DISCUSSÃO EXECUTIVA E TÉCNICA- PRIVACIDADE DIFERENCIAL EM DEEP LEARNING E FEDERATED LEARNING.md';
+  // Optional: a real long Markdown file with TeX. Never hard-code a personal path here (public repository).
+  const reference=process.env.SCRIBA_MATH_REFERENCE;
+  if(!reference){assert.deepEqual(errors,[]);console.log('PASS: standard TeX, imported TeX, tables, AMS matrices, editing and source preservation (real reference skipped: set SCRIBA_MATH_REFERENCE to a local Markdown file)');}else{
  await context.close();context=await browser.newContext({locale:'pt-BR',viewport:{width:1440,height:900},serviceWorkers:'block'});page=await context.newPage();await page.goto(base);await expect(page.getByLabel('Arquivo Markdown',{exact:true})).toBeEnabled();
  const original=await readFile(reference);const digest=()=>createHash('sha256').update(original).digest('hex');const before=digest();
  await page.getByLabel('Arquivo Markdown',{exact:true}).setInputFiles({name:'Math-reference.md',mimeType:'text/markdown',buffer:original});
@@ -88,6 +90,6 @@ try{
  await page.getByLabel('Exportar nota',{exact:true}).click();const originalDownload=page.waitForEvent('download');await page.getByRole('group',{name:'Formatos de exportação',exact:true}).getByRole('button',{name:/^Markdown/}).click();
  assert.deepEqual(await readFile(await(await originalDownload).path()),original,'The reference survives reading, cell focus and Write mode byte-for-byte');
  assert.equal(createHash('sha256').update(await readFile(reference)).digest('hex'),before,'The reference file is never rewritten');
- assert.deepEqual(errors,[]);console.log('PASS: standard TeX, imported TeX, tables, AMS matrices, editing, source preservation and real reference on desktop/mobile.');
+ assert.deepEqual(errors,[]);console.log('PASS: standard TeX, imported TeX, tables, AMS matrices, editing, source preservation and real reference on desktop/mobile.');}
  await context.close();
 }finally{await browser.close();await server.close();}
