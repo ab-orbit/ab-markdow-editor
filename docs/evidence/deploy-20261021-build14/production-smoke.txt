@@ -9,10 +9,10 @@ Received: false
 
 Call Log:
 - Timeout 90000ms exceeded while waiting on the predicate
-    at captureRawStack (/Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/node_modules/playwright/node_modules/playwright-core/lib/coreBundle.js:9282:17)
-    at callMatcherAsStep (/Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/node_modules/playwright/lib/matchers/expect.js:13316:57)
-    at Object.toBe (/Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/node_modules/playwright/lib/matchers/expect.js:13308:23)
-    at /Users/jwcunha/Documents/COMPANIES/AB/repos/private/portfolio/ab-polinsights/standalone/markdown-editor/tests/public-production.smoke.mjs:20:97 {
+    at captureRawStack (<repo>/node_modules/playwright/node_modules/playwright-core/lib/coreBundle.js:9282:17)
+    at callMatcherAsStep (<repo>/node_modules/playwright/lib/matchers/expect.js:13316:57)
+    at Object.toBe (<repo>/node_modules/playwright/lib/matchers/expect.js:13308:23)
+    at <repo>/tests/public-production.smoke.mjs:20:97 {
   matcherResult: {
     pass: false,
     message: 'expect(received).toBe(expected) // Object.is equality\n' +
