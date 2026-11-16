@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {unified} from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
+import {remarkSafeMath as remarkMath} from '../src/lib/markdown/remarkSafeMath.ts';
 import {mathSpans,remarkCompatibleMath,renderMath} from '../src/lib/markdown/math.ts';
 const parse=source=>{const processor=unified().use(remarkParse).use(remarkGfm).use(remarkMath).use(remarkCompatibleMath);return processor.runSync(processor.parse(source),{value:source});};
 const all=(node,type)=>[...(node.type===type?[node]:[]),...(node.children||[]).flatMap(child=>all(child,type))];
@@ -103,4 +103,19 @@ test('unclosed legacy groups always make forward progress and remain plain edita
  assert.equal(mathSpans('\\Delta f = {').at(-1)?.to,10,'The unclosed group remains outside a valid math prefix');
  const source='A paragraph with x = { and no closing brace.\n\nAnother paragraph.';
  assert.equal(all(parse(source),'paragraph').length,2);
+});
+
+test('currency dollar signs (R$, US$) are not paired as inline math while valid dollar math still renders',async()=>{
+ const {remarkSafeMath}=await import('../src/lib/markdown/remarkSafeMath.ts');
+ const safeParse=source=>{const processor=unified().use(remarkParse).use(remarkGfm).use(remarkSafeMath).use(remarkCompatibleMath);return processor.runSync(processor.parse(source),{value:source});};
+ const prose='A DRE mostra custos de R$274.680,43, exatamente a soma de pró-labore R$88.724,17, bônus R$152.545,51 e benefícios R$33.410,75. Exemplos: 22/10 R$40.000, R$10.000 e R$0,01. Nove saídas, R$152.545,51. Custa US$ 20 ou $ 30 e $5 e $6.';
+ const tree=safeParse(prose);
+ assert.equal(all(tree,'inlineMath').length,0);
+ assert.equal(all(tree,'text').map(node=>node.value).join(''),prose);
+ assert.equal(mathSpans(prose).length,0);
+ const strong=safeParse('Lucro R$129.341,09. Se aumentaria em R$152.545,51. **Isso não é final**.');
+ assert.equal(all(strong,'inlineMath').length,0);assert.equal(all(strong,'strong').length,1);
+ const valid=safeParse('Inline $x^2$ and $a+b$, then $y$, and $$z$$ ok.');
+ assert.deepEqual(all(valid,'inlineMath').map(node=>node.value),['x^2','a+b','y','z']);
+ assert.deepEqual(mathSpans('Inline $x^2$ and cost R$5 and $y$.',false).map(span=>span.tex),['x^2','y']);
 });

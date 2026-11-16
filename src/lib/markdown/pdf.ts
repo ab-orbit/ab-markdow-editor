@@ -2,7 +2,7 @@ import { t, currentLanguage } from '../../i18n';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
+import { remarkSafeMath as remarkMath } from './remarkSafeMath';
 import type { Root, RootContent, PhrasingContent, Definition, FootnoteDefinition } from 'mdast';
 import type { Content, ContentText, TableCell } from 'pdfmake/interfaces';
 import { resolveAsset, type MarkdownAsset } from './assets';
