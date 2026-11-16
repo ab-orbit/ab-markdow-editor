@@ -60,5 +60,9 @@ test('the built Mac application rejects packaging regressions before installatio
     await t.test('stale application versions are rejected', async () => {
       await assert.rejects(verifyMacBundle(bundle, { version: '0.0.0' }), /version/i);
     });
-  } finally { await fs.rm(temporary, { recursive: true, force: true }); }
+  } finally {
+    // Copies are registered by LaunchServices; unregister so Finder's "Open With" stays clean.
+    await new Promise(resolve => execFile('/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister', ['-u', bundle], () => resolve()));
+    await fs.rm(temporary, { recursive: true, force: true });
+  }
 });

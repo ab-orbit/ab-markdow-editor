@@ -36,6 +36,8 @@ async function applications(directories) {
 export async function openEditorWindow(url, {
   applicationsDirectories = [path.join(os.homedir(), 'Applications'), '/Applications'],
   run = exec,
+  /** Bring the already-open editor to the front without creating a window. */
+  focusOnly = false,
 } = {}) {
   const target = new URL(url);
   if (target.protocol !== 'http:' || target.hostname !== '127.0.0.1' || target.username || target.password) {
@@ -49,7 +51,7 @@ export async function openEditorWindow(url, {
   if (pwa) {
     // Activating the installed shim selects the app's existing Chrome/Edge profile, including multi-profile shims.
     await run('/usr/bin/open', ['-a', pwa.bundle]);
-    if (!target.searchParams.has('finder')) return;
+    if (focusOnly || !target.searchParams.has('finder')) return;
     const profile = pwa.info.CrAppModeProfileDir;
     const profileArguments = profile && profile !== '-' ? [`--profile-directory=${profile}`] : [];
     // Ordinary HTTP open-URL AppleEvents are ignored by Chromium app shims. Use the supported app URL override.
@@ -59,6 +61,7 @@ export async function openEditorWindow(url, {
   }
   const browser = browsers.map(id => installed.find(app => app.info.CFBundleIdentifier === id)).find(Boolean);
   if (!browser) throw new Error('Instale o Scriba pelo Chrome ou Edge para abrir suas notas em uma janela de aplicativo.');
+  if (focusOnly) { await run('/usr/bin/open', ['-a', browser.bundle]); return; }
   // A fresh installation still opens a separate window instead of a tab in the default browser.
   await run('/usr/bin/open', ['-n', '-a', browser.bundle, '--args', `--app=${target.href}`]);
 }

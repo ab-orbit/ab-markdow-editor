@@ -13,7 +13,11 @@ DESKTOP_DIR="${MARKDOWN_DESKTOP_DIR:-$HOME/Desktop}"
 mkdir -p "$STATE_DIR" "$APPLICATIONS_DIR" "$DESKTOP_DIR"
 chmod 700 "$STATE_DIR"
 WORK_DIR="$(mktemp -d "$STATE_DIR/install.XXXXXX")"
-trap 'rm -rf "$WORK_DIR"' EXIT
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+# The staging bundle is registered by LaunchServices as soon as it is signed; unregister it
+# (the bundle may already have moved; -u works on missing paths) before deletion so Finder's "Open With" does not accumulate one stale Scriba per install.
+cleanup_work_dir() { "$LSREGISTER" -u "$WORK_DIR/Scriba.app" 2>/dev/null || true; rm -rf "$WORK_DIR"; }
+trap cleanup_work_dir EXIT
 
 # Bundle an official runtime rather than a host binary with external dylib dependencies.
 case "$(uname -m)" in arm64) NODE_ARCH=arm64 ;; x86_64) NODE_ARCH=x64 ;; *) echo 'Arquitetura não suportada.' >&2; exit 1 ;; esac

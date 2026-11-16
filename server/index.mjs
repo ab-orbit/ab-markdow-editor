@@ -6,6 +6,7 @@ import { randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { Repository } from './repository.mjs';
 import { pickFolder, pickSaveFile } from './folder-picker.mjs';
+import { createFinderRelay } from './finder-relay.mjs';
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 const stateDir = process.env.MARKDOWN_STATE_DIR || path.join(os.homedir(), 'Library', 'Application Support', 'AB Markdown');
@@ -13,6 +14,7 @@ const repository = new Repository(stateDir);
 await repository.initialize();
 const token = randomBytes(32).toString('hex');
 let origin;
+const finderRelay = createFinderRelay();
 const send = (res, status, data) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(data)); };
 /** Private native capabilities cannot be supplied as arbitrary filesystem paths by the webview. */
 async function selectedFile(id) {
@@ -31,6 +33,14 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'");
     const url = new URL(req.url, origin);
     if (url.pathname === '/health') return send(res, 200, { app: 'ab-markdown-editor', pid: process.pid });
+    // Local launcher only: browsers always send Origin on POST and must preflight the custom header,
+    // so web pages cannot reach this route. The id must name a launcher-written inbox entry.
+    if (url.pathname === '/finder-open' && req.method === 'POST') {
+      if (req.headers.origin || req.headers['x-scriba-launcher'] !== '1') return send(res, 403, { error: 'Origem inválida.' });
+      const id = url.searchParams.get('id');
+      await selectedFile(id);
+      return send(res, 200, { delivered: finderRelay.offer(id) });
+    }
     if (url.pathname === '/api/session' && req.method === 'GET') {
       if (req.headers['x-ab-markdown-client'] !== '1' || req.headers['sec-fetch-site'] === 'cross-site' || (req.headers.origin && req.headers.origin !== origin)) return send(res, 403, { error: 'Origem inválida.' });
       return send(res, 200, { token });
@@ -51,7 +61,14 @@ const server = http.createServer(async (req, res) => {
           const relative = repository.root ? path.relative(repository.root, document.filename) : '';
           const inRepository = !document.writable && !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
           const {filename, ...content} = document;
-          return send(res, 200, {...content, ...(document.writable ? {location:filename} : {}), name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository, repository:repository.root});
+          const match = !document.writable && !inRepository ? await repository.findIdentical(path.basename(filename), content.version).catch(() => null) : null;
+          return send(res, 200, {...content, ...(document.writable ? {location:filename} : {}), name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository, repository:repository.root, ...(match ? {match} : {})});
+        }
+        if (url.pathname === '/api/finder-next') {
+          // Long-poll held by each open window; see server/finder-relay.mjs.
+          const controller = new AbortController();
+          res.on('close', () => { if (!res.writableEnded) controller.abort(); });
+          return send(res, 200, await finderRelay.next(controller.signal));
         }
         if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());

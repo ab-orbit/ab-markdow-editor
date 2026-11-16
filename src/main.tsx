@@ -484,15 +484,7 @@ function App() {
       } finally {
         try {
         const finderId = !browserMode && new URLSearchParams(location.search).get('finder');
-        if (finderId) {
-          const doc = await api<LoadedDocument & {name:string;inRepository:boolean;repository:string|null}>(`finder-document?id=${encodeURIComponent(finderId)}`);
-          if (!active) return;
-          const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
-          const extracted = resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);setOpenedScope(doc.repository);
-          if(!extracted && !doc.inRepository && doc.version) {setImportedVersion({name:doc.name,version:doc.version});setFinderSourceId(finderId);}
-          history.replaceState(null, "", location.pathname);
-          setError("");setSettingsOpen(false);setNotice(extracted ? t("Conteúdo Markdown extraído do JSON. O arquivo original foi preservado; a cópia usa outro nome.") : doc.inRepository ? t("Documento do Finder aberto no repositório.") : t("Documento do Finder importado. Salvar usará o repositório configurado; o original fica preservado."));
-        }
+        if (finderId) await loadFinderDocument(finderId, () => active);
         } catch(cause) {if(active)setError(cause instanceof Error ? t(cause.message) : t("Não foi possível abrir o arquivo do Finder."));}
         if (active) setDraftReady(true);
       }
@@ -653,6 +645,49 @@ function App() {
     if (settingsOpen) flushSync(() => setSettingsOpen(false));
     workbenchRef.current?.openFile();
   }
+  /** Load a document handed over by Finder, from the launch URL or into a window that is already open. */
+  async function loadFinderDocument(finderId: string, isActive: () => boolean = () => true) {
+    const doc = await api<LoadedDocument & {name:string;inRepository:boolean;repository:string|null;match?:string}>(`finder-document?id=${encodeURIComponent(finderId)}`);
+    if (!isActive()) return;
+    if (doc.match) {
+      // Same bytes already live in the repository: open that note so the list highlights it and saves update it.
+      const note = await api<LoadedDocument>(`document?name=${encodeURIComponent(doc.match)}`);
+      if (!isActive()) return;
+      const files = note.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
+      resetDocument(note.value, doc.match, note.version, files);setReloadMode('read');setPendingSync(!!note.pendingSync);setSelected(doc.match);
+      history.replaceState(null, "", location.pathname);
+      setError("");setSettingsOpen(false);setNotice(t("Documento do Finder aberto no repositório."));
+      return;
+    }
+    const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
+    const extracted = resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);setOpenedScope(doc.repository);
+    if(!extracted && !doc.inRepository && doc.version) {setImportedVersion({name:doc.name,version:doc.version});setFinderSourceId(finderId);}
+    history.replaceState(null, "", location.pathname);
+    setError("");setSettingsOpen(false);setNotice(extracted ? t("Conteúdo Markdown extraído do JSON. O arquivo original foi preservado; a cópia usa outro nome.") : doc.inRepository ? t("Documento do Finder aberto no repositório.") : t("Documento do Finder importado. Salvar usará o repositório configurado; o original fica preservado."));
+  }
+  /** Finder opened a document while this window was open: reuse it instead of a new window. */
+  const finderHandoff = useRef<(id: string) => Promise<void>>(async () => {});
+  finderHandoff.current = async id => {
+    window.focus();
+    if (!discard()) return;
+    setOpeningDocument(true);
+    try { await run(() => loadFinderDocument(id)); } finally { setOpeningDocument(false); }
+  };
+  useEffect(() => {
+    if (browserMode || !draftReady) return;
+    let active = true;
+    void (async () => {
+      while (active) {
+        try {
+          // Long-poll held by the local service; see server/finder-relay.mjs.
+          const {id} = await api<{id: string | null}>('finder-next');
+          // Never drop a delivered document, even if this loop is being replaced.
+          if (id) await finderHandoff.current(id);
+        } catch { if (active) await new Promise(resolve => setTimeout(resolve, 3000)); }
+      }
+    })();
+    return () => { active = false; };
+  }, [draftReady]);
   async function openNote(fileName: string) {
     if (!discard()) return;
     setOpeningDocument(true);
