@@ -15,8 +15,8 @@ chmod 700 "$STATE_DIR"
 WORK_DIR="$(mktemp -d "$STATE_DIR/install.XXXXXX")"
 LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 # The staging bundle is registered by LaunchServices as soon as it is signed; unregister it
-# before deletion so Finder's "Open With" does not accumulate one stale Scriba per install.
-cleanup_work_dir() { [ -d "$WORK_DIR/Scriba.app" ] && "$LSREGISTER" -u "$WORK_DIR/Scriba.app" 2>/dev/null; rm -rf "$WORK_DIR"; }
+# (the bundle may already have moved; -u works on missing paths) before deletion so Finder's "Open With" does not accumulate one stale Scriba per install.
+cleanup_work_dir() { "$LSREGISTER" -u "$WORK_DIR/Scriba.app" 2>/dev/null || true; rm -rf "$WORK_DIR"; }
 trap cleanup_work_dir EXIT
 
 # Bundle an official runtime rather than a host binary with external dylib dependencies.
