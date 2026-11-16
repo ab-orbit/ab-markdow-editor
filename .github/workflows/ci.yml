@@ -1,0 +1,35 @@
+name: CI
+
+# Fast, cheap gate for every pull request and push to main.
+# Runs on Linux; the macOS packaging acceptance test is skipped here and
+# covered by the on-demand "macOS installer" workflow instead.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Locales and types
+        run: npm run check:locales && npx tsc --noEmit
+      - name: Unit tests
+        run: npm test
+      - name: Web build
+        run: npx vite build

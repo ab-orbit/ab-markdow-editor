@@ -1,9 +1,23 @@
 name: macOS installer
 
+# macOS runners are ~10x the cost of Linux. The full installer build runs only
+# when packaging inputs change, on release tags, or manually. Source behaviour
+# is gated by the Linux "CI / Test" workflow on every pull request.
 on:
   pull_request:
+    paths: &packaging
+      - install.sh
+      - native/**
+      - scripts/**
+      - server/**
+      - package.json
+      - package-lock.json
+      - tests/macos-bundle.test.mjs
+      - .github/workflows/macos-installer.yml
   push:
     branches: [main]
+    tags: ['v*']
+    paths: *packaging
   workflow_dispatch:
 
 permissions:
