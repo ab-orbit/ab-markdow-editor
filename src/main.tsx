@@ -647,8 +647,18 @@ function App() {
   }
   /** Load a document handed over by Finder, from the launch URL or into a window that is already open. */
   async function loadFinderDocument(finderId: string, isActive: () => boolean = () => true) {
-    const doc = await api<LoadedDocument & {name:string;inRepository:boolean;repository:string|null}>(`finder-document?id=${encodeURIComponent(finderId)}`);
+    const doc = await api<LoadedDocument & {name:string;inRepository:boolean;repository:string|null;match?:string}>(`finder-document?id=${encodeURIComponent(finderId)}`);
     if (!isActive()) return;
+    if (doc.match) {
+      // Same bytes already live in the repository: open that note so the list highlights it and saves update it.
+      const note = await api<LoadedDocument>(`document?name=${encodeURIComponent(doc.match)}`);
+      if (!isActive()) return;
+      const files = note.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
+      resetDocument(note.value, doc.match, note.version, files);setReloadMode('read');setPendingSync(!!note.pendingSync);setSelected(doc.match);
+      history.replaceState(null, "", location.pathname);
+      setError("");setSettingsOpen(false);setNotice(t("Documento do Finder aberto no repositório."));
+      return;
+    }
     const attached = doc.files.map(file => ({path:file.path,file:new File([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], file.path.split('/').at(-1)!, {type:file.mime})}));
     const extracted = resetDocument(doc.value, doc.name, doc.inRepository ? doc.version : null, attached);setOpenedScope(doc.repository);
     if(!extracted && !doc.inRepository && doc.version) {setImportedVersion({name:doc.name,version:doc.version});setFinderSourceId(finderId);}

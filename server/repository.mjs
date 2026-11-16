@@ -555,6 +555,21 @@ export class Repository {
   }
 
   /** Lightweight source check: no image payloads and no Git mutation. */
+  /**
+   * Find a repository note with exactly these bytes and the same base name, ignoring the
+   * " (n)" suffix of imported copies. Lets a Finder document from outside the repository
+   * open (and save) as the note that already holds it instead of an unsaved duplicate.
+   */
+  async findIdentical(fileName, version) {
+    if (typeof version !== 'string' || !this.root) return null;
+    const stem = fileName.replace(/\.(md|markdown|mdown)$/i, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = new RegExp(`(^|/)${stem}( \\(\\d+\\))?\\.(md|markdown|mdown)$`, 'i');
+    const candidates = (await this.list()).filter(name => pattern.test(name))
+      .sort((a, b) => Number(path.posix.basename(b) === fileName) - Number(path.posix.basename(a) === fileName));
+    for (const name of candidates) if ((await this.documentVersion(name)).version === version) return name;
+    return null;
+  }
+
   async documentVersion(name) {
     markdownName(name);
     try {

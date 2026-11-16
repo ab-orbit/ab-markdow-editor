@@ -61,7 +61,8 @@ const server = http.createServer(async (req, res) => {
           const relative = repository.root ? path.relative(repository.root, document.filename) : '';
           const inRepository = !document.writable && !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
           const {filename, ...content} = document;
-          return send(res, 200, {...content, ...(document.writable ? {location:filename} : {}), name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository, repository:repository.root});
+          const match = !document.writable && !inRepository ? await repository.findIdentical(path.basename(filename), content.version).catch(() => null) : null;
+          return send(res, 200, {...content, ...(document.writable ? {location:filename} : {}), name:inRepository ? relative.split(path.sep).join('/') : path.basename(filename), inRepository, repository:repository.root, ...(match ? {match} : {})});
         }
         if (url.pathname === '/api/finder-next') {
           // Long-poll held by each open window; see server/finder-relay.mjs.
