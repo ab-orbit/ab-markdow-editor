@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawn, execFile} from 'node:child_process';
 import {promisify} from 'node:util';
+import { sessionToken } from './helpers/session.mjs';
 
 const exec = promisify(execFile);
 const git = async (cwd, ...args) => (await exec('git', ['-C', cwd, ...args])).stdout.trim();
@@ -28,7 +29,7 @@ before(async () => {
   server=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'0',MARKDOWN_STATE_DIR:path.join(directory,'state'),MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});
   for(let i=0;i<100;i++) {try{base=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}
   assert.ok(base,'HTTP service started');
-  token=(await (await fetch(base)).text()).match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];
+  token=await sessionToken(base);
   const connected=await fetch(`${base}/api/connect`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({directory:checkout})});
   assert.equal(connected.status,200);
   checkout=(await connected.json()).repository;

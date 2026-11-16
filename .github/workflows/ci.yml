@@ -29,7 +29,9 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: Locales and types
         run: npm run check:locales && npx tsc --noEmit
+      # HTTP tests serve dist/index.html, so the web build must exist before npm test.
+      # build-picker (osacompile/codesign) is macOS-only and stays in the installer workflow.
+      - name: Web build
+        run: npx vite build && node scripts/build-pwa.mjs
       - name: Unit tests
         run: npm test
-      - name: Web build
-        run: npx vite build

@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawn,execFile} from 'node:child_process';
 import {promisify} from 'node:util';
+import { sessionToken } from './helpers/session.mjs';
 const exec=promisify(execFile);
 let directory,source,remote,config,base,token,server;
 const git=async(cwd,...args)=>(await exec('git',['-C',cwd,...args],{env:{...process.env,GIT_CONFIG_GLOBAL:config,GIT_CONFIG_NOSYSTEM:'1'}})).stdout.trim();
@@ -27,7 +28,7 @@ before(async()=>{
   await fs.writeFile(path.join(source,'notes','Nota á.md'),'# Source\n\n![image](assets/test.png)');await fs.writeFile(path.join(source,'notes','assets','test.png'),Buffer.from([137,80,78,71,1,2]));await fs.writeFile(path.join(source,'.obsidian','preferences.json'),'{}');await fs.writeFile(path.join(source,'.gitignore'),'ignored.bin\n');await git(source,'add','.');await git(source,'commit','-m','Source structure');await git(source,'push');
   await fs.writeFile(path.join(source,'pending.md'),'# Not committed yet');await fs.writeFile(path.join(source,'ignored.bin'),'Private ignored content');
   const runtime=path.join(directory,'runtime.json');server=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,GIT_CONFIG_GLOBAL:config,GIT_CONFIG_NOSYSTEM:'1',PORT:'0',MARKDOWN_STATE_DIR:path.join(directory,'state'),MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});
-  for(let i=0;i<100;i++){try{base=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}assert.ok(base);token=(await(await fetch(base)).text()).match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];await connectSource();
+  for(let i=0;i<100;i++){try{base=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}assert.ok(base);token=await sessionToken(base);await connectSource();
 });
 after(async()=>{if(server){server.kill();await new Promise(resolve=>server.once('exit',resolve));}if(directory)await fs.rm(directory,{recursive:true,force:true});});
 
@@ -37,7 +38,7 @@ test('disconnect preserves files, Git config, preferences and the remembered sou
   assert.equal((await request('sync',{repository:source})).status,400);assert.equal(await git(source,'rev-parse','HEAD'),head);assert.equal(await git(source,'status','--porcelain'),before);
   const persisted=JSON.parse(await fs.readFile(path.join(directory,'state','settings.json'),'utf8'));assert.equal(persisted.repository,null);assert.equal(persisted.previousRepository,source);
   const runtime=path.join(directory,'second.json'),second=spawn(process.execPath,['server/index.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,GIT_CONFIG_GLOBAL:config,PORT:'0',MARKDOWN_STATE_DIR:path.join(directory,'state'),MARKDOWN_RUNTIME_FILE:runtime},stdio:'pipe'});
-  try{let origin;for(let i=0;i<100;i++){try{origin=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}const html=await(await fetch(origin)).text(),capability=html.match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];const info=await(await fetch(origin+'/api/repository',{headers:{Authorization:`Bearer ${capability}`}})).json();assert.equal(info.repository,null);assert.equal(info.previousRepository,source);}finally{second.kill();await new Promise(resolve=>second.once('exit',resolve));}
+  try{let origin;for(let i=0;i<100;i++){try{origin=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}const capability=await sessionToken(origin);const info=await(await fetch(origin+'/api/repository',{headers:{Authorization:`Bearer ${capability}`}})).json();assert.equal(info.repository,null);assert.equal(info.previousRepository,source);}finally{second.kill();await new Promise(resolve=>second.once('exit',resolve));}
   const reconnect=await request('repository/prepare-switch',{repository:null,mode:'local',directory:source,carryFiles:true});assert.equal(reconnect.status,200,reconnect.body.error);const applied=await request('repository/apply-switch',{id:reconnect.body.id,publish:false});assert.equal(applied.status,200,applied.body.error);assert.equal(applied.body.info.repository,source);assert.equal(await git(source,'rev-parse','HEAD'),head);
 });
 test('previews conflicts without copying, then copies a complete subfolder and pushes while preserving both histories',async()=>{

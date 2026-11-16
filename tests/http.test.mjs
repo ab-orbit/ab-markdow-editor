@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { sessionToken } from './helpers/session.mjs';
 const exec = promisify(execFile);
 let temporary, checkout, remote, server, base, token;
 const git = async (cwd, ...args) => (await exec('git', ['-C', cwd, ...args])).stdout.trim();
@@ -29,7 +30,7 @@ before(async () => {
     try { base = JSON.parse(await fs.readFile(runtime, 'utf8')).url; break; } catch { await new Promise(resolve => setTimeout(resolve, 50)); }
   }
   assert.ok(base, 'server started');
-  const html = await (await fetch(base)).text(); token = html.match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];
+  token = await sessionToken(base);
 });
 after(async () => { server?.kill(); if (server) await new Promise(resolve => server.once('exit', resolve)); await fs.rm(temporary, { recursive: true, force: true }); });
 
@@ -185,7 +186,7 @@ test('save preferences validate the interval, survive reconnect and a fresh serv
     let address;
     for (let i = 0; i < 100; i++) { try { address = JSON.parse(await fs.readFile(runtime, 'utf8')).url; break; } catch { await new Promise(resolve => setTimeout(resolve, 50)); } }
     assert.ok(address);
-    const html = await (await fetch(address)).text(); const capability = html.match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];
+    const capability = await sessionToken(address);
     const response = await fetch(`${address}/api/preferences`, { headers: { Authorization: `Bearer ${capability}` } });
     assert.deepEqual(await response.json(), preferences);
   } finally { second.kill(); await new Promise(resolve => second.once('exit', resolve)); }
