@@ -42,7 +42,7 @@ function legacyAtom(source: string, start: number): number {
   return 0;
 }
 /** Find explicit TeX first; legacy inference never runs inside explicit expressions. */
-export function mathSpans(source: string, legacy = true): MathSpan[] {
+export function mathSpans(source: string, legacy = true, currencySafe = true): MathSpan[] {
   const spans: MathSpan[] = [];
   for (let i = 0; i < source.length;) {
     let to = 0, tex = '', display = false;
@@ -51,8 +51,10 @@ export function mathSpans(source: string, legacy = true): MathSpan[] {
     const delimiter = source.startsWith('$$', i) ? '$$' : source[i] === '$' && source[i - 1] !== '\\' ? '$' : slashDelimiter && source.startsWith('\\(', i) ? '\\(' : slashDelimiter && source.startsWith('\\[', i) ? '\\[' : '';
     if (delimiter) {
       const close = delimiter === '\\(' ? '\\)' : delimiter === '\\[' ? '\\]' : delimiter;
-      let end = source.indexOf(close, i + delimiter.length);
-      while (end >= 0 && source[end - 1] === '\\') end = source.indexOf(close, end + close.length);
+      // Currency-safe single-dollar math (Pandoc rules plus no letter/digit before the opener): R$10 e R$20, US$ 5 stay prose.
+      const dollarRules = currencySafe && delimiter === '$';
+      let end = dollarRules && (/\s/.test(source[i + 1] || ' ') || /[\p{L}\p{N}]/u.test(source[i - 1] || '')) ? -1 : source.indexOf(close, i + delimiter.length);
+      while (end >= 0 && (source[end - 1] === '\\' || dollarRules && (/\s/.test(source[end - 1]) || /\d/.test(source[end + 1] || '')))) end = source.indexOf(close, end + close.length);
       const inner = end < 0 ? '' : source.slice(i + delimiter.length, end);
       const bracketMath = delimiter !== '\\[' || !source.slice(0, i).trim() && !source.slice(end + close.length).trim() || /\\[A-Za-z]+|[=+^]|(?<!\\)_/.test(inner);
       if (end >= 0 && bracketMath && (delimiter !== '$' || !source.slice(i + 1, end).includes('\n'))) { to = end + close.length; tex = source.slice(i + delimiter.length, end); display = delimiter === '$$' || delimiter === '\\['; }
@@ -70,7 +72,7 @@ export function mathSpans(source: string, legacy = true): MathSpan[] {
 }
 /** A math fence is already a math container; unwrap one complete outer delimiter pair for rendering only. */
 export function mathBody(source: string): string {
-  const trimmed = source.trim(), span = mathSpans(trimmed, false)[0];
+  const trimmed = source.trim(), span = mathSpans(trimmed, false, false)[0];
   return span?.from === 0 && span.to === trimmed.length ? span.tex : trimmed;
 }
 /** Replace only prose text nodes: code, HTML, links and existing math retain their own semantics. */
