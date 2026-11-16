@@ -55,6 +55,14 @@ if (!url) {
   process.exit(1);
 }
 const documents = process.argv.slice(2).filter(argument => !argument.startsWith('-psn_'));
+/** Ask the service to hand the document to an editor window that is already open. */
+async function offerToOpenWindow(id) {
+  try {
+    const response = await fetch(`${url}/finder-open?id=${id}`, { method: 'POST', headers: { 'X-Scriba-Launcher': '1' }, signal: AbortSignal.timeout(2000) });
+    return response.ok && (await response.json()).delivered === true;
+  } catch { return false; } // Older services lack the route: fall back to a new window.
+}
+let openedWindow = false;
 try {
   if (!documents.length) await openEditorWindow(url);
   for (const document of documents) {
@@ -65,7 +73,11 @@ try {
     const payload = { ...await reader.read(path.basename(filename)), filename };
     const inbox = path.join(state, 'finder-inbox'); await fs.mkdir(inbox, {recursive:true, mode:0o700});
     const id = randomUUID(); await fs.writeFile(path.join(inbox, `${id}.json`), JSON.stringify(payload), {mode:0o600});
-    await openEditorWindow(`${url}/?finder=${id}`);
+    let delivered = await offerToOpenWindow(id);
+    // A window opened for a previous document in this batch needs a moment to start listening.
+    for (let attempt = 0; !delivered && openedWindow && attempt < 40; attempt++) { await new Promise(resolve => setTimeout(resolve, 200)); delivered = await offerToOpenWindow(id); }
+    if (delivered) await openEditorWindow(url, { focusOnly: true });
+    else { await openEditorWindow(`${url}/?finder=${id}`); openedWindow = true; }
   }
 } catch (error) {
   // Finder starts this process without a terminal. Report launch failures instead of silently doing nothing.

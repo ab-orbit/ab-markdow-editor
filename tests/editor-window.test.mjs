@@ -82,3 +82,20 @@ test('missing standalone browsers never silently send a document to the default 
   await assert.rejects(openEditorWindow(localURL, { applicationsDirectories: ['/missing/scriba-applications'], run: async (...args) => { opened.push(args); } }), /Chrome ou Edge/);
   assert.deepEqual(opened, []);
 });
+
+test('a Finder document delivered to an open window only focuses it, never creating a second window', { skip: process.platform !== 'darwin' }, async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'scriba-editor-window-'));
+  try {
+    const chrome = await application(root, 'Google Chrome.app', { CFBundleIdentifier: 'com.google.Chrome' });
+    const pwa = await application(path.join(root, 'Chrome Apps.localized'), 'Scriba.app', {
+      CrBundleIdentifier: 'com.google.Chrome', CrAppModeShortcutID: 'abcdefghijklmnopabcdefghijklmnop', CrAppModeShortcutURL: 'http://127.0.0.1:43127/?source=pwa',
+    });
+    const opened = [];
+    await openEditorWindow('http://127.0.0.1:43127', { applicationsDirectories: [root], focusOnly: true, run: async (...args) => { opened.push(args); } });
+    assert.deepEqual(opened.map(call => call.slice(0, 2)), [['/usr/bin/open', ['-a', pwa]]]);
+    await fs.rm(pwa, { recursive: true });
+    opened.length = 0;
+    await openEditorWindow('http://127.0.0.1:43127', { applicationsDirectories: [root], focusOnly: true, run: async (...args) => { opened.push(args); } });
+    assert.deepEqual(opened.map(call => call.slice(0, 2)), [['/usr/bin/open', ['-a', chrome]]]);
+  } finally { await fs.rm(root, { recursive: true, force: true }); }
+});
