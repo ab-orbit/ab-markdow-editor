@@ -761,17 +761,22 @@ function App() {
       const existing = new Set(await api<string[]>('files'));
       let imported = 0;
       let unsynced = 0;
+      let skipped = 0;
       let lastImported: {name:string;value:string;version:string|null;pending:boolean} | null = null;
       try {
         for (const file of selected) {
           if (!/\.(md|markdown|mdown)$/i.test(file.name)) throw new Error(t("Selecione arquivos Markdown (.md, .markdown ou .mdown)."));
           const stem = file.name.replace(/\.(md|markdown|mdown)$/i, '');
+          const original = await file.text();
+          const source = extractedConversionMarkdown(original) ?? original;
+          // Re-importing the same bytes opens the existing note instead of creating "name (n).md".
+          const sourceVersion = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source))), byte => byte.toString(16).padStart(2, '0')).join("");
+          const identical = browserMode ? null : (await api<{match:string|null}>(`identical?name=${encodeURIComponent(`${stem}.md`)}&version=${sourceVersion}`).catch(() => ({match:null}))).match;
+          if (identical) { skipped++; lastImported={name:identical,value:source,version:sourceVersion,pending:false}; continue; }
           let target = `${stem}.md`;
           let suffix = 2;
           // Reserve a distinct destination for every file; never replace an existing note.
           while (existing.has(target)) target = `${stem} (${suffix++}).md`;
-          const original = await file.text();
-          const source = extractedConversionMarkdown(original) ?? original;
           const result = await api<SaveResult>('save-sync', {
             repository: repository.repository, name: target, value: source,
             version: null, files: [], message: t("Import notes with Scriba"),
@@ -785,9 +790,9 @@ function App() {
         // Refresh even when a later file fails: earlier imports are already preserved.
         await refresh();
         if(lastImported){resetDocument(lastImported.value,lastImported.name,lastImported.version);setPendingSync(lastImported.pending);setReloadMode('read');setSelected(lastImported.name);setSettingsOpen(false);if(libraryIsOverlay())setNotesOpen(false);}
-        if (imported) setNotice(unsynced
+        if (imported || skipped) setNotice((unsynced
           ? t("{0} notas importadas. {1} aguardam sincronização.", imported, unsynced)
-          : t("{0} notas importadas.", imported));
+          : t("{0} notas importadas.", imported)) + (skipped ? t(" Já existentes com o mesmo conteúdo, não duplicadas: {0}.", skipped) : ''));
       }
     });
   }

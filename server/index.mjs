@@ -70,6 +70,8 @@ const server = http.createServer(async (req, res) => {
           res.on('close', () => { if (!res.writableEnded) controller.abort(); });
           return send(res, 200, await finderRelay.next(controller.signal));
         }
+        // Imports skip files whose bytes already exist under the same base name.
+        if (url.pathname === '/api/identical') return send(res, 200, { match: await repository.findIdentical(url.searchParams.get('name') || '', url.searchParams.get('version')) });
         if (url.pathname === '/api/preferences') return send(res, 200, repository.preferences);
         if (url.pathname === '/api/repository') return send(res, 200, await repository.info());
         if (url.pathname === '/api/thumbnail') return send(res, 200, await repository.thumbnail(url.searchParams.get('name')));
