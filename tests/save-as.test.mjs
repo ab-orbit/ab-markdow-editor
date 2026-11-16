@@ -5,6 +5,7 @@ import { randomUUID, createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
+import { sessionToken } from './helpers/session.mjs';
 
 test('Save As writes only the explicitly selected file, preserves originals and detects external changes over HTTP', async () => {
   const temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'scriba-save-as-'));
@@ -22,7 +23,7 @@ test('Save As writes only the explicitly selected file, preserves originals and 
     let base;
     for(let n=0;n<100;n++){try{base=JSON.parse(await fs.readFile(runtime,'utf8')).url;break;}catch{await new Promise(resolve=>setTimeout(resolve,50));}}
     assert.ok(base);
-    const token = (await (await fetch(base)).text()).match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];
+    const token = await sessionToken(base);
     const request = async (route,body) => {const result=await fetch(`${base}/api/${route}`,{method:body?'POST':'GET',headers:{Authorization:`Bearer ${token}`,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});return {status:result.status,body:await result.json()};};
     assert.equal((await request('finder-save',{id:readOnlyId,value:'unsafe',version:null})).status,400,'Finder imports never grant overwrite permission');
     assert.equal((await request('finder-save',{id:'../outside',value:'unsafe',version:null})).status,400);

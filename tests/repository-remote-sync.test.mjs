@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawn, execFile} from 'node:child_process';
 import {promisify} from 'node:util';
+import { sessionToken } from './helpers/session.mjs';
 
 const exec = promisify(execFile);
 const git = async (cwd, ...args) => (await exec('git', ['-C', cwd, ...args])).stdout.trim();
@@ -49,7 +50,7 @@ async function fixture(t) {
     catch { await new Promise(resolve => setTimeout(resolve, 50)); }
   }
   assert.ok(base, 'HTTP service started');
-  const token = (await (await fetch(base)).text()).match(/window\.__MARKDOWN_TOKEN__="([a-f0-9]+)"/)[1];
+  const token = await sessionToken(base);
   async function post(endpoint, body) {
     const response = await fetch(`${base}${endpoint}`, {method:'POST', headers:{Authorization:`Bearer ${token}`, 'Content-Type':'application/json'}, body:JSON.stringify(body)});
     return {status:response.status, body:await response.json()};
