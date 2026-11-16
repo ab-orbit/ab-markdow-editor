@@ -1,4 +1,4 @@
-import remarkMath from 'remark-math';
+import { remarkSafeMath as remarkMath } from '@/lib/markdown/remarkSafeMath';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { remarkCompatibleMath, mathOptions } from '@/lib/markdown/math';
